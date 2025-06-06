@@ -1,3 +1,4 @@
+
 import type { Test, Question } from './types';
 
 // Mock in-memory store for tests
@@ -78,21 +79,18 @@ let tests: Test[] = [
   },
 ];
 
-// Simulate server-side logic with a delay
-const simulateDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  await simulateDelay(300);
+  // await simulateDelay(300); // Removed delay
   return tests.filter(test => test.teacherId === teacherId);
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  await simulateDelay(200);
+  // await simulateDelay(200); // Removed delay
   return tests.find(test => test.id === testId);
 }
 
 export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  await simulateDelay(500);
+  // await simulateDelay(500); // Removed delay
   const newTest: Test = {
     ...newTestData,
     id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -104,7 +102,7 @@ export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'upda
 }
 
 export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  await simulateDelay(400);
+  // await simulateDelay(400); // Removed delay
   const testIndex = tests.findIndex(test => test.id === testId);
   if (testIndex === -1) {
     return undefined;
@@ -118,7 +116,7 @@ export async function updateTest(testId: string, updatedTestData: Partial<Omit<T
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  await simulateDelay(300);
+  // await simulateDelay(300); // Removed delay
   const initialLength = tests.length;
   tests = tests.filter(test => test.id !== testId);
   return tests.length < initialLength;
