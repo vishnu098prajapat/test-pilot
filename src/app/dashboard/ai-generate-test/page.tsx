@@ -28,13 +28,15 @@ const AIGenerateTestSchema = z.object({
 
 type AIGenerateTestFormValues = z.infer<typeof AIGenerateTestSchema>;
 
-const AI_GENERATED_QUESTIONS_STORAGE_KEY = "aiGeneratedTestQuestions";
+const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData"; // Changed key to store more than just questions
 
 export default function AIGenerateTestPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<AIQuestion[] | null>(null);
+  const [generationParams, setGenerationParams] = useState<AIGenerateTestFormValues | null>(null);
+
 
   const form = useForm<AIGenerateTestFormValues>({
     resolver: zodResolver(AIGenerateTestSchema),
@@ -49,6 +51,7 @@ export default function AIGenerateTestPage() {
   const onSubmit = async (data: AIGenerateTestFormValues) => {
     setIsLoading(true);
     setGeneratedQuestions(null);
+    setGenerationParams(data); // Store current generation parameters
     try {
       const input: GenerateTestQuestionsInput = {
         subject: data.subject,
@@ -73,16 +76,18 @@ export default function AIGenerateTestPage() {
 
   const transformAIQuestionsToTestBuilderFormat = (aiQuestions: AIQuestion[]): TestBuilderQuestion[] => {
     return aiQuestions.map((aiQ, index): TestBuilderQuestion => {
+      // Ensure question ID is very unique to avoid collisions in TestBuilder
+      const questionId = `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`;
+      
       const baseQuestion = {
-        id: `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 7)}`, // Ensure question ID is unique
+        id: questionId,
         text: aiQ.text,
         points: aiQ.points || 10,
       };
 
       if (aiQ.type === 'mcq') {
         const options: TestBuilderOption[] = (aiQ.options || []).map((optText, optIndex) => ({
-          // Make option IDs very unique to avoid any potential collision
-          id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+          id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`, // Even more unique option ID
           text: optText,
         }));
         const correctOption = options.find(opt => opt.text === aiQ.correctAnswer);
@@ -109,14 +114,25 @@ export default function AIGenerateTestPage() {
   };
 
   const handleUseQuestions = () => {
-    if (!generatedQuestions) return;
+    if (!generatedQuestions || !generationParams) return;
+    
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
+    
+    // Create a title based on generation params
+    const aiGeneratedTitle = `AI Generated ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
+    
+    const dataToStore = {
+      title: aiGeneratedTitle,
+      subject: generationParams.subject,
+      questions: testBuilderQuestions,
+    };
+
     try {
-      localStorage.setItem(AI_GENERATED_QUESTIONS_STORAGE_KEY, JSON.stringify(testBuilderQuestions));
-      toast({title: "Questions Saved", description: "Redirecting to Test Builder with generated questions."});
+      localStorage.setItem(AI_GENERATED_DATA_STORAGE_KEY, JSON.stringify(dataToStore));
+      toast({title: "Data Saved", description: "Redirecting to Test Builder with generated questions, title, and subject."});
       router.push('/dashboard/create-test?source=ai');
     } catch (e) {
-      toast({title: "Error", description: "Could not save questions for Test Builder.", variant: "destructive"});
+      toast({title: "Error", description: "Could not save data for Test Builder.", variant: "destructive"});
     }
   };
 

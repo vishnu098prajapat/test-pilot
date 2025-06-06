@@ -81,7 +81,7 @@ const testBuilderSchema = z.object({
 
 export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
 
-const AI_GENERATED_QUESTIONS_STORAGE_KEY = "aiGeneratedTestQuestions";
+const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 
 const defaultQuestionValues = (type: Question['type']): Question => {
   const base = { id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "", points: 10 };
@@ -130,24 +130,21 @@ export default function TestBuilderForm() {
 
     if (source === 'ai') {
       try {
-        const aiQuestionsString = localStorage.getItem(AI_GENERATED_QUESTIONS_STORAGE_KEY);
-        if (aiQuestionsString) {
-          const aiQuestions: Question[] = JSON.parse(aiQuestionsString);
-          if (aiQuestions.length > 0) {
-            // Pre-fill parts of the form that AI might suggest, like title/subject if available
-            // For now, just questions.
-            // form.setValue("title", "AI Generated Test"); // Example
-            // form.setValue("subject", "AI Suggested Subject"); // Example
-            replaceQuestions(aiQuestions); // Use replace from useFieldArray
-            toast({ title: "AI Questions Loaded", description: "AI-generated questions have been added to the form."});
+        const aiDataString = localStorage.getItem(AI_GENERATED_DATA_STORAGE_KEY);
+        if (aiDataString) {
+          const aiData: { title: string, subject: string, questions: Question[] } = JSON.parse(aiDataString);
+          if (aiData.questions && aiData.questions.length > 0) {
+            form.setValue("title", aiData.title || "AI Generated Test");
+            form.setValue("subject", aiData.subject || "AI Suggested Subject");
+            replaceQuestions(aiData.questions);
+            toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form."});
           }
         }
       } catch (e) {
-        console.error("Failed to load AI questions from localStorage", e);
-        toast({ title: "Load Error", description: "Could not load AI-generated questions.", variant: "destructive"});
+        console.error("Failed to load AI data from localStorage", e);
+        toast({ title: "Load Error", description: "Could not load AI-generated data.", variant: "destructive"});
       } finally {
-        localStorage.removeItem(AI_GENERATED_QUESTIONS_STORAGE_KEY); // Clean up
-         // Remove source=ai from URL to prevent re-loading on refresh
+        localStorage.removeItem(AI_GENERATED_DATA_STORAGE_KEY); // Clean up
         const newSearchParams = new URLSearchParams(searchParams.toString());
         newSearchParams.delete('source');
         router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
