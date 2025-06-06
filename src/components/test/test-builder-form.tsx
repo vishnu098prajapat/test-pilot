@@ -1,0 +1,396 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlusCircle, Save, Eye, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
+import { QuestionForm } from "./question-form";
+import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, Option } from "@/lib/types";
+import { addTest, getTestById, updateTest } from "@/lib/store"; // Mock store
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { Separator } from "../ui/separator";
+import {
+  Form as UIForm,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Skeleton } from "../ui/skeleton";
+
+
+const optionSchema = z.object({
+  id: z.string(),
+  text: z.string().min(1, "Option text cannot be empty"),
+});
+
+const baseQuestionSchema = z.object({
+  id: z.string().optional(), // Optional for new questions
+  text: z.string().min(1, "Question text is required"),
+  points: z.number().min(0, "Points must be non-negative"),
+});
+
+const mcqQuestionSchema = baseQuestionSchema.extend({
+  type: z.literal("mcq"),
+  options: z.array(optionSchema).min(2, "MCQ must have at least 2 options"),
+  correctOptionId: z.string().nullable().refine(val => val !== null, "Correct option must be selected for MCQ"),
+});
+
+const shortAnswerQuestionSchema = baseQuestionSchema.extend({
+  type: z.literal("short-answer"),
+  correctAnswer: z.string().min(1, "Correct answer is required for short answer"),
+});
+
+const trueFalseQuestionSchema = baseQuestionSchema.extend({
+  type: z.literal("true-false"),
+  correctAnswer: z.boolean({ required_error: "Correct answer must be selected for True/False" }),
+});
+
+const questionSchema = z.discriminatedUnion("type", [
+  mcqQuestionSchema,
+  shortAnswerQuestionSchema,
+  trueFalseQuestionSchema,
+]);
+
+const testBuilderSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  subject: z.string().min(1, "Subject is required"),
+  duration: z.number().min(5, "Duration must be at least 5 minutes").max(180, "Duration cannot exceed 3 hours"),
+  questions: z.array(questionSchema).min(1, "Test must have at least one question"),
+  // Settings
+  attemptsAllowed: z.number().min(0, "Attempts must be non-negative (0 for unlimited)"), // 0 for unlimited
+  randomizeQuestions: z.boolean(),
+  // Anti-cheat
+  enableTabSwitchDetection: z.boolean(),
+  enableCopyPasteDisable: z.boolean(),
+  enforceFullScreen: z.boolean(),
+  published: z.boolean(),
+});
+
+export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
+
+const defaultQuestionValues = (type: Question['type']): Question => {
+  const base = { id: `new-${Date.now()}-${Math.random()}`, text: "", points: 10 };
+  if (type === 'mcq') {
+    return { ...base, type, options: [{id: `opt-${Date.now()}`, text: ""}, {id: `opt-${Date.now()+1}`, text: ""}], correctOptionId: null } as MCQQuestion;
+  }
+  if (type === 'short-answer') {
+    return { ...base, type, correctAnswer: "" } as ShortAnswerQuestion;
+  }
+  return { ...base, type, correctAnswer: true } as TrueFalseQuestion; // Default True/False to True
+};
+
+export default function TestBuilderForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testIdToEdit, setTestIdToEdit] = useState<string | null>(null);
+
+  const form = useForm<TestBuilderFormValues>({
+    resolver: zodResolver(testBuilderSchema),
+    defaultValues: {
+      title: "",
+      subject: "",
+      duration: 30,
+      questions: [defaultQuestionValues('mcq')],
+      attemptsAllowed: 1,
+      randomizeQuestions: false,
+      enableTabSwitchDetection: true,
+      enableCopyPasteDisable: true,
+      enforceFullScreen: false,
+      published: false,
+    },
+  });
+
+  const { fields: questions, append: appendQuestion, remove: removeQuestion } = useFieldArray({
+    control: form.control,
+    name: "questions",
+  });
+
+  useEffect(() => {
+    const editId = searchParams.get("edit");
+    if (editId) {
+      setTestIdToEdit(editId);
+      setIsLoading(true);
+      getTestById(editId)
+        .then(testData => {
+          if (testData && testData.teacherId === user?.id) {
+            // Ensure IDs are strings for options if they exist
+            const questionsWithStrIds = testData.questions.map(q => {
+              if (q.type === 'mcq' && q.options) {
+                return { ...q, options: q.options.map(opt => ({ ...opt, id: String(opt.id) })) };
+              }
+              return q;
+            });
+
+            form.reset({
+              ...testData,
+              questions: questionsWithStrIds as Question[], // Type assertion after mapping
+            });
+          } else if (testData) {
+            toast({ title: "Unauthorized", description: "You are not authorized to edit this test.", variant: "destructive" });
+            router.push("/dashboard");
+          } else {
+            toast({ title: "Not Found", description: "Test not found.", variant: "destructive" });
+            router.push("/dashboard");
+          }
+        })
+        .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive" }))
+        .finally(() => setIsLoading(false));
+    }
+  }, [searchParams, form, user?.id, router, toast]);
+
+
+  const onSubmit = async (data: TestBuilderFormValues) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+    setIsSubmitting(true);
+
+    try {
+      let savedTest;
+      if (testIdToEdit) {
+        savedTest = await updateTest(testIdToEdit, { ...data, teacherId: user.id } as Partial<Test>);
+        toast({ title: "Success", description: "Test updated successfully!" });
+      } else {
+        savedTest = await addTest({ ...data, teacherId: user.id } as Omit<Test, 'id'|'createdAt'|'updatedAt'>);
+        toast({ title: "Success", description: "Test created successfully!" });
+      }
+      if (savedTest) router.push(`/dashboard/test/${savedTest.id}`);
+      else router.push('/dashboard');
+
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to save test. Please try again.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-1/2" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-10 w-1/4 mb-4" />
+        {[1,2].map(i => (
+          <Card key={i} className="mb-6">
+            <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
+            <CardContent className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-10 w-1/2" />
+            </CardContent>
+          </Card>
+        ))}
+        <Skeleton className="h-12 w-full" />
+      </div>
+    );
+  }
+
+  return (
+    <UIForm {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-headline">
+              {testIdToEdit ? "Edit Test" : "Create New Test"}
+            </CardTitle>
+            <CardDescription>
+              {testIdToEdit ? "Modify the details of your existing test." : "Fill in the details to create a new test."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="title">Test Title</Label>
+                    <Input id="title" placeholder="e.g., Midterm Exam" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input id="subject" placeholder="e.g., Mathematics" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+             <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="duration">Duration (minutes)</Label>
+                    <Input id="duration" type="number" min="5" max="180" {...field} 
+                      onChange={e => field.onChange(parseInt(e.target.value,10) || 0)}
+                    />
+                    <FormMessage />
+                    <p className="text-xs text-muted-foreground">Min: 5 minutes, Max: 180 minutes (3 hours).</p>
+                  </FormItem>
+                )}
+              />
+          </CardContent>
+        </Card>
+
+        <Separator />
+
+        <div>
+          <h2 className="text-xl font-semibold font-headline mb-4">Questions</h2>
+          {questions.map((field, index) => (
+            <QuestionForm
+              key={field.id}
+              questionIndex={index}
+              form={form}
+              removeQuestion={removeQuestion}
+            />
+          ))}
+           {form.formState.errors.questions && typeof form.formState.errors.questions === 'object' && !Array.isArray(form.formState.errors.questions) && (
+             <p className="text-sm text-destructive mt-1">{ (form.formState.errors.questions as unknown as {message : string}).message }</p>
+           )}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => appendQuestion(defaultQuestionValues('mcq'))}
+            className="mt-4"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Question
+          </Button>
+        </div>
+        
+        <Separator />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold font-headline flex items-center">
+              <SettingsIcon className="mr-2 h-5 w-5" /> Test Settings
+            </CardTitle>
+             <CardDescription>Configure test behavior and anti-cheat options.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="attemptsAllowed"
+              render={({ field }) => (
+                <FormItem>
+                  <Label htmlFor="attemptsAllowed">Attempts Allowed (0 for unlimited)</Label>
+                  <Input id="attemptsAllowed" type="number" min="0" {...field} 
+                     onChange={e => field.onChange(parseInt(e.target.value,10) || 0)}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
+              <FormField
+                control={form.control}
+                name="randomizeQuestions"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="randomizeQuestions">Randomize Question Order</Label>
+                       <p className="text-xs text-muted-foreground">Shuffle questions for each student.</p>
+                    </div>
+                    <FormControl>
+                      <Switch id="randomizeQuestions" checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="published"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-primary/5">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="published" className="text-primary font-medium">Publish Test</Label>
+                       <p className="text-xs text-muted-foreground">Make this test live and accessible to students.</p>
+                    </div>
+                    <FormControl>
+                      <Switch id="published" checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="enableTabSwitchDetection"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="enableTabSwitchDetection">Detect Tab Switching</Label>
+                      <p className="text-xs text-muted-foreground">Log and flag if student leaves the test tab.</p>
+                    </div>
+                    <FormControl>
+                      <Switch id="enableTabSwitchDetection" checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="enableCopyPasteDisable"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="enableCopyPasteDisable">Disable Copy/Paste</Label>
+                      <p className="text-xs text-muted-foreground">Prevent copying questions & pasting answers.</p>
+                    </div>
+                    <FormControl>
+                      <Switch id="enableCopyPasteDisable" checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="enforceFullScreen"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="enforceFullScreen">Enforce Fullscreen</Label>
+                      <p className="text-xs text-muted-foreground">Attempt to keep student in fullscreen mode.</p>
+                    </div>
+                    <FormControl>
+                      <Switch id="enforceFullScreen" checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end gap-4 mt-8 sticky bottom-0 bg-background/90 py-4 border-t">
+          <Button type="button" variant="outline">
+            <Eye className="mr-2 h-4 w-4" /> Preview (Not implemented)
+          </Button>
+          <Button type="submit" size="lg" disabled={isSubmitting}>
+            <Save className="mr-2 h-4 w-4" /> {isSubmitting ? "Saving..." : (testIdToEdit ? "Update Test" : "Create & Publish Test")}
+          </Button>
+        </div>
+      </form>
+    </UIForm>
+  );
+}
