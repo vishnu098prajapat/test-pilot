@@ -20,23 +20,22 @@ const BaseAIQuestionSchema = z.object({
 
 // Schema for AI-generated MCQ questions
 const AIQuestionMCQSchema = BaseAIQuestionSchema.extend({
-  type: z.literal('mcq').describe("The type of the question, must be 'mcq' for Multiple Choice Questions."),
+  type: z.enum(['mcq']).describe("The type of the question, must be 'mcq' for Multiple Choice Questions."),
   options: z.array(z.string())
     .length(4, "MCQ questions must have exactly 4 options.")
     .describe("An array of exactly 4 distinct option texts. This field is mandatory for MCQ questions."),
   correctAnswer: z.string().describe("The correct answer, which MUST be a string that exactly matches one of the texts in the 'options' array. This field is mandatory for MCQ questions."),
 });
-// Removed .refine() from here to ensure AIQuestionMCQSchema is a ZodObject
 
 // Schema for AI-generated Short Answer questions
 const AIQuestionShortAnswerSchema = BaseAIQuestionSchema.extend({
-  type: z.literal('short-answer').describe("The type of the question, must be 'short-answer'."),
+  type: z.enum(['short-answer']).describe("The type of the question, must be 'short-answer'."),
   correctAnswer: z.string().describe("The correct answer, which MUST be a string. This field is mandatory for short-answer questions."),
 });
 
 // Schema for AI-generated True/False questions
 const AIQuestionTrueFalseSchema = BaseAIQuestionSchema.extend({
-  type: z.literal('true-false').describe("The type of the question, must be 'true-false'."),
+  type: z.enum(['true-false']).describe("The type of the question, must be 'true-false'."),
   correctAnswer: z.boolean().describe("The correct answer, which MUST be a boolean (true or false). This field is mandatory for true/false questions."),
 });
 
