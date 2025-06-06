@@ -74,14 +74,15 @@ export default function AIGenerateTestPage() {
   const transformAIQuestionsToTestBuilderFormat = (aiQuestions: AIQuestion[]): TestBuilderQuestion[] => {
     return aiQuestions.map((aiQ, index): TestBuilderQuestion => {
       const baseQuestion = {
-        id: `ai-q-${Date.now()}-${index}`,
+        id: `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 7)}`, // Ensure question ID is unique
         text: aiQ.text,
         points: aiQ.points || 10,
       };
 
       if (aiQ.type === 'mcq') {
         const options: TestBuilderOption[] = (aiQ.options || []).map((optText, optIndex) => ({
-          id: `ai-q-${index}-opt-${Date.now()}-${optIndex}`,
+          // Make option IDs very unique to avoid any potential collision
+          id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           text: optText,
         }));
         const correctOption = options.find(opt => opt.text === aiQ.correctAnswer);
