@@ -6,14 +6,14 @@
  * - generateTestQuestions - A function that takes test parameters and returns generated questions.
  * - GenerateTestQuestionsInput - The input type for the generateTestQuestions function.
  * - GenerateTestQuestionsOutput - The return type for the generateTestQuestions function.
- * - AIQuestion - The schema for a single AI-generated question.
+ * - AIQuestion - The type for a single AI-generated question.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Schema for a single AI-generated question
-export const AIQuestionSchema = z.object({
+// Schema for a single AI-generated question (not exported)
+const AIQuestionSchema = z.object({
   text: z.string().describe("The question text."),
   type: z.enum(['mcq', 'short-answer', 'true-false']).describe("The type of the question."),
   points: z.number().default(10).describe("The points allocated to the question."),
@@ -127,3 +127,4 @@ const generateTestQuestionsFlow = ai.defineFlow(
     return output;
   }
 );
+
