@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -9,7 +10,8 @@ import {
   PlusCircle, 
   Settings,
   BarChart3,
-  BookOpenCheck
+  BookOpenCheck,
+  Sparkles // Added Sparkles
 } from "lucide-react";
 import { 
   SidebarMenu, 
@@ -26,11 +28,12 @@ const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
-  { href: "/dashboard/results", label: "Results", icon: BarChart3 }, // Placeholder
+  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, // New Item
+  { href: "/dashboard/results", label: "Results", icon: BarChart3 }, 
 ];
 
 const secondaryNavItems = [
-  { href: "/dashboard/settings", label: "Settings", icon: Settings }, // Placeholder
+  { href: "/dashboard/settings", label: "Settings", icon: Settings }, 
 ];
 
 
@@ -53,7 +56,7 @@ export function SidebarNav() {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={navLinkClass(item.href, item.href === "/dashboard")}
+                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test")}
                   tooltip={!open ? item.label : undefined}
                 >
                   <Link href={item.href}>
@@ -91,3 +94,4 @@ export function SidebarNav() {
     </nav>
   );
 }
+

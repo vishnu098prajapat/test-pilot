@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ const optionSchema = z.object({
 });
 
 const baseQuestionSchema = z.object({
-  id: z.string().optional(), // Optional for new questions
+  id: z.string(), // ID is now always present, generated client-side
   text: z.string().min(1, "Question text is required"),
   points: z.number().min(0, "Points must be non-negative"),
 });
@@ -48,11 +49,13 @@ const mcqQuestionSchema = baseQuestionSchema.extend({
 const shortAnswerQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("short-answer"),
   correctAnswer: z.string().min(1, "Correct answer is required for short answer"),
+  options: z.array(optionSchema).optional(), // To match discriminated union, but not used for this type
 });
 
 const trueFalseQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("true-false"),
   correctAnswer: z.boolean({ required_error: "Correct answer must be selected for True/False" }),
+  options: z.array(optionSchema).optional(), // To match discriminated union, but not used for this type
 });
 
 const questionSchema = z.discriminatedUnion("type", [
@@ -78,8 +81,10 @@ const testBuilderSchema = z.object({
 
 export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
 
+const AI_GENERATED_QUESTIONS_STORAGE_KEY = "aiGeneratedTestQuestions";
+
 const defaultQuestionValues = (type: Question['type']): Question => {
-  const base = { id: `new-${Date.now()}-${Math.random()}`, text: "", points: 10 };
+  const base = { id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "", points: 10 };
   if (type === 'mcq') {
     return { ...base, type, options: [{id: `opt-${Date.now()}`, text: ""}, {id: `opt-${Date.now()+1}`, text: ""}], correctOptionId: null } as MCQQuestion;
   }
@@ -114,30 +119,54 @@ export default function TestBuilderForm() {
     },
   });
 
-  const { fields: questions, append: appendQuestion, remove: removeQuestion } = useFieldArray({
+  const { fields: questions, append: appendQuestion, remove: removeQuestion, replace: replaceQuestions } = useFieldArray({
     control: form.control,
     name: "questions",
   });
 
   useEffect(() => {
     const editId = searchParams.get("edit");
-    if (editId) {
+    const source = searchParams.get("source");
+
+    if (source === 'ai') {
+      try {
+        const aiQuestionsString = localStorage.getItem(AI_GENERATED_QUESTIONS_STORAGE_KEY);
+        if (aiQuestionsString) {
+          const aiQuestions: Question[] = JSON.parse(aiQuestionsString);
+          if (aiQuestions.length > 0) {
+            // Pre-fill parts of the form that AI might suggest, like title/subject if available
+            // For now, just questions.
+            // form.setValue("title", "AI Generated Test"); // Example
+            // form.setValue("subject", "AI Suggested Subject"); // Example
+            replaceQuestions(aiQuestions); // Use replace from useFieldArray
+            toast({ title: "AI Questions Loaded", description: "AI-generated questions have been added to the form."});
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load AI questions from localStorage", e);
+        toast({ title: "Load Error", description: "Could not load AI-generated questions.", variant: "destructive"});
+      } finally {
+        localStorage.removeItem(AI_GENERATED_QUESTIONS_STORAGE_KEY); // Clean up
+         // Remove source=ai from URL to prevent re-loading on refresh
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.delete('source');
+        router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
+      }
+    } else if (editId) {
       setTestIdToEdit(editId);
       setIsLoading(true);
       getTestById(editId)
         .then(testData => {
           if (testData && testData.teacherId === user?.id) {
-            // Ensure IDs are strings for options if they exist
             const questionsWithStrIds = testData.questions.map(q => {
               if (q.type === 'mcq' && q.options) {
-                return { ...q, options: q.options.map(opt => ({ ...opt, id: String(opt.id) })) };
+                return { ...q, options: q.options.map(opt => ({ ...opt, id: String(opt.id) })), id: String(q.id) };
               }
-              return q;
+              return { ...q, id: String(q.id) };
             });
-
             form.reset({
               ...testData,
-              questions: questionsWithStrIds as Question[], // Type assertion after mapping
+              questions: questionsWithStrIds as Question[], 
             });
           } else if (testData) {
             toast({ title: "Unauthorized", description: "You are not authorized to edit this test.", variant: "destructive" });
@@ -150,7 +179,7 @@ export default function TestBuilderForm() {
         .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive" }))
         .finally(() => setIsLoading(false));
     }
-  }, [searchParams, form, user?.id, router, toast]);
+  }, [searchParams, form, user?.id, router, toast, replaceQuestions]);
 
 
   const onSubmit = async (data: TestBuilderFormValues) => {
@@ -179,7 +208,7 @@ export default function TestBuilderForm() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !searchParams.get("source")) { // Don't show main loading if loading AI questions
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-1/2" />
@@ -210,6 +239,7 @@ export default function TestBuilderForm() {
             </CardTitle>
             <CardDescription>
               {testIdToEdit ? "Modify the details of your existing test." : "Fill in the details to create a new test."}
+              {searchParams.get("source") === 'ai' && " Using AI-generated questions as a starting point."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -383,14 +413,15 @@ export default function TestBuilderForm() {
         </Card>
 
         <div className="flex justify-end gap-4 mt-8 sticky bottom-0 bg-background/90 py-4 border-t">
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" disabled>
             <Eye className="mr-2 h-4 w-4" /> Preview (Not implemented)
           </Button>
           <Button type="submit" size="lg" disabled={isSubmitting}>
-            <Save className="mr-2 h-4 w-4" /> {isSubmitting ? "Saving..." : (testIdToEdit ? "Update Test" : "Create & Publish Test")}
+            <Save className="mr-2 h-4 w-4" /> {isSubmitting ? "Saving..." : (testIdToEdit ? "Update Test" : "Create Test")}
           </Button>
         </div>
       </form>
     </UIForm>
   );
 }
+
