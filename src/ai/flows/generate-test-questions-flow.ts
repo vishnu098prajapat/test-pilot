@@ -17,8 +17,8 @@ const AIQuestionSchema = z.object({
   text: z.string().describe("The question text."),
   type: z.enum(['mcq', 'short-answer', 'true-false']).describe("The type of the question."),
   points: z.number().default(10).describe("The points allocated to the question."),
-  options: z.array(z.string()).optional().describe("For MCQ, an array of 4 distinct option texts. For other types, this can be omitted."),
-  correctAnswer: z.union([z.string(), z.boolean()]).describe("For MCQ, this is the exact string text of the correct option from the 'options' array. For True/False, a boolean (true or false). For Short Answer, the string answer."),
+  options: z.array(z.string()).optional().describe("Required for MCQ questions: an array of exactly 4 distinct option texts. This field MUST be present for MCQs. For other question types (short-answer, true-false), this field should be omitted."),
+  correctAnswer: z.union([z.string(), z.boolean()]).describe("The correct answer. For MCQ questions, this MUST be a string that exactly matches one of the texts in the 'options' array. For True/False questions, this MUST be a boolean (true or false). For Short Answer questions, this MUST be a string representing the correct answer."),
 });
 export type AIQuestion = z.infer<typeof AIQuestionSchema>;
 
