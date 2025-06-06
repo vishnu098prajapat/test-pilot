@@ -1,7 +1,8 @@
+
 "use client";
 
 import React from "react";
-import { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
+import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,57 +10,53 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Trash2, GripVertical } from "lucide-react";
-import type { Question, Option as OptionType } from "@/lib/types"; // Assuming TestBuilderFormValues is defined elsewhere
-import type { TestBuilderFormValues } from "./test-builder-form"; // Import the main form type
+import { PlusCircle, Trash2 } from "lucide-react";
+import type { Question, Option as OptionType } from "@/lib/types";
+import type { TestBuilderFormValues } from "./test-builder-form";
 
 interface QuestionFormProps {
   questionIndex: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<TestBuilderFormValues, any, undefined>; // Use the main form's type
+  form: UseFormReturn<TestBuilderFormValues, any, undefined>;
   removeQuestion: (index: number) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionsFieldArray?: UseFieldArrayReturn<TestBuilderFormValues, `questions.${number}.options`, "id">;
 }
 
 export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFormProps) {
   const { register, control, watch, setValue } = form;
-  const question = watch(`questions.${questionIndex}`);
   const questionType = watch(`questions.${questionIndex}.type`);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { fields: mcqOptions, append: appendMcqOption, remove: removeMcqOption } = form.control.register(`questions.${questionIndex}.options` as any) ? 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    form.control.fieldsRef.current[`questions.${questionIndex}.options` as any] as any : { fields: [], append: () => {}, remove: () => {} };
-
+  const {
+    fields: mcqOptionFields,
+    append: appendMcqOption,
+    remove: removeMcqOption,
+  } = useFieldArray({
+    control,
+    name: `questions.${questionIndex}.options` as `questions.${number}.options`,
+  });
 
   const handleTypeChange = (type: Question["type"]) => {
     setValue(`questions.${questionIndex}.type`, type);
-    // Reset specific fields when type changes
     if (type === 'mcq') {
-      setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }]);
+      // Clear existing options and add default ones if not already MCQ or empty
+      const existingOptions = watch(`questions.${questionIndex}.options`);
+      if (!existingOptions || existingOptions.length === 0) {
+        setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }, { id: `opt-${Date.now()+1}`, text: "" }]);
+      }
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, "");
+      setValue(`questions.${questionIndex}.options`, []); // Clear options if any
     } else if (type === 'true-false') {
       setValue(`questions.${questionIndex}.correctAnswer`, true);
+      setValue(`questions.${questionIndex}.options`, []); // Clear options if any
     }
   };
 
   const addOption = () => {
-    const currentOptions = watch(`questions.${questionIndex}.options`) || [];
-    setValue(`questions.${questionIndex}.options`, [
-      ...currentOptions,
-      { id: `opt-${Date.now()}-${Math.random()}`, text: "" }
-    ]);
+    appendMcqOption({ id: `opt-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "" });
   };
 
   const removeOption = (optionIndex: number) => {
-     const currentOptions = watch(`questions.${questionIndex}.options`);
-     if (currentOptions) {
-        const newOptions = currentOptions.filter((_,idx) => idx !== optionIndex);
-        setValue(`questions.${questionIndex}.options`, newOptions);
-     }
+    removeMcqOption(optionIndex);
   };
 
 
@@ -68,9 +65,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       <CardHeader className="flex flex-row items-center justify-between bg-muted/50 p-4">
         <CardTitle className="text-lg font-semibold">Question {questionIndex + 1}</CardTitle>
         <div className="flex items-center gap-2">
-           {/* <Button type="button" variant="ghost" size="icon" className="cursor-grab">
-            <GripVertical className="h-5 w-5" />
-          </Button> */}
           <Button
             type="button"
             variant="destructive"
@@ -116,22 +110,23 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         {questionType === "mcq" && (
           <div className="space-y-3">
             <Label>Options & Correct Answer</Label>
-            {watch(`questions.${questionIndex}.options`)?.map((option, optionIdx) => (
-              <div key={option.id || optionIdx} className="flex items-center gap-2">
+            {mcqOptionFields.map((optionField, optionIdx) => (
+              <div key={optionField.id} className="flex items-center gap-2">
                 <RadioGroup
                     value={watch(`questions.${questionIndex}.correctOptionId`) || ""}
                     onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
                     className="flex items-center"
                 >
-                    <RadioGroupItem value={option.id} id={`${questionIndex}-opt-${optionIdx}-correct`} />
+                    <RadioGroupItem value={optionField.id} id={`${questionIndex}-opt-${optionIdx}-correct`} />
                 </RadioGroup>
                 <Label htmlFor={`${questionIndex}-opt-${optionIdx}-correct`} className="sr-only">Mark as correct</Label>
                 <Input
                   placeholder={`Option ${optionIdx + 1}`}
                   {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                  defaultValue={optionField.text}
                   className="flex-grow"
                 />
-                {watch(`questions.${questionIndex}.options`)!.length > 1 && (
+                {mcqOptionFields.length > 1 && (
                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
                     <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                   </Button>
@@ -139,7 +134,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               </div>
             ))}
              {form.formState.errors?.questions?.[questionIndex]?.options && (
-                <p className="text-sm text-destructive mt-1">Each option text is required.</p>
+                <p className="text-sm text-destructive mt-1">Each option text is required, and at least two options are needed.</p>
             )}
              {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
                 <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
@@ -168,7 +163,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
           <div>
             <Label>Correct Answer</Label>
             <RadioGroup
-              defaultValue={watch(`questions.${questionIndex}.correctAnswer`)?.toString() || "true"}
+              value={String(watch(`questions.${questionIndex}.correctAnswer`))}
               onValueChange={(value) => setValue(`questions.${questionIndex}.correctAnswer`, value === "true")}
               className="flex space-x-4"
             >
@@ -204,3 +199,5 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
+
+    
