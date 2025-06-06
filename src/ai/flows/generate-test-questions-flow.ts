@@ -12,15 +12,44 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Schema for a single AI-generated question (not exported)
-const AIQuestionSchema = z.object({
+// Base schema for common AI question properties
+const BaseAIQuestionSchema = z.object({
   text: z.string().describe("The question text."),
-  type: z.enum(['mcq', 'short-answer', 'true-false']).describe("The type of the question."),
   points: z.number().default(10).describe("The points allocated to the question."),
-  options: z.array(z.string()).optional().describe("Required for MCQ questions: an array of exactly 4 distinct option texts. This field MUST be present for MCQs. For other question types (short-answer, true-false), this field should be omitted."),
-  correctAnswer: z.union([z.string(), z.boolean()]).describe("The correct answer. For MCQ questions, this MUST be a string that exactly matches one of the texts in the 'options' array. For True/False questions, this MUST be a boolean (true or false). For Short Answer questions, this MUST be a string representing the correct answer."),
 });
+
+// Schema for AI-generated MCQ questions
+const AIQuestionMCQSchema = BaseAIQuestionSchema.extend({
+  type: z.literal('mcq').describe("The type of the question, must be 'mcq' for Multiple Choice Questions."),
+  options: z.array(z.string())
+    .length(4, "MCQ questions must have exactly 4 options.")
+    .describe("An array of exactly 4 distinct option texts. This field is mandatory for MCQ questions."),
+  correctAnswer: z.string().describe("The correct answer, which MUST be a string that exactly matches one of the texts in the 'options' array. This field is mandatory for MCQ questions."),
+}).refine(data => data.options.includes(data.correctAnswer), {
+  message: "For MCQ questions, the correctAnswer string must exactly match one of the provided option strings.",
+  path: ["correctAnswer"],
+});
+
+// Schema for AI-generated Short Answer questions
+const AIQuestionShortAnswerSchema = BaseAIQuestionSchema.extend({
+  type: z.literal('short-answer').describe("The type of the question, must be 'short-answer'."),
+  correctAnswer: z.string().describe("The correct answer, which MUST be a string. This field is mandatory for short-answer questions."),
+});
+
+// Schema for AI-generated True/False questions
+const AIQuestionTrueFalseSchema = BaseAIQuestionSchema.extend({
+  type: z.literal('true-false').describe("The type of the question, must be 'true-false'."),
+  correctAnswer: z.boolean().describe("The correct answer, which MUST be a boolean (true or false). This field is mandatory for true/false questions."),
+});
+
+// Discriminated union for AIQuestionSchema
+const AIQuestionSchema = z.discriminatedUnion("type", [
+  AIQuestionMCQSchema,
+  AIQuestionShortAnswerSchema,
+  AIQuestionTrueFalseSchema,
+]).describe("A single AI-generated question, structured based on its 'type' field (mcq, short-answer, or true-false).");
 export type AIQuestion = z.infer<typeof AIQuestionSchema>;
+
 
 // Input schema for the flow
 const GenerateTestQuestionsInputSchema = z.object({
@@ -33,7 +62,7 @@ export type GenerateTestQuestionsInput = z.infer<typeof GenerateTestQuestionsInp
 
 // Output schema for the flow
 const GenerateTestQuestionsOutputSchema = z.object({
-  generatedQuestions: z.array(AIQuestionSchema).describe("An array of AI-generated question objects."),
+  generatedQuestions: z.array(AIQuestionSchema).describe("An array of AI-generated question objects, each conforming to the AIQuestionSchema based on its type."),
 });
 export type GenerateTestQuestionsOutput = z.infer<typeof GenerateTestQuestionsOutputSchema>;
 
@@ -45,45 +74,50 @@ export async function generateTestQuestions(input: GenerateTestQuestionsInput): 
 const generateTestQuestionsPrompt = ai.definePrompt({
   name: 'generateTestQuestionsPrompt',
   input: {schema: GenerateTestQuestionsInputSchema},
-  output: {schema: GenerateTestQuestionsOutputSchema},
-  prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} {{questionType}} questions about the subject "{{subject}}", focusing on the following topics:
+  output: {schema: GenerateTestQuestionsOutputSchema}, // This will use the new AIQuestionSchema with discriminated union
+  prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" about the subject "{{subject}}", focusing on the following topics:
 {{#each topics}}
 - {{{this}}}
 {{/each}}
 
-Each question should be worth 10 points.
+Each question must be worth 10 points by default.
 The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
 
-Instructions for question structure based on the requested type "{{questionType}}":
+Follow these specific structures based on the question type "{{questionType}}":
 
-If the requested type is "mcq", each question object should follow this example structure:
+If "{{questionType}}" is "mcq":
+Each question object MUST be structured as follows:
 {
-  "text": "What is the capital of France?",
+  "text": "Example: What is the capital of France?",
   "type": "mcq",
   "points": 10,
-  "options": ["London", "Berlin", "Paris", "Madrid"],
-  "correctAnswer": "Paris" // Ensure this text perfectly matches one of the provided options.
+  "options": ["London", "Berlin", "Paris", "Madrid"], // MANDATORY: An array of EXACTLY 4 distinct string options.
+  "correctAnswer": "Paris" // MANDATORY: A string that EXACTLY matches one of the 4 provided options.
 }
-For "mcq" questions, always provide exactly 4 distinct string options.
 
-If the requested type is "short-answer", each question object should follow this example structure:
+If "{{questionType}}" is "short-answer":
+Each question object MUST be structured as follows:
 {
-  "text": "What is the chemical symbol for water?",
+  "text": "Example: What is the chemical symbol for water?",
   "type": "short-answer",
   "points": 10,
-  "correctAnswer": "H2O"
+  "correctAnswer": "H2O" // MANDATORY: A string representing the correct answer.
 }
+The 'options' field MUST NOT be present for "short-answer" questions.
 
-If the requested type is "true-false", each question object should follow this example structure:
+If "{{questionType}}" is "true-false":
+Each question object MUST be structured as follows:
 {
-  "text": "The sun rises in the west.",
+  "text": "Example: The sun rises in the west.",
   "type": "true-false",
   "points": 10,
-  "correctAnswer": false // This should be a boolean: true or false.
+  "correctAnswer": false // MANDATORY: A boolean value (true or false).
 }
+The 'options' field MUST NOT be present for "true-false" questions.
 
-Please ensure your entire output is a single JSON object containing a key "generatedQuestions", which is an array of question objects.
-Each question object must strictly adhere to the structure and types shown in the example corresponding to the requested "{{questionType}}".
+Please ensure your entire output is a single JSON object containing a key "generatedQuestions".
+"generatedQuestions" must be an array of question objects.
+Each question object in the array must strictly adhere to the structure and types outlined above for the specified "{{questionType}}".
 The "type" field for each question must exactly match the input '{{questionType}}'.
 `,
 });
@@ -96,21 +130,16 @@ const generateTestQuestionsFlow = ai.defineFlow(
   },
   async (input) => {
     const {output} = await generateTestQuestionsPrompt(input);
-    if (!output) {
-        throw new Error("AI failed to generate questions.");
+
+    // If output is null or generatedQuestions is missing/empty, it means the AI response was not parsable
+    // or did not conform to the GenerateTestQuestionsOutputSchema (which includes AIQuestionSchema validation with .refine()).
+    if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
+        throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics or subject, or try a different question type.");
     }
-    // Validate that for MCQs, options and correctAnswer are present
-    if (input.questionType === 'mcq') {
-        output.generatedQuestions.forEach(q => {
-            if (q.type === 'mcq' && (!q.options || q.options.length !== 4 || typeof q.correctAnswer !== 'string')) {
-                throw new Error('AI generated invalid MCQ structure. Options array or correctAnswer text is missing/invalid.');
-            }
-            if (q.type === 'mcq' && q.options && !q.options.includes(q.correctAnswer as string)) {
-                throw new Error('AI generated MCQ where correctAnswer text does not match any of the options.');
-            }
-        });
-    }
+
+    // At this point, 'output.generatedQuestions' has been successfully parsed by Zod
+    // against the AIQuestionSchema (including its discriminated union and .refine() checks).
+    // Any structural or type errors, or correctAnswer mismatches for MCQs, would have been caught.
     return output;
   }
 );
-
