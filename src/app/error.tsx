@@ -19,8 +19,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en"> {/* Ensure html and body tags are present for root error boundary */}
-      <body>
+    <html lang="en"><body>
         <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 bg-background">
           <AlertTriangle className="w-20 h-20 text-destructive mb-6" />
           <h1 className="text-4xl font-bold font-headline text-destructive mb-4">
@@ -44,7 +43,6 @@ export default function GlobalError({
             <RotateCcw className="mr-2 h-4 w-4" /> Try again
           </Button>
         </div>
-      </body>
-    </html>
+      </body></html>
   );
 }
