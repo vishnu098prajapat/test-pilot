@@ -13,6 +13,7 @@ import { getTestById, deleteTest as deleteTestAction } from "@/lib/store"; // Mo
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input"; // Added import
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Image from "next/image";
+
 
 export default function TestManagementPage() {
   const params = useParams();
@@ -229,4 +232,3 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
     </CardContent>
   </Card>
 );
-
