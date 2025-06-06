@@ -25,10 +25,8 @@ const AIQuestionMCQSchema = BaseAIQuestionSchema.extend({
     .length(4, "MCQ questions must have exactly 4 options.")
     .describe("An array of exactly 4 distinct option texts. This field is mandatory for MCQ questions."),
   correctAnswer: z.string().describe("The correct answer, which MUST be a string that exactly matches one of the texts in the 'options' array. This field is mandatory for MCQ questions."),
-}).refine(data => data.options.includes(data.correctAnswer), {
-  message: "For MCQ questions, the correctAnswer string must exactly match one of the provided option strings.",
-  path: ["correctAnswer"],
 });
+// Removed .refine() from here to ensure AIQuestionMCQSchema is a ZodObject
 
 // Schema for AI-generated Short Answer questions
 const AIQuestionShortAnswerSchema = BaseAIQuestionSchema.extend({
@@ -74,7 +72,7 @@ export async function generateTestQuestions(input: GenerateTestQuestionsInput): 
 const generateTestQuestionsPrompt = ai.definePrompt({
   name: 'generateTestQuestionsPrompt',
   input: {schema: GenerateTestQuestionsInputSchema},
-  output: {schema: GenerateTestQuestionsOutputSchema}, // This will use the new AIQuestionSchema with discriminated union
+  output: {schema: GenerateTestQuestionsOutputSchema},
   prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" about the subject "{{subject}}", focusing on the following topics:
 {{#each topics}}
 - {{{this}}}
@@ -131,15 +129,9 @@ const generateTestQuestionsFlow = ai.defineFlow(
   async (input) => {
     const {output} = await generateTestQuestionsPrompt(input);
 
-    // If output is null or generatedQuestions is missing/empty, it means the AI response was not parsable
-    // or did not conform to the GenerateTestQuestionsOutputSchema (which includes AIQuestionSchema validation with .refine()).
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
         throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics or subject, or try a different question type.");
     }
-
-    // At this point, 'output.generatedQuestions' has been successfully parsed by Zod
-    // against the AIQuestionSchema (including its discriminated union and .refine() checks).
-    // Any structural or type errors, or correctAnswer mismatches for MCQs, would have been caught.
     return output;
   }
 );
