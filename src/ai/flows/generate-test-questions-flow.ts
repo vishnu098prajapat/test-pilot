@@ -52,6 +52,7 @@ export type AIQuestion = z.infer<typeof AIQuestionSchema>;
 const GenerateTestQuestionsInputSchema = z.object({
   subject: z.string().describe("The general subject of the test (e.g., Mathematics, History)."),
   questionType: z.enum(['mcq', 'short-answer', 'true-false']).describe("The desired type for all generated questions (mcq, short-answer, or true-false)."),
+  difficulty: z.enum(['easy', 'medium', 'hard']).describe("The desired difficulty level for the questions (easy, medium, or hard)."),
   topics: z.array(z.string()).min(1).describe("An array of specific topics to generate questions about."),
   numberOfQuestions: z.number().int().min(1).max(10).describe("The number of questions to generate (integer between 1 and 10)."),
 });
@@ -72,13 +73,14 @@ const generateTestQuestionsPrompt = ai.definePrompt({
   name: 'generateTestQuestionsPrompt',
   input: {schema: GenerateTestQuestionsInputSchema},
   output: {schema: GenerateTestQuestionsOutputSchema},
-  prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" about the subject "{{subject}}", focusing on the following topics:
+  prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}", focusing on the following topics:
 {{#each topics}}
 - {{{this}}}
 {{/each}}
 
 Each question must be worth 10 points by default.
 The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
+The questions should be appropriate for the specified "{{difficulty}}" level.
 
 Follow these specific structures based on the question type "{{questionType}}":
 
@@ -116,6 +118,7 @@ Please ensure your entire output is a single JSON object containing a key "gener
 "generatedQuestions" must be an array of question objects.
 Each question object in the array must strictly adhere to the structure and types outlined above for the specified "{{questionType}}".
 The "type" field for each question must exactly match the input '{{questionType}}'.
+The questions should reflect the requested "{{difficulty}}" level.
 `,
 });
 
@@ -129,7 +132,7 @@ const generateTestQuestionsFlow = ai.defineFlow(
     const {output} = await generateTestQuestionsPrompt(input);
 
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
-        throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics or subject, or try a different question type.");
+        throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject or difficulty, or try a different question type.");
     }
     return output;
   }

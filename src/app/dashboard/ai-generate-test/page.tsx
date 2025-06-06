@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, ListChecks, Send } from 'lucide-react';
+import { Sparkles, Loader2, ListChecks, Send, Activity } from 'lucide-react'; // Added Activity for difficulty
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
@@ -22,13 +22,14 @@ import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQ
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
   questionType: z.enum(['mcq', 'short-answer', 'true-false'], { required_error: "Question type is required." }),
+  difficulty: z.enum(['easy', 'medium', 'hard'], { required_error: "Difficulty level is required."}),
   topics: z.string().min(3, "Please provide at least one topic.").transform(val => val.split(',').map(t => t.trim()).filter(t => t.length > 0)),
   numberOfQuestions: z.coerce.number().int().min(1, "Minimum 1 question.").max(10, "Maximum 10 questions."),
 });
 
 type AIGenerateTestFormValues = z.infer<typeof AIGenerateTestSchema>;
 
-const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData"; // Changed key to store more than just questions
+const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 
 export default function AIGenerateTestPage() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function AIGenerateTestPage() {
     defaultValues: {
       subject: '',
       questionType: 'mcq',
+      difficulty: 'medium',
       topics: '',
       numberOfQuestions: 5,
     },
@@ -51,11 +53,12 @@ export default function AIGenerateTestPage() {
   const onSubmit = async (data: AIGenerateTestFormValues) => {
     setIsLoading(true);
     setGeneratedQuestions(null);
-    setGenerationParams(data); // Store current generation parameters
+    setGenerationParams(data);
     try {
       const input: GenerateTestQuestionsInput = {
         subject: data.subject,
         questionType: data.questionType,
+        difficulty: data.difficulty,
         topics: data.topics,
         numberOfQuestions: data.numberOfQuestions,
       };
@@ -76,7 +79,6 @@ export default function AIGenerateTestPage() {
 
   const transformAIQuestionsToTestBuilderFormat = (aiQuestions: AIQuestion[]): TestBuilderQuestion[] => {
     return aiQuestions.map((aiQ, index): TestBuilderQuestion => {
-      // Ensure question ID is very unique to avoid collisions in TestBuilder
       const questionId = `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`;
       
       const baseQuestion = {
@@ -87,10 +89,13 @@ export default function AIGenerateTestPage() {
 
       if (aiQ.type === 'mcq') {
         const options: TestBuilderOption[] = (aiQ.options || []).map((optText, optIndex) => ({
-          id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`, // Even more unique option ID
+          id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
           text: optText,
         }));
         const correctOption = options.find(opt => opt.text === aiQ.correctAnswer);
+        if (!correctOption) {
+          console.warn(`AI Warning: For MCQ "${aiQ.text}", AI-provided correctAnswer "${aiQ.correctAnswer}" did not exactly match any of its provided options: `, aiQ.options.map(o => o.text));
+        }
         return {
           ...baseQuestion,
           type: 'mcq',
@@ -118,18 +123,19 @@ export default function AIGenerateTestPage() {
     
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
     
-    // Create a title based on generation params
-    const aiGeneratedTitle = `AI Generated ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
+    const aiGeneratedTitle = `AI Gen (${generationParams.difficulty}) ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
     
     const dataToStore = {
       title: aiGeneratedTitle,
       subject: generationParams.subject,
+      // difficulty is not part of the Test object, so not stored directly for the test builder.
+      // It's used for generation only for now.
       questions: testBuilderQuestions,
     };
 
     try {
       localStorage.setItem(AI_GENERATED_DATA_STORAGE_KEY, JSON.stringify(dataToStore));
-      toast({title: "Data Saved", description: "Redirecting to Test Builder with generated questions, title, and subject."});
+      toast({title: "Data Saved", description: "Redirecting to Test Builder with generated content."});
       router.push('/dashboard/create-test?source=ai');
     } catch (e) {
       toast({title: "Error", description: "Could not save data for Test Builder.", variant: "destructive"});
@@ -162,28 +168,52 @@ export default function AIGenerateTestPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="questionType"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label htmlFor="questionType">Question Type</Label>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger id="questionType">
-                          <SelectValue placeholder="Select question type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
-                        <SelectItem value="short-answer">Short Answer</SelectItem>
-                        <SelectItem value="true-false">True/False</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="questionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="questionType">Question Type</Label>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger id="questionType">
+                            <SelectValue placeholder="Select question type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
+                          <SelectItem value="short-answer">Short Answer</SelectItem>
+                          <SelectItem value="true-false">True/False</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="difficulty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="difficulty">Difficulty Level</Label>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger id="difficulty">
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="easy">Easy</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="hard">Hard</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="topics"
@@ -268,4 +298,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-
