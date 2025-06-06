@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Edit3, LogIn, UserPlus, Zap } from "lucide-react";
+import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit } from "lucide-react"; // Added BrainCircuit
 import Image from "next/image";
 import Link from "next/link";
 
@@ -51,6 +52,7 @@ export default function HomePage() {
                 height={600} 
                 className="rounded-lg shadow-2xl mx-auto"
                 data-ai-hint="dashboard interface"
+                priority 
               />
             </div>
           </div>
@@ -69,7 +71,7 @@ export default function HomePage() {
                 description="Easily create diverse question types (MCQ, Short Answer, True/False) with a drag-and-drop interface."
               />
               <FeatureCard
-                icon={<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M14.5 3.5c-1.2 1.2-1 3- الأصل"></path><path d="m12 12 7 7"></path><path d="M12 12 7 7"></path></svg>}
+                icon={<BrainCircuit className="w-10 h-10 text-primary" />}
                 title="AI-Powered Proctoring"
                 description="Advanced anti-cheat system analyzes student activity to ensure test integrity."
               />
