@@ -52,53 +52,39 @@ const generateTestQuestionsPrompt = ai.definePrompt({
 {{/each}}
 
 Each question should be worth 10 points.
+The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
 
-For each question, provide:
-- "text": The question text.
-- "type": "{{questionType}}" (this will be one of 'mcq', 'short-answer', or 'true-false' based on the input)
-- "points": 10
+Instructions for question structure based on the requested type "{{questionType}}":
 
-{{#if (eq questionType "mcq")}}
-For Multiple Choice Questions (MCQ):
-- "options": An array of exactly 4 distinct string options.
-- "correctAnswer": The exact string text of the correct option from the "options" array. Ensure this text perfectly matches one of the provided options.
-Example for MCQ:
+If the requested type is "mcq", each question object should follow this example structure:
 {
   "text": "What is the capital of France?",
   "type": "mcq",
   "points": 10,
   "options": ["London", "Berlin", "Paris", "Madrid"],
-  "correctAnswer": "Paris"
+  "correctAnswer": "Paris" // Ensure this text perfectly matches one of the provided options.
 }
-{{/if}}
+For "mcq" questions, always provide exactly 4 distinct string options.
 
-{{#if (eq questionType "short-answer")}}
-For Short Answer Questions:
-- "correctAnswer": A string representing the correct answer.
-Example for Short Answer:
+If the requested type is "short-answer", each question object should follow this example structure:
 {
   "text": "What is the chemical symbol for water?",
   "type": "short-answer",
   "points": 10,
   "correctAnswer": "H2O"
 }
-{{/if}}
 
-{{#if (eq questionType "true-false")}}
-For True/False Questions:
-- "correctAnswer": A boolean value (true or false).
-Example for True/False:
+If the requested type is "true-false", each question object should follow this example structure:
 {
   "text": "The sun rises in the west.",
   "type": "true-false",
   "points": 10,
-  "correctAnswer": false
+  "correctAnswer": false // This should be a boolean: true or false.
 }
-{{/if}}
 
-Please ensure your entire output is a single JSON object containing a key "generatedQuestions" which is an array of question objects, strictly adhering to the specified structure and types.
+Please ensure your entire output is a single JSON object containing a key "generatedQuestions", which is an array of question objects.
+Each question object must strictly adhere to the structure and types shown in the example corresponding to the requested "{{questionType}}".
 The "type" field for each question must exactly match the input '{{questionType}}'.
-For MCQs, always provide 4 options.
 `,
 });
 
