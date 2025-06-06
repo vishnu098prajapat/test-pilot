@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -37,7 +38,7 @@ export default function DashboardHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
               <Avatar className="h-7 w-7">
-                <AvatarImage src={user?.id /* replace with actual avatar URL if available */} />
+                <AvatarImage src={undefined /* No actual avatar URL, so use undefined to trigger fallback */} />
                 <AvatarFallback>{getInitials(user?.email)}</AvatarFallback>
               </Avatar>
               <span className="hidden sm:inline">{user?.email || "Teacher"}</span>
