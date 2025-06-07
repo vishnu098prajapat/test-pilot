@@ -23,14 +23,22 @@ export function useAuth(): AuthContextType {
   useEffect(() => {
     setIsLoading(true); 
     try {
-      const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      const storedUserString = localStorage.getItem(USER_STORAGE_KEY);
+      if (storedUserString) {
+        const parsedUser = JSON.parse(storedUserString);
+        // Validate the parsed user object
+        if (parsedUser && typeof parsedUser.id === 'string' && typeof parsedUser.email === 'string' && typeof parsedUser.role === 'string') {
+          setUser(parsedUser as User);
+        } else {
+          console.warn("Stored user data in localStorage is invalid or incomplete. Clearing session.");
+          localStorage.removeItem(USER_STORAGE_KEY);
+          setUser(null);
+        }
       } else {
         setUser(null); 
       }
     } catch (error) {
-      console.error("Failed to load user from localStorage during auth init:", error);
+      console.error("Failed to parse user from localStorage during auth init:", error);
       localStorage.removeItem(USER_STORAGE_KEY); 
       setUser(null); 
     } finally {
@@ -40,18 +48,28 @@ export function useAuth(): AuthContextType {
 
   const login = useCallback((userData: User) => {
     try {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-      setUser(userData);
+      // Ensure userData is valid before storing
+      if (userData && typeof userData.id === 'string' && typeof userData.email === 'string') {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+        setUser(userData);
+      } else {
+        console.error("Attempted to login with invalid userData:", userData);
+        // Optionally, inform the user or handle this error appropriately
+      }
     } catch (error) {
         console.error("Failed to save user to localStorage on login:", error);
-        // Optionally, inform the user about the session save failure
     }
   }, []);
   
   const signup = useCallback((userData: User) => {
     try {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-      setUser(userData);
+       // Ensure userData is valid before storing
+      if (userData && typeof userData.id === 'string' && typeof userData.email === 'string') {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+        setUser(userData);
+      } else {
+        console.error("Attempted to signup with invalid userData:", userData);
+      }
     } catch (error) {
         console.error("Failed to save user to localStorage on signup:", error);
     }
@@ -69,4 +87,3 @@ export function useAuth(): AuthContextType {
 
   return { user, isLoading, login, logout, signup };
 }
-
