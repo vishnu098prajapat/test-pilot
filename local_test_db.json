@@ -230,5 +230,97 @@
     "id": "test-1749304793315-uqdr1",
     "createdAt": "2025-06-07T13:59:53.315Z",
     "updatedAt": "2025-06-07T13:59:53.315Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749305548612-0-88bpte5",
+        "text": "What is one of the primary functions of the vagina?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749305548612_hj87r4bc2",
+            "text": "To produce estrogen only"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749305548612_p6b3rnqw4",
+            "text": "To store urine"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749305548612_v2sd6g9pg",
+            "text": "To provide a passageway for childbirth"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749305548612_jnx9dcgrw",
+            "text": "To filter blood"
+          }
+        ],
+        "correctOptionId": "2709a0ed-5f95-41a7-865b-c80fe15a0c9f"
+      },
+      {
+        "id": "ai-q-1749305548612-1-b7p7x40",
+        "text": "The transverse folds located within the vagina are called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749305548612_jcf81ifne",
+            "text": "Fimbriae"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749305548612_5uy7qm6o5",
+            "text": "Rugae"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749305548612_zuqy74jzb",
+            "text": "Myometrium"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749305548612_4z93t5mnv",
+            "text": "Endometrium"
+          }
+        ],
+        "correctOptionId": "f241df41-2a8a-4d67-8c18-4e87cb41bd44"
+      },
+      {
+        "id": "ai-q-1749305548612-2-770rlsf",
+        "text": "The vagina is primarily lined with what type of tissue?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749305548612_7tlyo2iwh",
+            "text": "Simple cuboidal epithelium"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749305548612_ax8s2mhda",
+            "text": "Transitional epithelium"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749305548612_cmgm4kxjx",
+            "text": "Pseudostratified columnar epithelium"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749305548612_cblav3d0e",
+            "text": "Stratified squamous epithelium"
+          }
+        ],
+        "correctOptionId": "9794317f-2188-4fec-8748-56ca5c612f7a"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749305217810",
+    "id": "test-1749305570749-n5h3y",
+    "createdAt": "2025-06-07T14:12:50.749Z",
+    "updatedAt": "2025-06-07T14:12:50.749Z"
   }
 ]

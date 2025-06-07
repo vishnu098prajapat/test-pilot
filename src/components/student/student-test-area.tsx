@@ -8,7 +8,7 @@ import Timer from './timer';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, CheckCircle, Send } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Added Card imports
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { analyzeStudentBehavior, AnalyzeStudentBehaviorInput } from '@/ai/flows/analyze-student-behavior';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -22,11 +22,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useRouter } from 'next/navigation'; // For redirecting after submission
+import { useRouter } from 'next/navigation';
 
 interface StudentTestAreaProps {
   testData: Test;
 }
+
+const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
 export default function StudentTestArea({ testData }: StudentTestAreaProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -43,7 +45,6 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     setActivityLog(prevLog => [...prevLog, `[${timestamp}] ${action}`]);
   }, []);
 
-  // Anti-cheat basic listeners
   useEffect(() => {
     if (!testData.enableTabSwitchDetection && !testData.enableCopyPasteDisable && !testData.enforceFullScreen) return;
 
@@ -66,13 +67,11 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     }
     if (testData.enforceFullScreen) {
       try {
-        // This is a request, user can deny.
         document.documentElement.requestFullscreen?.().catch(err => logActivity(`Fullscreen request failed: ${err.message}`));
       } catch (e) {
         logActivity(`Fullscreen not supported or error: ${(e as Error).message}`);
       }
     }
-
 
     logActivity("Test started. Anti-cheat measures active based on test settings.");
 
@@ -89,7 +88,6 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     };
   }, [logActivity, testData, toast]);
 
-
   const handleAnswerChange = (questionId: string, answer: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
     logActivity(`Answer changed for question ID ${questionId}.`);
@@ -100,8 +98,65 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     setIsSubmitting(true);
     logActivity(autoSubmit ? "Test auto-submitted due to time up." : "Test submitted by student.");
 
+    // Calculate results
+    const studentAnswersForStorage: StudentAnswer[] = Object.entries(answers).map(([questionId, answer]) => ({
+      questionId,
+      answer,
+    }));
+
+    let correctQuestionsCount = 0;
+    let totalPointsAchieved = 0;
+    let totalPossiblePoints = 0;
+
+    testData.questions.forEach(q => {
+      totalPossiblePoints += q.points;
+      const studentAnswerForQuestion = studentAnswersForStorage.find(sa => sa.questionId === q.id);
+      const studentAnswerValue = studentAnswerForQuestion ? studentAnswerForQuestion.answer : undefined;
+      let isQCorrect = false;
+
+      if (studentAnswerValue !== undefined && studentAnswerValue !== null) { // Check for actual answers
+        if (q.type === 'mcq') {
+          if (studentAnswerValue === q.correctOptionId) isQCorrect = true;
+        } else if (q.type === 'true-false') {
+          if (studentAnswerValue === q.correctAnswer) isQCorrect = true; // answers[q.id] is already boolean
+        } else if (q.type === 'short-answer') {
+          if (String(studentAnswerValue).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) isQCorrect = true;
+        }
+      }
+
+      if (isQCorrect) {
+        correctQuestionsCount++;
+        totalPointsAchieved += q.points;
+      }
+    });
+
+    const scorePercentage = totalPossiblePoints > 0 ? (totalPointsAchieved / totalPossiblePoints) * 100 : 0;
+    const totalQuestionsInTest = testData.questions.length;
+    const incorrectOrUnansweredQuestionsCount = totalQuestionsInTest - correctQuestionsCount;
+
+    const resultsToStore = {
+      testId: testData.id,
+      testTitle: testData.title,
+      totalQuestions: totalQuestionsInTest,
+      correctAnswersCount: correctQuestionsCount,
+      incorrectOrUnansweredCount: incorrectOrUnansweredQuestionsCount,
+      totalPointsScored: totalPointsAchieved,
+      maxPossiblePoints: totalPossiblePoints,
+      scorePercentage: Math.round(scorePercentage),
+      // studentAnswers: studentAnswersForStorage, // Can be added later for detailed review
+    };
+
+    try {
+      localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`, JSON.stringify(resultsToStore));
+    } catch (e) {
+      console.error("Failed to save results to localStorage", e);
+      toast({ title: "Storage Error", description: "Could not save your test results locally.", variant: "destructive", duration: 2000 });
+      // Continue with submission even if localStorage fails for now
+    }
+    
+    // AI Proctoring
     const proctorInput: AnalyzeStudentBehaviorInput = {
-      studentId: `student-${Date.now()}`, // Using a mock student ID
+      studentId: `student-${Date.now()}`, 
       testId: testData.id,
       activityLog: activityLog.join('\n'),
     };
@@ -112,7 +167,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
       
       console.log("Test Submitted:", {
         testId: testData.id,
-        answers,
+        calculatedResults: resultsToStore,
         activityLog: proctorInput.activityLog, 
         proctoringResult,
         startTime: startTimeRef.current,
@@ -125,8 +180,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         duration: 2000,
       });
       setIsSubmitted(true);
-      setTimeout(() => router.push(`/test/${testData.id}/results`), 2000); // Redirect after 2 seconds to allow toast viewing
-
+      setTimeout(() => router.push(`/test/${testData.id}/results`), 2000);
 
     } catch (error) {
       console.error("Error submitting test or with AI proctoring:", error);
@@ -136,11 +190,14 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         variant: "destructive",
         duration: 2000,
       });
+      // Even if AI proctoring fails, try to redirect to results if local storage save was attempted
+      setIsSubmitted(true); // Mark as submitted to prevent re-submission
+      setTimeout(() => router.push(`/test/${testData.id}/results`), 3000); // Redirect after a delay
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Only set to false if submission truly failed and needs retry
+                               // For now, once submitted (or attempted), we move to results.
     }
-  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router]);
-
+  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity]);
 
   if (isSubmitted) {
     return (
@@ -149,7 +206,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         <h2 className="text-3xl font-bold font-headline mb-4">Test Submitted!</h2>
         <p className="text-muted-foreground mb-8">
           Your responses have been recorded. Thank you for taking the test.
-          You will be redirected shortly.
+          You will be redirected to your results shortly.
         </p>
         <Progress value={100} className="w-full" />
       </div>
@@ -167,7 +224,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
             initialDuration={testData.duration * 60} 
             onTimeUp={() => handleSubmitTest(true)}
             onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 2000})}
-            warningThreshold={60} // 1 minute warning
+            warningThreshold={60}
           />
            <Card className="mt-6 shadow-lg">
             <CardHeader><CardTitle className="text-lg font-headline">Navigation</CardTitle></CardHeader>
@@ -180,6 +237,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
                     size="sm"
                     className="aspect-square"
                     onClick={() => setCurrentQuestionIndex(index)}
+                    disabled={isSubmitting || isSubmitted}
                   >
                     {index + 1}
                   </Button>
@@ -196,6 +254,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
             totalQuestions={totalQuestions}
             currentAnswer={answers[currentQuestion.id]}
             onAnswerChange={handleAnswerChange}
+            isReviewMode={isSubmitted} // Disable inputs if submitted
           />
         </div>
       </div>
@@ -204,7 +263,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         <Button
           variant="outline"
           onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-          disabled={currentQuestionIndex === 0 || isSubmitting}
+          disabled={currentQuestionIndex === 0 || isSubmitting || isSubmitted}
         >
           <ChevronLeft className="mr-2 h-4 w-4" /> Previous
         </Button>
@@ -214,7 +273,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         {currentQuestionIndex === totalQuestions - 1 ? (
            <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="default" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white">
+              <Button variant="default" disabled={isSubmitting || isSubmitted} className="bg-green-600 hover:bg-green-700 text-white">
                 <Send className="mr-2 h-4 w-4" /> Submit Test
               </Button>
             </AlertDialogTrigger>
@@ -237,7 +296,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
           <Button
             variant="default"
             onClick={() => setCurrentQuestionIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isSubmitted}
           >
             Next <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
@@ -246,4 +305,3 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     </div>
   );
 }
-
