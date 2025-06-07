@@ -1,158 +1,78 @@
 
-import type { Test } from './types';
-import fs from 'fs';
-import path from 'path';
+import type { Test, Question } from './types';
 
-// Define the path to the JSON file that will act as our database
-const DB_FILE_PATH = path.join(process.cwd(), 'local_test_db.json');
+const API_BASE_URL = '/api'; // Assuming your app runs at the root
 
-const initialMockTests: Test[] = [
-  {
-    id: 'test1',
-    title: 'Basic Algebra Quiz',
-    subject: 'Mathematics',
-    duration: 30, // minutes
-    questions: [
-      {
-        id: 'q1',
-        type: 'mcq',
-        text: 'What is 2 + 2?',
-        points: 10,
-        options: [
-          { id: 'opt1', text: '3' },
-          { id: 'opt2', text: '4' },
-          { id: 'opt3', text: '5' },
-          { id: 'opt4', text: '6' },
-        ],
-        correctOptionId: 'opt2',
-      },
-      {
-        id: 'q2',
-        type: 'true-false',
-        text: 'The Earth is flat.',
-        points: 5,
-        correctAnswer: false,
-      },
-      {
-        id: 'q3',
-        type: 'short-answer',
-        text: 'What is the capital of France?',
-        points: 10,
-        correctAnswer: 'Paris',
-      },
-    ],
-    teacherId: 'teacher1',
-    // Store dates as ISO strings for JSON compatibility
-    createdAt: new Date('2023-10-01T10:00:00Z').toISOString() as any,
-    updatedAt: new Date('2023-10-01T10:00:00Z').toISOString() as any,
-    published: true,
-    attemptsAllowed: 1,
-    randomizeQuestions: false,
-    enableTabSwitchDetection: true,
-    enableCopyPasteDisable: true,
-    enforceFullScreen: false,
-  },
-  {
-    id: 'test2',
-    title: 'Introduction to JavaScript',
-    subject: 'Programming',
-    duration: 60,
-    questions: [
-        {
-        id: 'q2-1',
-        type: 'mcq',
-        text: 'Which keyword is used to declare a variable in JavaScript?',
-        points: 10,
-        options: [
-          { id: 'opt2-1-1', text: 'var' },
-          { id: 'opt2-1-2', text: 'let' },
-          { id: 'opt2-1-3', text: 'const' },
-          { id: 'opt2-1-4', text: 'All of the above' },
-        ],
-        correctOptionId: 'opt2-1-4',
-      },
-    ],
-    teacherId: 'teacher1',
-    createdAt: new Date('2023-10-15T14:30:00Z').toISOString() as any,
-    updatedAt: new Date('2023-10-15T14:30:00Z').toISOString() as any,
-    published: false,
-    attemptsAllowed: 0, // Unlimited
-    randomizeQuestions: true,
-    enableTabSwitchDetection: true,
-    enableCopyPasteDisable: false,
-    enforceFullScreen: true,
-  },
-];
-
-// Function to read data from the JSON file
-function readDb(): Test[] {
+// Helper function to fetch all tests from the API
+async function _fetchAllTests(): Promise<Test[]> {
   try {
-    if (fs.existsSync(DB_FILE_PATH)) {
-      const fileContent = fs.readFileSync(DB_FILE_PATH, 'utf-8');
-      const data = JSON.parse(fileContent);
-      // Ensure dates are parsed back into Date objects if needed, or handle as strings
-      return data.map((test: Test) => ({
-        ...test,
-        createdAt: new Date(test.createdAt),
-        updatedAt: new Date(test.updatedAt),
-      }));
+    const response = await fetch(`${API_BASE_URL}/tests`);
+    if (!response.ok) {
+      console.error(`[STORE-CLIENT] Error fetching tests: ${response.status} ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error(`[STORE-CLIENT] Error body: ${errorBody}`);
+      return []; // Return empty or throw, depending on desired error handling
     }
-  } catch (error) {
-    console.error('[STORE-DB] Error reading or parsing DB file:', error);
-    // Fallback or re-initialization logic if file is corrupt
-  }
-  // If file doesn't exist or error, initialize with mock data and write to file
-  console.log('[STORE-DB] DB file not found or error reading. Initializing with mock data and creating file.');
-  fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initialMockTests, null, 2), 'utf-8');
-  return initialMockTests.map(test => ({
-    ...test,
-    createdAt: new Date(test.createdAt),
-    updatedAt: new Date(test.updatedAt),
-  }));
-}
-
-// Function to write data to the JSON file
-function writeDb(data: Test[]): void {
-  try {
-    // Convert Date objects to ISO strings before writing
-    const dataToWrite = data.map(test => ({
-        ...test,
-        createdAt: (test.createdAt as Date).toISOString(),
-        updatedAt: (test.updatedAt as Date).toISOString(),
+    const tests: Test[] = await response.json();
+    // Convert date strings from JSON to Date objects
+    return tests.map(test => ({
+      ...test,
+      createdAt: new Date(test.createdAt),
+      updatedAt: new Date(test.updatedAt),
     }));
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(dataToWrite, null, 2), 'utf-8');
-    console.log(`[STORE-DB] Data successfully written to ${DB_FILE_PATH}. Total tests: ${data.length}`);
   } catch (error) {
-    console.error('[STORE-DB] Error writing to DB file:', error);
+    console.error('[STORE-CLIENT] Network or parsing error fetching tests:', error);
+    return []; // Return empty or throw
   }
 }
 
-// Initialize the store by ensuring the DB file exists
-// This top-level call will ensure the DB is ready when the module loads.
-// The readDb function handles creation if it doesn't exist.
-readDb(); 
-
+// Helper function to save all tests via the API
+async function _saveAllTests(tests: Test[]): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/tests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tests),
+    });
+    if (!response.ok) {
+      console.error(`[STORE-CLIENT] Error saving tests: ${response.status} ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error(`[STORE-CLIENT] Error body: ${errorBody}`);
+      return false;
+    }
+    console.log('[STORE-CLIENT] Tests saved successfully via API.');
+    return true;
+  } catch (error) {
+    console.error('[STORE-CLIENT] Network error saving tests:', error);
+    return false;
+  }
+}
 
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  const store = readDb();
-  console.log(`[STORE-DB] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${store.length}`);
-  return store.filter(test => test.teacherId === teacherId);
+  console.log(`[STORE-CLIENT] getTestsByTeacher called for teacherId: "${teacherId}"`);
+  const allTests = await _fetchAllTests();
+  const teacherTests = allTests.filter(test => test.teacherId === teacherId);
+  console.log(`[STORE-CLIENT] Found ${teacherTests.length} tests for teacherId "${teacherId}".`);
+  return teacherTests;
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  const store = readDb();
-  console.log(`[STORE-DB] getTestById called for ID: "${testId}". Current store count from DB: ${store.length}`);
-  const foundTest = store.find(test => test.id === testId);
-  if (!foundTest) {
-    console.warn(`[STORE-DB] Test with ID "${testId}" NOT FOUND in DB.`);
+  console.log(`[STORE-CLIENT] getTestById called for ID: "${testId}"`);
+  const allTests = await _fetchAllTests();
+  const foundTest = allTests.find(test => test.id === testId);
+  if (foundTest) {
+    console.log(`[STORE-CLIENT] Test with ID "${testId}" FOUND.`);
   } else {
-    console.log(`[STORE-DB] Test with ID "${testId}" FOUND in DB.`);
+    console.warn(`[STORE-CLIENT] Test with ID "${testId}" NOT FOUND.`);
   }
   return foundTest;
 }
 
-export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  const store = readDb();
+export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test | null> {
+  console.log(`[STORE-CLIENT] addTest: Attempting to add test titled: "${newTestData.title}"`);
+  const allTests = await _fetchAllTests();
   
   const newTest: Test = {
     ...newTestData,
@@ -161,54 +81,64 @@ export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'upda
     updatedAt: new Date(),
   };
 
-  console.log(`[STORE-DB] addTest: Attempting to add test ID: ${newTest.id}`);
-  store.push(newTest);
-  writeDb(store); // Write the updated store back to the file
-  
-  // Verify it was written by reading again (optional, good for debugging)
-  const verificationStore = readDb();
-  if (verificationStore.find(t => t.id === newTest.id)) {
-    console.log(`[STORE-DB] SUCCESS: Test ID ${newTest.id} VERIFIED in DB file after addTest.`);
+  const updatedTests = [...allTests, newTest];
+  const success = await _saveAllTests(updatedTests);
+
+  if (success) {
+    console.log(`[STORE-CLIENT] SUCCESS: Test ID ${newTest.id} added and saved via API.`);
+    return newTest;
   } else {
-    console.error(`[STORE-DB] CRITICAL FAILURE: Test ID ${newTest.id} NOT VERIFIED in DB file after addTest.`);
+    console.error(`[STORE-CLIENT] FAILURE: Test ID ${newTest.id} could not be saved via API.`);
+    return null;
   }
-  return newTest;
 }
 
-export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  const store = readDb();
-  const testIndex = store.findIndex(test => test.id === testId);
+export async function updateTest(testId: string, updatedTestPartialData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
+  console.log(`[STORE-CLIENT] updateTest: Attempting to update test ID: "${testId}"`);
+  const allTests = await _fetchAllTests();
+  const testIndex = allTests.findIndex(test => test.id === testId);
 
   if (testIndex === -1) {
-    console.warn(`[STORE-DB] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
+    console.warn(`[STORE-CLIENT] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
     return undefined;
   }
   
   const updatedTest: Test = {
-    ...store[testIndex],
-    ...updatedTestData,
+    ...allTests[testIndex],
+    ...updatedTestPartialData,
     updatedAt: new Date(),
   };
   
-  store[testIndex] = updatedTest;
-  writeDb(store);
+  allTests[testIndex] = updatedTest;
+  const success = await _saveAllTests(allTests);
 
-  console.log(`[STORE-DB] updateTest: Test updated. Test ID: ${updatedTest.id}. Store count: ${store.length}`);
-  return updatedTest;
+  if (success) {
+    console.log(`[STORE-CLIENT] Test ID "${updatedTest.id}" updated and saved successfully via API.`);
+    return updatedTest;
+  } else {
+    console.error(`[STORE-CLIENT] FAILURE: Test ID ${updatedTest.id} could not be updated via API.`);
+    return undefined; // Or return the old test data if partial update is not desired on failure
+  }
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  let store = readDb();
-  const initialLength = store.length;
+  console.log(`[STORE-CLIENT] deleteTest: Attempting to delete test ID: "${testId}"`);
+  let allTests = await _fetchAllTests();
+  const initialLength = allTests.length;
   
-  store = store.filter(test => test.id !== testId);
+  allTests = allTests.filter(test => test.id !== testId);
 
-  if (store.length < initialLength) {
-    writeDb(store);
-    console.log(`[STORE-DB] deleteTest: Test with ID "${testId}" deleted. New store count: ${store.length}`);
-    return true;
+  if (allTests.length < initialLength) {
+    const success = await _saveAllTests(allTests);
+    if (success) {
+      console.log(`[STORE-CLIENT] Test with ID "${testId}" deleted and saved successfully via API.`);
+      return true;
+    } else {
+      console.error(`[STORE-CLIENT] FAILURE: Could not save DB after deleting test ID "${testId}".`);
+      return false;
+    }
   } else {
-    console.warn(`[STORE-DB] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${initialLength}`);
+    console.warn(`[STORE-CLIENT] deleteTest: Test with ID "${testId}" NOT FOUND for deletion.`);
     return false;
   }
 }
