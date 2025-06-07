@@ -137,12 +137,12 @@ export default function TestBuilderForm() {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
             replaceQuestions(aiData.questions);
-            toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form."});
+            toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form.", duration: 2000});
           }
         }
       } catch (e) {
         console.error("Failed to load AI data from localStorage", e);
-        toast({ title: "Load Error", description: "Could not load AI-generated data.", variant: "destructive"});
+        toast({ title: "Load Error", description: "Could not load AI-generated data.", variant: "destructive", duration: 2000});
       } finally {
         localStorage.removeItem(AI_GENERATED_DATA_STORAGE_KEY); // Clean up
         const newSearchParams = new URLSearchParams(searchParams.toString());
@@ -166,14 +166,14 @@ export default function TestBuilderForm() {
               questions: questionsWithStrIds as Question[], 
             });
           } else if (testData) {
-            toast({ title: "Unauthorized", description: "You are not authorized to edit this test.", variant: "destructive" });
+            toast({ title: "Unauthorized", description: "You are not authorized to edit this test.", variant: "destructive", duration: 2000 });
             router.push("/dashboard");
           } else {
-            toast({ title: "Not Found", description: "Test not found.", variant: "destructive" });
+            toast({ title: "Not Found", description: "Test not found.", variant: "destructive", duration: 2000 });
             router.push("/dashboard");
           }
         })
-        .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive" }))
+        .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive", duration: 2000 }))
         .finally(() => setIsLoading(false));
     }
   }, [searchParams, form, user?.id, router, toast, replaceQuestions]);
@@ -181,31 +181,46 @@ export default function TestBuilderForm() {
 
   const onSubmit = async (data: TestBuilderFormValues) => {
     if (!user) {
-      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive", duration: 2000 });
       return;
     }
     setIsSubmitting(true);
 
     try {
       let savedTest;
-      if (testIdToEdit) {
-        savedTest = await updateTest(testIdToEdit, { ...data, teacherId: user.id } as Partial<Test>);
-        toast({ title: "Success", description: "Test updated successfully!" });
-      } else {
-        savedTest = await addTest({ ...data, teacherId: user.id } as Omit<Test, 'id'|'createdAt'|'updatedAt'>);
-        toast({ title: "Success", description: "Test created successfully!" });
-      }
-      if (savedTest) router.push(`/dashboard/test/${savedTest.id}`);
-      else router.push('/dashboard');
+      const teacherUserId = user.id;
 
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to save test. Please try again.", variant: "destructive" });
+      if (testIdToEdit) {
+        savedTest = await updateTest(testIdToEdit, { ...data, teacherId: teacherUserId });
+        if (savedTest) {
+          toast({ title: "Success", description: "Test updated successfully!", duration: 2000 });
+        } else {
+          toast({ title: "Update Error", description: `Failed to find test with ID ${testIdToEdit} to update.`, variant: "destructive", duration: 2000 });
+          router.push('/dashboard');
+          return;
+        }
+      } else {
+        savedTest = await addTest({ ...data, teacherId: teacherUserId });
+        if (savedTest) {
+            toast({ title: "Success", description: "Test created successfully!", duration: 2000 });
+        } else {
+            toast({ title: "Creation Error", description: "Failed to create test. The save operation returned no data.", variant: "destructive", duration: 2000 });
+            router.push('/dashboard');
+            return;
+        }
+      }
+      
+      router.push(`/dashboard/test/${savedTest.id}`);
+
+    } catch (error: any) {
+      console.error("Error saving test:", error);
+      toast({ title: "Save Error", description: `Failed to save test: ${error.message || "Please try again."}`, variant: "destructive", duration: 2000 });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isLoading && !searchParams.get("source")) { // Don't show main loading if loading AI questions
+  if (isLoading && !searchParams.get("source")) { 
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-1/2" />

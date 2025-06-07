@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { User } from "@/lib/types";
@@ -11,7 +12,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (userData: User) => void;
   logout: () => void;
-  signup: (userData: User) => void; // Simplified signup that just logs in
+  signup: (userData: User) => void; 
 }
 
 export function useAuth(): AuthContextType {
@@ -20,35 +21,52 @@ export function useAuth(): AuthContextType {
   const router = useRouter();
 
   useEffect(() => {
+    setIsLoading(true); 
     try {
       const storedUser = localStorage.getItem(USER_STORAGE_KEY);
       if (storedUser) {
         setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null); 
       }
     } catch (error) {
-      console.error("Failed to load user from localStorage", error);
-      localStorage.removeItem(USER_STORAGE_KEY);
+      console.error("Failed to load user from localStorage during auth init:", error);
+      localStorage.removeItem(USER_STORAGE_KEY); 
+      setUser(null); 
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); 
     }
   }, []);
 
   const login = useCallback((userData: User) => {
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-    setUser(userData);
+    try {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+        console.error("Failed to save user to localStorage on login:", error);
+        // Optionally, inform the user about the session save failure
+    }
   }, []);
   
   const signup = useCallback((userData: User) => {
-    // In this mock, signup is the same as login for simplicity
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-    setUser(userData);
+    try {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+        console.error("Failed to save user to localStorage on signup:", error);
+    }
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(USER_STORAGE_KEY);
+    try {
+      localStorage.removeItem(USER_STORAGE_KEY);
+    } catch (error) {
+        console.error("Failed to remove user from localStorage on logout:", error);
+    }
     setUser(null);
     router.push("/auth/login");
   }, [router]);
 
   return { user, isLoading, login, logout, signup };
 }
+

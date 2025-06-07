@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,10 +18,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { signupUser } from "@/lib/auth-actions"; // Server action
+import { signupUser } from "@/lib/auth-actions"; 
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
+
+const USER_STORAGE_KEY = "test_pilot_user";
 
 const signupSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -62,15 +65,24 @@ export default function SignupForm() {
         toast({
           title: "Signup Successful",
           description: "Your account has been created. Please login.",
+          duration: 2000,
         });
-         // Simulate setting auth state (e.g. in localStorage or context)
-        localStorage.setItem("test_pilot_user", JSON.stringify(result.user));
-        router.push("/dashboard"); // Or router.push("/auth/login") then redirect to dashboard after login
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.user));
+        } catch (e) {
+          console.error("Failed to save user to localStorage", e);
+          toast({ title: "Session Error", description: "Could not save your session. Please try logging in again after signup.", variant: "destructive", duration: 2000});
+          setIsSubmitting(false);
+          router.push("/auth/login"); // Redirect to login even if session save fails
+          return;
+        }
+        router.push("/dashboard"); 
       } else {
         toast({
           title: "Signup Failed",
           description: result.message || "An unexpected error occurred.",
           variant: "destructive",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -78,6 +90,7 @@ export default function SignupForm() {
         title: "Signup Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
+        duration: 2000,
       });
     } finally {
       setIsSubmitting(false);
@@ -183,3 +196,4 @@ export default function SignupForm() {
     </Card>
   );
 }
+

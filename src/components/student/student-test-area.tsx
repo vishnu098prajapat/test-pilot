@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -48,7 +49,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     const handleVisibilityChange = () => {
       if (document.hidden && testData.enableTabSwitchDetection) {
         logActivity("Tab switched / minimized.");
-        toast({ title: "Warning", description: "Leaving the test tab has been logged.", variant: "destructive" });
+        toast({ title: "Warning", description: "Leaving the test tab has been logged.", variant: "destructive", duration: 2000 });
       }
     };
 
@@ -85,7 +86,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         document.exitFullscreen?.();
       }
     };
-  }, [logActivity, testData]);
+  }, [logActivity, testData, toast]);
 
 
   const handleAnswerChange = (questionId: string, answer: any) => {
@@ -108,12 +109,10 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
       const proctoringResult = await analyzeStudentBehavior(proctorInput);
       logActivity(`AI Proctoring result: Suspicious - ${proctoringResult.isSuspicious}, Reason - ${proctoringResult.suspiciousReason}, Severity - ${proctoringResult.severityScore}`);
       
-      // Here you would typically save the test results, answers, and proctoring info to a database.
-      // For this mock, we'll just show a toast and log.
       console.log("Test Submitted:", {
         testId: testData.id,
         answers,
-        activityLog: proctorInput.activityLog, // Use the combined log
+        activityLog: proctorInput.activityLog, 
         proctoringResult,
         startTime: startTimeRef.current,
         endTime: new Date(),
@@ -122,12 +121,10 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
       toast({
         title: "Test Submitted!",
         description: `Your test has been successfully ${autoSubmit ? 'auto-' : ''}submitted. ${proctoringResult.isSuspicious ? 'Suspicious activity was flagged.' : ''}`,
-        duration: 5000,
+        duration: 2000,
       });
       setIsSubmitted(true);
-      // TODO: Redirect to a results page or a thank you page
-      // For now, redirect to dashboard after a delay
-      setTimeout(() => router.push(`/test/${testData.id}/results`), 3000);
+      setTimeout(() => router.push(`/test/${testData.id}/results`), 2000); // Redirect after 2 seconds to allow toast viewing
 
 
     } catch (error) {
@@ -136,6 +133,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         title: "Submission Error",
         description: "There was an error submitting your test or with proctoring. Please contact support.",
         variant: "destructive",
+        duration: 2000,
       });
     } finally {
       setIsSubmitting(false);
@@ -167,7 +165,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
            <Timer 
             initialDuration={testData.duration * 60} 
             onTimeUp={() => handleSubmitTest(true)}
-            onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 10000})}
+            onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 2000})}
             warningThreshold={60} // 1 minute warning
           />
            <Card className="mt-6 shadow-lg">
@@ -247,3 +245,4 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
     </div>
   );
 }
+

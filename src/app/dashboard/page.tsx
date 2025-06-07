@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -7,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test } from "@/lib/types";
-import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; // Mock store functions
+import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
 import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
@@ -38,7 +39,7 @@ export default function DashboardPage() {
           const teacherTests = await getTestsByTeacher(user.id);
           setTests(teacherTests);
         } catch (error) {
-          toast({ title: "Error", description: "Failed to load tests.", variant: "destructive" });
+          toast({ title: "Error", description: "Failed to load tests.", variant: "destructive", duration: 2000 });
         } finally {
           setIsLoading(false);
         }
@@ -52,12 +53,12 @@ export default function DashboardPage() {
       const success = await deleteTestAction(testId);
       if (success) {
         setTests(prevTests => prevTests.filter(test => test.id !== testId));
-        toast({ title: "Success", description: "Test deleted successfully." });
+        toast({ title: "Success", description: "Test deleted successfully.", duration: 2000 });
       } else {
-        toast({ title: "Error", description: "Failed to delete test.", variant: "destructive" });
+        toast({ title: "Error", description: "Failed to delete test.", variant: "destructive", duration: 2000 });
       }
     } catch (error) {
-      toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive" });
+      toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive", duration: 2000 });
     }
   };
   
@@ -151,7 +152,7 @@ export default function DashboardPage() {
                   <Button variant="outline" size="sm" disabled={!test.published} onClick={() => {
                     const testLink = `${window.location.origin}/test/${test.id}`;
                     navigator.clipboard.writeText(testLink);
-                    toast({ title: "Link Copied!", description: "Test link copied to clipboard." });
+                    toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
                   }}>
                     <Share2 className="mr-1 h-4 w-4" /> Share
                   </Button>
@@ -199,3 +200,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

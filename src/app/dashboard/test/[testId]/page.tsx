@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -35,22 +36,20 @@ export default function TestManagementPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [test, setTest] = useState<Test | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Local loading state for this page's data
+  const [isLoading, setIsLoading] = useState(true); 
 
   const testId = params.testId as string;
 
   useEffect(() => {
-    let isActive = true; // Flag to prevent state updates if component unmounts
+    let isActive = true; 
 
     async function fetchTestDetails() {
-      // user object is from useAuth. DashboardLayout handles skeleton/redirect if user is initially loading or null.
-      // So, if this effect runs and user is null, it's an edge case or user logged out.
       if (!testId || !user?.id) {
         if (isActive) setIsLoading(false);
-        if (!testId && user?.id) { // If user is somehow loaded but testId is missing
-           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive" });
+        if (!testId && user?.id) { 
+           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
            router.push("/dashboard");
-        } else if (!user?.id) { // If user is not available (e.g., logged out)
+        } else if (!user?.id) { 
            router.push("/auth/login");
         }
         return;
@@ -58,7 +57,7 @@ export default function TestManagementPage() {
 
       if (isActive) {
         setIsLoading(true);
-        setTest(null); // Clear previous test data before fetching new
+        setTest(null); 
       }
 
       try {
@@ -68,18 +67,16 @@ export default function TestManagementPage() {
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
         } else if (fetchedTest) {
-          toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive" });
+          toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive", duration: 2000 });
           router.push("/dashboard");
         } else {
-          toast({ title: "Not Found", description: "Test not found.", variant: "destructive" });
+          toast({ title: "Not Found", description: "Test not found.", variant: "destructive", duration: 2000 });
           router.push("/dashboard");
         }
       } catch (error) {
         if (!isActive) return;
         console.error("Failed to load test details:", error);
-        toast({ title: "Error", description: "Failed to load test details.", variant: "destructive" });
-        // Optionally, redirect or set an error state to display on the page
-        // router.push("/dashboard"); 
+        toast({ title: "Error", description: "Failed to load test details.", variant: "destructive", duration: 2000 });
       } finally {
         if (isActive) {
           setIsLoading(false);
@@ -90,9 +87,9 @@ export default function TestManagementPage() {
     fetchTestDetails();
 
     return () => {
-      isActive = false; // Cleanup function
+      isActive = false; 
     };
-  }, [testId, user?.id, router, toast]); // Dependencies that trigger re-fetch
+  }, [testId, user?.id, router, toast]);
 
 
   const handleDeleteTest = async () => {
@@ -100,20 +97,18 @@ export default function TestManagementPage() {
     try {
       const success = await deleteTestAction(test.id);
       if (success) {
-        toast({ title: "Success", description: "Test deleted successfully." });
+        toast({ title: "Success", description: "Test deleted successfully.", duration: 2000 });
         router.push("/dashboard");
       } else {
-        toast({ title: "Error", description: "Failed to delete test.", variant: "destructive" });
+        toast({ title: "Error", description: "Failed to delete test.", variant: "destructive", duration: 2000 });
       }
     } catch (error) {
-      toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive" });
+      toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive", duration: 2000 });
     }
   };
 
   const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
 
-  // This isLoading is the local one for this page's content.
-  // DashboardLayout handles the auth loading state.
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
@@ -136,10 +131,6 @@ export default function TestManagementPage() {
   }
 
   if (!test) {
-    // This case means fetching finished (isLoading is false) but test is still null
-    // (e.g., not found, unauthorized and redirected, or error during fetch).
-    // The toast messages from useEffect should guide the user.
-    // A generic fallback if redirection somehow fails or isn't immediate:
     return (
       <div className="container mx-auto py-8 text-center">
         <p className="text-xl text-muted-foreground">Could not load test details.</p>
@@ -169,7 +160,7 @@ export default function TestManagementPage() {
            <Button variant="default" disabled={!test.published} onClick={() => {
               if(shareLink) {
                 navigator.clipboard.writeText(shareLink);
-                toast({ title: "Link Copied!", description: "Test link copied to clipboard." });
+                toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
               }
            }}>
             <Share2 className="mr-2 h-4 w-4" /> Share Test
@@ -187,7 +178,7 @@ export default function TestManagementPage() {
             <Input type="text" readOnly value={shareLink} className="mt-2 bg-green-100 dark:bg-green-800/50" />
             <Button size="sm" variant="ghost" className="mt-2 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-700" onClick={() => {
               navigator.clipboard.writeText(shareLink);
-              toast({ title: "Link Copied!", description: "Test link copied to clipboard." });
+              toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
             }}>
               Copy Link
             </Button>

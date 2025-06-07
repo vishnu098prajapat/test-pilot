@@ -1,10 +1,11 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Use next/navigation for App Router
+import { useRouter } from "next/navigation"; 
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,10 +18,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { loginUser } from "@/lib/auth-actions"; // Server action
+import { loginUser } from "@/lib/auth-actions"; 
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import React from "react";
+
+const USER_STORAGE_KEY = "test_pilot_user";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -50,22 +53,29 @@ export default function LoginForm() {
       formData.append("email", data.email);
       formData.append("password", data.password);
       
-      // This is a mock login. In a real app, you'd handle session/cookie here.
       const result = await loginUser(formData); 
 
       if (result.success && result.user) {
         toast({
           title: "Login Successful",
           description: `Welcome back, ${result.user.email}!`,
+          duration: 2000,
         });
-        // Simulate setting auth state (e.g. in localStorage or context)
-        localStorage.setItem("test_pilot_user", JSON.stringify(result.user));
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.user));
+        } catch (e) {
+          console.error("Failed to save user to localStorage", e);
+          toast({ title: "Session Error", description: "Could not save your session. Please try logging in again.", variant: "destructive", duration: 2000});
+          setIsSubmitting(false);
+          return;
+        }
         router.push("/dashboard");
       } else {
         toast({
           title: "Login Failed",
           description: result.message || "An unexpected error occurred.",
           variant: "destructive",
+          duration: 2000,
         });
       }
     } catch (error) {
@@ -73,6 +83,7 @@ export default function LoginForm() {
         title: "Login Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
+        duration: 2000,
       });
     } finally {
       setIsSubmitting(false);
@@ -154,3 +165,4 @@ export default function LoginForm() {
     </Card>
   );
 }
+
