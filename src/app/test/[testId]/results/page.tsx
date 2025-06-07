@@ -22,14 +22,14 @@ const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 interface StoredTestResults {
   testId: string;
   testTitle: string;
-  totalQuestions: number; 
+  totalQuestions: number; // This should now be accurate from calculation
   correctAnswersCount: number;
   incorrectOrUnansweredCount: number;
   totalPointsScored: number;
   maxPossiblePoints: number;
   scorePercentage: number;
-  questions: Question[]; 
-  studentRawAnswers: Record<string, any>; 
+  questions: Question[]; // Expecting the actual questions array here
+  studentRawAnswers: Record<string, any>; // Expecting the raw answers
 }
 
 export default function StudentResultsPage() {
@@ -55,17 +55,18 @@ export default function StudentResultsPage() {
         const parsedResults = JSON.parse(storedResultsString) as StoredTestResults;
         console.log("[ResultsPage] Loaded from localStorage:", parsedResults);
 
+        // Validate crucial fields including questions array
         if (
           typeof parsedResults.testTitle === 'string' &&
-          typeof parsedResults.totalQuestions === 'number' &&
+          typeof parsedResults.totalQuestions === 'number' && // This is now the calculated total
           typeof parsedResults.correctAnswersCount === 'number' &&
           typeof parsedResults.incorrectOrUnansweredCount === 'number' &&
           typeof parsedResults.scorePercentage === 'number' &&
           typeof parsedResults.totalPointsScored === 'number' &&
           typeof parsedResults.maxPossiblePoints === 'number' &&
-          Array.isArray(parsedResults.questions) &&
-          parsedResults.questions.length > 0 && 
-          typeof parsedResults.studentRawAnswers === 'object'
+          Array.isArray(parsedResults.questions) && // Check if questions array exists
+          parsedResults.questions.length > 0 && // Check if it's not empty
+          typeof parsedResults.studentRawAnswers === 'object' // Check if raw answers exist
         ) {
           setResults(parsedResults);
         } else {
@@ -127,6 +128,7 @@ export default function StudentResultsPage() {
     );
   }
   
+  // Use results.questions.length for the most accurate total question count from the attempt
   const displayTotalQuestions = results.questions.length;
 
   return (
