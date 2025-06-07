@@ -9,11 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Award, AlertTriangle, Home, ArrowLeft } from 'lucide-react';
-import type { TestAttempt } from '@/lib/types';
+import type { TestAttempt, StudentAnswer } from '@/lib/types';
 
 interface RankedAttempt extends TestAttempt {
   rank: number | null;
   badge?: { name: string; color: string; icon: React.ElementType };
+  correctAnswersCount: number;
+  totalQuestionsInAttempt: number;
 }
 
 export default function LeaderboardPage() {
@@ -54,7 +56,7 @@ export default function LeaderboardPage() {
           let lastScore = -1;
           let tiedCount = 1;
 
-          sortedAttempts.forEach((attempt, index) => {
+          sortedAttempts.forEach((attempt) => {
             if (attempt.scorePercentage !== lastScore) {
               currentRank += tiedCount;
               tiedCount = 1;
@@ -72,12 +74,21 @@ export default function LeaderboardPage() {
               badge = { name: 'Bronze', color: 'text-orange-400', icon: Award };
             }
 
-            rankedAttempts.push({ ...attempt, rank: currentRank, badge });
+            const correctAnswersCount = attempt.answers.filter(a => a.isCorrect).length;
+            const totalQuestionsInAttempt = attempt.answers.length;
+
+            rankedAttempts.push({ 
+              ...attempt, 
+              rank: currentRank, 
+              badge,
+              correctAnswersCount,
+              totalQuestionsInAttempt
+            });
           });
           setAttempts(rankedAttempts);
 
         } else {
-          setTestTitle('Test Leaderboard'); // Default title if no attempts
+          setTestTitle('Test Leaderboard'); 
           setAttempts([]);
         }
       } catch (e: any) {
@@ -168,7 +179,7 @@ export default function LeaderboardPage() {
                     <TableCell className="text-right">
                       {attempt.scorePercentage !== undefined ? `${attempt.scorePercentage}%` : 'N/A'}
                       <span className="text-xs text-muted-foreground ml-1">
-                        ({attempt.score}/{attempt.maxPossiblePoints})
+                        ({attempt.correctAnswersCount}/{attempt.totalQuestionsInAttempt})
                       </span>
                     </TableCell>
                     <TableCell className="text-center">

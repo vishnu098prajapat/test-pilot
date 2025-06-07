@@ -882,5 +882,289 @@
     "id": "test-1749308207227-log8y",
     "createdAt": "2025-06-07T14:56:47.227Z",
     "updatedAt": "2025-06-07T14:56:47.227Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749308868307-0-94h7meg",
+        "text": "Which list method adds an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749308868307_l4e3apspb",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749308868307_9a4yqgqpv",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749308868307_3vrb1ueqi",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749308868307_f9750r1k6",
+            "text": "concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1749308868307_9a4yqgqpv"
+      },
+      {
+        "id": "ai-q-1749308868307-1-8w6wouw",
+        "text": "What error is raised when trying to access an index that is out of range for a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749308868307_mxizhg09t",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749308868307_0g9y465k8",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749308868307_zbp8yb9i4",
+            "text": "IndexError"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749308868307_yhic5r5st",
+            "text": "KeyError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1749308868307_zbp8yb9i4"
+      },
+      {
+        "id": "ai-q-1749308868307-2-kdtodjg",
+        "text": "What is the output of the code: `my_list = [1, 2, 3, 4, 5]; print(my_list[2:])`?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749308868307_rm7usx2sd",
+            "text": "[1, 2]"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749308868307_ud6c895h4",
+            "text": "[3, 4, 5]"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749308868307_4pjmvafj1",
+            "text": "[1, 2, 3, 4, 5]"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749308868307_5dnt1k781",
+            "text": "Error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1749308868307_ud6c895h4"
+      },
+      {
+        "id": "ai-q-1749308868307-3-sz49b9e",
+        "text": "Which list method removes the first occurrence of a specific value from a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749308868307_uh89hmszf",
+            "text": "delete()"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749308868307_n9t5shd3x",
+            "text": "pop()"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749308868307_7zbifqvej",
+            "text": "remove()"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749308868307_bqvtavpqy",
+            "text": "discard()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1749308868307_7zbifqvej"
+      },
+      {
+        "id": "ai-q-1749308868307-4-gn8u5nb",
+        "text": "Which function is used to determine the number of elements in a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749308868307_wm2hbktvc",
+            "text": "size()"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749308868307_lekss6jmx",
+            "text": "length()"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749308868307_h8ytw1ko3",
+            "text": "count()"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749308868307_qglcpfj5q",
+            "text": "len()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749308868307_qglcpfj5q"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749308539005",
+    "id": "test-1749308881931-2fagp",
+    "createdAt": "2025-06-07T15:08:01.931Z",
+    "updatedAt": "2025-06-07T15:08:01.931Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749308868307-0-94h7meg",
+        "text": "Which list method adds an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749308868307_l4e3apspb",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749308868307_9a4yqgqpv",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749308868307_3vrb1ueqi",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749308868307_f9750r1k6",
+            "text": "concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1749308868307_9a4yqgqpv"
+      },
+      {
+        "id": "ai-q-1749308868307-1-8w6wouw",
+        "text": "What error is raised when trying to access an index that is out of range for a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749308868307_mxizhg09t",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749308868307_0g9y465k8",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749308868307_zbp8yb9i4",
+            "text": "IndexError"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749308868307_yhic5r5st",
+            "text": "KeyError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1749308868307_zbp8yb9i4"
+      },
+      {
+        "id": "ai-q-1749308868307-2-kdtodjg",
+        "text": "What is the output of the code: `my_list = [1, 2, 3, 4, 5]; print(my_list[2:])`?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749308868307_rm7usx2sd",
+            "text": "[1, 2]"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749308868307_ud6c895h4",
+            "text": "[3, 4, 5]"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749308868307_4pjmvafj1",
+            "text": "[1, 2, 3, 4, 5]"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749308868307_5dnt1k781",
+            "text": "Error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1749308868307_ud6c895h4"
+      },
+      {
+        "id": "ai-q-1749308868307-3-sz49b9e",
+        "text": "Which list method removes the first occurrence of a specific value from a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749308868307_uh89hmszf",
+            "text": "delete()"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749308868307_n9t5shd3x",
+            "text": "pop()"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749308868307_7zbifqvej",
+            "text": "remove()"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749308868307_bqvtavpqy",
+            "text": "discard()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1749308868307_7zbifqvej"
+      },
+      {
+        "id": "ai-q-1749308868307-4-gn8u5nb",
+        "text": "Which function is used to determine the number of elements in a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749308868307_wm2hbktvc",
+            "text": "size()"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749308868307_lekss6jmx",
+            "text": "length()"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749308868307_h8ytw1ko3",
+            "text": "count()"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749308868307_qglcpfj5q",
+            "text": "len()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749308868307_qglcpfj5q"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749308539005",
+    "id": "test-1749308888402-cn6mr",
+    "createdAt": "2025-06-07T15:08:08.402Z",
+    "updatedAt": "2025-06-07T15:08:08.402Z"
   }
 ]
