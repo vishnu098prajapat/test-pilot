@@ -4,7 +4,7 @@ import type { Test } from './types';
 // Augment the Global interface to include our custom store
 declare global {
   // eslint-disable-next-line no-var
-  var __PRIMARY_APP_STORE_INSTANCE__: Test[];
+  var __PRIMARY_APP_STORE_INSTANCE__: Test[] | undefined;
 }
 
 const initialMockTests: Test[] = [
@@ -84,40 +84,39 @@ const initialMockTests: Test[] = [
   },
 ];
 
-// Initialize the store ONCE using a more robust check.
-// This code runs when the module is first loaded by the Node.js process.
-if (globalThis.__PRIMARY_APP_STORE_INSTANCE__ === undefined) {
+// Initialize the store ONCE using a standard check for the global variable.
+if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined') {
   console.log('[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED. Initializing with a deep copy of mock data.');
+  // Deep copy to prevent accidental mutation of initialMockTests if it were used elsewhere.
   globalThis.__PRIMARY_APP_STORE_INSTANCE__ = JSON.parse(JSON.stringify(initialMockTests));
 } else {
-  console.log('[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ already exists. Re-using existing store instance.');
+  console.log(`[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ already exists. Current count: ${globalThis.__PRIMARY_APP_STORE_INSTANCE__.length}. Re-using existing store instance.`);
 }
 
-
 function getStore(): Test[] {
-  // Always return the single global instance.
-  // If it's somehow undefined here, something is very wrong with the server environment
-  // or module lifecycle, beyond simple HMR.
-  if (globalThis.__PRIMARY_APP_STORE_INSTANCE__ === undefined) {
-      console.error('[STORE-CRITICAL] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED in getStore()! This should not happen after initial load. Falling back to re-initializing. This indicates a severe HMR or environment issue.');
+  // This function now primarily serves as an accessor and a last-resort initializer
+  // if the global variable somehow gets wiped to undefined (though the goal is it shouldn't after first init).
+  if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined' || !Array.isArray(globalThis.__PRIMARY_APP_STORE_INSTANCE__)) {
+      console.error('[STORE-CRITICAL] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED or not an array in getStore()! This indicates a severe HMR or environment issue. Re-initializing.');
       globalThis.__PRIMARY_APP_STORE_INSTANCE__ = JSON.parse(JSON.stringify(initialMockTests));
   }
   return globalThis.__PRIMARY_APP_STORE_INSTANCE__;
 }
 
+
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
   const store = getStore();
-  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}". Current store count: ${store.length}. IDs: ${store.map(t => t.id).join(', ')}`);
+  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${store.length}`);
   return store.filter(test => test.teacherId === teacherId);
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  const currentStore = getStore(); // Get the current state of the store
+  const store = getStore();
   console.log(`[STORE] getTestById: Called for ID: "${testId}"`);
-  console.log(`[STORE] getTestById: Current store size from getStore(): ${currentStore.length}`);
-  console.log(`[STORE] getTestById: Current store IDs from getStore(): ${currentStore.map(t => t.id).join(', ')}`);
+  console.log(`[STORE] getTestById: Current store size from getStore(): ${store.length}`);
+  console.log(`[STORE] getTestById: Current store IDs from getStore(): ${store.map(t => t.id).join(', ')}`);
   
-  const foundTest = currentStore.find(test => test.id === testId);
+  const foundTest = store.find(test => test.id === testId);
   if (!foundTest) {
     console.warn(`[STORE] getTestById: Test with ID "${testId}" NOT FOUND in current store state during getTestById.`);
   } else {
@@ -127,8 +126,7 @@ export async function getTestById(testId: string): Promise<Test | undefined> {
 }
 
 export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  // IMPORTANT: Ensure we are getting the reference to the *actual* global array
-  const storeInstance = getStore(); 
+  const store = getStore(); // Get the direct reference to the global array
   
   const newTest: Test = {
     ...newTestData,
@@ -138,27 +136,28 @@ export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'upda
   };
 
   console.log(`[STORE] addTest: Attempting to add test ID: ${newTest.id}`);
-  console.log(`[STORE] addTest: Store instance size BEFORE push: ${storeInstance.length}`);
-  console.log(`[STORE] addTest: Store instance IDs BEFORE push: ${storeInstance.map(t => t.id).join(', ')}`);
+  console.log(`[STORE] addTest: Store size BEFORE push: ${store.length}`);
+  console.log(`[STORE] addTest: Store IDs BEFORE push: ${store.map(t => t.id).join(', ')}`);
 
-  storeInstance.push(newTest); // Directly modify the global array referenced by 'storeInstance'
+  store.push(newTest); // Directly mutate the global array
 
-  console.log(`[STORE] addTest: Store instance size AFTER push: ${storeInstance.length}`);
-  console.log(`[STORE] addTest: Store instance IDs AFTER push: ${storeInstance.map(t => t.id).join(', ')}`);
+  console.log(`[STORE] addTest: Store size AFTER push: ${store.length}`);
+  console.log(`[STORE] addTest: Store IDs AFTER push (from mutated 'store' var): ${store.map(t => t.id).join(', ')}`);
   
-  // Verify it's in the actual global store instance by fetching it again
-  const verificationStore = getStore(); 
+  // Verify it's in the actual global store instance by fetching it again (or checking the same reference)
+  const verificationStore = getStore(); // Should be the same array instance
   if (verificationStore.find(t => t.id === newTest.id)) {
     console.log(`[STORE] SUCCESS: Test ID ${newTest.id} VERIFIED in global store (via getStore()) after addTest. Verification store count: ${verificationStore.length}`);
   } else {
+    // This case should be less likely now if 'store' is truly the global reference and 'push' worked.
     console.error(`[STORE] CRITICAL FAILURE: Test ID ${newTest.id} NOT VERIFIED in global store (via getStore()) after addTest. Verification store count: ${verificationStore.length}, IDs: ${verificationStore.map(t=>t.id).join(', ')}`);
   }
   return newTest;
 }
 
 export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  const storeInstance = getStore();
-  const testIndex = storeInstance.findIndex(test => test.id === testId);
+  const store = getStore();
+  const testIndex = store.findIndex(test => test.id === testId);
 
   if (testIndex === -1) {
     console.warn(`[STORE] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
@@ -166,27 +165,31 @@ export async function updateTest(testId: string, updatedTestData: Partial<Omit<T
   }
   
   const updatedTest = {
-    ...storeInstance[testIndex],
-    ...updatedTestData,
-    updatedAt: new Date(),
+    ...store[testIndex], // Existing test data
+    ...updatedTestData, // Overwrite with new data
+    updatedAt: new Date(), // Always update timestamp
   };
   
-  storeInstance[testIndex] = updatedTest; // Update in place
+  store[testIndex] = updatedTest; // Update in place
 
-  console.log(`[STORE] Test updated. Test ID: ${updatedTest.id}. Store count: ${storeInstance.length}`);
+  console.log(`[STORE] updateTest: Test updated. Test ID: ${updatedTest.id}. Store count: ${store.length}`);
   return updatedTest;
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  const storeInstance = getStore();
-  const testIndex = storeInstance.findIndex(test => test.id === testId);
+  const store = getStore();
+  const initialLength = store.length;
+  // Filter out the test to delete, creating a new array
+  const newStore = store.filter(test => test.id !== testId);
 
-  if (testIndex > -1) {
-    storeInstance.splice(testIndex, 1); // Remove the test from the array
-    console.log(`[STORE] Test with ID "${testId}" deleted. Store count: ${storeInstance.length}`);
+  if (newStore.length < initialLength) {
+    // If a test was removed, update the global store reference to this new array.
+    // This is a key change: instead of splice, we replace the array.
+    globalThis.__PRIMARY_APP_STORE_INSTANCE__ = newStore;
+    console.log(`[STORE] deleteTest: Test with ID "${testId}" deleted. Store count: ${newStore.length}`);
     return true;
   } else {
-    console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${storeInstance.length}`);
+    console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${initialLength}`);
     return false;
   }
 }
