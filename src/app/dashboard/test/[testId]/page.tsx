@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -10,12 +9,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, Eye } from "lucide-react";
-import { getTestById, deleteTest as deleteTestAction } from "@/lib/store"; 
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck } from "lucide-react"; // Removed Eye as it's not used directly here
+import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input"; 
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,31 +32,42 @@ import Image from "next/image";
 export default function TestManagementPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
   const { toast } = useToast();
   const [test, setTest] = useState<Test | null>(null);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isFetchingTest, setIsFetchingTest] = useState(true); // Renamed for clarity
 
   const testId = params.testId as string;
 
   useEffect(() => {
-    let isActive = true; 
+    let isActive = true;
+    // Don't proceed if auth is still loading or user is not available.
+    // DashboardLayout should handle redirecting to login if user is null after auth loading.
+    if (isAuthLoading) {
+      setIsFetchingTest(true); // Keep showing local loading state if auth is not ready
+      return;
+    }
+
+    // If DashboardLayout has done its job, user should be available here.
+    // If user is null here, DashboardLayout should have redirected.
+    // We proceed only if user is definitively available.
+    if (!user) {
+        // This case should ideally be caught by DashboardLayout.
+        // If somehow reached, push to login to be safe, though DashboardLayout is primary.
+        if (isActive) router.push('/auth/login');
+        return;
+    }
 
     async function fetchTestDetails() {
-      if (!testId || !user?.id) {
-        if (isActive) setIsLoading(false);
-        if (!testId && user?.id) { 
-           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
-           router.push("/dashboard");
-        } else if (!user?.id) { 
-           router.push("/auth/login");
-        }
-        return;
-      }
+      if (!isActive) return;
+      setIsFetchingTest(true);
+      setTest(null);
 
-      if (isActive) {
-        setIsLoading(true);
-        setTest(null); 
+      if (!testId) {
+        toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
+        if (isActive) router.push("/dashboard");
+        setIsFetchingTest(false);
+        return;
       }
 
       try {
@@ -67,19 +77,23 @@ export default function TestManagementPage() {
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
         } else if (fetchedTest) {
+          // Teacher ID mismatch
           toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive", duration: 2000 });
-          router.push("/dashboard");
+          if (isActive) router.push("/dashboard");
         } else {
+          // Test not found
           toast({ title: "Not Found", description: "Test not found.", variant: "destructive", duration: 2000 });
-          router.push("/dashboard");
+          if (isActive) router.push("/dashboard");
         }
       } catch (error) {
         if (!isActive) return;
         console.error("Failed to load test details:", error);
         toast({ title: "Error", description: "Failed to load test details.", variant: "destructive", duration: 2000 });
+        // Optionally redirect to dashboard on critical fetch error
+        // if (isActive) router.push("/dashboard");
       } finally {
         if (isActive) {
-          setIsLoading(false);
+          setIsFetchingTest(false);
         }
       }
     }
@@ -87,9 +101,9 @@ export default function TestManagementPage() {
     fetchTestDetails();
 
     return () => {
-      isActive = false; 
+      isActive = false;
     };
-  }, [testId, user?.id, router, toast]);
+  }, [testId, user, isAuthLoading, router, toast]); // Added isAuthLoading and user itself
 
 
   const handleDeleteTest = async () => {
@@ -109,7 +123,8 @@ export default function TestManagementPage() {
 
   const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
 
-  if (isLoading) {
+  // Show skeleton if auth is loading OR if test data is fetching
+  if (isAuthLoading || isFetchingTest) {
     return (
       <div className="container mx-auto py-8">
         <Skeleton className="h-10 w-3/4 mb-4" />
@@ -130,10 +145,13 @@ export default function TestManagementPage() {
     );
   }
 
+  // If after loading, test is still null, it means fetching failed or test was not found/unauthorized.
+  // The useEffect should have handled redirection in those cases.
+  // This is a fallback or for cases where redirect hasn't happened yet.
   if (!test) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <p className="text-xl text-muted-foreground">Could not load test details.</p>
+        <p className="text-xl text-muted-foreground">Could not load test details or test not found.</p>
         <Button asChild className="mt-4"><Link href="/dashboard">Go to Dashboard</Link></Button>
       </div>
     );
@@ -185,7 +203,7 @@ export default function TestManagementPage() {
           </CardContent>
         </Card>
       )}
-      
+
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <InfoCard icon={<ListChecks />} label="Questions" value={`${test.questions.length} Questions`} />
         <InfoCard icon={<Clock />} label="Duration" value={`${test.duration} Minutes`} />
@@ -260,4 +278,5 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
     </CardContent>
   </Card>
 );
-
+    
+    
