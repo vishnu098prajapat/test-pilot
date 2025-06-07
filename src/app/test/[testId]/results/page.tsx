@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation'; // Added useRouter
+import { useParams, useRouter } from 'next/navigation'; 
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -12,27 +12,31 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import { Award, CheckCircle, XCircle, AlertTriangle } from "lucide-react"; // Added AlertTriangle
+import { Award, CheckCircle, XCircle, AlertTriangle } from "lucide-react"; 
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton'; // Added Skeleton
+import { Skeleton } from '@/components/ui/skeleton'; 
+import type { Question } from '@/lib/types'; // Import Question type
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
-interface DisplayResults {
+interface StoredTestResults {
+  testId: string;
   testTitle: string;
-  totalQuestions: number;
+  totalQuestions: number; // Calculated by StudentTestArea
   correctAnswersCount: number;
   incorrectOrUnansweredCount: number;
-  scorePercentage: number;
-  maxPossiblePoints: number;
   totalPointsScored: number;
+  maxPossiblePoints: number;
+  scorePercentage: number;
+  questions: Question[]; // Array of actual questions from the attempt
+  studentRawAnswers: Record<string, any>; // Student's raw answers {qid: answerValue}
 }
 
 export default function StudentResultsPage() {
   const params = useParams();
-  const router = useRouter(); // For redirecting if no data
+  const router = useRouter(); 
   const testId = params.testId as string;
-  const [results, setResults] = useState<DisplayResults | null>(null);
+  const [results, setResults] = useState<StoredTestResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,25 +52,32 @@ export default function StudentResultsPage() {
     try {
       const storedResultsString = localStorage.getItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testId}`);
       if (storedResultsString) {
-        const parsedResults = JSON.parse(storedResultsString);
+        const parsedResults = JSON.parse(storedResultsString) as StoredTestResults;
+        console.log("[ResultsPage] Loaded from localStorage:", parsedResults);
+
         // Basic validation of parsed results
         if (
           typeof parsedResults.testTitle === 'string' &&
-          typeof parsedResults.totalQuestions === 'number' &&
+          typeof parsedResults.totalQuestions === 'number' && // This was calculated by StudentTestArea
           typeof parsedResults.correctAnswersCount === 'number' &&
           typeof parsedResults.incorrectOrUnansweredCount === 'number' &&
-          typeof parsedResults.scorePercentage === 'number'
+          typeof parsedResults.scorePercentage === 'number' &&
+          typeof parsedResults.totalPointsScored === 'number' &&
+          typeof parsedResults.maxPossiblePoints === 'number' &&
+          Array.isArray(parsedResults.questions) &&
+          parsedResults.questions.length > 0 && // Ensure there are questions
+          typeof parsedResults.studentRawAnswers === 'object'
         ) {
-          setResults(parsedResults as DisplayResults);
+          setResults(parsedResults);
         } else {
           setError("Test result data is invalid or incomplete. Please try taking the test again.");
-          console.warn("Invalid results structure in localStorage:", parsedResults);
+          console.warn("[ResultsPage] Invalid results structure in localStorage:", parsedResults);
         }
       } else {
         setError("No results found for this test. You might need to complete the test first.");
       }
     } catch (e) {
-      console.error("Error reading or parsing results from localStorage:", e);
+      console.error("[ResultsPage] Error reading or parsing results from localStorage:", e);
       setError("Could not load your test results. Please try again or contact support.");
     } finally {
       setIsLoading(false);
@@ -118,6 +129,9 @@ export default function StudentResultsPage() {
       </div>
     );
   }
+  
+  // Use results.questions.length for displaying total questions for this specific attempt's data
+  const displayTotalQuestions = results.questions.length;
 
   return (
     <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center">
@@ -136,7 +150,7 @@ export default function StudentResultsPage() {
           
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-2xl font-semibold">{results.totalQuestions}</p>
+              <p className="text-2xl font-semibold">{displayTotalQuestions}</p>
               <p className="text-sm text-muted-foreground">Total Questions</p>
             </div>
             <div>
@@ -173,3 +187,5 @@ export default function StudentResultsPage() {
     </div>
   );
 }
+
+    

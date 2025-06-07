@@ -322,5 +322,381 @@
     "id": "test-1749305570749-n5h3y",
     "createdAt": "2025-06-07T14:12:50.749Z",
     "updatedAt": "2025-06-07T14:12:50.749Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749306778374-0-aof4vd8",
+        "text": "Which type of blood cell is primarily responsible for oxygen transport?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749306778374_9gixeyebv",
+            "text": "Leukocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749306778374_op15njrl7",
+            "text": "Thrombocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749306778374_flbg72e5s",
+            "text": "Plasma"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749306778374_um0w2w12i",
+            "text": "Erythrocytes"
+          }
+        ],
+        "correctOptionId": "c0217609-e67f-4a49-aa54-fc30e67a9818"
+      },
+      {
+        "id": "ai-q-1749306778374-1-1yrlscw",
+        "text": "Which blood type is considered the universal recipient?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749306778374_8feooqq47",
+            "text": "A"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749306778374_p6ntspce9",
+            "text": "B"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749306778374_ptfgmfge4",
+            "text": "O"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749306778374_ashr4lryf",
+            "text": "AB"
+          }
+        ],
+        "correctOptionId": "3e0dd690-196a-4e1b-9e6f-f4d93e21c840"
+      },
+      {
+        "id": "ai-q-1749306778374-2-eunzuo2",
+        "text": "Where does hematopoiesis (blood cell formation) primarily occur in adults?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749306778374_slft1yotu",
+            "text": "Liver"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749306778374_gas9btxl9",
+            "text": "Spleen"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749306778374_3al09vixv",
+            "text": "Bone marrow"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749306778374_jstzckwt5",
+            "text": "Kidneys"
+          }
+        ],
+        "correctOptionId": "51f4838e-b87b-4aef-88cb-c144791b85af"
+      },
+      {
+        "id": "ai-q-1749306778374-3-96x3hgy",
+        "text": "Which protein is responsible for carrying oxygen in red blood cells?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749306778374_csk4qb2g8",
+            "text": "Myoglobin"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749306778374_vhyba9980",
+            "text": "Hemoglobin"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749306778374_9jgnlrel6",
+            "text": "Fibrinogen"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749306778374_4jm7b6dt7",
+            "text": "Albumin"
+          }
+        ],
+        "correctOptionId": "79ce4b67-3f04-447f-ba74-690f4dd0853c"
+      },
+      {
+        "id": "ai-q-1749306778374-4-odcw0qu",
+        "text": "What is the primary function of platelets (thrombocytes)?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749306778374_0r11m5rva",
+            "text": "Oxygen transport"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749306778374_r6hqkmgan",
+            "text": "Clotting"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749306778374_7jlmsn4pd",
+            "text": "Immunity"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749306778374_lesdd8lsm",
+            "text": "Nutrient transport"
+          }
+        ],
+        "correctOptionId": "a74da914-cba5-4948-a57a-285b644112bc"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749306366811",
+    "id": "test-1749306806829-x7kkp",
+    "createdAt": "2025-06-07T14:33:26.829Z",
+    "updatedAt": "2025-06-07T14:33:26.829Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749306778374-0-aof4vd8",
+        "text": "Which type of blood cell is primarily responsible for oxygen transport?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749306778374_9gixeyebv",
+            "text": "Leukocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749306778374_op15njrl7",
+            "text": "Thrombocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749306778374_flbg72e5s",
+            "text": "Plasma"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749306778374_um0w2w12i",
+            "text": "Erythrocytes"
+          }
+        ],
+        "correctOptionId": "c0217609-e67f-4a49-aa54-fc30e67a9818"
+      },
+      {
+        "id": "ai-q-1749306778374-1-1yrlscw",
+        "text": "Which blood type is considered the universal recipient?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749306778374_8feooqq47",
+            "text": "A"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749306778374_p6ntspce9",
+            "text": "B"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749306778374_ptfgmfge4",
+            "text": "O"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749306778374_ashr4lryf",
+            "text": "AB"
+          }
+        ],
+        "correctOptionId": "3e0dd690-196a-4e1b-9e6f-f4d93e21c840"
+      },
+      {
+        "id": "ai-q-1749306778374-2-eunzuo2",
+        "text": "Where does hematopoiesis (blood cell formation) primarily occur in adults?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749306778374_slft1yotu",
+            "text": "Liver"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749306778374_gas9btxl9",
+            "text": "Spleen"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749306778374_3al09vixv",
+            "text": "Bone marrow"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749306778374_jstzckwt5",
+            "text": "Kidneys"
+          }
+        ],
+        "correctOptionId": "51f4838e-b87b-4aef-88cb-c144791b85af"
+      },
+      {
+        "id": "ai-q-1749306778374-3-96x3hgy",
+        "text": "Which protein is responsible for carrying oxygen in red blood cells?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749306778374_csk4qb2g8",
+            "text": "Myoglobin"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749306778374_vhyba9980",
+            "text": "Hemoglobin"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749306778374_9jgnlrel6",
+            "text": "Fibrinogen"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749306778374_4jm7b6dt7",
+            "text": "Albumin"
+          }
+        ],
+        "correctOptionId": "79ce4b67-3f04-447f-ba74-690f4dd0853c"
+      },
+      {
+        "id": "ai-q-1749306778374-4-odcw0qu",
+        "text": "What is the primary function of platelets (thrombocytes)?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749306778374_0r11m5rva",
+            "text": "Oxygen transport"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749306778374_r6hqkmgan",
+            "text": "Clotting"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749306778374_7jlmsn4pd",
+            "text": "Immunity"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749306778374_lesdd8lsm",
+            "text": "Nutrient transport"
+          }
+        ],
+        "correctOptionId": "a74da914-cba5-4948-a57a-285b644112bc"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749306366811",
+    "id": "test-1749306818663-ncbqq",
+    "createdAt": "2025-06-07T14:33:38.663Z",
+    "updatedAt": "2025-06-07T14:33:38.663Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749306966341-0-c28mfiv",
+        "text": "What is the primary function of the labia in the female reproductive system?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749306966341_7wevm9mbf",
+            "text": "To produce estrogen"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749306966341_mad1tqzif",
+            "text": "To protect the opening of the vagina"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749306966341_tnuasa8b1",
+            "text": "To secrete testosterone"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749306966341_aj1b1wr87",
+            "text": "To provide lubrication for the ovaries"
+          }
+        ],
+        "correctOptionId": "fc2785ca-7623-4380-b2ab-ab95f136631d"
+      },
+      {
+        "id": "ai-q-1749306966341-1-xdo1043",
+        "text": "What is the typical pH level of the vagina, which helps protect against infection?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749306966341_tb8ck0rzg",
+            "text": "Neutral"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749306966341_ooxf33y39",
+            "text": "Basic"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749306966341_t48c61vw0",
+            "text": "Acidic"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749306966341_iako17d7n",
+            "text": "Highly alkaline"
+          }
+        ],
+        "correctOptionId": "afe171d8-25da-4ad2-8a3a-0c46f97fdee9"
+      },
+      {
+        "id": "ai-q-1749306966341-2-daefwoe",
+        "text": "Which glands are primarily responsible for producing lubricating secretions during sexual arousal, located near the vaginal opening?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749306966341_5w4bnjco5",
+            "text": "Skene's glands"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749306966341_e2gqj25jj",
+            "text": "Sweat glands"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749306966341_bkf84e2sx",
+            "text": "Sebaceous glands"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749306966341_75225g76y",
+            "text": "Bartholin's glands"
+          }
+        ],
+        "correctOptionId": "bf487e1d-9196-4d49-8891-4077f914ebed"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749306366811",
+    "id": "test-1749306988608-cr50j",
+    "createdAt": "2025-06-07T14:36:28.608Z",
+    "updatedAt": "2025-06-07T14:36:28.608Z"
   }
 ]
