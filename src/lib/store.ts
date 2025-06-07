@@ -1,11 +1,10 @@
 
 import type { Test } from './types';
+import fs from 'fs';
+import path from 'path';
 
-// Augment the Global interface to include our custom store
-declare global {
-  // eslint-disable-next-line no-var
-  var __PRIMARY_APP_STORE_INSTANCE__: Test[] | undefined;
-}
+// Define the path to the JSON file that will act as our database
+const DB_FILE_PATH = path.join(process.cwd(), 'local_test_db.json');
 
 const initialMockTests: Test[] = [
   {
@@ -43,8 +42,9 @@ const initialMockTests: Test[] = [
       },
     ],
     teacherId: 'teacher1',
-    createdAt: new Date('2023-10-01T10:00:00Z'),
-    updatedAt: new Date('2023-10-01T10:00:00Z'),
+    // Store dates as ISO strings for JSON compatibility
+    createdAt: new Date('2023-10-01T10:00:00Z').toISOString() as any,
+    updatedAt: new Date('2023-10-01T10:00:00Z').toISOString() as any,
     published: true,
     attemptsAllowed: 1,
     randomizeQuestions: false,
@@ -73,8 +73,8 @@ const initialMockTests: Test[] = [
       },
     ],
     teacherId: 'teacher1',
-    createdAt: new Date('2023-10-15T14:30:00Z'),
-    updatedAt: new Date('2023-10-15T14:30:00Z'),
+    createdAt: new Date('2023-10-15T14:30:00Z').toISOString() as any,
+    updatedAt: new Date('2023-10-15T14:30:00Z').toISOString() as any,
     published: false,
     attemptsAllowed: 0, // Unlimited
     randomizeQuestions: true,
@@ -84,50 +84,75 @@ const initialMockTests: Test[] = [
   },
 ];
 
-// Initialize the store ONCE using a standard check for the global variable.
-// This code runs once when the module is first loaded.
-if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined') {
-  console.log('[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED. Initializing with a deep copy of mock data.');
-  // Deep copy to prevent accidental mutation of initialMockTests if it were used elsewhere.
-  globalThis.__PRIMARY_APP_STORE_INSTANCE__ = JSON.parse(JSON.stringify(initialMockTests));
-} else {
-  console.log(`[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ already exists. Current count: ${globalThis.__PRIMARY_APP_STORE_INSTANCE__.length}. Re-using existing store instance.`);
+// Function to read data from the JSON file
+function readDb(): Test[] {
+  try {
+    if (fs.existsSync(DB_FILE_PATH)) {
+      const fileContent = fs.readFileSync(DB_FILE_PATH, 'utf-8');
+      const data = JSON.parse(fileContent);
+      // Ensure dates are parsed back into Date objects if needed, or handle as strings
+      return data.map((test: Test) => ({
+        ...test,
+        createdAt: new Date(test.createdAt),
+        updatedAt: new Date(test.updatedAt),
+      }));
+    }
+  } catch (error) {
+    console.error('[STORE-DB] Error reading or parsing DB file:', error);
+    // Fallback or re-initialization logic if file is corrupt
+  }
+  // If file doesn't exist or error, initialize with mock data and write to file
+  console.log('[STORE-DB] DB file not found or error reading. Initializing with mock data and creating file.');
+  fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initialMockTests, null, 2), 'utf-8');
+  return initialMockTests.map(test => ({
+    ...test,
+    createdAt: new Date(test.createdAt),
+    updatedAt: new Date(test.updatedAt),
+  }));
 }
 
-// Helper function to get the store. It should always return the initialized global instance.
-function getStore(): Test[] {
-  // This check is a safeguard, but the initialization above should handle most cases.
-  if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined' || !Array.isArray(globalThis.__PRIMARY_APP_STORE_INSTANCE__)) {
-      console.error('[STORE-CRITICAL] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED or not an array in getStore()! This indicates a severe HMR or environment issue. Re-initializing.');
-      globalThis.__PRIMARY_APP_STORE_INSTANCE__ = JSON.parse(JSON.stringify(initialMockTests));
+// Function to write data to the JSON file
+function writeDb(data: Test[]): void {
+  try {
+    // Convert Date objects to ISO strings before writing
+    const dataToWrite = data.map(test => ({
+        ...test,
+        createdAt: (test.createdAt as Date).toISOString(),
+        updatedAt: (test.updatedAt as Date).toISOString(),
+    }));
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(dataToWrite, null, 2), 'utf-8');
+    console.log(`[STORE-DB] Data successfully written to ${DB_FILE_PATH}. Total tests: ${data.length}`);
+  } catch (error) {
+    console.error('[STORE-DB] Error writing to DB file:', error);
   }
-  return globalThis.__PRIMARY_APP_STORE_INSTANCE__;
 }
+
+// Initialize the store by ensuring the DB file exists
+// This top-level call will ensure the DB is ready when the module loads.
+// The readDb function handles creation if it doesn't exist.
+readDb(); 
 
 
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  const store = getStore();
-  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${store.length}`);
+  const store = readDb();
+  console.log(`[STORE-DB] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${store.length}`);
   return store.filter(test => test.teacherId === teacherId);
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  const store = getStore();
-  console.log(`[STORE] getTestById: Called for ID: "${testId}"`);
-  console.log(`[STORE] getTestById: Current store size from getStore(): ${store.length}`);
-  console.log(`[STORE] getTestById: Current store IDs from getStore(): ${store.map(t => t.id).join(', ')}`);
-  
+  const store = readDb();
+  console.log(`[STORE-DB] getTestById called for ID: "${testId}". Current store count from DB: ${store.length}`);
   const foundTest = store.find(test => test.id === testId);
   if (!foundTest) {
-    console.warn(`[STORE] getTestById: Test with ID "${testId}" NOT FOUND in current store state during getTestById.`);
+    console.warn(`[STORE-DB] Test with ID "${testId}" NOT FOUND in DB.`);
   } else {
-    console.log(`[STORE] getTestById: Test with ID "${testId}" FOUND.`);
+    console.log(`[STORE-DB] Test with ID "${testId}" FOUND in DB.`);
   }
   return foundTest;
 }
 
 export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  const store = getStore(); // Get the direct reference to the global array
+  const store = readDb();
   
   const newTest: Test = {
     ...newTestData,
@@ -136,61 +161,54 @@ export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'upda
     updatedAt: new Date(),
   };
 
-  console.log(`[STORE] addTest: Attempting to add test ID: ${newTest.id}`);
-  console.log(`[STORE] addTest: Store size BEFORE push: ${store.length}`);
-  console.log(`[STORE] addTest: Store IDs BEFORE push: ${store.map(t => t.id).join(', ')}`);
-
-  store.push(newTest); // Directly mutate the global array
-
-  console.log(`[STORE] addTest: Store size AFTER push: ${store.length}`);
-  console.log(`[STORE] addTest: Store IDs AFTER push (from mutated 'store' var): ${store.map(t => t.id).join(', ')}`);
+  console.log(`[STORE-DB] addTest: Attempting to add test ID: ${newTest.id}`);
+  store.push(newTest);
+  writeDb(store); // Write the updated store back to the file
   
-  // Verify it's in the actual global store instance by fetching it again (or checking the same reference)
-  const verificationStore = getStore(); // Should be the same array instance
+  // Verify it was written by reading again (optional, good for debugging)
+  const verificationStore = readDb();
   if (verificationStore.find(t => t.id === newTest.id)) {
-    console.log(`[STORE] SUCCESS: Test ID ${newTest.id} VERIFIED in global store (via getStore()) after addTest. Verification store count: ${verificationStore.length}`);
+    console.log(`[STORE-DB] SUCCESS: Test ID ${newTest.id} VERIFIED in DB file after addTest.`);
   } else {
-    // This case should be less likely now if 'store' is truly the global reference and 'push' worked.
-    console.error(`[STORE] CRITICAL FAILURE: Test ID ${newTest.id} NOT VERIFIED in global store (via getStore()) after addTest. Verification store count: ${verificationStore.length}, IDs: ${verificationStore.map(t=>t.id).join(', ')}`);
+    console.error(`[STORE-DB] CRITICAL FAILURE: Test ID ${newTest.id} NOT VERIFIED in DB file after addTest.`);
   }
   return newTest;
 }
 
 export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  const store = getStore();
+  const store = readDb();
   const testIndex = store.findIndex(test => test.id === testId);
 
   if (testIndex === -1) {
-    console.warn(`[STORE] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
+    console.warn(`[STORE-DB] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
     return undefined;
   }
   
-  const updatedTest = {
-    ...store[testIndex], // Existing test data
-    ...updatedTestData, // Overwrite with new data
-    updatedAt: new Date(), // Always update timestamp
+  const updatedTest: Test = {
+    ...store[testIndex],
+    ...updatedTestData,
+    updatedAt: new Date(),
   };
   
-  store[testIndex] = updatedTest; // Update in place
+  store[testIndex] = updatedTest;
+  writeDb(store);
 
-  console.log(`[STORE] updateTest: Test updated. Test ID: ${updatedTest.id}. Store count: ${store.length}`);
+  console.log(`[STORE-DB] updateTest: Test updated. Test ID: ${updatedTest.id}. Store count: ${store.length}`);
   return updatedTest;
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  const store = getStore(); // Get the current store reference
+  let store = readDb();
   const initialLength = store.length;
   
-  // Create a new array without the test to be deleted
-  const newStoreArray = store.filter(test => test.id !== testId);
+  store = store.filter(test => test.id !== testId);
 
-  if (newStoreArray.length < initialLength) {
-    // If a test was removed, update the global store reference to this new array.
-    globalThis.__PRIMARY_APP_STORE_INSTANCE__ = newStoreArray;
-    console.log(`[STORE] deleteTest: Test with ID "${testId}" deleted. Store count: ${globalThis.__PRIMARY_APP_STORE_INSTANCE__.length}`);
+  if (store.length < initialLength) {
+    writeDb(store);
+    console.log(`[STORE-DB] deleteTest: Test with ID "${testId}" deleted. New store count: ${store.length}`);
     return true;
   } else {
-    console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${initialLength}`);
+    console.warn(`[STORE-DB] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${initialLength}`);
     return false;
   }
 }
