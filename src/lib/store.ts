@@ -85,6 +85,7 @@ const initialMockTests: Test[] = [
 ];
 
 // Initialize the store ONCE using a standard check for the global variable.
+// This code runs once when the module is first loaded.
 if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined') {
   console.log('[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED. Initializing with a deep copy of mock data.');
   // Deep copy to prevent accidental mutation of initialMockTests if it were used elsewhere.
@@ -93,9 +94,9 @@ if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined') {
   console.log(`[STORE-INIT] globalThis.__PRIMARY_APP_STORE_INSTANCE__ already exists. Current count: ${globalThis.__PRIMARY_APP_STORE_INSTANCE__.length}. Re-using existing store instance.`);
 }
 
+// Helper function to get the store. It should always return the initialized global instance.
 function getStore(): Test[] {
-  // This function now primarily serves as an accessor and a last-resort initializer
-  // if the global variable somehow gets wiped to undefined (though the goal is it shouldn't after first init).
+  // This check is a safeguard, but the initialization above should handle most cases.
   if (typeof globalThis.__PRIMARY_APP_STORE_INSTANCE__ === 'undefined' || !Array.isArray(globalThis.__PRIMARY_APP_STORE_INSTANCE__)) {
       console.error('[STORE-CRITICAL] globalThis.__PRIMARY_APP_STORE_INSTANCE__ is UNDEFINED or not an array in getStore()! This indicates a severe HMR or environment issue. Re-initializing.');
       globalThis.__PRIMARY_APP_STORE_INSTANCE__ = JSON.parse(JSON.stringify(initialMockTests));
@@ -177,16 +178,16 @@ export async function updateTest(testId: string, updatedTestData: Partial<Omit<T
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  const store = getStore();
+  const store = getStore(); // Get the current store reference
   const initialLength = store.length;
-  // Filter out the test to delete, creating a new array
-  const newStore = store.filter(test => test.id !== testId);
+  
+  // Create a new array without the test to be deleted
+  const newStoreArray = store.filter(test => test.id !== testId);
 
-  if (newStore.length < initialLength) {
+  if (newStoreArray.length < initialLength) {
     // If a test was removed, update the global store reference to this new array.
-    // This is a key change: instead of splice, we replace the array.
-    globalThis.__PRIMARY_APP_STORE_INSTANCE__ = newStore;
-    console.log(`[STORE] deleteTest: Test with ID "${testId}" deleted. Store count: ${newStore.length}`);
+    globalThis.__PRIMARY_APP_STORE_INSTANCE__ = newStoreArray;
+    console.log(`[STORE] deleteTest: Test with ID "${testId}" deleted. Store count: ${globalThis.__PRIMARY_APP_STORE_INSTANCE__.length}`);
     return true;
   } else {
     console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion. Store count: ${initialLength}`);
