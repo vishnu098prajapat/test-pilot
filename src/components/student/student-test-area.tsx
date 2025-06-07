@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import type { Test, Question, StudentAnswer } from '@/lib/types';
+import type { Test, Question, StudentAnswer, TestAttempt } from '@/lib/types';
 import QuestionDisplay from './question-display';
 import Timer from './timer';
 import { Button } from '@/components/ui/button';
@@ -26,13 +26,14 @@ import { useRouter } from 'next/navigation';
 
 interface StudentTestAreaProps {
   testData: Test;
+  studentIdentifier: string; // Student's name or ID
 }
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
-export default function StudentTestArea({ testData }: StudentTestAreaProps) {
+export default function StudentTestArea({ testData, studentIdentifier }: StudentTestAreaProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({}); // Store answers by questionId
+  const [answers, setAnswers] = useState<Record<string, any>>({}); 
   const [activityLog, setActivityLog] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -73,7 +74,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
       }
     }
 
-    logActivity("Test started. Anti-cheat measures active based on test settings.");
+    logActivity(`Test started by ${studentIdentifier}. Anti-cheat measures active based on test settings.`);
 
     return () => {
       if (testData.enableTabSwitchDetection) document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -86,7 +87,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
         document.exitFullscreen?.();
       }
     };
-  }, [logActivity, testData, toast]);
+  }, [logActivity, testData, toast, studentIdentifier]);
 
   const handleAnswerChange = (questionId: string, answer: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
@@ -96,45 +97,55 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
   const handleSubmitTest = useCallback(async (autoSubmit: boolean = false) => {
     if (isSubmitting || isSubmitted) return;
     setIsSubmitting(true);
-    logActivity(autoSubmit ? "Test auto-submitted due to time up." : "Test submitted by student.");
+    logActivity(autoSubmit ? "Test auto-submitted due to time up." : `Test submitted by ${studentIdentifier}.`);
+    const endTime = new Date();
 
-    // Calculate results
-    const studentAnswersForStorage: StudentAnswer[] = Object.entries(answers).map(([questionId, answer]) => ({
-      questionId,
-      answer,
-    }));
+    const studentAnswersForStorage: StudentAnswer[] = testData.questions.map(q => {
+      const studentAnswerValue = answers[q.id];
+      let isQCorrect = false;
+      let pointsForQ = 0;
+
+      if (studentAnswerValue !== undefined && studentAnswerValue !== null) {
+        if (q.type === 'mcq') {
+          if (studentAnswerValue === q.correctOptionId) isQCorrect = true;
+        } else if (q.type === 'true-false') {
+          if (studentAnswerValue === q.correctAnswer) isQCorrect = true;
+        } else if (q.type === 'short-answer') {
+          if (String(studentAnswerValue).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) isQCorrect = true;
+        }
+      }
+      if (isQCorrect) {
+        pointsForQ = q.points;
+      }
+      return {
+        questionId: q.id,
+        answer: studentAnswerValue,
+        isCorrect: isQCorrect,
+        pointsScored: pointsForQ,
+      };
+    });
 
     let correctQuestionsCount = 0;
     let totalPointsAchieved = 0;
     let totalPossiblePoints = 0;
 
-    testData.questions.forEach(q => {
-      totalPossiblePoints += q.points;
-      const studentAnswerForQuestion = studentAnswersForStorage.find(sa => sa.questionId === q.id);
-      const studentAnswerValue = studentAnswerForQuestion ? studentAnswerForQuestion.answer : undefined;
-      let isQCorrect = false;
-
-      if (studentAnswerValue !== undefined && studentAnswerValue !== null) { // Check for actual answers
-        if (q.type === 'mcq') {
-          if (studentAnswerValue === q.correctOptionId) isQCorrect = true;
-        } else if (q.type === 'true-false') {
-          if (studentAnswerValue === q.correctAnswer) isQCorrect = true; // answers[q.id] is already boolean
-        } else if (q.type === 'short-answer') {
-          if (String(studentAnswerValue).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) isQCorrect = true;
+    studentAnswersForStorage.forEach(sa => {
+      const question = testData.questions.find(q => q.id === sa.questionId);
+      if (question) {
+        totalPossiblePoints += question.points;
+        if (sa.isCorrect) {
+          correctQuestionsCount++;
+          totalPointsAchieved += sa.pointsScored || 0;
         }
       }
-
-      if (isQCorrect) {
-        correctQuestionsCount++;
-        totalPointsAchieved += q.points;
-      }
     });
-
-    const scorePercentage = totalPossiblePoints > 0 ? (totalPointsAchieved / totalPossiblePoints) * 100 : 0;
+    
+    const scorePercentage = totalPossiblePoints > 0 ? Math.round((totalPointsAchieved / totalPossiblePoints) * 100) : 0;
     const totalQuestionsInTest = testData.questions.length;
     const incorrectOrUnansweredQuestionsCount = totalQuestionsInTest - correctQuestionsCount;
 
-    const resultsToStore = {
+    // For student's immediate results page (localStorage)
+    const resultsForStudentPage = {
       testId: testData.id,
       testTitle: testData.title,
       totalQuestions: totalQuestionsInTest,
@@ -142,62 +153,93 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
       incorrectOrUnansweredCount: incorrectOrUnansweredQuestionsCount,
       totalPointsScored: totalPointsAchieved,
       maxPossiblePoints: totalPossiblePoints,
-      scorePercentage: Math.round(scorePercentage),
-      // studentAnswers: studentAnswersForStorage, // Can be added later for detailed review
+      scorePercentage: scorePercentage,
+      // For review feature:
+      questions: testData.questions, // Send original questions
+      studentRawAnswers: answers, // Send the map of answers {qid: answerValue}
     };
 
     try {
-      localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`, JSON.stringify(resultsToStore));
+      localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`, JSON.stringify(resultsForStudentPage));
     } catch (e) {
       console.error("Failed to save results to localStorage", e);
       toast({ title: "Storage Error", description: "Could not save your test results locally.", variant: "destructive", duration: 2000 });
-      // Continue with submission even if localStorage fails for now
     }
     
-    // AI Proctoring
+    // For centralized teacher leaderboard (API)
+    const attemptDataForApi: Omit<TestAttempt, 'id' | 'submittedAt'> = {
+      testId: testData.id,
+      testTitle: testData.title,
+      studentIdentifier: studentIdentifier,
+      startTime: startTimeRef.current.toISOString(),
+      endTime: endTime.toISOString(),
+      answers: studentAnswersForStorage, // Detailed answers with correctness
+      score: totalPointsAchieved,
+      maxPossiblePoints: totalPossiblePoints,
+      scorePercentage: scorePercentage,
+      activityLog: activityLog.join('\n'), // Keep activity log here as well
+      isSuspicious: false, // Placeholder, AI proctoring will update this
+      suspiciousReason: "", // Placeholder
+    };
+
+    // AI Proctoring (can run in parallel or before API submission)
     const proctorInput: AnalyzeStudentBehaviorInput = {
-      studentId: `student-${Date.now()}`, 
+      studentId: studentIdentifier, 
       testId: testData.id,
       activityLog: activityLog.join('\n'),
     };
-
+    
+    let proctoringSucceeded = false;
     try {
       const proctoringResult = await analyzeStudentBehavior(proctorInput);
+      attemptDataForApi.isSuspicious = proctoringResult.isSuspicious;
+      attemptDataForApi.suspiciousReason = proctoringResult.suspiciousReason;
       logActivity(`AI Proctoring result: Suspicious - ${proctoringResult.isSuspicious}, Reason - ${proctoringResult.suspiciousReason}, Severity - ${proctoringResult.severityScore}`);
-      
-      console.log("Test Submitted:", {
-        testId: testData.id,
-        calculatedResults: resultsToStore,
-        activityLog: proctorInput.activityLog, 
-        proctoringResult,
-        startTime: startTimeRef.current,
-        endTime: new Date(),
-      });
+      proctoringSucceeded = true;
+    } catch (proctorError) {
+      console.error("AI Proctoring Error:", proctorError);
+      logActivity(`AI Proctoring failed: ${(proctorError as Error).message}`);
+      toast({ title: "AI Proctoring Issue", description: "Could not analyze behavior, but test will still be submitted.", variant: "destructive", duration: 2000 });
+      // Default isSuspicious to false or handle as needed
+      attemptDataForApi.isSuspicious = false;
+      attemptDataForApi.suspiciousReason = "Proctoring analysis failed.";
+    }
 
+    // Submit attempt to central API
+    try {
+      const response = await fetch('/api/attempts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(attemptDataForApi),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `API Error: ${response.status}`);
+      }
+      const responseData = await response.json();
+      console.log("Attempt submitted to API:", responseData);
       toast({
         title: "Test Submitted!",
-        description: `Your test has been successfully ${autoSubmit ? 'auto-' : ''}submitted. ${proctoringResult.isSuspicious ? 'Suspicious activity was flagged.' : ''}`,
-        duration: 2000,
+        description: `Your test has been successfully ${autoSubmit ? 'auto-' : ''}submitted. ${attemptDataForApi.isSuspicious ? 'Suspicious activity was flagged.' : ''}`,
+        duration: proctoringSucceeded ? 2000 : 3000,
       });
       setIsSubmitted(true);
-      setTimeout(() => router.push(`/test/${testData.id}/results`), 2000);
+      setTimeout(() => router.push(`/test/${testData.id}/results`), proctoringSucceeded ? 2000 : 3000);
 
     } catch (error) {
-      console.error("Error submitting test or with AI proctoring:", error);
+      console.error("Error submitting test attempt to API:", error);
       toast({
         title: "Submission Error",
-        description: "There was an error submitting your test or with proctoring. Please contact support.",
+        description: "There was an error recording your test attempt centrally. Please contact support if this persists.",
         variant: "destructive",
-        duration: 2000,
+        duration: 3000,
       });
-      // Even if AI proctoring fails, try to redirect to results if local storage save was attempted
-      setIsSubmitted(true); // Mark as submitted to prevent re-submission
-      setTimeout(() => router.push(`/test/${testData.id}/results`), 3000); // Redirect after a delay
-    } finally {
-      setIsSubmitting(false); // Only set to false if submission truly failed and needs retry
-                               // For now, once submitted (or attempted), we move to results.
+      // Even if API submission fails, redirect to student's local results page
+      setIsSubmitted(true); 
+      setTimeout(() => router.push(`/test/${testData.id}/results`), 3500); 
     }
-  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity]);
+    // No finally setIsSubmitting(false) here, because once submitted, it should stay submitted.
+  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity, studentIdentifier, startTimeRef]);
 
   if (isSubmitted) {
     return (
@@ -224,7 +266,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
             initialDuration={testData.duration * 60} 
             onTimeUp={() => handleSubmitTest(true)}
             onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 2000})}
-            warningThreshold={60}
+            warningThreshold={60} // 1 minute
           />
            <Card className="mt-6 shadow-lg">
             <CardHeader><CardTitle className="text-lg font-headline">Navigation</CardTitle></CardHeader>
@@ -254,7 +296,7 @@ export default function StudentTestArea({ testData }: StudentTestAreaProps) {
             totalQuestions={totalQuestions}
             currentAnswer={answers[currentQuestion.id]}
             onAnswerChange={handleAnswerChange}
-            isReviewMode={isSubmitted} // Disable inputs if submitted
+            isReviewMode={false} 
           />
         </div>
       </div>
