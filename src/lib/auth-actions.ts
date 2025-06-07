@@ -1,3 +1,4 @@
+
 // For now, these are conceptual server actions.
 // In a real app, you'd integrate with Firebase Auth or another auth provider.
 
@@ -17,10 +18,15 @@ interface AuthResult {
 }
 
 export async function loginUser(formData: FormData): Promise<AuthResult> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string; // Password check is omitted for mock
+  const emailInput = formData.get("email") as string;
+  // const password = formData.get("password") as string; // Password check is omitted for mock
 
-  const user = mockUsers.find((u) => u.email === email);
+  if (!emailInput) {
+      return { success: false, message: "Email is required." };
+  }
+  const normalizedEmailInput = emailInput.toLowerCase().trim();
+
+  const user = mockUsers.find((u) => u.email.toLowerCase() === normalizedEmailInput);
 
   if (user) {
     // In a real app, verify password here
@@ -31,16 +37,22 @@ export async function loginUser(formData: FormData): Promise<AuthResult> {
 }
 
 export async function signupUser(formData: FormData): Promise<AuthResult> {
-  const email = formData.get("email") as string;
+  const emailInput = formData.get("email") as string;
   // const password = formData.get("password") as string; // Password handling omitted for mock
 
-  if (mockUsers.find((u) => u.email === email)) {
+  if (!emailInput) {
+    return { success: false, message: "Email is required." };
+  }
+  const normalizedEmailInput = emailInput.toLowerCase().trim();
+
+
+  if (mockUsers.find((u) => u.email.toLowerCase() === normalizedEmailInput)) {
     return { success: false, message: "User already exists with this email" };
   }
 
   const newUser: User = {
     id: `user-${Date.now()}`,
-    email,
+    email: emailInput.trim(), // Store the trimmed version of the input email
     role: "teacher", // Defaulting to teacher for signup
   };
   mockUsers.push(newUser);
