@@ -115,5 +115,145 @@
     "suspiciousReason": "The student started the test and changed answers to a few questions. This activity is normal and doesn't raise suspicion.",
     "id": "attempt-1749306763650-86rb0ha",
     "submittedAt": "2025-06-07T14:32:43.650Z"
+  },
+  {
+    "testId": "test-1749306988608-cr50j",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-07T14:49:53.012Z",
+    "endTime": "2025-06-07T14:50:07.677Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749306966341-0-c28mfiv",
+        "answer": "ai-opt_q0_idx2_1749306966341_tnuasa8b1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749306966341-1-xdo1043",
+        "answer": "ai-opt_q1_idx1_1749306966341_ooxf33y39",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749306966341-2-daefwoe",
+        "answer": "ai-opt_q2_idx3_1749306966341_75225g76y",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 30,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-07T14:49:53.035Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:49:53.036Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:49:55.575Z] Answer changed for question ID ai-q-1749306966341-0-c28mfiv.\n[2025-06-07T14:50:00.379Z] Answer changed for question ID ai-q-1749306966341-1-xdo1043.\n[2025-06-07T14:50:04.423Z] Answer changed for question ID ai-q-1749306966341-2-daefwoe.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log only contains information about the start of the test and answer changes for different questions. There are no indications of suspicious behavior like frequent tab switches, copy-pasting, or unusual keyboard activity.",
+    "id": "attempt-1749307552952-qzos3e1",
+    "submittedAt": "2025-06-07T14:45:52.952Z"
+  },
+  {
+    "testId": "test-1749308006497-w2cgr",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-07T14:54:12.359Z",
+    "endTime": "2025-06-07T14:54:26.569Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749307983136-0-guswikd",
+        "answer": "ai-opt_q0_idx1_1749307983136_zncg3g0xz",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749307983136-1-kzmi4oe",
+        "answer": "ai-opt_q1_idx2_1749307983136_14doiocw9",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749307983136-2-8bvnfdm",
+        "answer": "ai-opt_q2_idx1_1749307983136_oeqrbw0jy",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 30,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-07T14:54:12.376Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:54:12.377Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:54:14.468Z] Answer changed for question ID ai-q-1749307983136-0-guswikd.\n[2025-06-07T14:54:17.616Z] Answer changed for question ID ai-q-1749307983136-1-kzmi4oe.\n[2025-06-07T14:54:21.044Z] Answer changed for question ID ai-q-1749307983136-2-8bvnfdm.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows only normal test-taking actions, such as answering and changing answers. There is no indication of suspicious behavior like tab switching, copying/pasting, or unusual keyboard activity.",
+    "id": "attempt-1749307811074-ipovqty",
+    "submittedAt": "2025-06-07T14:50:11.075Z"
+  },
+  {
+    "testId": "test-1749308207227-log8y",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-07T14:56:59.245Z",
+    "endTime": "2025-06-07T14:57:10.453Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749308200336-0-ij0rh12",
+        "answer": "ai-opt_q0_idx0_1749308200336_1yz3o0m6w",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308200336-1-cf3ch1m",
+        "answer": "ai-opt_q1_idx0_1749308200336_5utekz8ka",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308200336-2-dk4dyv8",
+        "answer": "ai-opt_q2_idx0_1749308200336_e2kjwu7j4",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 30,
+    "maxPossiblePoints": 30,
+    "scorePercentage": 100,
+    "activityLog": "[2025-06-07T14:56:59.260Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:56:59.261Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:57:01.374Z] Answer changed for question ID ai-q-1749308200336-0-ij0rh12.\n[2025-06-07T14:57:04.250Z] Answer changed for question ID ai-q-1749308200336-1-cf3ch1m.\n[2025-06-07T14:57:07.317Z] Answer changed for question ID ai-q-1749308200336-2-dk4dyv8.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student started the test and changed answers for three questions within a reasonable time frame. There is no indication of any suspicious behavior like tab switching, copying/pasting, or unusual keyboard activity. The activity log shows normal test progression.",
+    "id": "attempt-1749307974786-81gybof",
+    "submittedAt": "2025-06-07T14:52:54.786Z"
+  },
+  {
+    "testId": "test-1749308207227-log8y",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-07T14:57:46.961Z",
+    "endTime": "2025-06-07T14:57:59.127Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749308200336-0-ij0rh12",
+        "answer": "ai-opt_q0_idx0_1749308200336_1yz3o0m6w",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308200336-1-cf3ch1m",
+        "answer": "ai-opt_q1_idx3_1749308200336_77rz3pk6d",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749308200336-2-dk4dyv8",
+        "answer": "ai-opt_q2_idx1_1749308200336_ljfv7futh",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 30,
+    "scorePercentage": 33,
+    "activityLog": "[2025-06-07T14:57:46.985Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:57:46.986Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-07T14:57:50.543Z] Answer changed for question ID ai-q-1749308200336-0-ij0rh12.\n[2025-06-07T14:57:53.427Z] Answer changed for question ID ai-q-1749308200336-1-cf3ch1m.\n[2025-06-07T14:57:56.438Z] Answer changed for question ID ai-q-1749308200336-2-dk4dyv8.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student only changed answers within the test. There is no indication of suspicious behavior. The student only changed 3 answers in the provided log.",
+    "id": "attempt-1749308022744-fu0pqpw",
+    "submittedAt": "2025-06-07T14:53:42.744Z"
   }
 ]

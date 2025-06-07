@@ -698,5 +698,189 @@
     "id": "test-1749306988608-cr50j",
     "createdAt": "2025-06-07T14:36:28.608Z",
     "updatedAt": "2025-06-07T14:36:28.608Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749307983136-0-guswikd",
+        "text": "Glinides primarily work by stimulating which of the following?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749307983136_hk95fjsed",
+            "text": "Decrease glucagon secretion"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749307983136_zncg3g0xz",
+            "text": "Increase insulin secretion"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749307983136_g2blc8g8p",
+            "text": "Inhibit glucose uptake by cells"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749307983136_wrx9epg9d",
+            "text": "Promote glycogen synthesis in muscles"
+          }
+        ],
+        "correctOptionId": "db752b35-270e-41a5-b807-75904368d025"
+      },
+      {
+        "id": "ai-q-1749307983136-1-kzmi4oe",
+        "text": "Glinides help regulate postprandial glucose levels mainly by acting on which organ?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749307983136_a3k89wsbd",
+            "text": "Kidney"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749307983136_7ywwkn3fz",
+            "text": "Pancreas"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749307983136_14doiocw9",
+            "text": "Liver"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749307983136_binal5v9x",
+            "text": "Spleen"
+          }
+        ],
+        "correctOptionId": "dc4924d8-f115-467b-8981-cac76f249407"
+      },
+      {
+        "id": "ai-q-1749307983136-2-8bvnfdm",
+        "text": "When are glinides typically administered in relation to food intake?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749307983136_oemg9jaf5",
+            "text": "First thing in the morning"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749307983136_oeqrbw0jy",
+            "text": "Shortly before meals"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749307983136_546eg2l6f",
+            "text": "At bedtime"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749307983136_f7j1pv118",
+            "text": "Once daily in the morning"
+          }
+        ],
+        "correctOptionId": "6e31977e-71dc-4478-9eae-3737b8f791b7"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749307656166",
+    "id": "test-1749308006497-w2cgr",
+    "createdAt": "2025-06-07T14:53:26.497Z",
+    "updatedAt": "2025-06-07T14:53:26.497Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749308200336-0-ij0rh12",
+        "text": "What is the primary biological function of most birth control pills?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749308200336_1yz3o0m6w",
+            "text": "To prevent ovulation"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749308200336_nnjncwdnk",
+            "text": "To increase estrogen production"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749308200336_owzudr72o",
+            "text": "To increase libido"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749308200336_bdimnsuj8",
+            "text": "To cure STDs"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1749308200336_1yz3o0m6w"
+      },
+      {
+        "id": "ai-q-1749308200336-1-cf3ch1m",
+        "text": "For maximum effectiveness, when should birth control pills be taken?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749308200336_5utekz8ka",
+            "text": "Same time each day"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749308200336_t95e58kbg",
+            "text": "Whenever you remember"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749308200336_0x9103unp",
+            "text": "Only before sexual activity"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749308200336_77rz3pk6d",
+            "text": "Only after sexual activity"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1749308200336_5utekz8ka"
+      },
+      {
+        "id": "ai-q-1749308200336-2-dk4dyv8",
+        "text": "Which of the following medications is MOST likely to interfere with the effectiveness of birth control pills?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749308200336_e2kjwu7j4",
+            "text": "Antibiotics"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749308200336_ljfv7futh",
+            "text": "Vitamin C"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749308200336_gumebness",
+            "text": "Pain relievers"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749308200336_dxi327d6q",
+            "text": "Antacids"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1749308200336_e2kjwu7j4"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749307656166",
+    "id": "test-1749308207227-log8y",
+    "createdAt": "2025-06-07T14:56:47.227Z",
+    "updatedAt": "2025-06-07T14:56:47.227Z"
   }
 ]

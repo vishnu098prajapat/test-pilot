@@ -12,24 +12,24 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import { Award, CheckCircle, XCircle, AlertTriangle } from "lucide-react"; 
+import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home } from "lucide-react"; 
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; 
-import type { Question } from '@/lib/types'; // Import Question type
+import type { Question } from '@/lib/types'; 
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
 interface StoredTestResults {
   testId: string;
   testTitle: string;
-  totalQuestions: number; // Calculated by StudentTestArea
+  totalQuestions: number; 
   correctAnswersCount: number;
   incorrectOrUnansweredCount: number;
   totalPointsScored: number;
   maxPossiblePoints: number;
   scorePercentage: number;
-  questions: Question[]; // Array of actual questions from the attempt
-  studentRawAnswers: Record<string, any>; // Student's raw answers {qid: answerValue}
+  questions: Question[]; 
+  studentRawAnswers: Record<string, any>; 
 }
 
 export default function StudentResultsPage() {
@@ -55,17 +55,16 @@ export default function StudentResultsPage() {
         const parsedResults = JSON.parse(storedResultsString) as StoredTestResults;
         console.log("[ResultsPage] Loaded from localStorage:", parsedResults);
 
-        // Basic validation of parsed results
         if (
           typeof parsedResults.testTitle === 'string' &&
-          typeof parsedResults.totalQuestions === 'number' && // This was calculated by StudentTestArea
+          typeof parsedResults.totalQuestions === 'number' &&
           typeof parsedResults.correctAnswersCount === 'number' &&
           typeof parsedResults.incorrectOrUnansweredCount === 'number' &&
           typeof parsedResults.scorePercentage === 'number' &&
           typeof parsedResults.totalPointsScored === 'number' &&
           typeof parsedResults.maxPossiblePoints === 'number' &&
           Array.isArray(parsedResults.questions) &&
-          parsedResults.questions.length > 0 && // Ensure there are questions
+          parsedResults.questions.length > 0 && 
           typeof parsedResults.studentRawAnswers === 'object'
         ) {
           setResults(parsedResults);
@@ -81,8 +80,6 @@ export default function StudentResultsPage() {
       setError("Could not load your test results. Please try again or contact support.");
     } finally {
       setIsLoading(false);
-      // Optional: Clean up localStorage item after reading if desired
-      // localStorage.removeItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testId}`);
     }
   }, [testId]);
 
@@ -130,7 +127,6 @@ export default function StudentResultsPage() {
     );
   }
   
-  // Use results.questions.length for displaying total questions for this specific attempt's data
   const displayTotalQuestions = results.questions.length;
 
   return (
@@ -177,15 +173,17 @@ export default function StudentResultsPage() {
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
            <Button asChild>
-            <Link href="/dashboard">Back to Dashboard</Link>
+            <Link href={`/test/${testId}/leaderboard`}>
+              <BarChart3 className="mr-2 h-4 w-4" /> View All Results
+            </Link>
           </Button>
-           <Button asChild variant="outline" onClick={() => router.push('/')}>
-             <Link href="/">Go to Homepage</Link>
+           <Button asChild variant="outline">
+             <Link href="/"> 
+               <Home className="mr-2 h-4 w-4" /> Go to Homepage
+             </Link>
            </Button>
         </CardFooter>
       </Card>
     </div>
   );
 }
-
-    
