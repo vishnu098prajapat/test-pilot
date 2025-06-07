@@ -1,9 +1,17 @@
+
 "use client";
 
 import React from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle, 
+  CardFooter // Ensuring CardFooter is definitely here
+} from "@/components/ui/card";
 import { Award, CheckCircle, XCircle } from "lucide-react";
 import Link from 'next/link';
 
