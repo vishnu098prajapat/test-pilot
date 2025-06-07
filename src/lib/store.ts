@@ -1,10 +1,9 @@
 
 import type { Test, Question } from './types';
 
-// Augment the Global interface to include our custom 'tests_store'
+// Augment the Global interface to include our custom store
 declare global {
-  var tests_store: Test[] | undefined;
-  var tests_store_prod: Test[] | undefined; // Using a different name for safety
+  var __DEV_TEST_APP_STORE__: Test[] | undefined;
 }
 
 // Initial mock data
@@ -85,83 +84,88 @@ const initialMockTests: Test[] = [
   },
 ];
 
-
-function getStore(): Test[] {
-  if (process.env.NODE_ENV === 'production') {
-     if (!globalThis.tests_store_prod) {
-        (globalThis as any).tests_store_prod = [...initialMockTests];
-     }
-     return (globalThis as any).tests_store_prod;
-  } else {
-    // Development environment
-    if (!globalThis.tests_store) {
-      console.log('[STORE-INIT] Initializing globalThis.tests_store for development with a copy of mock data.');
-      globalThis.tests_store = [...initialMockTests]; // Use a copy
-    }
-    return globalThis.tests_store;
+// Initialize the store on globalThis if it doesn't exist.
+// This block should only run once per server lifecycle in development.
+if (process.env.NODE_ENV !== 'production') {
+  if (!globalThis.__DEV_TEST_APP_STORE__) {
+    console.log('[STORE-INIT] Initializing globalThis.__DEV_TEST_APP_STORE__ with initial mock data.');
+    globalThis.__DEV_TEST_APP_STORE__ = [...initialMockTests]; // Store a copy
   }
 }
 
-function setStore(newStore: Test[]): void {
+function getStore(): Test[] {
   if (process.env.NODE_ENV === 'production') {
-     (globalThis as any).tests_store_prod = newStore;
+    // In production, you'd ideally use a real database.
+    // For this mock, we'll simulate a separate prod store if needed,
+    // but it won't persist across deployments.
+    if (!globalThis.__PROD_TEST_APP_STORE__) {
+        (globalThis as any).__PROD_TEST_APP_STORE__ = [...initialMockTests];
+    }
+    return (globalThis as any).__PROD_TEST_APP_STORE__;
   } else {
-    globalThis.tests_store = newStore;
+    // Development: use the dev-specific global store
+    if (!globalThis.__DEV_TEST_APP_STORE__) {
+      console.warn('[STORE-WARN] globalThis.__DEV_TEST_APP_STORE__ was not found in getStore (dev). Re-initializing.');
+      globalThis.__DEV_TEST_APP_STORE__ = [...initialMockTests];
+    }
+    return globalThis.__DEV_TEST_APP_STORE__;
   }
 }
 
 
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  const currentTests = getStore();
-  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${currentTests.length}`);
-  return currentTests.filter(test => test.teacherId === teacherId);
+  const store = getStore();
+  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}". Store count: ${store.length}`);
+  return store.filter(test => test.teacherId === teacherId);
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  const currentTests = getStore();
-  console.log(`[STORE] getTestById called for ID: "${testId}"`);
-  console.log(`[STORE] Current test count in store variable: ${currentTests.length}`);
-  console.log(`[STORE] Current test IDs in store variable: ${currentTests.map(t => t.id).join(', ')}`);
-  const foundTest = currentTests.find(test => test.id === testId);
+  const store = getStore();
+  console.log(`[STORE] getTestById: Called for ID: "${testId}"`);
+  console.log(`[STORE] getTestById: Current store size from getStore(): ${store.length}`);
+  console.log(`[STORE] getTestById: Current store IDs from getStore(): ${store.map(t => t.id).join(', ')}`);
+  
+  const foundTest = store.find(test => test.id === testId);
   if (!foundTest) {
-    console.warn(`[STORE] Test with ID "${testId}" NOT FOUND in current store state during getTestById.`);
+    console.warn(`[STORE] getTestById: Test with ID "${testId}" NOT FOUND.`);
   } else {
-    console.log(`[STORE] Test with ID "${testId}" FOUND in store.`);
+    console.log(`[STORE] getTestById: Test with ID "${testId}" FOUND.`);
   }
   return foundTest;
 }
 
 export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  const currentTests = getStore(); // Get current state
+  const store = getStore(); // Get the reference to the global array
+  
   const newTest: Test = {
     ...newTestData,
     id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  
-  // Create a new array with the new test and assign it back
-  const updatedTests = [...currentTests, newTest];
-  setStore(updatedTests); // This updates globalThis.tests_store
 
-  console.log('[STORE] addTest: New test to be added:', JSON.stringify(newTest.id));
-  console.log('[STORE] addTest: Store state BEFORE add attempt (IDs):', currentTests.map(t => t.id).join(', ') || 'empty');
+  console.log(`[STORE] addTest: Attempting to add test ID: ${newTest.id}`);
+  console.log(`[STORE] addTest: Store size BEFORE push: ${store.length}`);
+  console.log(`[STORE] addTest: Store IDs BEFORE push: ${store.map(t => t.id).join(', ')}`);
+
+  store.push(newTest); // Directly modify the global array referenced by 'store'
+
+  console.log(`[STORE] addTest: Store size AFTER push: ${store.length}`);
+  console.log(`[STORE] addTest: Store IDs AFTER push (from mutated 'store' var): ${store.map(t => t.id).join(', ')}`);
   
-  const finalStore = getStore(); // Re-fetch to confirm it was set
-  console.log('[STORE] addTest: Total tests in store AFTER add:', finalStore.length);
-  console.log(`[STORE] addTest: All test IDs in store AFTER add: ${finalStore.map(t => t.id).join(', ')}`);
-  
-  if (!finalStore.find(t => t.id === newTest.id)) {
-    console.error(`[STORE] CRITICAL: Test ID ${newTest.id} was NOT FOUND in store immediately after addTest!`);
+  // Verify it's in the actual global store instance
+  const verificationStore = getStore(); // Fetch global store again
+  if (verificationStore.find(t => t.id === newTest.id)) {
+    console.log(`[STORE] SUCCESS: Test ID ${newTest.id} VERIFIED in global store (via getStore()) after addTest.`);
   } else {
-    console.log(`[STORE] SUCCESS: Test ID ${newTest.id} was found in store after addTest.`);
+    console.error(`[STORE] CRITICAL FAILURE: Test ID ${newTest.id} NOT VERIFIED in global store (via getStore()) after addTest. Verification store length: ${verificationStore.length}, IDs: ${verificationStore.map(t=>t.id).join(', ')}`);
   }
   return newTest;
 }
 
 export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  let currentTests = getStore();
-  const testIndex = currentTests.findIndex(test => test.id === testId);
+  const store = getStore();
+  const testIndex = store.findIndex(test => test.id === testId);
 
   if (testIndex === -1) {
     console.warn(`[STORE] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
@@ -169,30 +173,30 @@ export async function updateTest(testId: string, updatedTestData: Partial<Omit<T
   }
   
   const updatedTest = {
-    ...currentTests[testIndex],
+    ...store[testIndex],
     ...updatedTestData,
     updatedAt: new Date(),
   };
   
-  const newStoreState = currentTests.map((test, index) => index === testIndex ? updatedTest : test);
-  setStore(newStoreState);
+  store[testIndex] = updatedTest; // Update in place
 
   console.log('[STORE] Test updated. Test ID:', updatedTest.id);
   return updatedTest;
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  let currentTests = getStore();
-  const initialLength = currentTests.length;
-  const newTestsArray = currentTests.filter(test => test.id !== testId);
-  const success = newTestsArray.length < initialLength;
+  const store = getStore();
+  const initialLength = store.length;
+  const testIndex = store.findIndex(test => test.id === testId);
 
-  if (success) {
-    setStore(newTestsArray);
+  if (testIndex > -1) {
+    store.splice(testIndex, 1); // Remove the test from the array
     console.log(`[STORE] Test with ID "${testId}" deleted.`);
+    console.log('[STORE] Total tests in store after delete:', store.length);
+    return true;
   } else {
     console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion.`);
+    console.log('[STORE] Total tests in store after failed delete attempt:', store.length);
+    return false;
   }
-  console.log('[STORE] Total tests in store after delete attempt:', getStore().length);
-  return success;
 }
