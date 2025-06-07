@@ -1,0 +1,142 @@
+[
+  {
+    "id": "test1",
+    "title": "Basic Algebra Quiz",
+    "subject": "Mathematics",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "q1",
+        "type": "mcq",
+        "text": "What is 2 + 2?",
+        "points": 10,
+        "options": [
+          {
+            "id": "opt1",
+            "text": "3"
+          },
+          {
+            "id": "opt2",
+            "text": "4"
+          },
+          {
+            "id": "opt3",
+            "text": "5"
+          },
+          {
+            "id": "opt4",
+            "text": "6"
+          }
+        ],
+        "correctOptionId": "opt2"
+      },
+      {
+        "id": "q2",
+        "type": "true-false",
+        "text": "The Earth is flat.",
+        "points": 5,
+        "correctAnswer": false
+      },
+      {
+        "id": "q3",
+        "type": "short-answer",
+        "text": "What is the capital of France?",
+        "points": 10,
+        "correctAnswer": "Paris"
+      }
+    ],
+    "teacherId": "teacher1",
+    "createdAt": "2023-10-01T10:00:00.000Z",
+    "updatedAt": "2023-10-01T10:00:00.000Z",
+    "published": true,
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false
+  },
+  {
+    "id": "test2",
+    "title": "Introduction to JavaScript",
+    "subject": "Programming",
+    "duration": 60,
+    "questions": [
+      {
+        "id": "q2-1",
+        "type": "mcq",
+        "text": "Which keyword is used to declare a variable in JavaScript?",
+        "points": 10,
+        "options": [
+          {
+            "id": "opt2-1-1",
+            "text": "var"
+          },
+          {
+            "id": "opt2-1-2",
+            "text": "let"
+          },
+          {
+            "id": "opt2-1-3",
+            "text": "const"
+          },
+          {
+            "id": "opt2-1-4",
+            "text": "All of the above"
+          }
+        ],
+        "correctOptionId": "opt2-1-4"
+      }
+    ],
+    "teacherId": "teacher1",
+    "createdAt": "2023-10-15T14:30:00.000Z",
+    "updatedAt": "2023-10-15T14:30:00.000Z",
+    "published": false,
+    "attemptsAllowed": 0,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": false,
+    "enforceFullScreen": true
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749304216564-0-bs36iet",
+        "text": "Which of the following methods is used to add an element to the end of a list in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749304216564_gql714wr8",
+            "text": "list.add(element)"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749304216564_5t7et9cia",
+            "text": "list.insert(element)"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749304216564_elghpzsz0",
+            "text": "list.append(element)"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749304216564_ytik8s49p",
+            "text": "list.update(element)"
+          }
+        ],
+        "correctOptionId": "6627b311-46d3-4ca2-bc7a-c144a4aa3c56"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749303895286",
+    "id": "test-1749304244982-woe5j",
+    "createdAt": "2025-06-07T13:50:44.982Z",
+    "updatedAt": "2025-06-07T13:50:44.982Z"
+  }
+]
