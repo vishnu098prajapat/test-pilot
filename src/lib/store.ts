@@ -80,17 +80,24 @@ let tests: Test[] = [
 ];
 
 export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  // await simulateDelay(300); // Removed delay
+  console.log(`[STORE] getTestsByTeacher called for teacherId: "${teacherId}"`);
   return tests.filter(test => test.teacherId === teacherId);
 }
 
 export async function getTestById(testId: string): Promise<Test | undefined> {
-  // await simulateDelay(200); // Removed delay
-  return tests.find(test => test.id === testId);
+  console.log(`[STORE] getTestById called for ID: "${testId}"`);
+  console.log(`[STORE] Current test count: ${tests.length}`);
+  console.log(`[STORE] Current test IDs in store: ${tests.map(t => t.id).join(', ')}`);
+  const foundTest = tests.find(test => test.id === testId);
+  if (!foundTest) {
+    console.warn(`[STORE] Test with ID "${testId}" NOT FOUND in current store state during getTestById.`);
+  } else {
+    console.log(`[STORE] Test with ID "${testId}" FOUND in store.`);
+  }
+  return foundTest;
 }
 
 export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test> {
-  // await simulateDelay(500); // Removed delay
   const newTest: Test = {
     ...newTestData,
     id: `test-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -98,13 +105,17 @@ export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'upda
     updatedAt: new Date(),
   };
   tests.push(newTest);
+  console.log('[STORE] Test added. New test ID:', newTest.id);
+  console.log('[STORE] Test details:', JSON.stringify(newTest, null, 2));
+  console.log('[STORE] Total tests in store after add:', tests.length);
+  console.log(`[STORE] All test IDs in store after add: ${tests.map(t => t.id).join(', ')}`);
   return newTest;
 }
 
 export async function updateTest(testId: string, updatedTestData: Partial<Omit<Test, 'id' | 'teacherId' | 'createdAt'>>): Promise<Test | undefined> {
-  // await simulateDelay(400); // Removed delay
   const testIndex = tests.findIndex(test => test.id === testId);
   if (testIndex === -1) {
+    console.warn(`[STORE] updateTest: Test with ID "${testId}" NOT FOUND for update.`);
     return undefined;
   }
   tests[testIndex] = {
@@ -112,12 +123,20 @@ export async function updateTest(testId: string, updatedTestData: Partial<Omit<T
     ...updatedTestData,
     updatedAt: new Date(),
   };
+  console.log('[STORE] Test updated. Test ID:', tests[testIndex].id);
+  console.log('[STORE] Updated test details:', JSON.stringify(tests[testIndex], null, 2));
   return tests[testIndex];
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  // await simulateDelay(300); // Removed delay
   const initialLength = tests.length;
   tests = tests.filter(test => test.id !== testId);
-  return tests.length < initialLength;
+  const success = tests.length < initialLength;
+  if (success) {
+    console.log(`[STORE] Test with ID "${testId}" deleted.`);
+  } else {
+    console.warn(`[STORE] deleteTest: Test with ID "${testId}" NOT FOUND for deletion.`);
+  }
+  console.log('[STORE] Total tests in store after delete attempt:', tests.length);
+  return success;
 }
