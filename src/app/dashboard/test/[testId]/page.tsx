@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -9,11 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, Eye } from "lucide-react";
-import { getTestById, deleteTest as deleteTestAction } from "@/lib/store"; // Mock store
+import { getTestById, deleteTest as deleteTestAction } from "@/lib/store"; 
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input"; // Added import
+import { Input } from "@/components/ui/input"; 
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,36 +35,65 @@ export default function TestManagementPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [test, setTest] = useState<Test | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Local loading state for this page's data
 
   const testId = params.testId as string;
 
   useEffect(() => {
-    async function fetchTest() {
-      if (testId && user?.id) {
+    let isActive = true; // Flag to prevent state updates if component unmounts
+
+    async function fetchTestDetails() {
+      // user object is from useAuth. DashboardLayout handles skeleton/redirect if user is initially loading or null.
+      // So, if this effect runs and user is null, it's an edge case or user logged out.
+      if (!testId || !user?.id) {
+        if (isActive) setIsLoading(false);
+        if (!testId && user?.id) { // If user is somehow loaded but testId is missing
+           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive" });
+           router.push("/dashboard");
+        } else if (!user?.id) { // If user is not available (e.g., logged out)
+           router.push("/auth/login");
+        }
+        return;
+      }
+
+      if (isActive) {
         setIsLoading(true);
-        try {
-          const fetchedTest = await getTestById(testId);
-          if (fetchedTest && fetchedTest.teacherId === user.id) {
-            setTest(fetchedTest);
-          } else if (fetchedTest) {
-             toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive" });
-            router.push("/dashboard");
-          } else {
-            toast({ title: "Not Found", description: "Test not found.", variant: "destructive" });
-            router.push("/dashboard");
-          }
-        } catch (error) {
-          toast({ title: "Error", description: "Failed to load test details.", variant: "destructive" });
-        } finally {
+        setTest(null); // Clear previous test data before fetching new
+      }
+
+      try {
+        const fetchedTest = await getTestById(testId);
+        if (!isActive) return;
+
+        if (fetchedTest && fetchedTest.teacherId === user.id) {
+          setTest(fetchedTest);
+        } else if (fetchedTest) {
+          toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive" });
+          router.push("/dashboard");
+        } else {
+          toast({ title: "Not Found", description: "Test not found.", variant: "destructive" });
+          router.push("/dashboard");
+        }
+      } catch (error) {
+        if (!isActive) return;
+        console.error("Failed to load test details:", error);
+        toast({ title: "Error", description: "Failed to load test details.", variant: "destructive" });
+        // Optionally, redirect or set an error state to display on the page
+        // router.push("/dashboard"); 
+      } finally {
+        if (isActive) {
           setIsLoading(false);
         }
-      } else if (!user?.id && !isLoading) { // if user is not loaded yet but not loading, wait
-         router.push("/auth/login");
       }
     }
-    fetchTest();
-  }, [testId, user?.id, router, toast, isLoading]);
+
+    fetchTestDetails();
+
+    return () => {
+      isActive = false; // Cleanup function
+    };
+  }, [testId, user?.id, router, toast]); // Dependencies that trigger re-fetch
+
 
   const handleDeleteTest = async () => {
     if (!test) return;
@@ -80,8 +110,10 @@ export default function TestManagementPage() {
     }
   };
 
-  const shareLink = test ? `${window.location.origin}/test/${test.id}` : "";
+  const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
 
+  // This isLoading is the local one for this page's content.
+  // DashboardLayout handles the auth loading state.
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
@@ -104,9 +136,13 @@ export default function TestManagementPage() {
   }
 
   if (!test) {
-    return ( // This case should ideally be handled by redirection in useEffect
+    // This case means fetching finished (isLoading is false) but test is still null
+    // (e.g., not found, unauthorized and redirected, or error during fetch).
+    // The toast messages from useEffect should guide the user.
+    // A generic fallback if redirection somehow fails or isn't immediate:
+    return (
       <div className="container mx-auto py-8 text-center">
-        <p className="text-xl text-muted-foreground">Test not found or you do not have permission to view it.</p>
+        <p className="text-xl text-muted-foreground">Could not load test details.</p>
         <Button asChild className="mt-4"><Link href="/dashboard">Go to Dashboard</Link></Button>
       </div>
     );
@@ -131,15 +167,17 @@ export default function TestManagementPage() {
             </Link>
           </Button>
            <Button variant="default" disabled={!test.published} onClick={() => {
-              navigator.clipboard.writeText(shareLink);
-              toast({ title: "Link Copied!", description: "Test link copied to clipboard." });
+              if(shareLink) {
+                navigator.clipboard.writeText(shareLink);
+                toast({ title: "Link Copied!", description: "Test link copied to clipboard." });
+              }
            }}>
             <Share2 className="mr-2 h-4 w-4" /> Share Test
           </Button>
         </div>
       </div>
 
-      {test.published && (
+      {test.published && shareLink && (
         <Card className="mb-6 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-700">
           <CardHeader>
             <CardTitle className="text-green-700 dark:text-green-400">Test is Live!</CardTitle>
@@ -176,7 +214,6 @@ export default function TestManagementPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">Results analysis features are coming soon.</p>
-            {/* Placeholder for results list or charts */}
              <Image src="https://placehold.co/600x300.png" alt="Placeholder chart" width={600} height={300} className="mt-4 rounded-md" data-ai-hint="chart analytics" />
           </CardContent>
            <CardFooter>
@@ -232,3 +269,4 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
     </CardContent>
   </Card>
 );
+
