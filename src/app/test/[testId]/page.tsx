@@ -1,9 +1,10 @@
+
 "use client"; // Required for useParams and client-side data fetching/state
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import StudentTestArea from '@/components/student/student-test-area';
-import { getTestById } from '@/lib/store'; // Mock store
+import { getTestById } from '@/lib/store'; 
 import type { Test } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle } from 'lucide-react';
@@ -22,25 +23,32 @@ export default function StudentTestPage() {
   useEffect(() => {
     async function fetchTest() {
       if (!testId) {
-        setError("Test ID is missing.");
+        console.error("StudentTestPage: No testId provided in URL parameters.");
+        setError("Test ID is missing from the link.");
         setIsLoading(false);
         return;
       }
       
       setIsLoading(true);
       setError(null);
+      console.log(`StudentTestPage: Attempting to load test with ID: "${testId}"`);
       try {
         const fetchedTest = await getTestById(testId);
+        console.log(`StudentTestPage: Fetched test data for ID "${testId}":`, fetchedTest);
+
         if (fetchedTest && fetchedTest.published) {
           setTestData(fetchedTest);
+          setError(null); 
+          console.log(`StudentTestPage: Test ID "${testId}" is published and loaded successfully.`);
         } else if (fetchedTest && !fetchedTest.published) {
-          setError("This test is not currently active or published.");
-        }
-        else {
-          setError("Test not found. Please check the link or contact your instructor.");
+          console.warn(`StudentTestPage: Test ID "${testId}" found but it is NOT PUBLISHED.`);
+          setError(`This test (ID: ${testId}) is not currently active or published. Please ask your teacher to publish it.`);
+        } else {
+          console.warn(`StudentTestPage: Test ID "${testId}" NOT FOUND in store.`);
+          setError(`Test with ID "${testId}" not found. Please check the link or contact your instructor.`);
         }
       } catch (err) {
-        console.error("Failed to load test:", err);
+        console.error(`StudentTestPage: Error loading test ID "${testId}":`, err);
         setError("An error occurred while loading the test. Please try again later.");
       } finally {
         setIsLoading(false);
@@ -80,12 +88,11 @@ export default function StudentTestPage() {
   }
 
   if (!testData) {
-     // This case should ideally be covered by error state, but as a fallback:
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
          <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
         <h2 className="text-2xl font-bold text-destructive mb-2">Test Not Available</h2>
-        <p className="text-muted-foreground mb-6">The requested test could not be loaded.</p>
+        <p className="text-muted-foreground mb-6">The requested test (ID: {testId}) could not be loaded. It might not exist or is not published.</p>
          <Button asChild variant="outline">
           <Link href="/">Go to Homepage</Link>
         </Button>
@@ -93,9 +100,5 @@ export default function StudentTestPage() {
     );
   }
   
-  // Check if student has already attempted (if attemptsAllowed is limited)
-  // This logic would be more complex with a backend and user tracking
-  // For now, we assume a fresh attempt.
-
   return <StudentTestArea testData={testData} />;
 }
