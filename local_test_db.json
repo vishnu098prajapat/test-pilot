@@ -138,5 +138,97 @@
     "id": "test-1749304244982-woe5j",
     "createdAt": "2025-06-07T13:50:44.982Z",
     "updatedAt": "2025-06-07T13:50:44.982Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749304768211-0-ju4cu4y",
+        "text": "Which chamber of the heart receives deoxygenated blood from the body?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749304768211_pg0j1beg3",
+            "text": "Left ventricle"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749304768211_bo3t5wup9",
+            "text": "Right atrium"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749304768211_ulufg4x5k",
+            "text": "Aorta"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749304768211_3qrsbaki7",
+            "text": "Pulmonary artery"
+          }
+        ],
+        "correctOptionId": "d398bd66-a777-43ee-9caa-c4add48ee832"
+      },
+      {
+        "id": "ai-q-1749304768211-1-vkiqb7r",
+        "text": "What type of valves prevent backflow of blood from the ventricles into the atria?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749304768211_4np1hw8oy",
+            "text": "Semilunar valves"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749304768211_0sz13rjvo",
+            "text": "Atrioventricular valves"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749304768211_gay712c4s",
+            "text": "Aortic valves"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749304768211_oxc5tiar7",
+            "text": "Pulmonary valves"
+          }
+        ],
+        "correctOptionId": "45b6e4a8-ea67-4785-9043-32f5a6aee4c1"
+      },
+      {
+        "id": "ai-q-1749304768211-2-192zuvb",
+        "text": "Which structure is known as the 'pacemaker' of the heart?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749304768211_myq7vfqj3",
+            "text": "Atrioventricular (AV) node"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749304768211_62jlcp57z",
+            "text": "Bundle of His"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749304768211_9fs915fu0",
+            "text": "Purkinje fibers"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749304768211_b5n14a85z",
+            "text": "Sinoatrial (SA) node"
+          }
+        ],
+        "correctOptionId": "28963a98-2a44-4ca0-aa73-64fbefc9c091"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749304439784",
+    "id": "test-1749304793315-uqdr1",
+    "createdAt": "2025-06-07T13:59:53.315Z",
+    "updatedAt": "2025-06-07T13:59:53.315Z"
   }
 ]

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input'; // For short answer if preferred over textarea
+import { Badge } from '@/components/ui/badge'; // Added Badge import
 
 interface QuestionDisplayProps {
   question: Question;
