@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck } from "lucide-react"; // Removed Eye as it's not used directly here
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle } from "lucide-react";
 import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
@@ -32,41 +32,46 @@ import Image from "next/image";
 export default function TestManagementPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, isLoading: isAuthLoading } = useAuth(); // Use auth loading state
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const [test, setTest] = useState<Test | null>(null);
-  const [isFetchingTest, setIsFetchingTest] = useState(true); // Renamed for clarity
+  const [isFetchingTest, setIsFetchingTest] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const testId = params.testId as string;
 
   useEffect(() => {
     let isActive = true;
-    // Don't proceed if auth is still loading or user is not available.
-    // DashboardLayout should handle redirecting to login if user is null after auth loading.
+    setFetchError(null); // Clear previous errors on new fetch
+
     if (isAuthLoading) {
-      setIsFetchingTest(true); // Keep showing local loading state if auth is not ready
+      // Auth state is still being determined by useAuth and DashboardLayout
+      setIsFetchingTest(true); // Show loading skeleton for this page
       return;
     }
 
-    // If DashboardLayout has done its job, user should be available here.
-    // If user is null here, DashboardLayout should have redirected.
-    // We proceed only if user is definitively available.
+    // If auth has loaded and user is null, DashboardLayout should handle redirection.
+    // This page should not proceed to fetch if user is not available.
     if (!user) {
-        // This case should ideally be caught by DashboardLayout.
-        // If somehow reached, push to login to be safe, though DashboardLayout is primary.
-        if (isActive) router.push('/auth/login');
-        return;
+      // DashboardLayout is responsible for redirecting.
+      // This page can show a message or a minimal loader until redirect happens.
+      // console.log("TestManagementPage: User not authenticated after auth load. DashboardLayout should redirect.");
+      setIsFetchingTest(false); // Stop local fetching indicator
+      // No explicit router.push here; DashboardLayout handles it.
+      return;
     }
 
     async function fetchTestDetails() {
       if (!isActive) return;
       setIsFetchingTest(true);
-      setTest(null);
+      setTest(null); // Clear previous test data
 
       if (!testId) {
-        toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
-        if (isActive) router.push("/dashboard");
-        setIsFetchingTest(false);
+        if (isActive) {
+          toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
+          router.push("/dashboard"); // Redirect if no testId
+          setIsFetchingTest(false);
+        }
         return;
       }
 
@@ -76,21 +81,21 @@ export default function TestManagementPage() {
 
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
+          setFetchError(null);
         } else if (fetchedTest) {
-          // Teacher ID mismatch
+          setFetchError("You are not authorized to view this test.");
           toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive", duration: 2000 });
-          if (isActive) router.push("/dashboard");
+          // router.push("/dashboard"); // Optional: redirect if unauthorized
         } else {
-          // Test not found
+          setFetchError("Test not found.");
           toast({ title: "Not Found", description: "Test not found.", variant: "destructive", duration: 2000 });
-          if (isActive) router.push("/dashboard");
+          // router.push("/dashboard"); // Optional: redirect if not found
         }
       } catch (error) {
         if (!isActive) return;
         console.error("Failed to load test details:", error);
+        setFetchError("Failed to load test details. Please try again.");
         toast({ title: "Error", description: "Failed to load test details.", variant: "destructive", duration: 2000 });
-        // Optionally redirect to dashboard on critical fetch error
-        // if (isActive) router.push("/dashboard");
       } finally {
         if (isActive) {
           setIsFetchingTest(false);
@@ -103,7 +108,7 @@ export default function TestManagementPage() {
     return () => {
       isActive = false;
     };
-  }, [testId, user, isAuthLoading, router, toast]); // Added isAuthLoading and user itself
+  }, [testId, user, isAuthLoading, router, toast]);
 
 
   const handleDeleteTest = async () => {
@@ -123,8 +128,7 @@ export default function TestManagementPage() {
 
   const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
 
-  // Show skeleton if auth is loading OR if test data is fetching
-  if (isAuthLoading || isFetchingTest) {
+  if (isAuthLoading || (isFetchingTest && !fetchError)) {
     return (
       <div className="container mx-auto py-8">
         <Skeleton className="h-10 w-3/4 mb-4" />
@@ -145,13 +149,37 @@ export default function TestManagementPage() {
     );
   }
 
-  // If after loading, test is still null, it means fetching failed or test was not found/unauthorized.
-  // The useEffect should have handled redirection in those cases.
-  // This is a fallback or for cases where redirect hasn't happened yet.
+  // If auth has loaded but there's no user, DashboardLayout should be redirecting.
+  // Show a message here as a fallback or while redirect is happening.
+  if (!isAuthLoading && !user) {
+    return (
+      <div className="container mx-auto py-8 text-center flex flex-col items-center justify-center min-h-[300px]">
+        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
+        <p className="text-xl text-muted-foreground">Authentication issue.</p>
+        <p className="text-sm text-muted-foreground">You might be redirected to the login page.</p>
+      </div>
+    );
+  }
+  
+  if (fetchError) {
+     return (
+      <div className="container mx-auto py-8 text-center flex flex-col items-center justify-center min-h-[300px]">
+        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
+        <h2 className="text-2xl font-bold text-destructive mb-2">Error Loading Test</h2>
+        <p className="text-muted-foreground mb-6">{fetchError}</p>
+        <Button asChild variant="outline">
+          <Link href="/dashboard">Go to Dashboard</Link>
+        </Button>
+      </div>
+    );
+  }
+
+
   if (!test) {
+    // This case should ideally be covered by fetchError or loading state.
     return (
       <div className="container mx-auto py-8 text-center">
-        <p className="text-xl text-muted-foreground">Could not load test details or test not found.</p>
+        <p className="text-xl text-muted-foreground">Test data is not available.</p>
         <Button asChild className="mt-4"><Link href="/dashboard">Go to Dashboard</Link></Button>
       </div>
     );
@@ -195,8 +223,10 @@ export default function TestManagementPage() {
             <p className="text-sm text-green-600 dark:text-green-300">Students can access this test using the link:</p>
             <Input type="text" readOnly value={shareLink} className="mt-2 bg-green-100 dark:bg-green-800/50" />
             <Button size="sm" variant="ghost" className="mt-2 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-700" onClick={() => {
-              navigator.clipboard.writeText(shareLink);
-              toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
+              if (shareLink) {
+                navigator.clipboard.writeText(shareLink);
+                toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
+              }
             }}>
               Copy Link
             </Button>
