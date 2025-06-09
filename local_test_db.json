@@ -1308,5 +1308,62 @@
     "id": "test-1749457749389-nihp9",
     "createdAt": "2025-06-09T08:29:09.389Z",
     "updatedAt": "2025-06-09T08:29:09.389Z"
+  },
+  {
+    "title": "AI Gen (medium) SHORT-ANSWER Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749460512067-0-fqm3gty",
+        "text": "What is the C++ keyword used to declare a boolean variable?",
+        "points": 10,
+        "type": "short-answer",
+        "correctAnswer": "bool",
+        "options": []
+      },
+      {
+        "id": "ai-q-1749460512068-1-jmn0smp",
+        "text": "Which data type is commonly used to store whole numbers in C++?",
+        "points": 10,
+        "type": "short-answer",
+        "correctAnswer": "int",
+        "options": []
+      },
+      {
+        "id": "ai-q-1749460512068-2-ut0giwc",
+        "text": "What data type is generally used for storing single-precision floating-point numbers in C++?",
+        "points": 10,
+        "type": "short-answer",
+        "correctAnswer": "float",
+        "options": []
+      },
+      {
+        "id": "ai-q-1749460512068-3-lobgddk",
+        "text": "Which data type in C++ is used to represent a single character?",
+        "points": 10,
+        "type": "short-answer",
+        "correctAnswer": "char",
+        "options": []
+      },
+      {
+        "id": "ai-q-1749460512068-4-g9h48ue",
+        "text": "Which data type is used to represent the absence of a type in C++?",
+        "points": 10,
+        "type": "short-answer",
+        "correctAnswer": "void",
+        "options": []
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749459754354-kijzf",
+    "id": "test-1749460552060-krwx1",
+    "createdAt": "2025-06-09T09:15:52.060Z",
+    "updatedAt": "2025-06-09T09:15:52.060Z"
   }
 ]

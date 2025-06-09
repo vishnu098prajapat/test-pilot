@@ -26,8 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import Image from "next/image";
-
 
 export default function TestManagementPage() {
   const params = useParams();
@@ -42,34 +40,27 @@ export default function TestManagementPage() {
 
   useEffect(() => {
     let isActive = true;
-    setFetchError(null); // Clear previous errors on new fetch
+    setFetchError(null); 
 
     if (isAuthLoading) {
-      // Auth state is still being determined by useAuth and DashboardLayout
-      setIsFetchingTest(true); // Show loading skeleton for this page
+      setIsFetchingTest(true); 
       return;
     }
 
-    // If auth has loaded and user is null, DashboardLayout should handle redirection.
-    // This page should not proceed to fetch if user is not available.
     if (!user) {
-      // DashboardLayout is responsible for redirecting.
-      // This page can show a message or a minimal loader until redirect happens.
-      // console.log("TestManagementPage: User not authenticated after auth load. DashboardLayout should redirect.");
-      setIsFetchingTest(false); // Stop local fetching indicator
-      // No explicit router.push here; DashboardLayout handles it.
+      setIsFetchingTest(false); 
       return;
     }
 
     async function fetchTestDetails() {
       if (!isActive) return;
       setIsFetchingTest(true);
-      setTest(null); // Clear previous test data
+      setTest(null); 
 
       if (!testId) {
         if (isActive) {
           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
-          router.push("/dashboard"); // Redirect if no testId
+          router.push("/dashboard"); 
           setIsFetchingTest(false);
         }
         return;
@@ -85,11 +76,9 @@ export default function TestManagementPage() {
         } else if (fetchedTest) {
           setFetchError("You are not authorized to view this test.");
           toast({ title: "Unauthorized", description: "You are not authorized to view this test.", variant: "destructive", duration: 2000 });
-          // router.push("/dashboard"); // Optional: redirect if unauthorized
         } else {
           setFetchError("Test not found.");
           toast({ title: "Not Found", description: "Test not found.", variant: "destructive", duration: 2000 });
-          // router.push("/dashboard"); // Optional: redirect if not found
         }
       } catch (error) {
         if (!isActive) return;
@@ -149,8 +138,6 @@ export default function TestManagementPage() {
     );
   }
 
-  // If auth has loaded but there's no user, DashboardLayout should be redirecting.
-  // Show a message here as a fallback or while redirect is happening.
   if (!isAuthLoading && !user) {
     return (
       <div className="container mx-auto py-8 text-center flex flex-col items-center justify-center min-h-[300px]">
@@ -176,7 +163,6 @@ export default function TestManagementPage() {
 
 
   if (!test) {
-    // This case should ideally be covered by fetchError or loading state.
     return (
       <div className="container mx-auto py-8 text-center">
         <p className="text-xl text-muted-foreground">Test data is not available.</p>
@@ -211,6 +197,11 @@ export default function TestManagementPage() {
            }}>
             <Share2 className="mr-2 h-4 w-4" /> Share Test
           </Button>
+           <Button variant="outline" asChild>
+                <Link href={`/test/${test.id}/leaderboard`}>
+                  <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
+                </Link>
+            </Button>
         </div>
       </div>
 
@@ -246,24 +237,6 @@ export default function TestManagementPage() {
       <Separator className="my-8" />
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-xl font-headline flex items-center"><BarChart3 className="mr-2 h-5 w-5" /> Results & Analytics</CardTitle>
-            <CardDescription>View student submissions and performance (Placeholder).</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Results analysis features are coming soon.</p>
-             <Image src="https://placehold.co/600x300.png" alt="Placeholder chart" width={600} height={300} className="mt-4 rounded-md" data-ai-hint="chart analytics" />
-          </CardContent>
-           <CardFooter>
-             <Button asChild variant="outline">
-                <Link href={`/test/${test.id}/leaderboard`}>
-                  <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
-                </Link>
-            </Button>
-          </CardFooter>
-        </Card>
-
         <Card className="border-orange-400 dark:border-orange-600">
           <CardHeader>
             <CardTitle className="text-xl font-headline flex items-center text-orange-600 dark:text-orange-400"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
@@ -316,3 +289,4 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
 );
     
     
+

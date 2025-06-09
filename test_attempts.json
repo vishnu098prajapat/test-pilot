@@ -443,5 +443,51 @@
     "suspiciousReason": "The student is answering questions at a reasonable pace with no indication of accessing external resources or unauthorized actions. Multiple updates to the same answer field are permitted within the testing parameters.",
     "id": "attempt-1749458391518-b2iohrd",
     "submittedAt": "2025-06-09T08:39:51.518Z"
+  },
+  {
+    "testId": "test-1749460552060-krwx1",
+    "testTitle": "AI Gen (medium) SHORT-ANSWER Test on c++",
+    "studentIdentifier": "golu",
+    "startTime": "2025-06-09T09:16:44.492Z",
+    "endTime": "2025-06-09T09:17:27.958Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749460512067-0-fqm3gty",
+        "answer": "bool",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749460512068-1-jmn0smp",
+        "answer": "int",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749460512068-2-ut0giwc",
+        "answer": "float",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749460512068-3-lobgddk",
+        "answer": "char",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749460512068-4-g9h48ue",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-09T09:16:44.501Z] Test started by golu. Anti-cheat measures active based on test settings.\n[2025-06-09T09:16:44.502Z] Test started by golu. Anti-cheat measures active based on test settings.\n[2025-06-09T09:16:50.509Z] Answer changed for question ID ai-q-1749460512067-0-fqm3gty.\n[2025-06-09T09:16:50.745Z] Answer changed for question ID ai-q-1749460512067-0-fqm3gty.\n[2025-06-09T09:16:50.904Z] Answer changed for question ID ai-q-1749460512067-0-fqm3gty.\n[2025-06-09T09:16:51.081Z] Answer changed for question ID ai-q-1749460512067-0-fqm3gty.\n[2025-06-09T09:16:59.910Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:00.149Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:00.262Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:01.110Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:01.261Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:01.380Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:01.946Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:02.172Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:02.284Z] Answer changed for question ID ai-q-1749460512068-1-jmn0smp.\n[2025-06-09T09:17:08.300Z] Answer changed for question ID ai-q-1749460512068-2-ut0giwc.\n[2025-06-09T09:17:08.500Z] Answer changed for question ID ai-q-1749460512068-2-ut0giwc.\n[2025-06-09T09:17:08.711Z] Answer changed for question ID ai-q-1749460512068-2-ut0giwc.\n[2025-06-09T09:17:08.896Z] Answer changed for question ID ai-q-1749460512068-2-ut0giwc.\n[2025-06-09T09:17:09.125Z] Answer changed for question ID ai-q-1749460512068-2-ut0giwc.\n[2025-06-09T09:17:15.863Z] Answer changed for question ID ai-q-1749460512068-3-lobgddk.\n[2025-06-09T09:17:16.028Z] Answer changed for question ID ai-q-1749460512068-3-lobgddk.\n[2025-06-09T09:17:16.074Z] Answer changed for question ID ai-q-1749460512068-3-lobgddk.\n[2025-06-09T09:17:16.216Z] Answer changed for question ID ai-q-1749460512068-3-lobgddk.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student rapidly changed answers multiple times for several questions (ai-q-1749460512067-0-fqm3gty, ai-q-1749460512068-1-jmn0smp, ai-q-1749460512068-2-ut0giwc, ai-q-1749460512068-3-lobgddk). This behavior is unusual and suggests the student may be looking up answers or trying different options quickly, indicating potential cheating.",
+    "id": "attempt-1749460389939-cok3ags",
+    "submittedAt": "2025-06-09T09:13:09.939Z"
   }
 ]
