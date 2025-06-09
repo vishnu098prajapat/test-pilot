@@ -30,27 +30,28 @@ export default function HomePage() {
       </header>
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-32 min-h-[70vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden">
-          <Image
-            src="/hero-background-study.png" // IMPORTANT: Assuming you save the image here
-            alt="Illustration of a student studying at a desk with a lamp and books"
-            layout="fill"
-            objectFit="cover"
-            quality={85} // Slightly increased quality for a nice illustration
-            className="-z-20"
-            data-ai-hint="student illustration" 
-            priority
-          />
-          <div className="absolute inset-0 bg-primary/60 -z-10"></div> {/* Overlay adjusted slightly if needed */}
-          <div className="container mx-auto px-6 z-10">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-white">
+        {/* Hero Section Updated */}
+        <section className="py-12 md:py-20 text-center bg-gradient-to-br from-background to-secondary/30">
+          <div className="container mx-auto px-6 flex flex-col items-center">
+            <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary dark:text-primary-foreground">
               The Future of Online Assessments is Here
             </h1>
-            <p className="text-lg md:text-xl text-neutral-200 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-foreground/80 dark:text-muted-foreground mb-10 max-w-2xl mx-auto">
               Test Pilot empowers educators to create, distribute, and manage secure online tests with ease, backed by AI-powered proctoring.
             </p>
-            <Button size="lg" variant="secondary" asChild>
+            <div className="mb-10 shadow-xl rounded-lg overflow-hidden">
+              <Image
+                src="/home-page.jpg" // CORRECTED: Assuming you rename "home page.jpg" to "home-page.jpg" in /public
+                width={800} 
+                height={500} // Adjusted height for better aspect ratio with 800 width
+                alt="Illustrative image of a person studying or working on a laptop for Test Pilot" 
+                quality={85}
+                className="object-cover" // Ensures image covers the dimensions without distortion
+                data-ai-hint="student illustration" 
+                priority
+              />
+            </div>
+            <Button size="lg" variant="default" asChild> {/* Changed variant to default for better visibility */}
               <Link href="/auth/signup">
                 Get Started Free <Zap className="ml-2 h-5 w-5"/>
               </Link>
@@ -77,8 +78,8 @@ export default function HomePage() {
               />
               <FeatureCard
                 icon={<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
-                title="Seamless Student Experience"
-                description="Clean, distraction-free interface for students with direct test access via unique links."
+                title="Seamless User Experience"
+                description="Clean, distraction-free interface for users with direct test access via unique links."
               />
             </div>
           </div>
@@ -88,7 +89,7 @@ export default function HomePage() {
         <section id="testimonials" className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-16 text-foreground">
-              Loved by Educators
+              Loved by Users
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <TestimonialCard
@@ -101,7 +102,7 @@ export default function HomePage() {
               <TestimonialCard
                 quote="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
                 author="John Smith"
-                role="High School Teacher"
+                role="High School Teacher" // This can stay or be generalized later
                 avatarSrc="https://placehold.co/100x100.png"
                 data-ai-hint="teacher profile"
               />
@@ -173,3 +174,5 @@ function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHin
     </Card>
   );
 }
+
+    
