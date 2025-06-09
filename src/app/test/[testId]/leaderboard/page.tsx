@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Award, AlertTriangle, Home, ArrowLeft } from 'lucide-react';
+import { Award, AlertTriangle, Home, LayoutDashboard } from 'lucide-react'; // Added LayoutDashboard
 import type { TestAttempt, StudentAnswer } from '@/lib/types';
 
 interface RankedAttempt extends TestAttempt {
@@ -130,6 +130,7 @@ export default function LeaderboardPage() {
           </CardContent>
            <CardFooter className="flex justify-center gap-4">
             <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
           </CardFooter>
         </Card>
       </div>
@@ -196,6 +197,11 @@ export default function LeaderboardPage() {
           )}
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 pt-6">
+          <Button asChild variant="outline">
+            <Link href="/dashboard">
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Go to Dashboard
+            </Link>
+          </Button>
           <Button asChild>
             <Link href="/">
               <Home className="mr-2 h-4 w-4" /> Go to Homepage
