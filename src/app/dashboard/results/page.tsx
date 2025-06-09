@@ -87,7 +87,7 @@ export default function ResultsDashboardPage() {
             Test Results & Analytics
           </h1>
           <p className="text-muted-foreground">
-            Select a test to view its detailed results and analytics.
+            Select a test to view its leaderboard and participant scores.
           </p>
         </div>
       </div>
@@ -131,8 +131,8 @@ export default function ResultsDashboardPage() {
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
-                  <Link href={`/dashboard/test/${test.id}`}>
-                    View Details & Results <ArrowRight className="ml-2 h-4 w-4" />
+                  <Link href={`/test/${test.id}/leaderboard`}>
+                    View Leaderboard <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </CardFooter>
