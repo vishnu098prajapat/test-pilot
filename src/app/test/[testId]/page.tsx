@@ -2,7 +2,7 @@
 "use client"; 
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import StudentTestArea from '@/components/student/student-test-area';
 import { getTestById } from '@/lib/store'; 
 import type { Test } from '@/lib/types';
@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 export default function StudentTestPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [testData, setTestData] = useState<Test | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,7 @@ export default function StudentTestPage() {
   const [nameSubmitted, setNameSubmitted] = useState<boolean>(false);
 
   const testId = params.testId as string;
+  const isPracticeMode = searchParams.get('mode') === 'practice';
 
   useEffect(() => {
     async function fetchTest() {
@@ -47,7 +49,7 @@ export default function StudentTestPage() {
           console.log(`StudentTestPage: Test ID "${testId}" is published and loaded successfully.`);
         } else if (fetchedTest && !fetchedTest.published) {
           console.warn(`StudentTestPage: Test ID "${testId}" found but it is NOT PUBLISHED.`);
-          setError(`This test (ID: ${testId}) is not currently active or published. Please ask your teacher to publish it.`);
+          setError(`This test (ID: ${testId}) is not currently active or published. Please ask the test creator to publish it.`);
         } else {
           console.warn(`StudentTestPage: Test ID "${testId}" NOT FOUND in store.`);
           setError(`Test with ID "${testId}" not found. Please check the link or contact your instructor.`);
@@ -149,5 +151,5 @@ export default function StudentTestPage() {
     );
   }
   
-  return <StudentTestArea testData={testData} studentIdentifier={studentName} />;
+  return <StudentTestArea testData={testData} studentIdentifier={studentName} isPracticeMode={isPracticeMode} />;
 }

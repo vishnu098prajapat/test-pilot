@@ -58,7 +58,7 @@ export default function LoginForm() {
       if (result.success && result.user) {
         toast({
           title: "Login Successful",
-          description: `Welcome back, ${result.user.email}!`,
+          description: `Welcome back, ${result.user.displayName || result.user.email}!`,
           duration: 2000,
         });
         try {
@@ -93,7 +93,7 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-3xl font-headline text-center">Teacher Login</CardTitle>
+        <CardTitle className="text-3xl font-headline text-center">Account Login</CardTitle>
         <CardDescription className="text-center">Access your Test Pilot dashboard.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -165,4 +165,3 @@ export default function LoginForm() {
     </Card>
   );
 }
-

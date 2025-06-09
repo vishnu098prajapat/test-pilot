@@ -61,7 +61,7 @@ export default function DashboardHeader() {
                   {user?.displayName || user?.email || "Test Pilot User"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  Teacher Account
+                  User Account
                 </p>
               </div>
             </DropdownMenuLabel>

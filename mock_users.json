@@ -2,11 +2,19 @@
   {
     "id": "teacher1",
     "email": "teacher@example.com",
-    "role": "teacher"
+    "role": "teacher",
+    "displayName": "Teacher"
   },
   {
     "id": "user-1749459448868-hr20j",
     "email": "vishanuprajapati888@gmail.com",
+    "role": "teacher",
+    "displayName": "Vishanuprajapati888"
+  },
+  {
+    "id": "user-1749459754354-kijzf",
+    "email": "vishnusiroya485@gmail.com",
+    "displayName": "Vishnusiroya485",
     "role": "teacher"
   }
 ]

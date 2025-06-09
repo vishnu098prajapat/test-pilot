@@ -100,7 +100,7 @@ export default function SignupForm() {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader>
-        <CardTitle className="text-3xl font-headline text-center">Create Teacher Account</CardTitle>
+        <CardTitle className="text-3xl font-headline text-center">Create Account</CardTitle>
         <CardDescription className="text-center">Join Test Pilot and start creating tests.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -196,4 +196,3 @@ export default function SignupForm() {
     </Card>
   );
 }
-
