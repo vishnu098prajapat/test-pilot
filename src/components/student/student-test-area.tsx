@@ -118,18 +118,30 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       let isQCorrect = false;
       let pointsForQ = 0;
 
+      if (q.type === 'mcq') {
+        console.log(`[StudentTestArea] Evaluating MCQ ID: ${q.id}:`);
+        console.log(`  Stored CorrectOptionId: "${(q as MCQQuestion).correctOptionId}"`);
+        console.log(`  Student's Answer (OptionId): "${studentAnswerValue}"`);
+      }
+
+
       if (studentAnswerValue !== undefined && studentAnswerValue !== null) {
         if (q.type === 'mcq') {
-          if (studentAnswerValue === q.correctOptionId) isQCorrect = true;
+          if (studentAnswerValue === (q as MCQQuestion).correctOptionId) isQCorrect = true;
         } else if (q.type === 'true-false') {
-          if (studentAnswerValue === q.correctAnswer) isQCorrect = true;
+          if (studentAnswerValue === (q as TrueFalseQuestion).correctAnswer) isQCorrect = true;
         } else if (q.type === 'short-answer') {
-          if (String(studentAnswerValue).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) isQCorrect = true;
+          if (String(studentAnswerValue).trim().toLowerCase() === String((q as ShortAnswerQuestion).correctAnswer).trim().toLowerCase()) isQCorrect = true;
         }
       }
       if (isQCorrect) {
         pointsForQ = q.points;
       }
+
+      if (q.type === 'mcq') {
+        console.log(`  Is Correct? ${isQCorrect}`);
+      }
+
       return {
         questionId: q.id,
         answer: studentAnswerValue,
@@ -282,7 +294,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
            <Card className="mt-6 shadow-lg">
             <CardHeader><CardTitle className="text-lg font-headline">Navigation</CardTitle></CardHeader>
             <CardContent className="max-h-60 overflow-y-auto">
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                 {testData.questions.map((q, index) => (
                   <Button
                     key={q.id}
