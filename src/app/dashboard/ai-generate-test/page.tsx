@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useState } from 'react';
@@ -13,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, ListChecks, Send, Activity } from 'lucide-react'; 
+import { Sparkles, Loader2, ListChecks, Send, Activity } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
@@ -78,6 +77,11 @@ export default function AIGenerateTestPage() {
     }
   };
 
+  const normalizeText = (text: string | undefined | null): string => {
+    if (typeof text !== 'string') return '';
+    return text.trim().toLowerCase();
+  };
+  
   const transformAIQuestionsToTestBuilderFormat = (aiQuestions: AIQuestion[]): TestBuilderQuestion[] => {
     return aiQuestions.map((aiQ, index): TestBuilderQuestion => {
       const questionId = `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`;
@@ -93,15 +97,22 @@ export default function AIGenerateTestPage() {
           id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
           text: optText,
         }));
-        const correctOption = options.find(opt => opt.text === aiQ.correctAnswer);
-        if (!correctOption) {
-          console.warn(`AI Warning: For MCQ "${aiQ.text}", AI-provided correctAnswer "${aiQ.correctAnswer}" did not exactly match any of its provided options: `, aiQ.options.map(o => o.text));
+        
+        let correctOptionFound = null;
+        if (aiQ.correctAnswer && options.length > 0) {
+            const normalizedAICorrectAnswer = normalizeText(aiQ.correctAnswer);
+            correctOptionFound = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
         }
+
+        if (!correctOptionFound && aiQ.correctAnswer) {
+          console.warn(`AI Warning (Q: "${aiQ.text}"): AI-provided correctAnswer "${aiQ.correctAnswer}" (normalized: "${normalizeText(aiQ.correctAnswer)}") did not robustly match any of its provided option texts (normalized options: ${JSON.stringify(options.map(o => normalizeText(o.text)))}). CorrectOptionId will be null. User must select manually.`);
+        }
+
         return {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: correctOption ? correctOption.id : null,
+          correctOptionId: correctOptionFound ? correctOptionFound.id : null,
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -274,8 +285,8 @@ export default function AIGenerateTestPage() {
                 {q.type === 'mcq' && q.options && (
                   <ul className="list-disc pl-5 mt-1 text-sm">
                     {q.options.map((opt, optIndex) => (
-                      <li key={optIndex} className={opt === q.correctAnswer ? 'text-green-600 font-medium' : ''}>
-                        {opt} {opt === q.correctAnswer ? '(Correct)' : ''}
+                      <li key={optIndex} className={normalizeText(opt) === normalizeText(q.correctAnswer) ? 'text-green-600 font-medium' : ''}>
+                        {opt} {normalizeText(opt) === normalizeText(q.correctAnswer) ? '(Correct)' : ''}
                       </li>
                     ))}
                   </ul>
@@ -297,4 +308,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-

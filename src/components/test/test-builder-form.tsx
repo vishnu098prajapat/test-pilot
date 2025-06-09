@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { PlusCircle, Save, Eye, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
 import { QuestionForm } from "./question-form";
 import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, Option } from "@/lib/types";
-import { addTest, getTestById, updateTest } from "@/lib/store"; // Mock store
+import { addTest, getTestById, updateTest } from "@/lib/store"; 
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "../ui/separator";
@@ -35,7 +35,7 @@ const optionSchema = z.object({
 });
 
 const baseQuestionSchema = z.object({
-  id: z.string(), // ID is now always present, generated client-side
+  id: z.string(), 
   text: z.string().min(1, "Question text is required"),
   points: z.number().min(0, "Points must be non-negative"),
 });
@@ -49,13 +49,13 @@ const mcqQuestionSchema = baseQuestionSchema.extend({
 const shortAnswerQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("short-answer"),
   correctAnswer: z.string().min(1, "Correct answer is required for short answer"),
-  options: z.array(optionSchema).optional(), // To match discriminated union, but not used for this type
+  options: z.array(optionSchema).optional(), 
 });
 
 const trueFalseQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("true-false"),
   correctAnswer: z.boolean({ required_error: "Correct answer must be selected for True/False" }),
-  options: z.array(optionSchema).optional(), // To match discriminated union, but not used for this type
+  options: z.array(optionSchema).optional(), 
 });
 
 const questionSchema = z.discriminatedUnion("type", [
@@ -69,10 +69,8 @@ const testBuilderSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   duration: z.number().min(5, "Duration must be at least 5 minutes").max(180, "Duration cannot exceed 3 hours"),
   questions: z.array(questionSchema).min(1, "Test must have at least one question"),
-  // Settings
-  attemptsAllowed: z.number().min(0, "Attempts must be non-negative (0 for unlimited)"), // 0 for unlimited
+  attemptsAllowed: z.number().min(0, "Attempts must be non-negative (0 for unlimited)"), 
   randomizeQuestions: z.boolean(),
-  // Anti-cheat
   enableTabSwitchDetection: z.boolean(),
   enableCopyPasteDisable: z.boolean(),
   enforceFullScreen: z.boolean(),
@@ -91,7 +89,7 @@ const defaultQuestionValues = (type: Question['type']): Question => {
   if (type === 'short-answer') {
     return { ...base, type, correctAnswer: "" } as ShortAnswerQuestion;
   }
-  return { ...base, type, correctAnswer: true } as TrueFalseQuestion; // Default True/False to True
+  return { ...base, type, correctAnswer: true } as TrueFalseQuestion; 
 };
 
 export default function TestBuilderForm() {
@@ -136,15 +134,17 @@ export default function TestBuilderForm() {
           if (aiData.questions && aiData.questions.length > 0) {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
-            replaceQuestions(aiData.questions);
+            replaceQuestions(aiData.questions); // This should correctly set questions with their correctOptionId
             toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form.", duration: 2000});
+          } else {
+            toast({ title: "AI Data Issue", description: "AI data found but no questions were present.", variant: "destructive", duration: 2000});
           }
         }
       } catch (e) {
         console.error("Failed to load AI data from localStorage", e);
         toast({ title: "Load Error", description: "Could not load AI-generated data.", variant: "destructive", duration: 2000});
       } finally {
-        localStorage.removeItem(AI_GENERATED_DATA_STORAGE_KEY); // Clean up
+        localStorage.removeItem(AI_GENERATED_DATA_STORAGE_KEY); 
         const newSearchParams = new URLSearchParams(searchParams.toString());
         newSearchParams.delete('source');
         router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
@@ -185,6 +185,22 @@ export default function TestBuilderForm() {
       return;
     }
     setIsSubmitting(true);
+
+    console.log("[TestBuilderForm] Data being submitted:", JSON.stringify(data, null, 2));
+    data.questions.forEach((q, idx) => {
+      if (q.type === 'mcq') {
+        console.log(`[TestBuilderForm] Submitting Q ${idx + 1} (ID: ${q.id}): Type: MCQ, Text: "${q.text}"`);
+        console.log(`  Options:`, JSON.stringify(q.options.map(opt => ({id: opt.id, text: opt.text}))));
+        console.log(`  CorrectOptionId: "${q.correctOptionId}"`);
+        const selectedOption = q.options.find(opt => opt.id === q.correctOptionId);
+        if (selectedOption) {
+          console.log(`  Selected Option Text (based on ID): "${selectedOption.text}"`);
+        } else {
+          console.error(`  [TestBuilderForm] SUBMISSION ERROR: CorrectOptionId "${q.correctOptionId}" for Q ${idx + 1} does NOT match any of its option IDs! This question will likely be unanswerable or auto-marked wrong.`);
+        }
+      }
+    });
+
 
     try {
       let savedTest;
@@ -436,4 +452,3 @@ export default function TestBuilderForm() {
     </UIForm>
   );
 }
-

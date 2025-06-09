@@ -302,5 +302,52 @@
     "suspiciousReason": "The student's activity log only contains information about the test starting and answers being changed. There is no indication of suspicious behavior such as frequent tab switches, copy-pasting, or unusual keyboard activity.",
     "id": "attempt-1749308681361-siom58u",
     "submittedAt": "2025-06-07T15:04:41.361Z"
+  },
+  {
+    "testId": "test-1749308888402-cn6mr",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "golu",
+    "startTime": "2025-06-07T15:17:06.989Z",
+    "endTime": "2025-06-07T15:17:36.090Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749308868307-0-94h7meg",
+        "answer": "ai-opt_q0_idx1_1749308868307_9a4yqgqpv",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308868307-1-8w6wouw",
+        "answer": "ai-opt_q1_idx2_1749308868307_zbp8yb9i4",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308868307-2-kdtodjg",
+        "answer": "ai-opt_q2_idx1_1749308868307_ud6c895h4",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749308868307-3-sz49b9e",
+        "answer": "ai-opt_q3_idx0_1749308868307_uh89hmszf",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749308868307-4-gn8u5nb",
+        "answer": "ai-opt_q4_idx3_1749308868307_qglcpfj5q",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-07T15:17:07.011Z] Test started by golu. Anti-cheat measures active based on test settings.\n[2025-06-07T15:17:07.012Z] Test started by golu. Anti-cheat measures active based on test settings.\n[2025-06-07T15:17:09.335Z] Answer changed for question ID ai-q-1749308868307-0-94h7meg.\n[2025-06-07T15:17:12.435Z] Answer changed for question ID ai-q-1749308868307-1-8w6wouw.\n[2025-06-07T15:17:15.807Z] Answer changed for question ID ai-q-1749308868307-2-kdtodjg.\n[2025-06-07T15:17:24.466Z] Answer changed for question ID ai-q-1749308868307-3-sz49b9e.\n[2025-06-07T15:17:27.249Z] Answer changed for question ID ai-q-1749308868307-4-gn8u5nb.\n[2025-06-07T15:17:28.323Z] Answer changed for question ID ai-q-1749308868307-4-gn8u5nb.\n[2025-06-07T15:17:29.618Z] Answer changed for question ID ai-q-1749308868307-4-gn8u5nb.\n[2025-06-07T15:17:30.827Z] Answer changed for question ID ai-q-1749308868307-4-gn8u5nb.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student rapidly changed their answer multiple times for question ID ai-q-1749308868307-4-gn8u5nb within a short period. This behavior could indicate they are receiving external assistance or attempting to guess the answer based on feedback, which is unusual and raises suspicion.",
+    "id": "attempt-1749309201510-dirg416",
+    "submittedAt": "2025-06-07T15:13:21.510Z"
   }
 ]
