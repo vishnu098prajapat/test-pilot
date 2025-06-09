@@ -26,6 +26,7 @@ export async function loginUser(formData: FormData): Promise<AuthResult> {
   }
   const normalizedEmailInput = emailInput.toLowerCase().trim();
 
+  // Ensure comparison is also case-insensitive for emails already in mockUsers
   const user = mockUsers.find((u) => u.email.toLowerCase() === normalizedEmailInput);
 
   if (user) {
@@ -52,10 +53,11 @@ export async function signupUser(formData: FormData): Promise<AuthResult> {
 
   const newUser: User = {
     id: `user-${Date.now()}`,
-    email: emailInput.trim(), // Store the trimmed version of the input email
+    email: normalizedEmailInput, // Store normalized email
     role: "teacher", // Defaulting to teacher for signup
   };
   mockUsers.push(newUser);
+  console.log("Mock users after signup:", mockUsers); // For debugging
   return { success: true, message: "Signup successful", user: newUser };
 }
 
@@ -66,3 +68,4 @@ export async function logoutUser(): Promise<{ success: boolean }> {
   // Simulate logout
   return { success: true };
 }
+
