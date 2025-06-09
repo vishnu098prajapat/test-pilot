@@ -59,7 +59,6 @@ export default function DashboardPage() {
       const success = await deleteTestAction(testId);
       if (success) {
         setTests(prevTests => prevTests.filter(test => test.id !== testId));
-        // Also remove attempts associated with the deleted test from local state
         setAllAttempts(prevAttempts => prevAttempts.filter(attempt => attempt.testId !== testId));
         toast({ title: "Success", description: "Test deleted successfully.", duration: 2000 });
       } else {
@@ -190,7 +189,7 @@ export default function DashboardPage() {
                 <CardFooter className="flex flex-wrap justify-end gap-2">
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/dashboard/test/${test.id}`}>
-                      <Activity className="mr-1 h-4 w-4" /> Manage & Results
+                      <Activity className="mr-1 h-4 w-4" /> Manage Test
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
@@ -250,3 +249,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
