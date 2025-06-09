@@ -130,7 +130,6 @@ export default function LeaderboardPage() {
           </CardContent>
            <CardFooter className="flex justify-center gap-4">
             <Skeleton className="h-10 w-32" />
-            <Skeleton className="h-10 w-32" />
           </CardFooter>
         </Card>
       </div>
@@ -197,11 +196,6 @@ export default function LeaderboardPage() {
           )}
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 pt-6">
-          <Button asChild variant="outline">
-            <Link href={`/test/${testId}/results`}>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to My Result
-            </Link>
-          </Button>
           <Button asChild>
             <Link href="/">
               <Home className="mr-2 h-4 w-4" /> Go to Homepage
@@ -212,3 +206,4 @@ export default function LeaderboardPage() {
     </div>
   );
 }
+
