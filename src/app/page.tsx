@@ -11,8 +11,10 @@ export default function HomePage() {
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold font-headline text-primary">
-            Test Pilot
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span> {/* Wrapper for logo and SVG */}
+              Test Pilot
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </span>
           </Link>
           <nav className="space-x-2">
             <Button variant="ghost" asChild>
@@ -31,29 +33,33 @@ export default function HomePage() {
 
       <main className="flex-grow">
         {/* Hero Section Updated */}
-        <section className="py-12 md:py-20 text-center bg-gradient-to-br from-background to-secondary/30">
-          <div className="container mx-auto px-6 flex flex-col items-center">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary dark:text-primary-foreground">
+        <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
+          {/* Background Image */}
+          <Image
+            src="/hero-background-study.png" 
+            alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
+            layout="fill"
+            objectFit="cover"
+            quality={85}
+            className="-z-20" // Ensure it's behind other content
+            data-ai-hint="student illustration"
+            priority
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-primary/60 -z-10"></div>
+
+          <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
+            <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
               The Future of Online Assessments is Here
             </h1>
-            <p className="text-lg md:text-xl text-foreground/80 dark:text-muted-foreground mb-10 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
               Test Pilot empowers educators to create, distribute, and manage secure online tests with ease, backed by AI-powered proctoring.
             </p>
-            <div className="mb-10 shadow-xl rounded-lg overflow-hidden">
-              <Image
-                src="/home-page.jpg" // CORRECTED: Assuming you rename "home page.jpg" to "home-page.jpg" in /public
-                width={800} 
-                height={500} // Adjusted height for better aspect ratio with 800 width
-                alt="Illustrative image of a person studying or working on a laptop for Test Pilot" 
-                quality={85}
-                className="object-cover" // Ensures image covers the dimensions without distortion
-                data-ai-hint="student illustration" 
-                priority
-              />
-            </div>
-            <Button size="lg" variant="default" asChild> {/* Changed variant to default for better visibility */}
+            <Button size="lg" variant="default" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground">
               <Link href="/auth/signup">
-                Get Started Free <Zap className="ml-2 h-5 w-5"/>
+                <span> {/* Wrapper for text and icon */}
+                  Get Started Free <Zap className="ml-2 h-5 w-5"/>
+                </span>
               </Link>
             </Button>
           </div>
@@ -102,7 +108,7 @@ export default function HomePage() {
               <TestimonialCard
                 quote="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
                 author="John Smith"
-                role="High School Teacher" // This can stay or be generalized later
+                role="High School Teacher" 
                 avatarSrc="https://placehold.co/100x100.png"
                 data-ai-hint="teacher profile"
               />
@@ -174,5 +180,3 @@ function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHin
     </Card>
   );
 }
-
-    
