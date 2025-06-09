@@ -396,5 +396,52 @@
     "suspiciousReason": "The student's activity log shows normal test-taking behavior, with only answer changes within the test environment. There are no indications of unauthorized resource access or communication.",
     "id": "attempt-1749457608699-1aabm94",
     "submittedAt": "2025-06-09T08:26:48.699Z"
+  },
+  {
+    "testId": "test-1749457749389-nihp9",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "vishnu",
+    "startTime": "2025-06-09T08:43:46.141Z",
+    "endTime": "2025-06-09T08:44:10.876Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749457737717-0-35er82p",
+        "answer": "ai-opt_q0_idx1_1749457737717_686bimif2",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749457737717-1-nyqwnye",
+        "answer": "ai-opt_q1_idx2_1749457737717_t3vkhaned",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749457737717-2-km0eze0",
+        "answer": "ai-opt_q2_idx1_1749457737717_1d4jzssb5",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749457737717-3-wv440i7",
+        "answer": "ai-opt_q3_idx2_1749457737717_pfs0ctjjk",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749457737717-4-bj7cmoj",
+        "answer": "ai-opt_q4_idx1_1749457737717_pc29s9gvt",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-09T08:43:46.155Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-09T08:43:46.156Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-09T08:43:48.033Z] Answer changed for question ID ai-q-1749457737717-0-35er82p.\n[2025-06-09T08:43:50.601Z] Answer changed for question ID ai-q-1749457737717-1-nyqwnye.\n[2025-06-09T08:43:53.219Z] Answer changed for question ID ai-q-1749457737717-2-km0eze0.\n[2025-06-09T08:43:56.158Z] Answer changed for question ID ai-q-1749457737717-3-wv440i7.\n[2025-06-09T08:44:05.435Z] Answer changed for question ID ai-q-1749457737717-4-bj7cmoj.\n[2025-06-09T08:44:07.289Z] Answer changed for question ID ai-q-1749457737717-4-bj7cmoj.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student is answering questions at a reasonable pace with no indication of accessing external resources or unauthorized actions. Multiple updates to the same answer field are permitted within the testing parameters.",
+    "id": "attempt-1749458391518-b2iohrd",
+    "submittedAt": "2025-06-09T08:39:51.518Z"
   }
 ]
