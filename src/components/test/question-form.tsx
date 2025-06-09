@@ -24,11 +24,9 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   const { register, control, watch, setValue } = form;
   const questionType = watch(`questions.${questionIndex}.type`);
   
-  // Determine if the question is AI-generated based on its ID prefix
   const questionIdFromWatch = watch(`questions.${questionIndex}.id`);
   const isAiQuestion = typeof questionIdFromWatch === 'string' && questionIdFromWatch.startsWith('ai-q-');
 
-  // Debug log
   console.log(`QuestionForm Render [Q Index: ${questionIndex}]: ID: "${questionIdFromWatch}", Type: ${questionType}, Is AI Question: ${isAiQuestion}`);
 
   const {
@@ -50,17 +48,16 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       if (!existingOptions || existingOptions.length === 0) {
         setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }, { id: `opt-${Date.now()+1}`, text: "" }]);
       }
-      // For AI questions, correctOptionId should already be set. For manual, it starts as null.
       if (!isCurrentAi) {
         setValue(`questions.${questionIndex}.correctOptionId`, null);
       }
     } else if (type === 'short-answer') {
-      if (!isCurrentAi) { // Only reset correctAnswer if it's a manual question being changed
+      if (!isCurrentAi) { 
          setValue(`questions.${questionIndex}.correctAnswer`, "");
       }
       setValue(`questions.${questionIndex}.options`, []); 
     } else if (type === 'true-false') {
-       if (!isCurrentAi) { // Only reset correctAnswer if it's a manual question being changed
+       if (!isCurrentAi) { 
         setValue(`questions.${questionIndex}.correctAnswer`, true);
        }
       setValue(`questions.${questionIndex}.options`, []);
@@ -125,7 +122,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         
         {questionType === "mcq" && (
           isAiQuestion ? (
-            // AI Question: Read-only options, highlight AI's correct answer
             <div className="space-y-2">
               <Label>Options (AI Generated - Correct Answer Pre-selected)</Label>
               {mcqOptionFields.map((optionField, optionIdx) => {
@@ -133,27 +129,21 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
                 return (
                   <div 
                     key={optionField.id} 
-                    className={`flex items-center gap-2 p-3 border rounded-md 
+                    className={`flex items-center justify-between gap-2 p-2 border rounded-md min-h-[2.5rem]  // Reduced padding, added min-height
                                 ${isCorrectAiSelected ? 'bg-green-100 dark:bg-green-900/30 border-green-500' : 'bg-muted/40'}`}
                   >
-                    <Input
-                      readOnly
-                      value={optionField.text} // Display text directly
-                      className="flex-grow bg-transparent border-0 shadow-none focus-visible:ring-0 px-0"
-                    />
+                    <span className="flex-grow text-sm">{optionField.text}</span>
                     {isCorrectAiSelected && (
-                      <span className="text-sm font-semibold text-green-700 dark:text-green-400">(AI Selected - Correct)</span>
+                      <span className="text-xs font-semibold text-green-700 dark:text-green-400 whitespace-nowrap">(AI Selected - Correct)</span>
                     )}
                   </div>
                 );
               })}
-              {/* Show error if AI question's correctOptionId is somehow null (should be caught by Zod if not set by AI properly) */}
               {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
                   <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
               )}
             </div>
           ) : (
-            // Manual Question: Interactive Radio buttons
             <div className="space-y-3">
               <Label>Options & Correct Answer</Label>
               {mcqOptionFields.map((optionField, optionIdx) => (
@@ -200,7 +190,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               id={`questions.${questionIndex}.correctAnswer`}
               placeholder="Enter the correct answer"
               {...register(`questions.${questionIndex}.correctAnswer`)}
-              readOnly={isAiQuestion} // Make read-only if AI question
+              readOnly={isAiQuestion} 
               className={isAiQuestion ? 'bg-muted/50' : ''}
             />
             {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
@@ -257,5 +247,3 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
-
-    
