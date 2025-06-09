@@ -112,8 +112,8 @@ export default function DashboardPage() {
     <div className="container mx-auto py-2">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-headline">Teacher Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, {user?.email || "Teacher"}!</p>
+          <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {user?.displayName || user?.email || "User"}!</p>
         </div>
         <Button asChild size="lg">
           <Link href="/dashboard/create-test">

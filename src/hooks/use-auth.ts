@@ -15,6 +15,23 @@ interface AuthContextType {
   signup: (userData: User) => void; 
 }
 
+// Helper to generate display name if not present, for localStorage consistency
+function ensureDisplayName(user: User): User {
+  if (user && !user.displayName && user.email) {
+    const namePart = user.email.split('@')[0];
+    return {
+      ...user,
+      displayName: namePart
+        .replace(/[._-]/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+    };
+  }
+  return user;
+}
+
+
 export function useAuth(): AuthContextType {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,10 +42,11 @@ export function useAuth(): AuthContextType {
     try {
       const storedUserString = localStorage.getItem(USER_STORAGE_KEY);
       if (storedUserString) {
-        const parsedUser = JSON.parse(storedUserString);
+        let parsedUser = JSON.parse(storedUserString) as User;
         // Validate the parsed user object
         if (parsedUser && typeof parsedUser.id === 'string' && typeof parsedUser.email === 'string' && typeof parsedUser.role === 'string') {
-          setUser(parsedUser as User);
+          parsedUser = ensureDisplayName(parsedUser); // Ensure displayName
+          setUser(parsedUser);
         } else {
           console.warn("Stored user data in localStorage is invalid or incomplete. Clearing session.");
           localStorage.removeItem(USER_STORAGE_KEY);
@@ -50,11 +68,11 @@ export function useAuth(): AuthContextType {
     try {
       // Ensure userData is valid before storing
       if (userData && typeof userData.id === 'string' && typeof userData.email === 'string') {
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-        setUser(userData);
+        const userToStore = ensureDisplayName(userData);
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
+        setUser(userToStore);
       } else {
         console.error("Attempted to login with invalid userData:", userData);
-        // Optionally, inform the user or handle this error appropriately
       }
     } catch (error) {
         console.error("Failed to save user to localStorage on login:", error);
@@ -65,8 +83,9 @@ export function useAuth(): AuthContextType {
     try {
        // Ensure userData is valid before storing
       if (userData && typeof userData.id === 'string' && typeof userData.email === 'string') {
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-        setUser(userData);
+        const userToStore = ensureDisplayName(userData);
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
+        setUser(userToStore);
       } else {
         console.error("Attempted to signup with invalid userData:", userData);
       }

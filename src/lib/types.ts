@@ -2,7 +2,8 @@
 export interface User {
   id: string;
   email: string;
-  role: 'teacher' | 'student'; // For mock purposes, students might not have accounts
+  displayName?: string; // Added for displaying a more friendly name
+  role: 'teacher' | 'student'; 
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false';

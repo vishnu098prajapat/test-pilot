@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2 } from "lucide-react";
 import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
@@ -256,19 +256,25 @@ export default function TestManagementPage() {
              <Image src="https://placehold.co/600x300.png" alt="Placeholder chart" width={600} height={300} className="mt-4 rounded-md" data-ai-hint="chart analytics" />
           </CardContent>
            <CardFooter>
-            <Button variant="outline" disabled>Export Results (PDF/CSV)</Button>
+             <Button asChild variant="outline">
+                <Link href={`/test/${test.id}/leaderboard`}>
+                  <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
+                </Link>
+            </Button>
           </CardFooter>
         </Card>
 
-        <Card className="border-destructive">
+        <Card className="border-orange-400 dark:border-orange-600">
           <CardHeader>
-            <CardTitle className="text-xl font-headline flex items-center text-destructive"><Trash2 className="mr-2 h-5 w-5" /> Danger Zone</CardTitle>
+            <CardTitle className="text-xl font-headline flex items-center text-orange-600 dark:text-orange-400"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">Deleting this test is permanent and cannot be undone. All associated data will be lost.</p>
+            <p className="text-sm text-muted-foreground mb-4">Deleting this test is permanent and cannot be undone. All associated data, including student attempts, will be lost.</p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete This Test</Button>
+                <Button variant="destructive">
+                 <Trash2 className="mr-2 h-4 w-4" /> Delete This Test
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

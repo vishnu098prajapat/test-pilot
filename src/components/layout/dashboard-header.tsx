@@ -20,9 +20,18 @@ export default function DashboardHeader() {
   const { user, logout } = useAuth();
   const { toggleSidebar, isMobile } = useSidebar();
 
-  const getInitials = (email?: string) => {
-    if (!email) return "TP";
-    return email.substring(0, 2).toUpperCase();
+  const getInitials = (displayName?: string, email?: string) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
+    }
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    return "TP";
   };
   
   return (
@@ -39,9 +48,9 @@ export default function DashboardHeader() {
             <Button variant="outline" className="flex items-center gap-2">
               <Avatar className="h-7 w-7">
                 <AvatarImage src={undefined /* No actual avatar URL, so use undefined to trigger fallback */} />
-                <AvatarFallback>{getInitials(user?.email)}</AvatarFallback>
+                <AvatarFallback>{getInitials(user?.displayName, user?.email)}</AvatarFallback>
               </Avatar>
-              <span className="hidden sm:inline">{user?.email || "Teacher"}</span>
+              <span className="hidden sm:inline">{user?.displayName || user?.email || "User"}</span>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -49,7 +58,7 @@ export default function DashboardHeader() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.email || "Test Pilot User"}
+                  {user?.displayName || user?.email || "Test Pilot User"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   Teacher Account
@@ -58,7 +67,7 @@ export default function DashboardHeader() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings"> {/* Placeholder settings page */}
+              <Link href="/dashboard/settings"> 
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </Link>

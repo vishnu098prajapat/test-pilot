@@ -10,25 +10,36 @@ import path from 'path';
 
 const MOCK_USERS_DB_FILE_PATH = path.join(process.cwd(), 'mock_users.json');
 
-const initialMockUser: User = { id: "teacher1", email: "teacher@example.com", role: "teacher" };
+const initialMockUser: User = { 
+  id: "teacher1", 
+  email: "teacher@example.com", 
+  displayName: "Teacher Example", 
+  role: "teacher" 
+};
 
 function readUsersDb(): User[] {
   try {
     if (fs.existsSync(MOCK_USERS_DB_FILE_PATH)) {
       const fileContent = fs.readFileSync(MOCK_USERS_DB_FILE_PATH, 'utf-8');
       if (fileContent.trim() === "") {
-        // File is empty, initialize with default and write back
         writeUsersDb([initialMockUser]);
         return [initialMockUser];
       }
       const data = JSON.parse(fileContent);
-      return Array.isArray(data) ? data : [initialMockUser]; // Fallback if not an array
+      if (!Array.isArray(data) || data.length === 0) {
+        // If data is not an array or is empty, re-initialize
+        console.warn('[AUTH-DB] DB file content is invalid or empty. Re-initializing with default user.');
+        writeUsersDb([initialMockUser]);
+        return [initialMockUser];
+      }
+      return data.map(user => ({
+        ...user,
+        displayName: user.displayName || generateDisplayNameFromEmail(user.email)
+      }));
     }
   } catch (error) {
     console.error('[AUTH-DB] Error reading or parsing users DB file:', error);
-    // If error, try to re-initialize with default
   }
-  // If file doesn't exist or error during read/parse, initialize with default
   console.log('[AUTH-DB] Users DB file not found or error. Initializing with default user and creating file.');
   writeUsersDb([initialMockUser]);
   return [initialMockUser];
@@ -45,6 +56,17 @@ function writeUsersDb(data: User[]): boolean {
   }
 }
 
+function generateDisplayNameFromEmail(email: string): string {
+  if (!email || !email.includes('@')) return email; // Return full email if not valid format
+  const namePart = email.split('@')[0];
+  // Replace dots or hyphens with spaces and capitalize each word
+  return namePart
+    .replace(/[._-]/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 
 interface AuthResult {
   success: boolean;
@@ -54,7 +76,7 @@ interface AuthResult {
 
 export async function loginUser(formData: FormData): Promise<AuthResult> {
   const emailInput = formData.get("email") as string;
-  const passwordInput = formData.get("password") as string; // Password check is omitted for mock
+  const passwordInput = formData.get("password") as string; 
 
   console.log(`[LOGIN ATTEMPT] Received email: "${emailInput}", password: "${passwordInput ? '******' : 'EMPTY'}"`);
   
@@ -70,9 +92,12 @@ export async function loginUser(formData: FormData): Promise<AuthResult> {
   const user = currentUsers.find((u) => u.email.toLowerCase() === normalizedEmailInput);
 
   if (user) {
-    // In a real app, verify password here
-    console.log(`[LOGIN SUCCESS] User found:`, JSON.stringify(user, null, 2));
-    return { success: true, message: "Login successful", user };
+    const userWithDisplayName = {
+      ...user,
+      displayName: user.displayName || generateDisplayNameFromEmail(user.email),
+    };
+    console.log(`[LOGIN SUCCESS] User found:`, JSON.stringify(userWithDisplayName, null, 2));
+    return { success: true, message: "Login successful", user: userWithDisplayName };
   } else {
     console.log(`[LOGIN FAILED] User with normalized email "${normalizedEmailInput}" not found in current users DB.`);
     return { success: false, message: "Invalid email or password" };
@@ -81,7 +106,7 @@ export async function loginUser(formData: FormData): Promise<AuthResult> {
 
 export async function signupUser(formData: FormData): Promise<AuthResult> {
   const emailInput = formData.get("email") as string;
-  const passwordInput = formData.get("password") as string; // Password handling omitted for mock
+  const passwordInput = formData.get("password") as string; 
 
   console.log(`[SIGNUP ATTEMPT] Received email: "${emailInput}", password: "${passwordInput ? '******' : 'EMPTY'}"`);
 
@@ -99,18 +124,19 @@ export async function signupUser(formData: FormData): Promise<AuthResult> {
     return { success: false, message: "User already exists with this email" };
   }
 
+  const displayName = generateDisplayNameFromEmail(normalizedEmailInput);
   const newUser: User = {
     id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     email: normalizedEmailInput, 
+    displayName: displayName,
     role: "teacher", 
   };
   
   const updatedUsers = [...currentUsers, newUser];
-  const success = writeUsersDb(updatedUsers);
+  const successWrite = writeUsersDb(updatedUsers);
 
-  if (success) {
+  if (successWrite) {
     console.log(`[SIGNUP SUCCESS] New user added to DB:`, JSON.stringify(newUser, null, 2));
-    console.log("[SIGNUP SUCCESS] Users DB after signup:", JSON.stringify(updatedUsers, null, 2));
     return { success: true, message: "Signup successful", user: newUser };
   } else {
     console.log(`[SIGNUP FAILED] Could not write new user to DB.`);
