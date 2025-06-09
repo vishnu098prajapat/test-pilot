@@ -34,9 +34,9 @@ export default function HomePage() {
       <main className="flex-grow">
         {/* Hero Section Updated */}
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
-          {/* Background Image: Ensure 'home-page.jpg' is in your public folder */}
+          {/* Background Image: Ensure 'homePage.jpg' (or similar, no spaces) is in your public folder */}
           <Image
-            src="/home-page.jpg" 
+            src="/homePage.jpg" 
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
@@ -180,3 +180,4 @@ function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHin
     </Card>
   );
 }
+
