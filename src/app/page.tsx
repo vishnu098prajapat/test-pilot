@@ -11,7 +11,7 @@ export default function HomePage() {
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold font-headline text-primary">
-            <span> {/* Wrapper for logo and SVG */}
+            <span> 
               Test Pilot
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </span>
@@ -34,14 +34,14 @@ export default function HomePage() {
       <main className="flex-grow">
         {/* Hero Section Updated */}
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
-          {/* Background Image */}
+          {/* Background Image: Ensure 'home-page.jpg' is in your public folder */}
           <Image
-            src="/hero-background-study.png" 
+            src="/home-page.jpg" 
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
             quality={85}
-            className="-z-20" // Ensure it's behind other content
+            className="-z-20" 
             data-ai-hint="student illustration"
             priority
           />
@@ -57,7 +57,7 @@ export default function HomePage() {
             </p>
             <Button size="lg" variant="default" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground">
               <Link href="/auth/signup">
-                <span> {/* Wrapper for text and icon */}
+                <span> 
                   Get Started Free <Zap className="ml-2 h-5 w-5"/>
                 </span>
               </Link>
