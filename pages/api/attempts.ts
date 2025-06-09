@@ -10,7 +10,6 @@ function readAttemptsDb(): TestAttempt[] {
   try {
     if (fs.existsSync(ATTEMPTS_DB_FILE_PATH)) {
       const fileContent = fs.readFileSync(ATTEMPTS_DB_FILE_PATH, 'utf-8');
-      // Handle empty file case
       if (fileContent.trim() === "") {
         return [];
       }
@@ -20,7 +19,6 @@ function readAttemptsDb(): TestAttempt[] {
   } catch (error) {
     console.error('[API-ATTEMPTS-DB] Error reading or parsing DB file:', error);
   }
-  // If file doesn't exist or is invalid, initialize with an empty array
   fs.writeFileSync(ATTEMPTS_DB_FILE_PATH, JSON.stringify([], null, 2), 'utf-8');
   return [];
 }
@@ -41,7 +39,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
       const newAttempt: Omit<TestAttempt, 'id' | 'submittedAt'> = req.body;
 
-      // Basic validation
       if (!newAttempt.testId || !newAttempt.studentIdentifier || !newAttempt.answers) {
         return res.status(400).json({ error: 'Invalid attempt data. Missing required fields.' });
       }
@@ -74,8 +71,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         const filteredAttempts = allAttempts.filter(attempt => attempt.testId === testId);
         res.status(200).json(filteredAttempts);
       } else {
-        // If no testId, could return all or an error, for now, let's support only filtered
-        res.status(400).json({ error: 'testId query parameter is required' });
+        // If no testId, return all attempts
+        res.status(200).json(allAttempts);
       }
     } catch (error) {
       console.error('[API-ATTEMPTS-DB] Failed to read data on GET:', error);

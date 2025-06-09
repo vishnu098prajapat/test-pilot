@@ -1,13 +1,13 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye } from "lucide-react";
+import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import type { Test } from "@/lib/types";
+import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -28,24 +28,30 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function DashboardPage() {
   const { user } = useAuth();
   const [tests, setTests] = useState<Test[]>([]);
+  const [allAttempts, setAllAttempts] = useState<TestAttempt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    async function fetchTests() {
+    async function fetchData() {
       if (user?.id) {
         setIsLoading(true);
         try {
-          const teacherTests = await getTestsByTeacher(user.id);
+          const [teacherTests, fetchedAttempts] = await Promise.all([
+            getTestsByTeacher(user.id),
+            fetch('/api/attempts').then(res => res.ok ? res.json() : [])
+          ]);
           setTests(teacherTests);
+          setAllAttempts(fetchedAttempts);
         } catch (error) {
-          toast({ title: "Error", description: "Failed to load tests.", variant: "destructive", duration: 2000 });
+          toast({ title: "Error", description: "Failed to load dashboard data.", variant: "destructive", duration: 2000 });
+          console.error("Dashboard fetch error:", error);
         } finally {
           setIsLoading(false);
         }
       }
     }
-    fetchTests();
+    fetchData();
   }, [user?.id, toast]);
 
   const handleDeleteTest = async (testId: string) => {
@@ -53,6 +59,8 @@ export default function DashboardPage() {
       const success = await deleteTestAction(testId);
       if (success) {
         setTests(prevTests => prevTests.filter(test => test.id !== testId));
+        // Also remove attempts associated with the deleted test from local state
+        setAllAttempts(prevAttempts => prevAttempts.filter(attempt => attempt.testId !== testId));
         toast({ title: "Success", description: "Test deleted successfully.", duration: 2000 });
       } else {
         toast({ title: "Error", description: "Failed to delete test.", variant: "destructive", duration: 2000 });
@@ -62,6 +70,31 @@ export default function DashboardPage() {
     }
   };
   
+  const dashboardStats = useMemo(() => {
+    if (!user || tests.length === 0) {
+      return { totalSubmissions: 0, averageScore: 0, publishedTests: 0 };
+    }
+    const teacherTestIds = new Set(tests.map(t => t.id));
+    const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
+    
+    const totalSubmissions = relevantAttempts.length;
+    const totalScoreSum = relevantAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const averageScore = totalSubmissions > 0 ? Math.round(totalScoreSum / totalSubmissions) : 0;
+    const publishedTests = tests.filter(t => t.published).length;
+
+    return { totalSubmissions, averageScore, publishedTests };
+  }, [tests, allAttempts, user]);
+
+
+  const getTestStats = (testId: string) => {
+    const attemptsForTest = allAttempts.filter(attempt => attempt.testId === testId);
+    const numberOfAttempts = attemptsForTest.length;
+    const averageScore = numberOfAttempts > 0 
+      ? Math.round(attemptsForTest.reduce((sum, att) => sum + (att.scorePercentage || 0), 0) / numberOfAttempts)
+      : 0;
+    return { numberOfAttempts, averageScore };
+  };
+
   const SummaryCard = ({ title, value, icon, description }: { title: string, value: string | number, icon: React.ReactNode, description: string }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -90,10 +123,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <SummaryCard title="Total Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : tests.length} icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />} description="Number of tests created" />
-        <SummaryCard title="Published Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : tests.filter(t => t.published).length} icon={<Eye className="h-4 w-4 text-muted-foreground" />} description="Tests available to students" />
-        <SummaryCard title="Total Submissions" value="0" icon={<Users className="h-4 w-4 text-muted-foreground" />} description="Across all tests (placeholder)" />
-        <SummaryCard title="Average Score" value="N/A" icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />} description="Overall performance (placeholder)" />
+        <SummaryCard title="Total Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : tests.length} icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />} description="Number of tests you've created" />
+        <SummaryCard title="Published Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.publishedTests} icon={<Eye className="h-4 w-4 text-muted-foreground" />} description="Tests available to students" />
+        <SummaryCard title="Total Submissions" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.totalSubmissions} icon={<Users className="h-4 w-4 text-muted-foreground" />} description="Across all your published tests" />
+        <SummaryCard title="Average Score" value={isLoading ? <Skeleton className="h-8 w-12" /> : `${dashboardStats.averageScore}%`} icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />} description="Avg. score on your tests" />
       </div>
       
       <Separator className="my-8" />
@@ -106,12 +139,17 @@ export default function DashboardPage() {
               <Card key={i}>
                 <CardHeader>
                   <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/2 mt-1" />
+                  <div className="flex gap-4 mt-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <Skeleton className="h-4 w-1/4" />
                 </CardContent>
                 <CardFooter className="flex justify-end gap-2">
+                   <Skeleton className="h-9 w-24" />
                    <Skeleton className="h-9 w-20" />
                    <Skeleton className="h-9 w-20" />
                 </CardFooter>
@@ -120,7 +158,9 @@ export default function DashboardPage() {
           </div>
         ) : tests.length > 0 ? (
           <div className="space-y-4">
-            {tests.map((test) => (
+            {tests.map((test) => {
+              const { numberOfAttempts, averageScore } = getTestStats(test.id);
+              return (
               <Card key={test.id} className="shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -132,16 +172,25 @@ export default function DashboardPage() {
                         {test.published ? "Published" : "Draft"}
                       </Badge>
                   </div>
+                  <div className="text-xs text-muted-foreground pt-2 flex gap-4 items-center">
+                      <span>
+                        <Users className="inline h-3 w-3 mr-1"/> Attempts: {numberOfAttempts}
+                      </span>
+                      <span>
+                        <BarChart3 className="inline h-3 w-3 mr-1"/> Avg. Score: {numberOfAttempts > 0 ? `${averageScore}%` : 'N/A'}
+                      </span>
+                    </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
                     Created: {new Date(test.createdAt).toLocaleDateString()}
                   </p>
+                  
                 </CardContent>
                 <CardFooter className="flex flex-wrap justify-end gap-2">
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/dashboard/test/${test.id}`}>
-                      <Eye className="mr-1 h-4 w-4" /> View/Manage
+                      <Activity className="mr-1 h-4 w-4" /> Manage & Results
                     </Link>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
@@ -154,7 +203,7 @@ export default function DashboardPage() {
                     navigator.clipboard.writeText(testLink);
                     toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
                   }}>
-                    <Share2 className="mr-1 h-4 w-4" /> Share
+                    <Share2 className="mr-1 h-4 w-4" /> Share Test
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -180,7 +229,8 @@ export default function DashboardPage() {
                   </AlertDialog>
                 </CardFooter>
               </Card>
-            ))}
+            );
+          })}
           </div>
         ) : (
           <Card className="text-center py-12">
@@ -200,4 +250,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

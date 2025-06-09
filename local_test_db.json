@@ -1166,5 +1166,147 @@
     "id": "test-1749308888402-cn6mr",
     "createdAt": "2025-06-07T15:08:08.402Z",
     "updatedAt": "2025-06-07T15:08:08.402Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749457737717-0-35er82p",
+        "text": "Which of the following best describes an array in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749457737717_2f04jn1m5",
+            "text": "It stores elements of different data types."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749457737717_686bimif2",
+            "text": "It stores elements in non-contiguous memory locations."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749457737717_ow3r65c1e",
+            "text": "It is a dynamic data structure."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749457737717_ebn7iyl5v",
+            "text": "It stores elements of the same data type in contiguous memory locations."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx3_1749457737717_ebn7iyl5v"
+      },
+      {
+        "id": "ai-q-1749457737717-1-nyqwnye",
+        "text": "How can you create a dynamically sized array in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749457737717_mkvc1nonl",
+            "text": "By declaring it with a fixed size at compile time."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749457737717_pmkdhkw7v",
+            "text": "By using the new keyword to dynamically allocate memory."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749457737717_t3vkhaned",
+            "text": "Arrays in C++ cannot be resized."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749457737717_jyhpty6ae",
+            "text": "By using the resize() method."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749457737717_pmkdhkw7v"
+      },
+      {
+        "id": "ai-q-1749457737717-2-km0eze0",
+        "text": "What happens if you try to access an array element at an index that is out of bounds?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749457737717_gtpxoi5kz",
+            "text": "It automatically resizes the array."
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749457737717_1d4jzssb5",
+            "text": "It throws an exception."
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749457737717_1z3fly6lf",
+            "text": "It returns a null pointer."
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749457737717_zawb3r7kt",
+            "text": "It causes a segmentation fault or undefined behavior."
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1749457737717_zawb3r7kt"
+      },
+      {
+        "id": "ai-q-1749457737717-3-wv440i7",
+        "text": "Which of the following is a valid way to initialize an array in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749457737717_hzx0kb6n5",
+            "text": "int arr[5] = {1, 2, 3};"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749457737717_e6epgurv8",
+            "text": "int arr[] = {1, 2, 3, 4, 5};"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749457737717_pfs0ctjjk",
+            "text": "int arr[5] = {1, 2, 3, 4, 5, 6};"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749457737717_gen9w5udp",
+            "text": "int arr[3] = {1, 2, 3, 4, 5};"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1749457737717_hzx0kb6n5"
+      },
+      {
+        "id": "ai-q-1749457737717-4-bj7cmoj",
+        "text": "How are arrays typically passed to functions in C++ and what is the implication?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749457737717_46kxr76wk",
+            "text": "Arrays are always passed by value, preventing modifications to the original array."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749457737717_pc29s9gvt",
+            "text": "Arrays can only be passed to functions by value."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749457737717_5y7gm62k7",
+            "text": "Arrays cannot be passed to functions in C++."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749457737717_29wsn53kl",
+            "text": "Arrays can be passed to functions by reference or by pointer, allowing modifications to the original array."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749457737717_29wsn53kl"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749457236486",
+    "id": "test-1749457749389-nihp9",
+    "createdAt": "2025-06-09T08:29:09.389Z",
+    "updatedAt": "2025-06-09T08:29:09.389Z"
   }
 ]
