@@ -33,16 +33,16 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative py-20 md:py-32 min-h-[70vh] md:min-h-[80vh] flex items-center justify-center text-center overflow-hidden">
           <Image
-            src="https://placehold.co/1920x1080.png"
-            alt="Abstract background for Test Pilot hero section"
+            src="/hero-background-study.png" // IMPORTANT: Assuming you save the image here
+            alt="Illustration of a student studying at a desk with a lamp and books"
             layout="fill"
             objectFit="cover"
-            quality={75}
+            quality={85} // Slightly increased quality for a nice illustration
             className="-z-20"
-            data-ai-hint="modern learning"
+            data-ai-hint="student illustration" 
             priority
           />
-          <div className="absolute inset-0 bg-primary/70 -z-10"></div> {/* Overlay */}
+          <div className="absolute inset-0 bg-primary/60 -z-10"></div> {/* Overlay adjusted slightly if needed */}
           <div className="container mx-auto px-6 z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-white">
               The Future of Online Assessments is Here
