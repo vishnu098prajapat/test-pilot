@@ -34,9 +34,9 @@ export default function HomePage() {
       <main className="flex-grow">
         {/* Hero Section Updated */}
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
-          {/* Background Image: Ensure 'homePage.jpg' (or similar, no spaces) is in your public folder */}
+          {/* Background Image */}
           <Image
-            src="/homePage.jpg" 
+            src="/home-page.jpg" 
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
@@ -50,15 +50,19 @@ export default function HomePage() {
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              The Future of Online Assessments is Here
+              Revolutionize Your Assessments with Test Pilot
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-              Test Pilot empowers educators to create, distribute, and manage secure online tests with ease, backed by AI-powered proctoring.
+              Create, manage, and secure online tests effortlessly. Leverage AI proctoring for ultimate integrity and gain valuable insights with our intuitive platform.
             </p>
-            <Button size="lg" variant="default" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground">
+            <Button 
+              size="lg" 
+              asChild 
+              className="bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105"
+            >
               <Link href="/auth/signup">
                 <span> 
-                  Get Started Free <Zap className="ml-2 h-5 w-5"/>
+                  Get Started Free <Zap className="ml-2 h-5 w-5 inline-block"/>
                 </span>
               </Link>
             </Button>
@@ -75,17 +79,17 @@ export default function HomePage() {
               <FeatureCard
                 icon={<Edit3 className="w-10 h-10 text-primary" />}
                 title="Intuitive Test Builder"
-                description="Easily create diverse question types (MCQ, Short Answer, True/False) with a drag-and-drop interface."
+                description="Easily create diverse question types (MCQ, Short Answer, True/False) with a user-friendly interface."
               />
               <FeatureCard
                 icon={<BrainCircuit className="w-10 h-10 text-primary" />}
-                title="AI-Powered Proctoring"
-                description="Advanced anti-cheat system analyzes student activity to ensure test integrity."
+                title="AI-Powered Integrity"
+                description="Advanced AI proctoring system analyzes student activity to ensure test integrity and fairness."
               />
               <FeatureCard
                 icon={<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
-                title="Seamless User Experience"
-                description="Clean, distraction-free interface for users with direct test access via unique links."
+                title="Streamlined Experience"
+                description="Clean, distraction-free interface for users with direct test access via unique links for hassle-free participation."
               />
             </div>
           </div>
@@ -108,7 +112,7 @@ export default function HomePage() {
               <TestimonialCard
                 quote="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
                 author="John Smith"
-                role="High School Teacher" 
+                role="High School Educator" 
                 avatarSrc="https://placehold.co/100x100.png"
                 data-ai-hint="teacher profile"
               />
@@ -180,4 +184,3 @@ function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHin
     </Card>
   );
 }
-
