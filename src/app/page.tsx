@@ -11,7 +11,7 @@ export default function HomePage() {
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold font-headline text-primary">
-            <span> 
+            <span>
               Test Pilot
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </span>
@@ -36,13 +36,13 @@ export default function HomePage() {
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
           {/* Background Image */}
           <Image
-            src="/home2.jpg" // Updated image path
-            alt="Inspiring background for Test Pilot hero section" // More generic alt text
+            src="/home2.jpg" // Ensure this image is in your public folder
+            alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
             quality={85}
-            className="-z-20" 
-            data-ai-hint="education technology" // Updated hint
+            className="-z-20"
+            data-ai-hint="education technology"
             priority
           />
           {/* Overlay */}
@@ -50,18 +50,18 @@ export default function HomePage() {
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              Elevate Your Assessments: Secure, Smart, Seamless.
+              Reimagine Online Testing: Secure, Intelligent, Effortless.
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-              Test Pilot empowers you to create, administer, and analyze tests with unparalleled ease and integrity. Harness AI-driven insights and provide a fair, focused testing experience for everyone.
+              Test Pilot offers a robust platform for crafting diverse tests, ensuring academic honesty with AI proctoring, and delivering a smooth experience for educators and students alike.
             </p>
-            <Button 
-              size="lg" 
-              asChild 
+            <Button
+              size="lg"
+              asChild
               className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105"
             >
               <Link href="/auth/signup">
-                <span> 
+                <span>
                   Get Started Free <Zap className="ml-2 h-5 w-5 inline-block"/>
                 </span>
               </Link>
@@ -112,7 +112,7 @@ export default function HomePage() {
               <TestimonialCard
                 quote="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
                 author="John Smith"
-                role="High School Educator" 
+                role="High School Educator"
                 avatarSrc="https://placehold.co/100x100.png"
                 data-ai-hint="teacher profile"
               />

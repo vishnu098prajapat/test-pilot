@@ -17,8 +17,8 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    --primary: 271 100% 25.5%;  /* #4B0082 Indigo */
-    --primary-foreground: 0 0% 98%; /* White/very light for text on Indigo */
+    --primary: 210 80% 45%;  /* Professional Blue */
+    --primary-foreground: 0 0% 98%; /* White/very light for text on Blue */
 
     --secondary: 0 0% 90%; /* Slightly darker than background for secondary elements */
     --secondary-foreground: 0 0% 15%;
@@ -26,7 +26,7 @@ body {
     --muted: 0 0% 88%; /* Muted background */
     --muted-foreground: 0 0% 45.1%; /* Muted text */
 
-    --accent: 180 100% 25.1%;   /* #008080 Teal */
+    --accent: 180 100% 25.1%;   /* #008080 Teal (kept for contrast) */
     --accent-foreground: 0 0% 98%; /* White/very light for text on Teal */
 
     --destructive: 0 84.2% 60.2%;
@@ -34,7 +34,7 @@ body {
 
     --border: 0 0% 85%; /* Border color */
     --input: 0 0% 85%;  /* Input border */
-    --ring: 271 100% 25.5%; /* Ring color (Primary - Indigo) */
+    --ring: 210 80% 45%; /* Ring color (Primary - Blue) */
 
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -43,17 +43,17 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
 
-    /* Sidebar specific theme variables */
-    --sidebar-background: 271 80% 28%; /* Darker Indigo */
+    /* Sidebar specific theme variables (Updated to Blue) */
+    --sidebar-background: 210 70% 30%; /* Darker Blue */
     --sidebar-foreground: 0 0% 95%;      /* Light text for sidebar */
     
     --sidebar-primary: 0 0% 98%;                     /* Active item text color (whiteish) */
-    --sidebar-primary-foreground: 271 100% 25.5%;     /* Active item background (Indigo) */
+    --sidebar-primary-foreground: 210 80% 45%;     /* Active item background (Main Blue) */
     
-    --sidebar-accent: 271 70% 35%;        /* Hover item background (Lighter Indigo variant) */
+    --sidebar-accent: 210 75% 38%;        /* Hover item background (Slightly Lighter/Saturated Blue Variant) */
     --sidebar-accent-foreground: 0 0% 98%; /* Hover item text color (Whiteish) */
     
-    --sidebar-border: 271 60% 40%;        /* Sidebar border color */
+    --sidebar-border: 210 65% 42%;        /* Sidebar border color (Blue Variant) */
     --sidebar-ring: 180 100% 25.1%;       /* Accent for ring (Teal) */
   }
 
@@ -67,7 +67,7 @@ body {
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 271 100% 55.5%;  /* Lighter Indigo for dark mode */
+    --primary: 210 80% 65%;  /* Lighter Blue for dark mode */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 20%;
@@ -84,7 +84,7 @@ body {
 
     --border: 0 0% 25%;
     --input: 0 0% 25%;
-    --ring: 271 100% 55.5%;
+    --ring: 210 80% 65%; /* Ring color (Lighter Blue) */
 
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -92,17 +92,17 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    /* Dark Sidebar specific theme variables */
-    --sidebar-background: 271 70% 18%; 
+    /* Dark Sidebar specific theme variables (Updated to Blue) */
+    --sidebar-background: 210 60% 20%; 
     --sidebar-foreground: 0 0% 90%;      
     
     --sidebar-primary: 0 0% 95%;                     
-    --sidebar-primary-foreground: 271 100% 45.5%;     
+    --sidebar-primary-foreground: 210 80% 55%;     
     
-    --sidebar-accent: 271 60% 25%;        
+    --sidebar-accent: 210 65% 30%;        
     --sidebar-accent-foreground: 0 0% 95%; 
     
-    --sidebar-border: 271 50% 30%;        
+    --sidebar-border: 210 55% 35%;        
     --sidebar-ring: 180 100% 45.1%;       
   }
 }
