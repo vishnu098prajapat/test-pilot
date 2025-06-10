@@ -73,14 +73,18 @@ const generateTestQuestionsPrompt = ai.definePrompt({
   name: 'generateTestQuestionsPrompt',
   input: {schema: GenerateTestQuestionsInputSchema},
   output: {schema: GenerateTestQuestionsOutputSchema},
-  prompt: `You are an expert test creator. Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}", focusing on the following topics:
+  prompt: `You are an expert test creator specializing in generating high-quality assessment questions.
+Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}", focusing on the following topics:
 {{#each topics}}
 - {{{this}}}
 {{/each}}
 
-Each question must be worth 10 points by default.
-The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
-The questions should be appropriate for the specified "{{difficulty}}" level.
+Key Instructions for Question Generation:
+1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty.
+2.  **Depth of Understanding:** Craft questions that assess a genuine understanding of the subject matter, not just superficial recall. They should be similar in style and analytical depth to questions found in well-designed educational assessments or typical previous year papers for this level.
+3.  **Clarity and Precision:** Ensure each question is clearly worded, unambiguous, and directly addresses the specified topics and difficulty.
+4.  **Points Allocation:** Each question must be worth 10 points by default, unless the schema specifies otherwise.
+5.  **Strict Adherence to Output Format:** The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
 
 Follow these specific structures based on the question type "{{questionType}}":
 
@@ -117,8 +121,7 @@ The 'options' field MUST NOT be present for "true-false" questions.
 Please ensure your entire output is a single JSON object containing a key "generatedQuestions".
 "generatedQuestions" must be an array of question objects.
 Each question object in the array must strictly adhere to the structure and types outlined above for the specified "{{questionType}}".
-The "type" field for each question must exactly match the input '{{questionType}}'.
-The questions should reflect the requested "{{difficulty}}" level.
+The questions should reflect the requested "{{difficulty}}" level and the key instructions provided above.
 `,
 });
 
@@ -137,3 +140,4 @@ const generateTestQuestionsFlow = ai.defineFlow(
     return output;
   }
 );
+
