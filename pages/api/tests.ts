@@ -109,6 +109,7 @@ function writeDb(data: Test[]): void {
     console.log(`[API-DB] Data successfully written to ${DB_FILE_PATH}. Total tests: ${data.length}`);
   } catch (error) {
     console.error('[API-DB] Error writing to DB file:', error);
+    throw error; // Re-throw the error to be caught by the handler
   }
 }
 
@@ -131,7 +132,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.status(201).json({ message: 'Data written successfully' });
     } catch (error) {
       console.error('[API-DB] Failed to write data on POST:', error);
-      res.status(500).json({ error: 'Failed to write data' });
+      res.status(500).json({ error: 'Failed to write data to the database file.' }); // Ensure response is sent
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

@@ -489,5 +489,52 @@
     "suspiciousReason": "The student rapidly changed answers multiple times for several questions (ai-q-1749460512067-0-fqm3gty, ai-q-1749460512068-1-jmn0smp, ai-q-1749460512068-2-ut0giwc, ai-q-1749460512068-3-lobgddk). This behavior is unusual and suggests the student may be looking up answers or trying different options quickly, indicating potential cheating.",
     "id": "attempt-1749460389939-cok3ags",
     "submittedAt": "2025-06-09T09:13:09.939Z"
+  },
+  {
+    "testId": "test-1749556201891-nuwim",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "vishnu",
+    "startTime": "2025-06-10T11:51:01.278Z",
+    "endTime": "2025-06-10T11:51:32.803Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749556171252-0-4h1d5dy",
+        "answer": "ai-opt_q0_idx0_1749556171252_2nb107irv",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749556171252-1-ea7c670",
+        "answer": "ai-opt_q1_idx1_1749556171252_gito8ejkw",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749556171252-2-fd21lol",
+        "answer": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749556171252-3-mpuxr8t",
+        "answer": "ai-opt_q3_idx2_1749556171252_yas2vk83r",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749556171252-4-cpgmx3o",
+        "answer": "ai-opt_q4_idx3_1749556171252_op9io4vkp",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-10T11:51:01.298Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-10T11:51:01.299Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-10T11:51:13.664Z] Answer changed for question ID ai-q-1749556171252-0-4h1d5dy.\n[2025-06-10T11:51:18.782Z] Answer changed for question ID ai-q-1749556171252-1-ea7c670.\n[2025-06-10T11:51:22.667Z] Answer changed for question ID ai-q-1749556171252-2-fd21lol.\n[2025-06-10T11:51:26.384Z] Answer changed for question ID ai-q-1749556171252-3-mpuxr8t.\n[2025-06-10T11:51:29.073Z] Answer changed for question ID ai-q-1749556171252-4-cpgmx3o.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student answered multiple questions in quick succession at the beginning of the test. While this could indicate an attempt to rush through the test, it could also indicate familiarity with the material. Without further evidence, the behavior is not deemed highly suspicious. It might be worthwhile to review answers for correctness later. This single observation does not warrant strong suspicion.",
+    "id": "attempt-1749556033202-58xuu7f",
+    "submittedAt": "2025-06-10T11:47:13.202Z"
   }
 ]

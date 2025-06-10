@@ -1365,5 +1365,431 @@
     "id": "test-1749460552060-krwx1",
     "createdAt": "2025-06-09T09:15:52.060Z",
     "updatedAt": "2025-06-09T09:15:52.060Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749556171252-0-4h1d5dy",
+        "text": "What is the key difference between lists and tuples in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749556171252_2nb107irv",
+            "text": "Lists are mutable, tuples are immutable"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749556171252_x1dvc7x6s",
+            "text": "Lists are immutable, tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749556171252_kn68efhep",
+            "text": "Both lists and tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749556171252_ay23ujuyv",
+            "text": "Both lists and tuples are immutable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1749556171252_2nb107irv"
+      },
+      {
+        "id": "ai-q-1749556171252-1-ea7c670",
+        "text": "Which list method is used to add an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749556171252_vg6pjj8vl",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749556171252_gito8ejkw",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749556171252_bn5qovpu6",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749556171252_tz6y2r77e",
+            "text": "concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749556171252_gito8ejkw"
+      },
+      {
+        "id": "ai-q-1749556171252-2-fd21lol",
+        "text": "Which of the following correctly represents a tuple in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749556171252_fm2n602tb",
+            "text": "[1, 2, 3]"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm",
+            "text": "(1, 2, 3)"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749556171252_bvez05gya",
+            "text": "{1, 2, 3}"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749556171252_mttlog5s1",
+            "text": "1, 2, 3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm"
+      },
+      {
+        "id": "ai-q-1749556171252-3-mpuxr8t",
+        "text": "Which statement is generally true regarding the performance of lists and tuples?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749556171252_kbfk2jclt",
+            "text": "Lists are generally faster than tuples for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr",
+            "text": "Tuples are generally faster than lists for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749556171252_yas2vk83r",
+            "text": "Lists and tuples have the same iteration speed."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749556171252_ia7olv4ky",
+            "text": "Lists can store more data than tuples."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr"
+      },
+      {
+        "id": "ai-q-1749556171252-4-cpgmx3o",
+        "text": "What will be the output of the following code snippet?\n\ntuple1 = (1, 2, 3)\ntuple1[1] = 5",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749556171252_3op7x9lmi",
+            "text": "[1, 5, 3]"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749556171252_vqg2h0jqy",
+            "text": "(1, 5, 3)"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749556171252_a1qvq10tj",
+            "text": "No error"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749556171252_op9io4vkp",
+            "text": "TypeError: 'tuple' object does not support item assignment"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749556171252_op9io4vkp"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749459448868-hr20j",
+    "id": "test-1749556181459-nc53n",
+    "createdAt": "2025-06-10T11:49:41.459Z",
+    "updatedAt": "2025-06-10T11:49:41.459Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749556171252-0-4h1d5dy",
+        "text": "What is the key difference between lists and tuples in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749556171252_2nb107irv",
+            "text": "Lists are mutable, tuples are immutable"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749556171252_x1dvc7x6s",
+            "text": "Lists are immutable, tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749556171252_kn68efhep",
+            "text": "Both lists and tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749556171252_ay23ujuyv",
+            "text": "Both lists and tuples are immutable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1749556171252_2nb107irv"
+      },
+      {
+        "id": "ai-q-1749556171252-1-ea7c670",
+        "text": "Which list method is used to add an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749556171252_vg6pjj8vl",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749556171252_gito8ejkw",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749556171252_bn5qovpu6",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749556171252_tz6y2r77e",
+            "text": "concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749556171252_gito8ejkw"
+      },
+      {
+        "id": "ai-q-1749556171252-2-fd21lol",
+        "text": "Which of the following correctly represents a tuple in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749556171252_fm2n602tb",
+            "text": "[1, 2, 3]"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm",
+            "text": "(1, 2, 3)"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749556171252_bvez05gya",
+            "text": "{1, 2, 3}"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749556171252_mttlog5s1",
+            "text": "1, 2, 3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm"
+      },
+      {
+        "id": "ai-q-1749556171252-3-mpuxr8t",
+        "text": "Which statement is generally true regarding the performance of lists and tuples?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749556171252_kbfk2jclt",
+            "text": "Lists are generally faster than tuples for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr",
+            "text": "Tuples are generally faster than lists for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749556171252_yas2vk83r",
+            "text": "Lists and tuples have the same iteration speed."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749556171252_ia7olv4ky",
+            "text": "Lists can store more data than tuples."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr"
+      },
+      {
+        "id": "ai-q-1749556171252-4-cpgmx3o",
+        "text": "What will be the output of the following code snippet?\n\ntuple1 = (1, 2, 3)\ntuple1[1] = 5",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749556171252_3op7x9lmi",
+            "text": "[1, 5, 3]"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749556171252_vqg2h0jqy",
+            "text": "(1, 5, 3)"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749556171252_a1qvq10tj",
+            "text": "No error"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749556171252_op9io4vkp",
+            "text": "TypeError: 'tuple' object does not support item assignment"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749556171252_op9io4vkp"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749459448868-hr20j",
+    "id": "test-1749556190748-jlvo5",
+    "createdAt": "2025-06-10T11:49:50.748Z",
+    "updatedAt": "2025-06-10T11:49:50.748Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749556171252-0-4h1d5dy",
+        "text": "What is the key difference between lists and tuples in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749556171252_2nb107irv",
+            "text": "Lists are mutable, tuples are immutable"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749556171252_x1dvc7x6s",
+            "text": "Lists are immutable, tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749556171252_kn68efhep",
+            "text": "Both lists and tuples are mutable"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749556171252_ay23ujuyv",
+            "text": "Both lists and tuples are immutable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1749556171252_2nb107irv"
+      },
+      {
+        "id": "ai-q-1749556171252-1-ea7c670",
+        "text": "Which list method is used to add an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749556171252_vg6pjj8vl",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749556171252_gito8ejkw",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749556171252_bn5qovpu6",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749556171252_tz6y2r77e",
+            "text": "concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749556171252_gito8ejkw"
+      },
+      {
+        "id": "ai-q-1749556171252-2-fd21lol",
+        "text": "Which of the following correctly represents a tuple in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749556171252_fm2n602tb",
+            "text": "[1, 2, 3]"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm",
+            "text": "(1, 2, 3)"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749556171252_bvez05gya",
+            "text": "{1, 2, 3}"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749556171252_mttlog5s1",
+            "text": "1, 2, 3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1749556171252_1mjkzdvdm"
+      },
+      {
+        "id": "ai-q-1749556171252-3-mpuxr8t",
+        "text": "Which statement is generally true regarding the performance of lists and tuples?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749556171252_kbfk2jclt",
+            "text": "Lists are generally faster than tuples for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr",
+            "text": "Tuples are generally faster than lists for iteration."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749556171252_yas2vk83r",
+            "text": "Lists and tuples have the same iteration speed."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749556171252_ia7olv4ky",
+            "text": "Lists can store more data than tuples."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1749556171252_2jr4n2mtr"
+      },
+      {
+        "id": "ai-q-1749556171252-4-cpgmx3o",
+        "text": "What will be the output of the following code snippet?\n\ntuple1 = (1, 2, 3)\ntuple1[1] = 5",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749556171252_3op7x9lmi",
+            "text": "[1, 5, 3]"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749556171252_vqg2h0jqy",
+            "text": "(1, 5, 3)"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749556171252_a1qvq10tj",
+            "text": "No error"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749556171252_op9io4vkp",
+            "text": "TypeError: 'tuple' object does not support item assignment"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1749556171252_op9io4vkp"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": true,
+    "teacherId": "user-1749459448868-hr20j",
+    "id": "test-1749556201891-nuwim",
+    "createdAt": "2025-06-10T11:50:01.891Z",
+    "updatedAt": "2025-06-10T11:50:01.891Z"
   }
 ]
