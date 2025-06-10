@@ -36,13 +36,13 @@ export default function HomePage() {
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
           {/* Background Image */}
           <Image
-            src="/home-page.jpg" 
-            alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
+            src="/home2.jpg" // Updated image path
+            alt="Inspiring background for Test Pilot hero section" // More generic alt text
             layout="fill"
             objectFit="cover"
             quality={85}
             className="-z-20" 
-            data-ai-hint="student illustration"
+            data-ai-hint="education technology" // Updated hint
             priority
           />
           {/* Overlay */}
@@ -50,15 +50,15 @@ export default function HomePage() {
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              Revolutionize Your Assessments with Test Pilot
+              Elevate Your Assessments: Secure, Smart, Seamless.
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-              Create, manage, and secure online tests effortlessly. Leverage AI proctoring for ultimate integrity and gain valuable insights with our intuitive platform.
+              Test Pilot empowers you to create, administer, and analyze tests with unparalleled ease and integrity. Harness AI-driven insights and provide a fair, focused testing experience for everyone.
             </p>
             <Button 
               size="lg" 
               asChild 
-              className="bg-accent hover:bg-accent/80 text-accent-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105"
             >
               <Link href="/auth/signup">
                 <span> 
