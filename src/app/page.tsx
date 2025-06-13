@@ -36,7 +36,7 @@ export default function HomePage() {
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
           {/* Background Image */}
           <Image
-            src="/home2.jpg" // Ensure this image is in your public folder
+            src="/home2.jpg" 
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
@@ -50,10 +50,15 @@ export default function HomePage() {
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              Reimagine Online Testing: Secure, Intelligent, Effortless.
+              Create, Proctor, and Analyze Tests with Ease
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 max-w-2xl mx-auto">
-              Test Pilot offers a robust platform for crafting diverse tests, ensuring academic honesty with AI proctoring, and delivering a smooth experience for educators and students alike.
+            <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+              Test Pilot empowers you to create, administer, and analyze tests with unparalleled ease and integrity. Harness AI-driven insights and provide a fair, focused testing experience for everyone.
+            </p>
+            <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
+              <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
+              World's Fastest Quiz Generator: Topic to Quiz in 5 Seconds – <span className="text-yellow-300 underline">FREE Forever!</span>
+              <Zap className="inline-block ml-2 h-6 w-6 text-yellow-300" />
             </p>
             <Button
               size="lg"
