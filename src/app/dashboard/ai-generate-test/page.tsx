@@ -24,7 +24,7 @@ const AIGenerateTestSchema = z.object({
   questionType: z.enum(['mcq', 'short-answer', 'true-false'], { required_error: "Question type is required." }),
   difficulty: z.enum(['easy', 'medium', 'hard'], { required_error: "Difficulty level is required."}),
   topics: z.string().min(3, "Please provide at least one topic.").transform(val => val.split(',').map(t => t.trim()).filter(t => t.length > 0)),
-  numberOfQuestions: z.coerce.number().int().min(1, "Minimum 1 question.").max(10, "Maximum 10 questions."),
+  numberOfQuestions: z.coerce.number().int().min(1, "Minimum 1 question.").max(50, "Maximum 50 questions."),
 });
 
 type AIGenerateTestFormValues = z.infer<typeof AIGenerateTestSchema>;
@@ -46,7 +46,7 @@ export default function AIGenerateTestPage() {
       questionType: 'mcq',
       difficulty: 'medium',
       topics: '',
-      numberOfQuestions: 5,
+      numberOfQuestions: 5, // Default to 5, user can change up to 50
     },
   });
 
@@ -246,8 +246,8 @@ export default function AIGenerateTestPage() {
                 name="numberOfQuestions"
                 render={({ field }) => (
                   <FormItem>
-                    <Label htmlFor="numberOfQuestions">Number of Questions (1-10)</Label>
-                    <Input id="numberOfQuestions" type="number" min="1" max="10" {...field} />
+                    <Label htmlFor="numberOfQuestions">Number of Questions (1-50)</Label>
+                    <Input id="numberOfQuestions" type="number" min="1" max="50" {...field} />
                     <FormMessage />
                   </FormItem>
                 )}

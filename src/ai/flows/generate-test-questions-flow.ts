@@ -54,7 +54,7 @@ const GenerateTestQuestionsInputSchema = z.object({
   questionType: z.enum(['mcq', 'short-answer', 'true-false']).describe("The desired type for all generated questions (mcq, short-answer, or true-false)."),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe("The desired difficulty level for the questions (easy, medium, or hard)."),
   topics: z.array(z.string()).min(1).describe("An array of specific topics to generate questions about."),
-  numberOfQuestions: z.number().int().min(1).max(10).describe("The number of questions to generate (integer between 1 and 10)."),
+  numberOfQuestions: z.number().int().min(1).max(50).describe("The number of questions to generate (integer between 1 and 50)."),
 });
 export type GenerateTestQuestionsInput = z.infer<typeof GenerateTestQuestionsInputSchema>;
 
@@ -78,6 +78,8 @@ Your task is to generate {{numberOfQuestions}} questions of type "{{questionType
 {{#each topics}}
 - {{{this}}}
 {{/each}}
+
+Please generate these questions as quickly as possible.
 
 Key Instructions for Question Generation:
 1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty.
