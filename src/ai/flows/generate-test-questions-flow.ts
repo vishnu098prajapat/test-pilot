@@ -80,7 +80,7 @@ Your task is to generate {{numberOfQuestions}} questions of type "{{questionType
 {{/each}}
 
 Please generate these questions as quickly as possible.
-It is CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number.
+It is CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number. The final output must contain precisely {{numberOfQuestions}} question objects in the 'generatedQuestions' array.
 
 Key Instructions for Question Generation:
 1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty.
@@ -125,6 +125,7 @@ Please ensure your entire output is a single JSON object containing a key "gener
 "generatedQuestions" must be an array of question objects.
 Each question object in the array must strictly adhere to the structure and types outlined above for the specified "{{questionType}}".
 The questions should reflect the requested "{{difficulty}}" level and the key instructions provided above.
+Ensure you fulfill the request for EXACTLY {{numberOfQuestions}} questions; do not provide fewer or more, even if the topics are challenging or easy. The final count must be {{numberOfQuestions}}.
 `,
 });
 
@@ -140,11 +141,9 @@ const generateTestQuestionsFlow = ai.defineFlow(
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
         throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject or difficulty, or try a different question type.");
     }
-    // Optional: Add a check for the number of questions returned, though this might be too strict if the AI sometimes slightly deviates.
+    // We can add a strict check here if preferred, though the user's main concern is the AI's generation, not post-validation.
     // if (output.generatedQuestions.length !== input.numberOfQuestions) {
-    //   console.warn(`AI generated ${output.generatedQuestions.length} questions, but ${input.numberOfQuestions} were requested.`);
-    //   // Decide if you want to throw an error or just proceed with the generated questions.
-    //   // For now, we'll proceed.
+    //   throw new Error(`AI generated ${output.generatedQuestions.length} questions, but exactly ${input.numberOfQuestions} were requested. Please try again.`);
     // }
     return output;
   }
