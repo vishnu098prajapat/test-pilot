@@ -46,14 +46,14 @@ export default function HomePage() {
             priority
           />
           {/* Overlay */}
-          <div className="absolute inset-0 bg-primary/60 -z-10"></div>
+          <div className="absolute inset-0 bg-primary/70 -z-10"></div>
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              Smarter Assessments, Brighter Futures.
+              Navigate Your Success with Test Pilot.
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              Test Pilot redefines online testing with an intelligent, secure, and user-friendly platform. Create, deliver, and analyze assessments effortlessly, empowering educators and inspiring students.
+              The ultimate online assessment platform. Effortlessly create, deliver, and analyze tests with AI-powered insights for a smarter, fairer educational experience.
             </p>
              <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
               <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
@@ -100,7 +100,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* New Features Section */}
+        {/* New Advanced Features Section */}
         <section id="advanced-features" className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-16 text-foreground">
@@ -145,11 +145,11 @@ export default function HomePage() {
               <FeatureCard
                 icon={<MessageSquareText className="w-10 h-10 text-primary" />}
                 title="Answer Explanations"
-                description="Enable an 'Explanation Mode' to provide detailed explanations for incorrect answers, aiding learning."
+                description="Enable 'Explanation Mode' to provide detailed explanations for incorrect answers, aiding learning."
               />
                <FeatureCard
                 icon={<Briefcase className="w-10 h-10 text-primary" />}
-                title="Multi-Class Management"
+                title="Teacher Dashboard"
                 description="Teachers can efficiently manage multiple classes, assign tests, and view analytics separately."
               />
               <FeatureCard
@@ -214,39 +214,3 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
     </Card>
   );
 }
-
-// TestimonialCard was using a different structure, let's keep FeatureCard for consistency or define TestimonialCard if needed.
-// For simplicity, I've made testimonials use FeatureCard structure for icon/title/description.
-// If specific avatar + quote structure is needed, TestimonialCard component should be defined and used.
-
-// interface TestimonialCardProps {
-//   quote: string;
-//   author: string;
-//   role: string;
-//   avatarSrc: string;
-//   "data-ai-hint": string;
-// }
-
-// function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHint }: TestimonialCardProps) {
-//   return (
-//     <Card className="shadow-lg bg-card">
-//       <CardContent className="pt-6">
-//         <blockquote className="italic text-lg mb-4 text-card-foreground">&ldquo;{quote}&rdquo;</blockquote>
-//         <div className="flex items-center">
-//           <Image
-//             src={avatarSrc}
-//             alt={author}
-//             width={50}
-//             height={50}
-//             className="rounded-full mr-4"
-//             data-ai-hint={aiHint}
-//           />
-//           <div>
-//             <p className="font-semibold text-card-foreground">{author}</p>
-//             <p className="text-sm text-muted-foreground">{role}</p>
-//           </div>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }
