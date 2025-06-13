@@ -536,5 +536,82 @@
     "suspiciousReason": "The student answered multiple questions in quick succession at the beginning of the test. While this could indicate an attempt to rush through the test, it could also indicate familiarity with the material. Without further evidence, the behavior is not deemed highly suspicious. It might be worthwhile to review answers for correctness later. This single observation does not warrant strong suspicion.",
     "id": "attempt-1749556033202-58xuu7f",
     "submittedAt": "2025-06-10T11:47:13.202Z"
+  },
+  {
+    "testId": "test-1749805673794-nskwg",
+    "testTitle": "AI Gen (medium) MCQ Test on g.k",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-13T09:08:36.828Z",
+    "endTime": "2025-06-13T09:09:37.449Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749805648242-0-6p0jdgy",
+        "answer": "ai-opt_q0_idx2_1749805648242_kdk72cafg",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749805648242-1-uwzmsac",
+        "answer": "ai-opt_q1_idx0_1749805648242_prab41ur1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-2-pfv9ncx",
+        "answer": "ai-opt_q2_idx1_1749805648242_fmr7j0lhg",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-3-nyh5u42",
+        "answer": "ai-opt_q3_idx0_1749805648242_yfry1vewt",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-4-15av4nl",
+        "answer": "ai-opt_q4_idx0_1749805648242_bagf82asc",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-5-snre9xd",
+        "answer": "ai-opt_q5_idx2_1749805648242_ma8wuzqm5",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749805648242-6-yzg4ttp",
+        "answer": "ai-opt_q6_idx2_1749805648242_bm1nhd42a",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-7-d51tvzx",
+        "answer": "ai-opt_q7_idx1_1749805648242_koo3ul2hg",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749805648242-8-ac6i9sg",
+        "answer": "ai-opt_q8_idx2_1749805648242_w884lmk4g",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749805648242-9-rj1o6nb",
+        "answer": "ai-opt_q9_idx2_1749805648242_7b5ro8hms",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 30,
+    "maxPossiblePoints": 100,
+    "scorePercentage": 30,
+    "activityLog": "[2025-06-13T09:08:36.843Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-13T09:08:36.844Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-13T09:08:39.100Z] Answer changed for question ID ai-q-1749805648242-0-6p0jdgy.\n[2025-06-13T09:08:51.877Z] Answer changed for question ID ai-q-1749805648242-1-uwzmsac.\n[2025-06-13T09:08:54.541Z] Answer changed for question ID ai-q-1749805648242-1-uwzmsac.\n[2025-06-13T09:08:56.392Z] Answer changed for question ID ai-q-1749805648242-1-uwzmsac.\n[2025-06-13T09:09:02.391Z] Answer changed for question ID ai-q-1749805648242-2-pfv9ncx.\n[2025-06-13T09:09:06.513Z] Answer changed for question ID ai-q-1749805648242-3-nyh5u42.\n[2025-06-13T09:09:10.974Z] Answer changed for question ID ai-q-1749805648242-4-15av4nl.\n[2025-06-13T09:09:14.527Z] Answer changed for question ID ai-q-1749805648242-5-snre9xd.\n[2025-06-13T09:09:19.957Z] Answer changed for question ID ai-q-1749805648242-6-yzg4ttp.\n[2025-06-13T09:09:25.524Z] Answer changed for question ID ai-q-1749805648242-7-d51tvzx.\n[2025-06-13T09:09:27.387Z] Answer changed for question ID ai-q-1749805648242-7-d51tvzx.\n[2025-06-13T09:09:30.657Z] Answer changed for question ID ai-q-1749805648242-8-ac6i9sg.\n[2025-06-13T09:09:33.906Z] Answer changed for question ID ai-q-1749805648242-9-rj1o6nb.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows consistent answering of questions with some changes, which is normal behavior during a test. There are no indications of tab switching, copy-pasting, or other suspicious activities.",
+    "id": "attempt-1749805511628-fmgh3zy",
+    "submittedAt": "2025-06-13T09:05:11.628Z"
   }
 ]

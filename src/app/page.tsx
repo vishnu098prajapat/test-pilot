@@ -36,7 +36,7 @@ export default function HomePage() {
         <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
           {/* Background Image */}
           <Image
-            src="/home2.jpg" 
+            src="/home2.jpg"
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
             layout="fill"
             objectFit="cover"
@@ -50,10 +50,10 @@ export default function HomePage() {
 
           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
-              Elevate Your Assessments: Secure, Smart, Seamless.
+              Smarter Assessments, Brighter Futures.
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              Test Pilot empowers you to create, administer, and analyze tests with unparalleled ease and integrity. Harness AI-driven insights and provide a fair, focused testing experience for everyone.
+              Test Pilot redefines online testing with an intelligent, secure, and user-friendly platform. Create, deliver, and analyze assessments effortlessly, empowering educators and inspiring students.
             </p>
              <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
               <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
@@ -168,19 +168,15 @@ export default function HomePage() {
               Loved by Users
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <TestimonialCard
-                quote="Test Pilot has revolutionized how I conduct online assessments. The AI proctoring gives me peace of mind."
-                author="Dr. Jane Doe"
-                role="Professor of Computer Science"
-                avatarSrc="https://placehold.co/100x100.png"
-                data-ai-hint="educator portrait"
+              <FeatureCard
+                icon={<Image src="https://placehold.co/100x100.png" alt="Dr. Jane Doe" width={50} height={50} className="rounded-full" data-ai-hint="educator portrait"/>}
+                title="Dr. Jane Doe, Professor"
+                description="Test Pilot has revolutionized how I conduct online assessments. The AI proctoring gives me peace of mind."
               />
-              <TestimonialCard
-                quote="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
-                author="John Smith"
-                role="High School Educator"
-                avatarSrc="https://placehold.co/100x100.png"
-                data-ai-hint="teacher profile"
+              <FeatureCard
+                icon={<Image src="https://placehold.co/100x100.png" alt="John Smith" width={50} height={50} className="rounded-full" data-ai-hint="teacher profile"/>}
+                title="John Smith, High School Educator"
+                description="Creating and managing tests is so much simpler now. My students find the interface very user-friendly."
               />
             </div>
           </div>
@@ -219,34 +215,38 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
   );
 }
 
-interface TestimonialCardProps {
-  quote: string;
-  author: string;
-  role: string;
-  avatarSrc: string;
-  "data-ai-hint": string;
-}
+// TestimonialCard was using a different structure, let's keep FeatureCard for consistency or define TestimonialCard if needed.
+// For simplicity, I've made testimonials use FeatureCard structure for icon/title/description.
+// If specific avatar + quote structure is needed, TestimonialCard component should be defined and used.
 
-function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHint }: TestimonialCardProps) {
-  return (
-    <Card className="shadow-lg bg-card">
-      <CardContent className="pt-6">
-        <blockquote className="italic text-lg mb-4 text-card-foreground">&ldquo;{quote}&rdquo;</blockquote>
-        <div className="flex items-center">
-          <Image
-            src={avatarSrc}
-            alt={author}
-            width={50}
-            height={50}
-            className="rounded-full mr-4"
-            data-ai-hint={aiHint}
-          />
-          <div>
-            <p className="font-semibold text-card-foreground">{author}</p>
-            <p className="text-sm text-muted-foreground">{role}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// interface TestimonialCardProps {
+//   quote: string;
+//   author: string;
+//   role: string;
+//   avatarSrc: string;
+//   "data-ai-hint": string;
+// }
+
+// function TestimonialCard({ quote, author, role, avatarSrc, "data-ai-hint": aiHint }: TestimonialCardProps) {
+//   return (
+//     <Card className="shadow-lg bg-card">
+//       <CardContent className="pt-6">
+//         <blockquote className="italic text-lg mb-4 text-card-foreground">&ldquo;{quote}&rdquo;</blockquote>
+//         <div className="flex items-center">
+//           <Image
+//             src={avatarSrc}
+//             alt={author}
+//             width={50}
+//             height={50}
+//             className="rounded-full mr-4"
+//             data-ai-hint={aiHint}
+//           />
+//           <div>
+//             <p className="font-semibold text-card-foreground">{author}</p>
+//             <p className="text-sm text-muted-foreground">{role}</p>
+//           </div>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
