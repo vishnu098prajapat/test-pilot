@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle } from "lucide-react";
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle, QrCode } from "lucide-react";
 import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import QrCodeModal from "@/components/common/qr-code-modal"; // Import QrCodeModal
 
 export default function TestManagementPage() {
   const params = useParams();
@@ -35,6 +36,9 @@ export default function TestManagementPage() {
   const [test, setTest] = useState<Test | null>(null);
   const [isFetchingTest, setIsFetchingTest] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const testId = params.testId as string;
 
@@ -72,6 +76,9 @@ export default function TestManagementPage() {
 
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
+          if (typeof window !== "undefined") {
+            setQrCodeUrl(`${window.location.origin}/test/${fetchedTest.id}`);
+          }
           setFetchError(null);
         } else if (fetchedTest) {
           setFetchError("You are not authorized to view this test.");
@@ -115,14 +122,26 @@ export default function TestManagementPage() {
     }
   };
 
-  const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
+  const handleCopyLink = () => {
+    if (qrCodeUrl) {
+      navigator.clipboard.writeText(qrCodeUrl);
+      toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
+    }
+  };
 
   const handleWhatsAppShare = () => {
-    if (test && shareLink) {
-      const message = encodeURIComponent(`Check out this test: "${test.title}". Take it here: ${shareLink}`);
+    if (test && qrCodeUrl) {
+      const message = encodeURIComponent(`Check out this test: "${test.title}". Take it here: ${qrCodeUrl}`);
       window.open(`https://wa.me/?text=${message}`, '_blank');
     }
   };
+
+  const handleShowQrCode = () => {
+    if (qrCodeUrl) {
+      setIsQrModalOpen(true);
+    }
+  };
+
 
   if (isAuthLoading || (isFetchingTest && !fetchError)) {
     return (
@@ -179,105 +198,108 @@ export default function TestManagementPage() {
   }
 
   return (
-    <div className="container mx-auto py-2">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-headline flex items-center">
-            {test.title}
-            <Badge variant={test.published ? "default" : "secondary"} className="ml-3 text-sm">
-              {test.published ? "Published" : "Draft"}
-            </Badge>
-          </h1>
-          <p className="text-muted-foreground">{test.subject}</p>
+    <>
+      <div className="container mx-auto py-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold font-headline flex items-center">
+              {test.title}
+              <Badge variant={test.published ? "default" : "secondary"} className="ml-3 text-sm">
+                {test.published ? "Published" : "Draft"}
+              </Badge>
+            </h1>
+            <p className="text-muted-foreground">{test.subject}</p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+             <Button variant="outline" asChild>
+              <Link href={`/dashboard/create-test?edit=${test.id}`}>
+                <Edit className="mr-2 h-4 w-4" /> Edit Test
+              </Link>
+            </Button>
+            <Button variant="default" disabled={!test.published || !qrCodeUrl} onClick={handleCopyLink}>
+              <Share2 className="mr-2 h-4 w-4" /> Copy Link
+            </Button>
+             <Button variant="outline" disabled={!test.published || !qrCodeUrl} onClick={handleShowQrCode}>
+                <QrCode className="mr-2 h-4 w-4" /> Show QR
+            </Button>
+             <Button variant="outline" disabled={!test.published || !qrCodeUrl} onClick={handleWhatsAppShare}>
+                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+              </Button>
+             <Button variant="outline" asChild>
+                  <Link href={`/test/${test.id}/leaderboard`}>
+                    <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
+                  </Link>
+              </Button>
+          </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
-           <Button variant="outline" asChild>
-            <Link href={`/dashboard/create-test?edit=${test.id}`}>
-              <Edit className="mr-2 h-4 w-4" /> Edit Test
-            </Link>
-          </Button>
-           <Button variant="default" disabled={!test.published} onClick={() => {
-              if(shareLink) {
-                navigator.clipboard.writeText(shareLink);
-                toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
-              }
-           }}>
-            <Share2 className="mr-2 h-4 w-4" /> Share Link
-          </Button>
-           <Button variant="outline" disabled={!test.published} onClick={handleWhatsAppShare}>
-                <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-            </Button>
-           <Button variant="outline" asChild>
-                <Link href={`/test/${test.id}/leaderboard`}>
-                  <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
-                </Link>
-            </Button>
+
+        {test.published && qrCodeUrl && (
+          <Card className="mb-6 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-700">
+            <CardHeader>
+              <CardTitle className="text-green-700 dark:text-green-400">Test is Live!</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-green-600 dark:text-green-300">Students can access this test using the link:</p>
+              <Input type="text" readOnly value={qrCodeUrl} className="mt-2 bg-green-100 dark:bg-green-800/50" />
+              <Button size="sm" variant="ghost" className="mt-2 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-700" onClick={handleCopyLink}>
+                Copy Link
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <InfoCard icon={<ListChecks />} label="Questions" value={`${test.questions.length} Questions`} />
+          <InfoCard icon={<Clock />} label="Duration" value={`${test.duration} Minutes`} />
+          <InfoCard icon={<Users />} label="Attempts Allowed" value={test.attemptsAllowed === 0 ? "Unlimited" : test.attemptsAllowed.toString()} />
+          <InfoCard icon={<ShieldCheck />} label="Tab Switch Detection" value={test.enableTabSwitchDetection ? "Enabled" : "Disabled"} />
+          <InfoCard icon={<ShieldCheck />} label="Copy/Paste Disabled" value={test.enableCopyPasteDisable ? "Enabled" : "Disabled"} />
+          <InfoCard icon={<ShieldCheck />} label="Fullscreen Enforced" value={test.enforceFullScreen ? "Enabled" : "Disabled"} />
+        </div>
+
+        <Separator className="my-8" />
+
+        <div className="space-y-6">
+          <Card className="border-orange-400 dark:border-orange-600">
+            <CardHeader>
+              <CardTitle className="text-xl font-headline flex items-center text-orange-600 dark:text-orange-400"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">Deleting this test is permanent and cannot be undone. All associated data, including student attempts, will be lost.</p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">
+                   <Trash2 className="mr-2 h-4 w-4" /> Delete This Test
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the test &quot;{test.title}&quot; and all its data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteTest} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                      Yes, delete test
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
-      {test.published && shareLink && (
-        <Card className="mb-6 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-700">
-          <CardHeader>
-            <CardTitle className="text-green-700 dark:text-green-400">Test is Live!</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-green-600 dark:text-green-300">Students can access this test using the link:</p>
-            <Input type="text" readOnly value={shareLink} className="mt-2 bg-green-100 dark:bg-green-800/50" />
-            <Button size="sm" variant="ghost" className="mt-2 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-700" onClick={() => {
-              if (shareLink) {
-                navigator.clipboard.writeText(shareLink);
-                toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
-              }
-            }}>
-              Copy Link
-            </Button>
-          </CardContent>
-        </Card>
+      {qrCodeUrl && (
+        <QrCodeModal
+          isOpen={isQrModalOpen}
+          onClose={() => setIsQrModalOpen(false)}
+          url={qrCodeUrl}
+          title={`QR Code for: ${test.title}`}
+        />
       )}
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <InfoCard icon={<ListChecks />} label="Questions" value={`${test.questions.length} Questions`} />
-        <InfoCard icon={<Clock />} label="Duration" value={`${test.duration} Minutes`} />
-        <InfoCard icon={<Users />} label="Attempts Allowed" value={test.attemptsAllowed === 0 ? "Unlimited" : test.attemptsAllowed.toString()} />
-        <InfoCard icon={<ShieldCheck />} label="Tab Switch Detection" value={test.enableTabSwitchDetection ? "Enabled" : "Disabled"} />
-        <InfoCard icon={<ShieldCheck />} label="Copy/Paste Disabled" value={test.enableCopyPasteDisable ? "Enabled" : "Disabled"} />
-        <InfoCard icon={<ShieldCheck />} label="Fullscreen Enforced" value={test.enforceFullScreen ? "Enabled" : "Disabled"} />
-      </div>
-
-      <Separator className="my-8" />
-
-      <div className="space-y-6">
-        <Card className="border-orange-400 dark:border-orange-600">
-          <CardHeader>
-            <CardTitle className="text-xl font-headline flex items-center text-orange-600 dark:text-orange-400"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">Deleting this test is permanent and cannot be undone. All associated data, including student attempts, will be lost.</p>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                 <Trash2 className="mr-2 h-4 w-4" /> Delete This Test
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the test &quot;{test.title}&quot; and all its data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteTest} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-                    Yes, delete test
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -297,5 +319,3 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
     </CardContent>
   </Card>
 );
-    
-    
