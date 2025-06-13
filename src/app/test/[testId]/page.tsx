@@ -7,12 +7,10 @@ import StudentTestArea from '@/components/student/student-test-area';
 import { getTestById } from '@/lib/store'; 
 import type { Test } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle, User } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+// Removed Input, Label, Card related to name input as they are no longer used here.
 
 export default function StudentTestPage() {
   const params = useParams();
@@ -21,11 +19,10 @@ export default function StudentTestPage() {
   const [testData, setTestData] = useState<Test | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [studentName, setStudentName] = useState<string>("");
-  const [nameSubmitted, setNameSubmitted] = useState<boolean>(false);
 
   const testId = params.testId as string;
   const isPracticeMode = searchParams.get('mode') === 'practice';
+  const studentIdentifier = "Anonymous Student"; // Default identifier
 
   useEffect(() => {
     async function fetchTest() {
@@ -64,15 +61,6 @@ export default function StudentTestPage() {
     fetchTest();
   }, [testId]);
 
-  const handleNameSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (studentName.trim()) {
-      setNameSubmitted(true);
-    } else {
-      setError("Please enter your name to start the test.");
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 w-full max-w-4xl mx-auto">
@@ -90,7 +78,7 @@ export default function StudentTestPage() {
     );
   }
 
-  if (error && !nameSubmitted) { // Show general error if name not submitted yet
+  if (error) { 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
@@ -115,41 +103,6 @@ export default function StudentTestPage() {
       </div>
     );
   }
-
-  if (!nameSubmitted) {
-    return (
-      <div className="w-full max-w-md mx-auto">
-        <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl font-headline text-center">Welcome to {testData.title}</CardTitle>
-            <CardDescription className="text-center">Please enter your name to begin the test.</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleNameSubmit}>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="studentName">Your Name</Label>
-                <Input 
-                  id="studentName" 
-                  type="text" 
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                  placeholder="Enter your full name" 
-                  required 
-                  className="mt-1"
-                />
-              </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-            </CardContent>
-            <CardFooter>
-              <Button type="submit" className="w-full">
-                <User className="mr-2 h-4 w-4" /> Start Test
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
-      </div>
-    );
-  }
   
-  return <StudentTestArea testData={testData} studentIdentifier={studentName} isPracticeMode={isPracticeMode} />;
+  return <StudentTestArea testData={testData} studentIdentifier={studentIdentifier} isPracticeMode={isPracticeMode} />;
 }
