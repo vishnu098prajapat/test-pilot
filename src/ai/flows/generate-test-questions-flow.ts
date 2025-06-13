@@ -80,6 +80,7 @@ Your task is to generate {{numberOfQuestions}} questions of type "{{questionType
 {{/each}}
 
 Please generate these questions as quickly as possible.
+It is CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number.
 
 Key Instructions for Question Generation:
 1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty.
@@ -139,6 +140,12 @@ const generateTestQuestionsFlow = ai.defineFlow(
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
         throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject or difficulty, or try a different question type.");
     }
+    // Optional: Add a check for the number of questions returned, though this might be too strict if the AI sometimes slightly deviates.
+    // if (output.generatedQuestions.length !== input.numberOfQuestions) {
+    //   console.warn(`AI generated ${output.generatedQuestions.length} questions, but ${input.numberOfQuestions} were requested.`);
+    //   // Decide if you want to throw an error or just proceed with the generated questions.
+    //   // For now, we'll proceed.
+    // }
     return output;
   }
 );
