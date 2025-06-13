@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity } from "lucide-react";
+import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
@@ -94,6 +94,14 @@ export default function DashboardPage() {
     return { numberOfAttempts, averageScore };
   };
 
+  const handleWhatsAppShare = (test: Test) => {
+    if (typeof window !== "undefined") {
+      const testLink = `${window.location.origin}/test/${test.id}`;
+      const message = encodeURIComponent(`Check out this test: "${test.title}". Take it here: ${testLink}`);
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+  };
+
   const SummaryCard = ({ title, value, icon, description }: { title: string, value: string | number, icon: React.ReactNode, description: string }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -151,6 +159,7 @@ export default function DashboardPage() {
                    <Skeleton className="h-9 w-24" />
                    <Skeleton className="h-9 w-20" />
                    <Skeleton className="h-9 w-20" />
+                   <Skeleton className="h-9 w-28" />
                 </CardFooter>
               </Card>
             ))}
@@ -202,7 +211,10 @@ export default function DashboardPage() {
                     navigator.clipboard.writeText(testLink);
                     toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
                   }}>
-                    <Share2 className="mr-1 h-4 w-4" /> Share Test
+                    <Share2 className="mr-1 h-4 w-4" /> Share Link
+                  </Button>
+                  <Button variant="outline" size="sm" disabled={!test.published} onClick={() => handleWhatsAppShare(test)}>
+                    <MessageCircle className="mr-1 h-4 w-4" /> WhatsApp
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -249,5 +261,4 @@ export default function DashboardPage() {
     </div>
   );
 }
-
     

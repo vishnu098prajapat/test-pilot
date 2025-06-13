@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2 } from "lucide-react";
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle } from "lucide-react";
 import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
 import type { Test } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
@@ -117,6 +117,13 @@ export default function TestManagementPage() {
 
   const shareLink = test && typeof window !== 'undefined' ? `${window.location.origin}/test/${test.id}` : "";
 
+  const handleWhatsAppShare = () => {
+    if (test && shareLink) {
+      const message = encodeURIComponent(`Check out this test: "${test.title}". Take it here: ${shareLink}`);
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+  };
+
   if (isAuthLoading || (isFetchingTest && !fetchError)) {
     return (
       <div className="container mx-auto py-8">
@@ -195,8 +202,11 @@ export default function TestManagementPage() {
                 toast({ title: "Link Copied!", description: "Test link copied to clipboard.", duration: 2000 });
               }
            }}>
-            <Share2 className="mr-2 h-4 w-4" /> Share Test
+            <Share2 className="mr-2 h-4 w-4" /> Share Link
           </Button>
+           <Button variant="outline" disabled={!test.published} onClick={handleWhatsAppShare}>
+                <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+            </Button>
            <Button variant="outline" asChild>
                 <Link href={`/test/${test.id}/leaderboard`}>
                   <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
@@ -289,4 +299,3 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
 );
     
     
-
