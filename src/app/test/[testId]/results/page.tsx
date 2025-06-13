@@ -12,33 +12,38 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home } from "lucide-react"; 
+import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home, Save } from "lucide-react"; 
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; 
 import type { Question } from '@/lib/types'; 
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
 interface StoredTestResults {
   testId: string;
   testTitle: string;
-  totalQuestions: number; // This should now be accurate from calculation
+  totalQuestions: number; 
   correctAnswersCount: number;
   incorrectOrUnansweredCount: number;
   totalPointsScored: number;
   maxPossiblePoints: number;
   scorePercentage: number;
-  questions: Question[]; // Expecting the actual questions array here
-  studentRawAnswers: Record<string, any>; // Expecting the raw answers
+  questions: Question[]; 
+  studentRawAnswers: Record<string, any>; 
+  notes?: string; // Added notes field
 }
 
 export default function StudentResultsPage() {
   const params = useParams();
   const router = useRouter(); 
+  const { toast } = useToast();
   const testId = params.testId as string;
   const [results, setResults] = useState<StoredTestResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [studentNotes, setStudentNotes] = useState<string>('');
 
   useEffect(() => {
     setIsLoading(true);
@@ -55,20 +60,20 @@ export default function StudentResultsPage() {
         const parsedResults = JSON.parse(storedResultsString) as StoredTestResults;
         console.log("[ResultsPage] Loaded from localStorage:", parsedResults);
 
-        // Validate crucial fields including questions array
         if (
           typeof parsedResults.testTitle === 'string' &&
-          typeof parsedResults.totalQuestions === 'number' && // This is now the calculated total
+          typeof parsedResults.totalQuestions === 'number' && 
           typeof parsedResults.correctAnswersCount === 'number' &&
           typeof parsedResults.incorrectOrUnansweredCount === 'number' &&
           typeof parsedResults.scorePercentage === 'number' &&
           typeof parsedResults.totalPointsScored === 'number' &&
           typeof parsedResults.maxPossiblePoints === 'number' &&
-          Array.isArray(parsedResults.questions) && // Check if questions array exists
-          parsedResults.questions.length > 0 && // Check if it's not empty
-          typeof parsedResults.studentRawAnswers === 'object' // Check if raw answers exist
+          Array.isArray(parsedResults.questions) && 
+          parsedResults.questions.length > 0 && 
+          typeof parsedResults.studentRawAnswers === 'object' 
         ) {
           setResults(parsedResults);
+          setStudentNotes(parsedResults.notes || ''); // Load existing notes
         } else {
           setError("Test result data is invalid or incomplete. Please try taking the test again.");
           console.warn("[ResultsPage] Invalid results structure in localStorage:", parsedResults);
@@ -83,6 +88,23 @@ export default function StudentResultsPage() {
       setIsLoading(false);
     }
   }, [testId]);
+
+  const handleSaveNotes = () => {
+    if (!results) {
+      toast({ title: "Error", description: "Result data not loaded, cannot save notes.", variant: "destructive" });
+      return;
+    }
+    const updatedResults: StoredTestResults = { ...results, notes: studentNotes };
+    try {
+      localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testId}`, JSON.stringify(updatedResults));
+      toast({ title: "Notes Saved", description: "Your personal notes for this test have been saved locally.", duration: 2000 });
+      setResults(updatedResults); // Update local state to reflect saved notes
+    } catch (e) {
+      toast({ title: "Error Saving Notes", description: "Could not save your notes to local storage.", variant: "destructive" });
+      console.error("[ResultsPage] Error saving notes to localStorage:", e);
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -128,7 +150,6 @@ export default function StudentResultsPage() {
     );
   }
   
-  // Use results.questions.length for the most accurate total question count from the attempt
   const displayTotalQuestions = results.questions.length;
 
   return (
@@ -171,7 +192,6 @@ export default function StudentResultsPage() {
               Review Answers (Coming Soon)
             </Button>
           </div>
-
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
            <Button asChild>
@@ -186,6 +206,31 @@ export default function StudentResultsPage() {
            </Button>
         </CardFooter>
       </Card>
+
+      {/* Student Notes Card */}
+      <Card className="w-full max-w-2xl shadow-xl mt-8">
+        <CardHeader>
+          <CardTitle className="text-2xl font-headline">My Personal Notes</CardTitle>
+          <CardDescription>Jot down your thoughts, areas for improvement, or key takeaways from this test.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            value={studentNotes}
+            onChange={(e) => setStudentNotes(e.target.value)}
+            placeholder="Type your notes here..."
+            rows={6}
+            className="bg-background"
+          />
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button onClick={handleSaveNotes}>
+            <Save className="mr-2 h-4 w-4" /> Save Notes
+          </Button>
+        </CardFooter>
+      </Card>
+
     </div>
   );
 }
+
+    
