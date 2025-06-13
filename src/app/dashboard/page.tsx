@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode } from "lucide-react";
+import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode, MoreVertical } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
@@ -21,10 +21,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import QrCodeModal from "@/components/common/qr-code-modal"; // Import QrCodeModal
+import QrCodeModal from "@/components/common/qr-code-modal";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -178,8 +185,6 @@ export default function DashboardPage() {
                   <CardFooter className="flex justify-end gap-2">
                      <Skeleton className="h-9 w-24" />
                      <Skeleton className="h-9 w-20" />
-                     <Skeleton className="h-9 w-20" />
-                     <Skeleton className="h-9 w-28" />
                   </CardFooter>
                 </Card>
               ))}
@@ -221,42 +226,56 @@ export default function DashboardPage() {
                         <Activity className="mr-1 h-4 w-4" /> Manage
                       </Link>
                     </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/create-test?edit=${test.id}`}>
-                        <Edit className="mr-1 h-4 w-4" /> Edit
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" disabled={!test.published || !testLink} onClick={() => testLink && handleShareLink(testLink)}>
-                      <Share2 className="mr-1 h-4 w-4" /> Copy Link
-                    </Button>
-                    <Button variant="outline" size="sm" disabled={!test.published} onClick={() => handleShowQrCode(test)}>
-                      <QrCode className="mr-1 h-4 w-4" /> Show QR
-                    </Button>
-                    <Button variant="outline" size="sm" disabled={!test.published} onClick={() => handleWhatsAppShare(test)}>
-                      <MessageCircle className="mr-1 h-4 w-4" /> WhatsApp
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          <Trash2 className="mr-1 h-4 w-4" /> Delete
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="h-4 w-4" />
+                          <span className="sr-only">More actions</span>
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the test
-                            &quot;{test.title}&quot; and all its associated data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteTest(test.id)}>
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/create-test?edit=${test.id}`}>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => testLink && handleShareLink(testLink)} disabled={!test.published || !testLink}>
+                          <Share2 className="mr-2 h-4 w-4" /> Copy Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleShowQrCode(test)} disabled={!test.published}>
+                          <QrCode className="mr-2 h-4 w-4" /> Show QR
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleWhatsAppShare(test)} disabled={!test.published}>
+                          <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem 
+                              className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                              onSelect={(event) => event.preventDefault()} // Prevents DropdownMenu from closing
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the test
+                                &quot;{test.title}&quot; and all its associated data.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteTest(test.id)} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </CardFooter>
                 </Card>
               );
@@ -289,3 +308,4 @@ export default function DashboardPage() {
     </>
   );
 }
+
