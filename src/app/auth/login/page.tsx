@@ -12,8 +12,14 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleGoogleSignIn = () => {
-    console.log("LoginPage: handleGoogleSignIn called. Attempting to redirect to /auth/select-account");
-    router.push("/auth/select-account");
+    console.log("LoginPage: handleGoogleSignIn function CALLED.");
+    try {
+      console.log("LoginPage: Attempting router.push('/auth/select-account'). Current router:", router);
+      router.push("/auth/select-account");
+      console.log("LoginPage: router.push('/auth/select-account') EXECUTED without immediate error.");
+    } catch (e) {
+      console.error("LoginPage: ERROR during router.push:", e);
+    }
   };
 
   return (
@@ -50,4 +56,6 @@ export default function LoginPage() {
     </div>
   );
 }
+    
+
     
