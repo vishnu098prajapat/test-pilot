@@ -12,11 +12,16 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleGoogleSignIn = () => {
-    console.log("LoginPage: handleGoogleSignIn function CALLED.");
-    // Removed try...catch as it's not essential for a simple push
-    // and to eliminate it as a source of subtle issues.
-    router.push("/auth/select-account");
-    console.log("LoginPage: router.push('/auth/select-account') was CALLED.");
+    console.log("LoginPage: handleGoogleSignIn >>> STARTED"); // Log 1: Function start
+
+    if (router) {
+      console.log("LoginPage: router object is:", router); // Log 2: Router object check
+      console.log("LoginPage: Attempting to navigate to /auth/select-account"); // Log 3: Before push
+      router.push("/auth/select-account");
+      console.log("LoginPage: router.push command issued."); // Log 4: After push
+    } else {
+      console.error("LoginPage: router object is not available!");
+    }
   };
 
   return (
@@ -53,4 +58,3 @@ export default function LoginPage() {
     </div>
   );
 }
-    
