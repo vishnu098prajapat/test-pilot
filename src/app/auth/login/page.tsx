@@ -2,18 +2,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Changed from "next/navigation"
+import { useRouter } from "next/navigation";
 import React from "react";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// Removed useToast, useAuth, signInWithGoogleAction as they are not directly used here for submission anymore
 
 export default function LoginPage() {
   const router = useRouter();
 
   const handleGoogleSignIn = () => {
-    // Navigate to the new account selection page
+    console.log("LoginPage: handleGoogleSignIn called. Attempting to redirect to /auth/select-account");
     router.push("/auth/select-account");
   };
 
