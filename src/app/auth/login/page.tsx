@@ -50,28 +50,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary via-purple-600 to-accent p-4 relative overflow-hidden">
-      {/* Background Animated Circles */}
-      <div className="absolute inset-0 -z-0">
-        <div className="absolute top-[-60px] left-[-60px] w-72 h-72 bg-pink-500/20 rounded-full filter blur-3xl opacity-60 animate-pulse"></div>
-        <div className="absolute bottom-[-90px] right-[-90px] w-96 h-96 bg-teal-400/20 rounded-full filter blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-[30%] left-[40%] w-80 h-80 bg-indigo-500/15 rounded-full filter blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '4s' }}></div>
-      </div>
-
-      <div className="absolute top-4 left-4 z-20">
-        <Button variant="ghost" asChild className="text-white hover:bg-white/10">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <div className="absolute top-4 left-4">
+        <Button variant="ghost" asChild className="text-primary hover:bg-primary/10">
           <Link href="/">
             <Home className="mr-2 h-4 w-4" /> Home
           </Link>
         </Button>
       </div>
-      <Card className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl relative z-10">
+      <Card className="w-full max-w-md bg-card rounded-xl shadow-xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-headline text-center text-white">Account Login</CardTitle>
-          <CardDescription className="text-center text-white/80">Access your Test Pilot dashboard.</CardDescription>
+          <CardTitle className="text-3xl font-headline text-center text-foreground">Account Login</CardTitle>
+          <CardDescription className="text-center text-muted-foreground">Access your Test Pilot dashboard.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <Button onClick={handleGoogleSignIn} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isSubmitting}>
+          <Button onClick={handleGoogleSignIn} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isSubmitting}>
             {isSubmitting ? "Processing..." : (
               <>
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path></svg>
@@ -79,7 +72,7 @@ export default function LoginPage() {
               </>
             )}
           </Button>
-          <p className="mt-6 text-center text-sm text-white/70">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             This app uses a simulated Google Sign-In for demonstration.
           </p>
         </CardContent>
