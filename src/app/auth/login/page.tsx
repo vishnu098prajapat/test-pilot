@@ -2,29 +2,24 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation"; // No longer using Next.js router for this specific navigation
 import React from "react";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
-  const router = useRouter();
+  // const router = useRouter(); // No longer using Next.js router for this specific navigation
 
   const handleGoogleSignIn = () => {
-    console.log("LoginPage: handleGoogleSignIn >>> STARTED"); // Log 1: Function start
-
-    // The router object should be available in a client component.
-    // If it's not, there's a deeper Next.js issue.
-    if (!router) {
-      console.error("LoginPage: CRITICAL - useRouter() returned null or undefined!");
-      return;
+    console.log("LoginPage: handleGoogleSignIn >>> ATTEMPTING DIRECT NAVIGATION");
+    try {
+      // Direct browser navigation
+      window.location.href = "/auth/select-account";
+      console.log("LoginPage: window.location.href set to /auth/select-account");
+    } catch (e) {
+      console.error("LoginPage: Error during window.location.href assignment:", e);
     }
-    
-    console.log("LoginPage: router object is:", router); // Log 2: Router object check
-    console.log("LoginPage: Attempting to navigate to /auth/select-account"); // Log 3: Before push
-    router.push("/auth/select-account");
-    console.log("LoginPage: router.push command issued."); // Log 4: After push
   };
 
   return (
