@@ -16,5 +16,11 @@
     "email": "vishnusiroya485@gmail.com",
     "displayName": "Vishnusiroya485",
     "role": "teacher"
+  },
+  {
+    "id": "google-testpilot-user-001",
+    "email": "google.user@testpilot.com",
+    "displayName": "Google User",
+    "role": "teacher"
   }
 ]
