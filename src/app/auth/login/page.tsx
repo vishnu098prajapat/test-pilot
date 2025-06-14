@@ -14,14 +14,17 @@ export default function LoginPage() {
   const handleGoogleSignIn = () => {
     console.log("LoginPage: handleGoogleSignIn >>> STARTED"); // Log 1: Function start
 
-    if (router) {
-      console.log("LoginPage: router object is:", router); // Log 2: Router object check
-      console.log("LoginPage: Attempting to navigate to /auth/select-account"); // Log 3: Before push
-      router.push("/auth/select-account");
-      console.log("LoginPage: router.push command issued."); // Log 4: After push
-    } else {
-      console.error("LoginPage: router object is not available!");
+    // The router object should be available in a client component.
+    // If it's not, there's a deeper Next.js issue.
+    if (!router) {
+      console.error("LoginPage: CRITICAL - useRouter() returned null or undefined!");
+      return;
     }
+    
+    console.log("LoginPage: router object is:", router); // Log 2: Router object check
+    console.log("LoginPage: Attempting to navigate to /auth/select-account"); // Log 3: Before push
+    router.push("/auth/select-account");
+    console.log("LoginPage: router.push command issued."); // Log 4: After push
   };
 
   return (
