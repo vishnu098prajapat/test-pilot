@@ -61,7 +61,13 @@ export default function LoginPage() {
       <Card className="w-full max-w-md bg-card rounded-xl shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-foreground">Account Login</CardTitle>
-          <CardDescription className="text-center text-muted-foreground">Access your Test Pilot dashboard.</CardDescription>
+          <CardDescription className="text-center text-muted-foreground pt-2">
+            <ol className="list-decimal list-inside space-y-1 text-left inline-block">
+              <li>1️⃣ Click "Continue with Google"</li>
+              <li>2️⃣ Choose your Gmail account</li>
+              <li>3️⃣ Start creating quizzes!</li>
+            </ol>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Button onClick={handleGoogleSignIn} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isSubmitting}>
@@ -72,9 +78,6 @@ export default function LoginPage() {
               </>
             )}
           </Button>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            This app uses a simulated Google Sign-In for demonstration.
-          </p>
         </CardContent>
       </Card>
     </div>

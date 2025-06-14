@@ -1649,5 +1649,772 @@
     "id": "test-1749556201891-nuwim",
     "createdAt": "2025-06-10T11:50:01.891Z",
     "updatedAt": "2025-06-10T11:50:01.891Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1749906604055-0-g4csmcr",
+        "text": "Which list method adds an element to the end of a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749906604055_gyo8ivrp3",
+            "text": "add()"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749906604055_n1ysbg7y1",
+            "text": "append()"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749906604055_ax0wtb7d9",
+            "text": "insert()"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749906604055_2175662gk",
+            "text": "extend()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1749906604055_n1ysbg7y1"
+      },
+      {
+        "id": "ai-q-1749906604055-1-h5qh08d",
+        "text": "Which of the following statements about tuples is correct?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749906604055_mlslpntvm",
+            "text": "Tuples are mutable."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749906604055_tix7igkgj",
+            "text": "Tuples are immutable."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749906604055_an6rd1uj3",
+            "text": "Tuples can only hold integers."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749906604055_qog1qpr1u",
+            "text": "Tuples are dynamically sized."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749906604055_tix7igkgj"
+      },
+      {
+        "id": "ai-q-1749906604055-2-833ta2s",
+        "text": "Which data type is used to represent whole numbers in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749906604055_tmzt4h6xz",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749906604055_czf0kvk5a",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749906604055_njj8p4nha",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749906604055_zc4pid1ph",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1749906604055_njj8p4nha"
+      },
+      {
+        "id": "ai-q-1749906604055-3-2xolqjk",
+        "text": "For what is the NumPy library primarily used?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749906604055_gd62bqgvb",
+            "text": "Data visualization"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749906604055_shqts0c3o",
+            "text": "Creating arrays"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749906604055_1wjcbu4jv",
+            "text": "Machine learning models"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749906604055_u1qt8c9m1",
+            "text": "Web development"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1749906604055_shqts0c3o"
+      },
+      {
+        "id": "ai-q-1749906604055-4-yrqvy8h",
+        "text": "Which Pandas data structure represents a table with rows and columns?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749906604055_0o4qwjnww",
+            "text": "Series"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749906604055_vjvajq012",
+            "text": "DataFrame"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749906604055_3khw0xqxf",
+            "text": "Panel"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749906604055_zggxgg13t",
+            "text": "Index"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1749906604055_vjvajq012"
+      },
+      {
+        "id": "ai-q-1749906604055-5-9h0ksw6",
+        "text": "What error occurs when you try to add a string to an integer?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1749906604055_c8gomax63",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1749906604055_rncyb46el",
+            "text": "IndexError"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1749906604055_madp9uai6",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1749906604055_mtlbxtho8",
+            "text": "SyntaxError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx2_1749906604055_madp9uai6"
+      },
+      {
+        "id": "ai-q-1749906604055-6-ra80qp1",
+        "text": "Which function is used to find the number of items in a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1749906604055_pryvltuv0",
+            "text": "size()"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1749906604055_9xx50u3t8",
+            "text": "length()"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1749906604055_ogwy4te2n",
+            "text": "count()"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1749906604055_ruxpuv6un",
+            "text": "len()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx3_1749906604055_ruxpuv6un"
+      },
+      {
+        "id": "ai-q-1749906604055-7-c1iuxxc",
+        "text": "What type of brackets are used to define a tuple?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1749906604055_j157b7rlh",
+            "text": "Square brackets []"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1749906604055_xqm2ok9n4",
+            "text": "Curly braces {}"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1749906604055_jtjqlbfho",
+            "text": "Parentheses ()"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1749906604056_seo802nlj",
+            "text": "Angle brackets <>"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx2_1749906604055_jtjqlbfho"
+      },
+      {
+        "id": "ai-q-1749906604056-8-a9dsjr7",
+        "text": "Which data type is used to represent decimal numbers in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q8_idx0_1749906604056_zl8a3yu4m",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q8_idx1_1749906604056_awox04brq",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q8_idx2_1749906604056_j1s5o5k2d",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q8_idx3_1749906604056_fzlapdl6p",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q8_idx2_1749906604056_j1s5o5k2d"
+      },
+      {
+        "id": "ai-q-1749906604056-9-89cf73w",
+        "text": "Which function is used to create a NumPy array?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q9_idx0_1749906604056_z10al9eiy",
+            "text": "array()"
+          },
+          {
+            "id": "ai-opt_q9_idx1_1749906604056_vhbd7zsll",
+            "text": "np.array()"
+          },
+          {
+            "id": "ai-opt_q9_idx2_1749906604056_227tpthh5",
+            "text": "numpy.array()"
+          },
+          {
+            "id": "ai-opt_q9_idx3_1749906604056_gdv4cn9fj",
+            "text": "ndarray()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q9_idx1_1749906604056_vhbd7zsll"
+      },
+      {
+        "id": "ai-q-1749906604056-10-twwjvlq",
+        "text": "What is a common use of Pandas?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q10_idx0_1749906604056_yoqvsnx9r",
+            "text": "Creating visualizations"
+          },
+          {
+            "id": "ai-opt_q10_idx1_1749906604056_7cdsvgqn5",
+            "text": "Machine learning"
+          },
+          {
+            "id": "ai-opt_q10_idx2_1749906604056_o2usl88j2",
+            "text": "Reading and writing data"
+          },
+          {
+            "id": "ai-opt_q10_idx3_1749906604056_qwvkgkdj2",
+            "text": "Web scraping"
+          }
+        ],
+        "correctOptionId": "ai-opt_q10_idx2_1749906604056_o2usl88j2"
+      },
+      {
+        "id": "ai-q-1749906604056-11-dnmkpt3",
+        "text": "Which method is used to remove a specific element from a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q11_idx0_1749906604056_t83oi1z4h",
+            "text": "list.delete(element)"
+          },
+          {
+            "id": "ai-opt_q11_idx1_1749906604056_j87hum6ss",
+            "text": "list.remove(element)"
+          },
+          {
+            "id": "ai-opt_q11_idx2_1749906604056_vlfyd3u7s",
+            "text": "list.pop(element)"
+          },
+          {
+            "id": "ai-opt_q11_idx3_1749906604056_n4zz6fkrs",
+            "text": "list.discard(element)"
+          }
+        ],
+        "correctOptionId": "ai-opt_q11_idx1_1749906604056_j87hum6ss"
+      },
+      {
+        "id": "ai-q-1749906604056-12-wa5voyr",
+        "text": "Can you modify a tuple after it has been created?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q12_idx0_1749906604056_ptllm5go2",
+            "text": "Yes"
+          },
+          {
+            "id": "ai-opt_q12_idx1_1749906604056_pmc1dpdvt",
+            "text": "No"
+          },
+          {
+            "id": "ai-opt_q12_idx2_1749906604056_d1hdq8vwk",
+            "text": "Sometimes"
+          },
+          {
+            "id": "ai-opt_q12_idx3_1749906604056_nvcbz7exe",
+            "text": "It depends on the version"
+          }
+        ],
+        "correctOptionId": "ai-opt_q12_idx1_1749906604056_pmc1dpdvt"
+      },
+      {
+        "id": "ai-q-1749906604056-13-aho8t07",
+        "text": "Which data type represents True or False values?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q13_idx0_1749906604056_5lxw4xy0z",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q13_idx1_1749906604056_6gbvnjc4x",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q13_idx2_1749906604056_llff3r8xe",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q13_idx3_1749906604056_f6n4f0pur",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q13_idx3_1749906604056_f6n4f0pur"
+      },
+      {
+        "id": "ai-q-1749906604056-14-lswczos",
+        "text": "What type of operations are NumPy arrays optimized for?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q14_idx0_1749906604056_pb5lwxfds",
+            "text": "Matrix multiplication"
+          },
+          {
+            "id": "ai-opt_q14_idx1_1749906604056_kv1jkg93a",
+            "text": "Inverting matrices"
+          },
+          {
+            "id": "ai-opt_q14_idx2_1749906604056_i80r1y867",
+            "text": "Element-wise operations"
+          },
+          {
+            "id": "ai-opt_q14_idx3_1749906604056_qv1x3p4xc",
+            "text": "Solving linear equations"
+          }
+        ],
+        "correctOptionId": "ai-opt_q14_idx2_1749906604056_i80r1y867"
+      },
+      {
+        "id": "ai-q-1749906604056-15-ivzpwp4",
+        "text": "What is the term for the row name in a Pandas DataFrame?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q15_idx0_1749906604056_8oexgw6ff",
+            "text": "label"
+          },
+          {
+            "id": "ai-opt_q15_idx1_1749906604056_p9a34kzeb",
+            "text": "row"
+          },
+          {
+            "id": "ai-opt_q15_idx2_1749906604056_cz24h7867",
+            "text": "index"
+          },
+          {
+            "id": "ai-opt_q15_idx3_1749906604056_deggrcfnj",
+            "text": "column"
+          }
+        ],
+        "correctOptionId": "ai-opt_q15_idx2_1749906604056_cz24h7867"
+      },
+      {
+        "id": "ai-q-1749906604056-16-dosalgh",
+        "text": "Which method sorts the elements of a list in place?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q16_idx0_1749906604056_k9zq9dy6o",
+            "text": "list.order()"
+          },
+          {
+            "id": "ai-opt_q16_idx1_1749906604056_chgwoxklg",
+            "text": "list.sorted()"
+          },
+          {
+            "id": "ai-opt_q16_idx2_1749906604056_ynmsqztv8",
+            "text": "list.sort()"
+          },
+          {
+            "id": "ai-opt_q16_idx3_1749906604056_wst6ohtqi",
+            "text": "list.arrange()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q16_idx2_1749906604056_ynmsqztv8"
+      },
+      {
+        "id": "ai-q-1749906604056-17-c7plsni",
+        "text": "Which function is used to convert a list into a tuple?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q17_idx0_1749906604056_47bj461jp",
+            "text": "list()"
+          },
+          {
+            "id": "ai-opt_q17_idx1_1749906604056_h6nn59t2x",
+            "text": "set()"
+          },
+          {
+            "id": "ai-opt_q17_idx2_1749906604056_xcv7uls9u",
+            "text": "dict()"
+          },
+          {
+            "id": "ai-opt_q17_idx3_1749906604056_tym8hwzpm",
+            "text": "tuple()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q17_idx3_1749906604056_tym8hwzpm"
+      },
+      {
+        "id": "ai-q-1749906604056-18-z9wmt6k",
+        "text": "Which data type is used to store key-value pairs?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q18_idx0_1749906604056_yjcn0fqlx",
+            "text": "list"
+          },
+          {
+            "id": "ai-opt_q18_idx1_1749906604056_lljrolt5p",
+            "text": "tuple"
+          },
+          {
+            "id": "ai-opt_q18_idx2_1749906604056_oyx7r5205",
+            "text": "set"
+          },
+          {
+            "id": "ai-opt_q18_idx3_1749906604056_jmpdxsspi",
+            "text": "dict"
+          }
+        ],
+        "correctOptionId": "ai-opt_q18_idx3_1749906604056_jmpdxsspi"
+      },
+      {
+        "id": "ai-q-1749906604056-19-dykuaxk",
+        "text": "Which NumPy function creates an array filled with zeros?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q19_idx0_1749906604056_x9x3u4akl",
+            "text": "np.empty()"
+          },
+          {
+            "id": "ai-opt_q19_idx1_1749906604056_jk1xqm5p4",
+            "text": "np.ones()"
+          },
+          {
+            "id": "ai-opt_q19_idx2_1749906604056_u8ucbwckf",
+            "text": "np.zeros()"
+          },
+          {
+            "id": "ai-opt_q19_idx3_1749906604056_7d6npk3jl",
+            "text": "np.full()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q19_idx2_1749906604056_u8ucbwckf"
+      },
+      {
+        "id": "ai-q-1749906604056-20-5vza0k0",
+        "text": "Which Pandas function reads data from a CSV file?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q20_idx0_1749906604056_two05gc8w",
+            "text": "pd.load_csv()"
+          },
+          {
+            "id": "ai-opt_q20_idx1_1749906604056_hxrh8dte1",
+            "text": "pd.open_csv()"
+          },
+          {
+            "id": "ai-opt_q20_idx2_1749906604056_kffa8imkv",
+            "text": "pd.read_csv()"
+          },
+          {
+            "id": "ai-opt_q20_idx3_1749906604056_jmaqw8wql",
+            "text": "pd.csv_read()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q20_idx2_1749906604056_kffa8imkv"
+      },
+      {
+        "id": "ai-q-1749906604056-21-8entfnk",
+        "text": "Which method removes and returns the element at a specified index from a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q21_idx0_1749906604056_512me7cw1",
+            "text": "list.remove(index)"
+          },
+          {
+            "id": "ai-opt_q21_idx1_1749906604056_c0m30uy6h",
+            "text": "list.delete(index)"
+          },
+          {
+            "id": "ai-opt_q21_idx2_1749906604056_jgbhh21m4",
+            "text": "list.pop(index)"
+          },
+          {
+            "id": "ai-opt_q21_idx3_1749906604056_gwckz01zc",
+            "text": "list.discard(index)"
+          }
+        ],
+        "correctOptionId": "ai-opt_q21_idx2_1749906604056_jgbhh21m4"
+      },
+      {
+        "id": "ai-q-1749906604056-22-xgxh3os",
+        "text": "How can you access specific elements in a tuple?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q22_idx0_1749906604056_x60h0rlpq",
+            "text": "Multiplication"
+          },
+          {
+            "id": "ai-opt_q22_idx1_1749906604056_zg59z3euz",
+            "text": "Concatenation"
+          },
+          {
+            "id": "ai-opt_q22_idx2_1749906604056_0vhw95ida",
+            "text": "Indexing and slicing"
+          },
+          {
+            "id": "ai-opt_q22_idx3_1749906604056_0dinyd1t5",
+            "text": "Replication"
+          }
+        ],
+        "correctOptionId": "ai-opt_q22_idx2_1749906604056_0vhw95ida"
+      },
+      {
+        "id": "ai-q-1749906604056-23-t6tsds9",
+        "text": "Which data type stores unordered unique elements?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q23_idx0_1749906604056_1uwe50n04",
+            "text": "list"
+          },
+          {
+            "id": "ai-opt_q23_idx1_1749906604056_lpos32p3h",
+            "text": "tuple"
+          },
+          {
+            "id": "ai-opt_q23_idx2_1749906604056_y5tfje4pn",
+            "text": "set"
+          },
+          {
+            "id": "ai-opt_q23_idx3_1749906604056_mbcmo8947",
+            "text": "dict"
+          }
+        ],
+        "correctOptionId": "ai-opt_q23_idx2_1749906604056_y5tfje4pn"
+      },
+      {
+        "id": "ai-q-1749906604056-24-7syjk2x",
+        "text": "Which NumPy function generates random numbers between 0 and 1?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q24_idx0_1749906604056_8ljbdhnz7",
+            "text": "np.random.randint()"
+          },
+          {
+            "id": "ai-opt_q24_idx1_1749906604056_obqalysq3",
+            "text": "np.random.randn()"
+          },
+          {
+            "id": "ai-opt_q24_idx2_1749906604056_w2eeb7cks",
+            "text": "np.random.random()"
+          },
+          {
+            "id": "ai-opt_q24_idx3_1749906604056_2s6p46ecn",
+            "text": "np.random.rand()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q24_idx3_1749906604056_2s6p46ecn"
+      },
+      {
+        "id": "ai-q-1749906604056-25-gimvhwv",
+        "text": "Which Pandas function is used to concatenate two DataFrames?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q25_idx0_1749906604056_nlwcgzj22",
+            "text": "pd.merge()"
+          },
+          {
+            "id": "ai-opt_q25_idx1_1749906604056_2ky0t74tu",
+            "text": "pd.join()"
+          },
+          {
+            "id": "ai-opt_q25_idx2_1749906604056_voltq0xel",
+            "text": "pd.append()"
+          },
+          {
+            "id": "ai-opt_q25_idx3_1749906604056_m2wutyuib",
+            "text": "pd.concat()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q25_idx3_1749906604056_m2wutyuib"
+      },
+      {
+        "id": "ai-q-1749906604056-26-p1vu9rq",
+        "text": "Which method is used to insert an element at a specific index in a list?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q26_idx0_1749906604056_9ya9ljh7f",
+            "text": "list.add(index, element)"
+          },
+          {
+            "id": "ai-opt_q26_idx1_1749906604056_rbbmzstb0",
+            "text": "list.append(index, element)"
+          },
+          {
+            "id": "ai-opt_q26_idx2_1749906604056_ip2gud3vj",
+            "text": "list.insert(index, element)"
+          },
+          {
+            "id": "ai-opt_q26_idx3_1749906604056_s9g8cixz3",
+            "text": "list.place(index, element)"
+          }
+        ],
+        "correctOptionId": "ai-opt_q26_idx2_1749906604056_ip2gud3vj"
+      },
+      {
+        "id": "ai-q-1749906604056-27-defx0ip",
+        "text": "What is a tuple in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q27_idx0_1749906604056_tzluce0wr",
+            "text": "A sequence of mutable Python objects."
+          },
+          {
+            "id": "ai-opt_q27_idx1_1749906604056_r6d55v2sl",
+            "text": "A sequence of immutable Python objects."
+          },
+          {
+            "id": "ai-opt_q27_idx2_1749906604056_7yx2fjpxe",
+            "text": "A sequence of only integers."
+          },
+          {
+            "id": "ai-opt_q27_idx3_1749906604056_bq2bvl1h9",
+            "text": "A sequence of only strings."
+          }
+        ],
+        "correctOptionId": "ai-opt_q27_idx1_1749906604056_r6d55v2sl"
+      },
+      {
+        "id": "ai-q-1749906604056-28-hw57dpd",
+        "text": "Which data type is used to represent text in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q28_idx0_1749906604056_o3o6t0ssn",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q28_idx1_1749906604056_n53lnjpq7",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q28_idx2_1749906604056_mvyz5oq4y",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q28_idx3_1749906604056_ho7j9fmv6",
+            "text": "str"
+          }
+        ],
+        "correctOptionId": "ai-opt_q28_idx3_1749906604056_ho7j9fmv6"
+      },
+      {
+        "id": "ai-q-1749906604056-29-26qhlo2",
+        "text": "Which NumPy function is used to change the shape of an array?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q29_idx0_1749906604056_refuu80gw",
+            "text": "np.resize()"
+          },
+          {
+            "id": "ai-opt_q29_idx1_1749906604056_qf6b93kn4",
+            "text": "np.reorder()"
+          },
+          {
+            "id": "ai-opt_q29_idx2_1749906604056_6h55gk6vt",
+            "text": "np.reshape()"
+          },
+          {
+            "id": "ai-opt_q29_idx3_1749906604056_22860qzsd",
+            "text": "np.transform()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q29_idx2_1749906604056_6h55gk6vt"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": false,
+    "published": false,
+    "teacherId": "google-testpilot-user-001",
+    "id": "test-1749906628368-dfo1w",
+    "createdAt": "2025-06-14T13:10:28.368Z",
+    "updatedAt": "2025-06-14T13:10:28.368Z"
   }
 ]
