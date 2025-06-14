@@ -62,11 +62,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-foreground">Account Login</CardTitle>
           <CardDescription className="text-center text-muted-foreground pt-2">
-            <ol className="list-decimal list-inside space-y-1 text-left inline-block">
-              <li>1️⃣ Click "Continue with Google"</li>
-              <li>2️⃣ Choose your Gmail account</li>
-              <li>3️⃣ Start creating quizzes!</li>
-            </ol>
+            Sign in quickly with your Google account to access your dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -78,6 +74,12 @@ export default function LoginPage() {
               </>
             )}
           </Button>
+           <p className="mt-4 text-center text-sm text-muted-foreground">
+            Need an account?{" "}
+            <Button variant="link" asChild className="p-0 h-auto text-primary hover:underline">
+              <Link href="/auth/signup">Sign up with Google</Link>
+            </Button>
+          </p>
         </CardContent>
       </Card>
     </div>
