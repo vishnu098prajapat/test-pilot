@@ -13,13 +13,10 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = () => {
     console.log("LoginPage: handleGoogleSignIn function CALLED.");
-    try {
-      console.log("LoginPage: Attempting router.push('/auth/select-account'). Current router:", router);
-      router.push("/auth/select-account");
-      console.log("LoginPage: router.push('/auth/select-account') EXECUTED without immediate error.");
-    } catch (e) {
-      console.error("LoginPage: ERROR during router.push:", e);
-    }
+    // Removed try...catch as it's not essential for a simple push
+    // and to eliminate it as a source of subtle issues.
+    router.push("/auth/select-account");
+    console.log("LoginPage: router.push('/auth/select-account') was CALLED.");
   };
 
   return (
@@ -56,6 +53,4 @@ export default function LoginPage() {
     </div>
   );
 }
-    
-
     

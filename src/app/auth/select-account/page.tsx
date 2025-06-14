@@ -13,6 +13,7 @@ import type { User } from '@/lib/types';
 import { Loader2, AlertTriangle, Home } from 'lucide-react';
 
 export default function SelectAccountPage() {
+  console.log("SelectAccountPage: Component rendering initiated."); // Log 1: Page starts rendering
   const router = useRouter();
   const { login } = useAuth();
   const { toast } = useToast();
@@ -21,27 +22,35 @@ export default function SelectAccountPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("SelectAccountPage: useEffect triggered to fetch users."); // Log 2: useEffect starts
     async function fetchUsers() {
       setIsLoading(true);
       setError(null);
+      console.log("SelectAccountPage: fetchUsers function called. Setting isLoading=true."); // Log 3: fetchUsers starts
       try {
         const response = await fetch('/api/mock-users');
+        console.log("SelectAccountPage: fetch('/api/mock-users') response status:", response.status); // Log 4: API response status
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error("SelectAccountPage: Failed to fetch mock users. Status:", response.status, "Error:", errorText);
           throw new Error('Failed to fetch mock users');
         }
         const data: User[] = await response.json();
-        setUsers(data.filter(user => user.email && user.id && user.role)); // Basic validation
-      } catch (e) {
-        setError('Could not load user accounts. Please try again.');
-        console.error("Error fetching mock users:", e);
+        console.log("SelectAccountPage: Successfully fetched and parsed mock users data:", data); // Log 5: API data received
+        setUsers(data.filter(user => user.email && user.id && user.role)); 
+      } catch (e: any) {
+        console.error("SelectAccountPage: Error in fetchUsers catch block:", e); // Log 6: Error during fetch
+        setError('Could not load user accounts. Please try again or check console.');
       } finally {
         setIsLoading(false);
+        console.log("SelectAccountPage: fetchUsers function finished. setIsLoading=false."); // Log 7: fetchUsers ends
       }
     }
     fetchUsers();
-  }, []);
+  }, []); // Empty dependency array, runs once on mount
 
   const handleSelectUser = (user: User) => {
+    console.log("SelectAccountPage: handleSelectUser called for user:", user.email); // Log 8: User selected
     login(user);
     toast({
       title: "Login Successful",
@@ -49,6 +58,7 @@ export default function SelectAccountPage() {
       duration: 2000,
     });
     router.push("/dashboard");
+    console.log("SelectAccountPage: Redirecting to /dashboard after user selection."); // Log 9: Redirecting to dashboard
   };
 
   const getInitials = (displayName?: string, email?: string) => {
@@ -92,7 +102,7 @@ export default function SelectAccountPage() {
             </div>
           )}
           {!isLoading && !error && users.length === 0 && (
-             <p className="text-center text-muted-foreground py-8">No mock accounts found. Please ensure `mock_users.json` is set up correctly.</p>
+             <p className="text-center text-muted-foreground py-8">No mock accounts found. Please ensure `mock_users.json` is set up correctly and the API is working.</p>
           )}
           {!isLoading && !error && users.length > 0 && (
             <ul className="space-y-3 max-h-80 overflow-y-auto">
@@ -129,3 +139,4 @@ export default function SelectAccountPage() {
     </div>
   );
 }
+    
