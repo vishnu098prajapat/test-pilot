@@ -38,10 +38,9 @@ export default function HomePage() {
           <Image
             src="/home2.jpg"
             alt="Focused student working on a laptop in a modern, illustrative style for Test Pilot hero section"
-            layout="fill"
-            objectFit="cover"
+            fill
             quality={85}
-            className="-z-20"
+            className="-z-20 object-cover"
             data-ai-hint="education technology"
             priority
           />
