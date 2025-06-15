@@ -31,7 +31,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { login } = useAuth(); // Use login from useAuth for consistency after signup
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignupFormValues>({
@@ -44,15 +44,18 @@ export default function SignupPage() {
 
   const handleSignUp = async (data: SignupFormValues) => {
     setIsSubmitting(true);
+    console.log("SignupPage: handleSignUp called with data:", data);
     try {
       const dobString = format(data.dob, "yyyy-MM-dd");
+      console.log("SignupPage: DOB formatted to string:", dobString);
       const result = await signUpWithNameAndDob(data.name, dobString);
+      console.log("SignupPage: signUpWithNameAndDob result:", result);
 
       if (result.success && result.user) {
-        login(result.user);
+        login(result.user); // Log the user in using the auth context
         toast({
           title: "Sign Up Successful",
-          description: `Welcome, ${result.user.displayName}! Your account is ready.`,
+          description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
           duration: 2000,
         });
         router.push("/dashboard");
@@ -143,6 +146,9 @@ export default function SignupPage() {
                             date > new Date() || date < new Date("1900-01-01")
                           }
                           initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1900}
+                          toYear={new Date().getFullYear()}
                         />
                       </PopoverContent>
                     </Popover>

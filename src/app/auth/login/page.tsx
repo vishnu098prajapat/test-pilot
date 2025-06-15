@@ -45,10 +45,12 @@ export default function LoginPage() {
 
   const handleLogin = async (data: LoginFormValues) => {
     setIsSubmitting(true);
+    console.log("LoginPage: handleLogin called with data:", data);
     try {
-      // Format DOB to "YYYY-MM-DD" string for the action
       const dobString = format(data.dob, "yyyy-MM-dd");
+      console.log("LoginPage: DOB formatted to string:", dobString);
       const result = await signInWithNameAndDob(data.name, dobString);
+      console.log("LoginPage: signInWithNameAndDob result:", result);
 
       if (result.success && result.user) {
         login(result.user);
@@ -145,6 +147,9 @@ export default function LoginPage() {
                             date > new Date() || date < new Date("1900-01-01")
                           }
                           initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1900}
+                          toYear={new Date().getFullYear()}
                         />
                       </PopoverContent>
                     </Popover>
