@@ -1,9 +1,10 @@
 
 export interface User {
   id: string;
-  email: string;
-  displayName?: string; // Added for displaying a more friendly name
-  role: 'teacher' | 'student'; 
+  email?: string; // Email is now optional
+  displayName: string; // Used as "Name" for login
+  dob: string; // Date of Birth, e.g., "YYYY-MM-DD"
+  role: 'teacher' | 'student';
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false';

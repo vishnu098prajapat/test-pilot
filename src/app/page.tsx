@@ -24,7 +24,7 @@ export default function HomePage() {
             </Button>
             <Button asChild>
               <Link href="/auth/signup">
-                <UserPlus className="mr-2 h-4 w-4"/> Sign Up
+                <UserPlus className="mr-2 h-4 w-4"/> Create Account
               </Link>
             </Button>
           </nav>
@@ -213,6 +213,3 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
     </Card>
   );
 }
-    
-
-    

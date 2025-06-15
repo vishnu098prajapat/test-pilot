@@ -6,45 +6,29 @@ import fs from 'fs';
 import path from 'path';
 
 const MOCK_USERS_DB_FILE_PATH = path.join(process.cwd(), 'mock_users.json');
-const PREDEFINED_GOOGLE_USER_EMAIL = "google.user@testpilot.com";
-const PREDEFINED_GOOGLE_USER_ID = "google-testpilot-user-001";
-const PREDEFINED_GOOGLE_DISPLAY_NAME = "Google User"; // Default display name
-
-function generateDisplayNameFromEmail(email: string): string {
-  if (!email || !email.includes('@')) return email;
-  const namePart = email.split('@')[0];
-  return namePart
-    .replace(/[._-]/g, ' ')
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
 
 function readUsersDb(): User[] {
   try {
     if (fs.existsSync(MOCK_USERS_DB_FILE_PATH)) {
       const fileContent = fs.readFileSync(MOCK_USERS_DB_FILE_PATH, 'utf-8');
       if (fileContent.trim() === "") {
-        console.warn('[AUTH-DB] DB file is empty. Initializing empty.');
-        writeUsersDb([]); 
+        writeUsersDb([]);
         return [];
       }
       const data = JSON.parse(fileContent);
       if (!Array.isArray(data)) {
-        console.warn('[AUTH-DB] DB file content is not an array. Initializing empty.');
         writeUsersDb([]);
         return [];
       }
-      // Ensure displayName is always present for all users read from DB
       return data.map(user => ({
         ...user,
-        displayName: user.displayName || generateDisplayNameFromEmail(user.email)
+        displayName: user.displayName || `User-${user.id.substring(0,5)}`, // Fallback display name
+        dob: user.dob || "1900-01-01" // Fallback DOB
       }));
     }
   } catch (error) {
     console.error('[AUTH-DB] Error reading or parsing users DB file:', error);
   }
-  console.log('[AUTH-DB] Users DB file not found or error. Initializing empty and creating file.');
   writeUsersDb([]);
   return [];
 }
@@ -66,50 +50,53 @@ interface AuthResult {
   user?: User;
 }
 
-export async function signInWithGoogleAction(): Promise<AuthResult> {
+export async function signInWithNameAndDob(name: string, dob: string): Promise<AuthResult> {
   const currentUsers = readUsersDb();
-  let user = currentUsers.find((u) => u.email.toLowerCase() === PREDEFINED_GOOGLE_USER_EMAIL.toLowerCase() && u.id === PREDEFINED_GOOGLE_USER_ID);
+  const user = currentUsers.find(
+    (u) => u.displayName.toLowerCase() === name.toLowerCase() && u.dob === dob
+  );
 
   if (user) {
-    // Ensure existing user has a displayName
-    user.displayName = user.displayName || PREDEFINED_GOOGLE_DISPLAY_NAME || generateDisplayNameFromEmail(user.email);
-    console.log(`[Google Sign-In] Existing user found:`, JSON.stringify(user, null, 2));
-    // If user exists, update it in the DB to ensure displayName is consistent
-    const updatedUsers = currentUsers.map(u => u.id === user!.id ? user : u);
-    writeUsersDb(updatedUsers);
+    console.log(`[Name/DOB Sign-In] User found:`, JSON.stringify(user, null, 2));
     return { success: true, message: "Login successful", user };
   } else {
-    console.log(`[Google Sign-In] Predefined Google user not found. Creating/Adding new user: ${PREDEFINED_GOOGLE_USER_EMAIL}`);
-    const newUser: User = {
-      id: PREDEFINED_GOOGLE_USER_ID,
-      email: PREDEFINED_GOOGLE_USER_EMAIL,
-      displayName: PREDEFINED_GOOGLE_DISPLAY_NAME || generateDisplayNameFromEmail(PREDEFINED_GOOGLE_USER_EMAIL),
-      role: "teacher", // Default role
-    };
-    
-    // Check if a user with this ID already exists, if so, update it, otherwise add.
-    const userExistsById = currentUsers.some(u => u.id === newUser.id);
-    let updatedUsers;
-    if (userExistsById) {
-        updatedUsers = currentUsers.map(u => u.id === newUser.id ? newUser : u);
-    } else {
-        updatedUsers = [...currentUsers, newUser];
-    }
-    
-    const successWrite = writeUsersDb(updatedUsers);
-
-    if (successWrite) {
-      console.log(`[Google Sign-In] New/Updated predefined user added/updated in DB:`, JSON.stringify(newUser, null, 2));
-      return { success: true, message: "Account processed and login successful", user: newUser };
-    } else {
-      console.log(`[Google Sign-In] Failed to write new/updated predefined user to DB.`);
-      return { success: false, message: "Failed to process user account due to a server error." };
-    }
+    console.log(`[Name/DOB Sign-In] User not found for Name: ${name}, DOB: ${dob}`);
+    return { success: false, message: "Invalid name or date of birth." };
   }
 }
 
-// This function remains unchanged but is kept for completeness if needed elsewhere.
+export async function signUpWithNameAndDob(name: string, dob: string): Promise<AuthResult> {
+  const currentUsers = readUsersDb();
+  const existingUser = currentUsers.find(
+    (u) => u.displayName.toLowerCase() === name.toLowerCase() && u.dob === dob
+  );
+
+  if (existingUser) {
+    console.log(`[Name/DOB Sign-Up] User already exists:`, JSON.stringify(existingUser, null, 2));
+    return { success: false, message: "An account with this name and date of birth already exists. Please try logging in." };
+  }
+
+  const newUser: User = {
+    id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+    displayName: name,
+    dob: dob,
+    role: "teacher", // Default role for new sign-ups
+    // email can be omitted or set to a placeholder if needed later
+  };
+
+  const updatedUsers = [...currentUsers, newUser];
+  const successWrite = writeUsersDb(updatedUsers);
+
+  if (successWrite) {
+    console.log(`[Name/DOB Sign-Up] New user added to DB:`, JSON.stringify(newUser, null, 2));
+    return { success: true, message: "Account created successfully. Welcome!", user: newUser };
+  } else {
+    console.log(`[Name/DOB Sign-Up] Failed to write new user to DB.`);
+    return { success: false, message: "Failed to create account due to a server error." };
+  }
+}
+
 export async function logoutUser(): Promise<{ success: boolean }> {
-  console.log("[LOGOUT ATTEMPT] User logged out.");
+  console.log("[LOGOUT ATTEMPT] User logged out (simulated).");
   return { success: true };
 }
