@@ -7,22 +7,28 @@ import StudentTestArea from '@/components/student/student-test-area';
 import { getTestById } from '@/lib/store'; 
 import type { Test } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-// Removed Input, Label, Card related to name input as they are no longer used here.
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 export default function StudentTestPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const [testData, setTestData] = useState<Test | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const [studentName, setStudentName] = useState('');
+  const [isNameSubmitted, setIsNameSubmitted] = useState(false);
 
   const testId = params.testId as string;
   const isPracticeMode = searchParams.get('mode') === 'practice';
-  const studentIdentifier = "Anonymous Student"; // Default identifier
 
   useEffect(() => {
     async function fetchTest() {
@@ -60,6 +66,20 @@ export default function StudentTestPage() {
     }
     fetchTest();
   }, [testId]);
+
+  const handleNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (studentName.trim() === "") {
+      toast({
+        title: "Name Required",
+        description: "Please enter your name to start the test.",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+    setIsNameSubmitted(true);
+  };
 
   if (isLoading) {
     return (
@@ -103,6 +123,40 @@ export default function StudentTestPage() {
       </div>
     );
   }
+
+  if (!isNameSubmitted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 w-full">
+        <Card className="w-full max-w-md shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-2xl font-headline text-center">Welcome to: {testData.title}</CardTitle>
+            <CardDescription className="text-center pt-2">Please enter your name to begin the test.</CardDescription>
+          </CardHeader>
+          <form onSubmit={handleNameSubmit}>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="studentName" className="mb-2 block">Your Name</Label>
+                <Input
+                  id="studentName"
+                  type="text"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  placeholder="Enter your full name"
+                  required
+                  className="text-base"
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full">
+                <User className="mr-2 h-4 w-4" /> Start Test
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    );
+  }
   
-  return <StudentTestArea testData={testData} studentIdentifier={studentIdentifier} isPracticeMode={isPracticeMode} />;
+  return <StudentTestArea testData={testData} studentIdentifier={studentName.trim()} />;
 }
