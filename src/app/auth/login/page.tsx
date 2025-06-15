@@ -41,7 +41,6 @@ export default function LoginPage() {
     setIsSubmitting(true);
     console.log("LoginPage: handleLogin called with data:", data);
     try {
-      // data.dob is already a string in "YYYY-MM-DD" format from input type="date"
       const result = await signInWithNameAndDob(data.name, data.dob);
       console.log("LoginPage: signInWithNameAndDob result:", result);
 
@@ -76,6 +75,7 @@ export default function LoginPage() {
   
   const getMaxDate = () => {
     const today = new Date();
+    // Prevent selecting future dates
     return today.toISOString().split("T")[0];
   }
 
@@ -122,8 +122,8 @@ export default function LoginPage() {
                         type="date" 
                         {...field} 
                         className="w-full"
-                        min="1900-01-01"
-                        max={getMaxDate()}
+                        min="1900-01-01" // Set a reasonable minimum year
+                        max={getMaxDate()}   // Set maximum date to today
                       />
                     </FormControl>
                     <FormMessage />
