@@ -7,6 +7,30 @@ import path from 'path';
 
 const MOCK_USERS_DB_FILE_PATH = path.join(process.cwd(), 'mock_users.json');
 
+// Helper to generate display name if not present, for consistency
+function ensureDisplayNameForUser(user: Partial<User>): User {
+  if (user && !user.displayName && user.email) {
+    const namePart = user.email.split('@')[0];
+    user.displayName = namePart
+      .replace(/[._-]/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  } else if (user && !user.displayName) {
+    // Fallback if no email and no displayName
+    user.displayName = `User-${(user.id || "temp").substring(0,5)}`;
+  }
+  // Ensure required fields have default values if somehow missing from a raw read
+  return {
+    id: user.id || `temp-${Date.now()}`,
+    displayName: user.displayName || "Unknown User",
+    role: user.role || "student", // Default role
+    dob: user.dob || "1900-01-01", // Default DOB
+    email: user.email // email is optional
+  };
+}
+
+
 function readUsersDb(): User[] {
   try {
     if (fs.existsSync(MOCK_USERS_DB_FILE_PATH)) {
@@ -15,20 +39,18 @@ function readUsersDb(): User[] {
         writeUsersDb([]);
         return [];
       }
-      const data = JSON.parse(fileContent);
+      const data: Partial<User>[] = JSON.parse(fileContent);
       if (!Array.isArray(data)) {
         writeUsersDb([]);
         return [];
       }
-      return data.map(user => ({
-        ...user,
-        displayName: user.displayName || `User-${user.id.substring(0,5)}`, // Fallback display name
-        dob: user.dob || "1900-01-01" // Fallback DOB
-      }));
+      // Ensure each user object conforms to the User type, especially displayName
+      return data.map(ensureDisplayNameForUser);
     }
   } catch (error) {
     console.error('[AUTH-DB] Error reading or parsing users DB file:', error);
   }
+  // If file doesn't exist or error, initialize with empty and create file
   writeUsersDb([]);
   return [];
 }
@@ -80,8 +102,8 @@ export async function signUpWithNameAndDob(name: string, dob: string): Promise<A
     id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
     displayName: name,
     dob: dob,
-    role: "teacher", // Default role for new sign-ups
-    // email can be omitted or set to a placeholder if needed later
+    role: "teacher", 
+    // email will be undefined by default as it's optional
   };
 
   const updatedUsers = [...currentUsers, newUser];
@@ -94,9 +116,4 @@ export async function signUpWithNameAndDob(name: string, dob: string): Promise<A
     console.log(`[Name/DOB Sign-Up] Failed to write new user to DB.`);
     return { success: false, message: "Failed to create account due to a server error." };
   }
-}
-
-export async function logoutUser(): Promise<{ success: boolean }> {
-  console.log("[LOGOUT ATTEMPT] User logged out (simulated).");
-  return { success: true };
 }

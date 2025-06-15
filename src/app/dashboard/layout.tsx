@@ -20,15 +20,21 @@ export default function DashboardLayout({
   const pathname = usePathname(); // Get current pathname
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      // More detailed log
-      console.log(`DashboardLayout: Auth check failed. User is not available. isLoading: ${isLoading}, user object: ${JSON.stringify(user)}. Current path: ${pathname}. Redirecting to /auth/login.`);
-      router.push('/auth/login');
+    // Detailed logging for auth state and redirection logic
+    if (isLoading) {
+      console.log(`DashboardLayout: Auth check. Still loading. isLoading: ${isLoading}. Path: ${pathname}.`);
+    } else {
+      if (!user) {
+        console.log(`DashboardLayout: Auth check COMPLETE. User NOT found. isLoading: ${isLoading}, user: ${JSON.stringify(user)}. Path: ${pathname}. Redirecting to /auth/login.`);
+        router.push('/auth/login');
+      } else {
+        console.log(`DashboardLayout: Auth check COMPLETE. User FOUND: ${user.displayName || user.email}. Path: ${pathname}. Not redirecting.`);
+      }
     }
-  }, [user, isLoading, router, pathname]); // Add pathname to dependencies
+  }, [user, isLoading, router, pathname]);
 
-  if (isLoading || !user) {
-    // This skeleton is shown while isLoading is true OR if user becomes null after loading
+
+  if (isLoading || (!isLoading && !user)) { // Show skeleton if loading OR if loading is done but user is still null (before redirect effect runs)
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="space-y-4 p-8 max-w-sm w-full">
@@ -40,7 +46,8 @@ export default function DashboardLayout({
       </div>
     );
   }
-
+  
+  // If user is definitely present and not loading, render the layout
   return (
     <SidebarProvider defaultOpen={true}>
       <Sidebar variant="sidebar" collapsible="icon" className="border-r">
