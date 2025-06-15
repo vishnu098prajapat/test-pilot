@@ -135,7 +135,7 @@ export default function AIGenerateTestPage() {
     
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
     
-    const aiGeneratedTitle = `AI Gen (${generationParams.difficulty}) ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
+    const aiGeneratedTitle = `Test on ${generationParams.subject}`; // Simplified title
     
     const dataToStore = {
       title: aiGeneratedTitle,

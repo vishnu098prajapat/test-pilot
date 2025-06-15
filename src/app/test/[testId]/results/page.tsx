@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Question, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion, StudentAnswer } from '@/lib/types';
 import QuestionDisplay from '@/components/student/question-display';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
@@ -102,7 +103,7 @@ export default function StudentResultsPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center">
-        <Card className="w-full max-w-xl shadow-xl"> {/* Adjusted from max-w-2xl */}
+        <Card className="w-full max-w-xl shadow-xl">
           <CardHeader className="text-center">
             <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
             <Skeleton className="h-8 w-3/4 mx-auto mb-2" />
@@ -122,7 +123,9 @@ export default function StudentResultsPage() {
               ))}
             </div>
           </CardContent>
-          <CardFooter className="flex justify-center">
+          <CardFooter className="flex justify-center gap-4 pt-6">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
             <Skeleton className="h-10 w-32" />
           </CardFooter>
         </Card>
@@ -147,7 +150,7 @@ export default function StudentResultsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center">
-      <Card className="w-full max-w-xl shadow-xl"> {/* Adjusted from max-w-2xl */}
+      <Card className="w-full max-w-xl shadow-xl">
         <CardHeader className="text-center">
           <Award className="w-16 h-16 text-primary mx-auto mb-4" />
           <CardTitle className="text-3xl font-bold font-headline">Test Results</CardTitle>
@@ -186,13 +189,13 @@ export default function StudentResultsPage() {
             </Button>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
-           <Button asChild>
+        <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 pt-6">
+           <Button asChild variant="default">
             <Link href={`/test/${testId}/leaderboard`}>
               <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
             </Link>
           </Button>
-           <Button asChild variant="outline">
+           <Button asChild variant="secondary">
              <Link href="/"> 
                <Home className="mr-2 h-4 w-4" /> Go to Homepage
              </Link>
@@ -201,7 +204,7 @@ export default function StudentResultsPage() {
       </Card>
 
       {showReview && results && (
-        <div className="w-full max-w-3xl mt-8 space-y-6"> {/* Changed from max-w-2xl to max-w-3xl */}
+        <div className="w-full max-w-3xl mt-8 space-y-6">
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
@@ -241,3 +244,4 @@ export default function StudentResultsPage() {
     </div>
   );
 }
+

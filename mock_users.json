@@ -2,34 +2,40 @@
   {
     "id": "teacher1",
     "displayName": "Teacher One",
-    "role": "teacher",
+    "email": "teacher@example.com",
     "dob": "1985-05-15",
-    "email": "teacher@example.com"
+    "role": "teacher"
   },
   {
     "id": "user-1749459448868-hr20j",
     "displayName": "Vishanu Prajapati",
-    "role": "teacher",
+    "email": "vishanuprajapati888@gmail.com",
     "dob": "1992-08-20",
-    "email": "vishanuprajapati888@gmail.com"
+    "role": "teacher"
   },
   {
     "id": "user-1749459754354-kijzf",
     "displayName": "Vishnu Siroya",
-    "role": "teacher",
+    "email": "vishnusiroya485@gmail.com",
     "dob": "1990-01-01",
-    "email": "vishnusiroya485@gmail.com"
+    "role": "teacher"
   },
   {
     "id": "google-testpilot-user-001",
     "displayName": "Demo User",
-    "role": "teacher",
+    "email": "google.user@testpilot.com",
     "dob": "2000-12-25",
-    "email": "google.user@testpilot.com"
+    "role": "teacher"
   },
   {
     "id": "user-1749975115744-fa007kc",
     "displayName": "Vishnu Prajapat",
+    "dob": "2005-04-18",
+    "role": "teacher"
+  },
+  {
+    "id": "user-1749980999462-a33g8hw",
+    "displayName": "Vishnu098",
     "dob": "2005-04-18",
     "role": "teacher"
   }
