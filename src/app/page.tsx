@@ -9,20 +9,20 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold font-headline text-primary">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+          <Link href="/" className="text-2xl font-bold font-headline text-primary mb-2 sm:mb-0">
             <span>
               Test Pilot
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </span>
           </Link>
-          <nav className="space-x-2">
-            <Button variant="ghost" asChild>
+          <nav className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
+            <Button variant="ghost" asChild className="w-full sm:w-auto">
               <Link href="/auth/login">
                 <LogIn className="mr-2 h-4 w-4"/> Login
               </Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto">
               <Link href="/auth/signup">
                 <UserPlus className="mr-2 h-4 w-4"/> Create Account
               </Link>
@@ -51,9 +51,7 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
               Navigate Your Success with Test Pilot.
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              The ultimate online assessment platform. Effortlessly create, deliver, and analyze tests with AI-powered insights for a smarter, fairer educational experience.
-            </p>
+            {/* Removed the long subtitle text below */}
              <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
               <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
               World's Fastest Quiz Generator: Topic to Quiz in 5 Seconds – <span className="text-yellow-300 underline">FREE Forever!</span>
