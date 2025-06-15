@@ -12,12 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, ListChecks, Send, Activity } from 'lucide-react';
+import { Sparkles, Loader2, ListChecks, Send, Activity, Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
+import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
 import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
-
+import { Badge } from '@/components/ui/badge';
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -37,6 +38,8 @@ export default function AIGenerateTestPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<AIQuestion[] | null>(null);
   const [generationParams, setGenerationParams] = useState<AIGenerateTestFormValues | null>(null);
+  const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
+  const [isSuggestingTopics, setIsSuggestingTopics] = useState(false);
 
 
   const form = useForm<AIGenerateTestFormValues>({
@@ -46,9 +49,49 @@ export default function AIGenerateTestPage() {
       questionType: 'mcq',
       difficulty: 'medium',
       topics: '',
-      numberOfQuestions: 5, // Default to 5, user can change up to 50
+      numberOfQuestions: 5, 
     },
   });
+
+  const handleSubjectBlur = async () => {
+    const subjectValue = form.getValues("subject");
+    if (subjectValue && subjectValue.trim().length >= 3) {
+      setIsSuggestingTopics(true);
+      setTopicSuggestions([]);
+      try {
+        const input: SuggestTopicsInput = { subject: subjectValue.trim() };
+        const result = await suggestTopics(input);
+        if (result.topicSuggestions && result.topicSuggestions.length > 0) {
+          setTopicSuggestions(result.topicSuggestions);
+          toast({ title: "Topic Suggestions", description: `${result.topicSuggestions.length} topics suggested for "${subjectValue}".`, duration: 2000 });
+        } else {
+          toast({ title: "No Suggestions", description: `No topic suggestions found for "${subjectValue}". Please enter topics manually.`, variant: "default", duration: 2000 });
+        }
+      } catch (error: any) {
+        console.error("Topic Suggestion Error:", error);
+        toast({ title: "Suggestion Error", description: error.message || "Failed to get topic suggestions.", variant: "destructive", duration: 2000 });
+      } finally {
+        setIsSuggestingTopics(false);
+      }
+    }
+  };
+
+  const handleAddTopicSuggestion = (suggestion: string) => {
+    const currentTopics = form.getValues("topics");
+    // The 'topics' field in the form is a string, which is then transformed to string[] by Zod.
+    // So, we need to manipulate it as a string here.
+    const currentTopicsString = Array.isArray(currentTopics) ? (currentTopics as string[]).join(", ") : (currentTopics || "");
+    
+    let newTopicsString;
+    if (currentTopicsString.trim() === "") {
+      newTopicsString = suggestion;
+    } else {
+      newTopicsString = `${currentTopicsString}, ${suggestion}`;
+    }
+    form.setValue("topics", newTopicsString, { shouldValidate: true });
+    // Optionally, clear suggestions after one is picked or let user pick multiple
+    // setTopicSuggestions(prev => prev.filter(s => s !== suggestion)); 
+  };
 
   const onSubmit = async (data: AIGenerateTestFormValues) => {
     setIsLoading(true);
@@ -59,7 +102,7 @@ export default function AIGenerateTestPage() {
         subject: data.subject,
         questionType: data.questionType,
         difficulty: data.difficulty,
-        topics: data.topics,
+        topics: data.topics, 
         numberOfQuestions: data.numberOfQuestions,
       };
       const result = await generateTestQuestions(input);
@@ -135,7 +178,7 @@ export default function AIGenerateTestPage() {
     
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
     
-    const aiGeneratedTitle = `Test on ${generationParams.subject}`; // Simplified title
+    const aiGeneratedTitle = `Test on ${generationParams.subject}`;
     
     const dataToStore = {
       title: aiGeneratedTitle,
@@ -173,11 +216,38 @@ export default function AIGenerateTestPage() {
                 render={({ field }) => (
                   <FormItem>
                     <Label htmlFor="subject">Subject</Label>
-                    <Input id="subject" placeholder="e.g., World History, Algebra I" {...field} />
+                    <div className="flex items-center gap-2">
+                       <Input 
+                         id="subject" 
+                         placeholder="e.g., World History, Algebra I" 
+                         {...field} 
+                         onBlur={handleSubjectBlur} 
+                       />
+                       {isSuggestingTopics && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              
+              {topicSuggestions.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="flex items-center"><Lightbulb className="h-4 w-4 mr-1 text-yellow-400" />Suggested Topics (click to add):</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {topicSuggestions.map((suggestion, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        onClick={() => handleAddTopicSuggestion(suggestion)}
+                        className="cursor-pointer hover:bg-primary/20"
+                      >
+                        {suggestion}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -237,7 +307,7 @@ export default function AIGenerateTestPage() {
                       className="min-h-[80px]"
                     />
                     <FormMessage />
-                     <p className="text-xs text-muted-foreground">Enter specific topics the AI should focus on.</p>
+                     <p className="text-xs text-muted-foreground">Enter specific topics the AI should focus on, or use suggestions.</p>
                   </FormItem>
                 )}
               />
@@ -254,10 +324,10 @@ export default function AIGenerateTestPage() {
               />
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading || isSuggestingTopics}>
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Questions...
                   </>
                 ) : (
                   <>
