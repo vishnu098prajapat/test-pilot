@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Home, LogIn } from "lucide-react";
@@ -15,16 +15,10 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { signInWithNameAndDob } from "@/lib/auth-actions";
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
-import { format, subYears } from "date-fns"
-import { cn } from "@/lib/utils"
-
 
 const loginSchema = z.object({
   name: z.string().min(1, "Name is required."),
-  dob: z.date({ required_error: "Date of Birth is required." }),
+  dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date of Birth must be in YYYY-MM-DD format."),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -34,13 +28,12 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const twentyYearsAgo = subYears(new Date(), 20);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       name: "",
-      dob: undefined,
+      dob: "",
     },
   });
 
@@ -48,9 +41,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
     console.log("LoginPage: handleLogin called with data:", data);
     try {
-      const dobString = format(data.dob, "yyyy-MM-dd");
-      console.log("LoginPage: DOB formatted to string:", dobString);
-      const result = await signInWithNameAndDob(data.name, dobString);
+      // data.dob is already a string in "YYYY-MM-DD" format from input type="date"
+      const result = await signInWithNameAndDob(data.name, data.dob);
       console.log("LoginPage: signInWithNameAndDob result:", result);
 
       if (result.success && result.user) {
@@ -81,6 +73,11 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+  
+  const getMaxDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
@@ -118,43 +115,17 @@ export default function LoginPage() {
                 control={form.control}
                 name="dob"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel>Date of Birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          defaultMonth={field.value || twentyYearsAgo}
-                          initialFocus
-                          captionLayout="dropdown-buttons"
-                          fromYear={1900}
-                          toYear={new Date().getFullYear()}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        {...field} 
+                        className="w-full"
+                        min="1900-01-01"
+                        max={getMaxDate()}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
