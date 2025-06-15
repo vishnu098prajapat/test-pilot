@@ -120,7 +120,7 @@ export default function QuestionDisplay({
                 <Label
                   key={option.id}
                   htmlFor={`${question.id}-${option.id}`}
-                  className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`}
+                  className={`flex items-start space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`} // Changed items-center to items-start
                 >
                   <RadioGroupItem 
                     value={option.id} 
@@ -128,8 +128,9 @@ export default function QuestionDisplay({
                     disabled={isReviewMode} 
                     checked={isReviewMode ? (studentAttempt?.answer === option.id) : (currentAnswer === option.id)}
                     aria-label={option.text}
+                    className="mt-1" // Align radio button slightly with the start of the text
                   />
-                  <span>{option.text}</span>
+                  <span className="flex-1">{option.text}</span> {/* Ensure span can take space and wrap */}
                 </Label>
               );
             })}
@@ -176,7 +177,7 @@ export default function QuestionDisplay({
                <Label
                 key={option.value}
                 htmlFor={`${question.id}-${option.value}`}
-                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`}
+                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`} // items-center is fine for T/F
               >
                 <RadioGroupItem 
                   value={option.value} 
@@ -196,6 +197,3 @@ export default function QuestionDisplay({
     </Card>
   );
 }
-
-
-    
