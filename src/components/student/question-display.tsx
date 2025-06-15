@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input'; 
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface QuestionDisplayProps {
   question: Question;
@@ -29,8 +30,8 @@ export default function QuestionDisplay({
   currentAnswer,
   onAnswerChange,
   isReviewMode = false,
-  studentAttempt, // This will be the student's actual recorded answer object for this question
-  isCorrect // This directly tells if studentAttempt was correct for the overall question
+  studentAttempt,
+  isCorrect 
 }: QuestionDisplayProps) {
   
   const handleMcqChange = (value: string) => {
@@ -45,12 +46,11 @@ export default function QuestionDisplay({
     if (!isReviewMode) onAnswerChange(question.id, value === 'true');
   };
 
-  // This section is for displaying feedback in review mode
   let reviewFeedbackDisplay = null;
   if (isReviewMode && studentAttempt) {
     let studentAnswerText = "Not Answered";
     let correctAnswerText = "";
-    const qIsCorrect = studentAttempt.isCorrect; // Use the isCorrect from the processed studentAttempt
+    const qIsCorrect = studentAttempt.isCorrect; 
 
     if (question.type === 'mcq') {
       const mcqQuestion = question as MCQQuestion;
@@ -69,13 +69,39 @@ export default function QuestionDisplay({
     }
 
     reviewFeedbackDisplay = (
-      <div className={`mt-4 p-3 border rounded-md text-sm ${qIsCorrect ? 'bg-green-500/10 border-green-500' : 'bg-red-500/10 border-red-500'}`}>
-        <h4 className="font-semibold mb-2 flex items-center">
-          {qIsCorrect ? <CheckCircle className="h-5 w-5 mr-2 text-green-700" /> : <XCircle className="h-5 w-5 mr-2 text-red-700" />}
-          Your Answer: <span className={`ml-1 font-medium ${qIsCorrect ? 'text-green-700' : 'text-red-700'}`}>{studentAnswerText}</span>
-        </h4>
+      <div className={`mt-3 p-2 border rounded-md text-sm ${qIsCorrect ? 'bg-green-500/10 border-green-500' : 'bg-red-500/10 border-red-500'}`}>
+        <div className="font-semibold mb-1 flex items-start"> 
+          {qIsCorrect ? <CheckCircle className="h-5 w-5 mr-2 text-green-700 shrink-0 mt-px" /> : <XCircle className="h-5 w-5 mr-2 text-red-700 shrink-0 mt-px" />}
+          <span className="mr-1 shrink-0">Your Answer:</span> 
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={`font-medium ${qIsCorrect ? 'text-green-700' : 'text-red-700'} truncate block flex-1 min-w-0`}> 
+                  {studentAnswerText}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs break-words shadow-lg">
+                <p>{studentAnswerText}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         {!qIsCorrect && (
-          <p>Correct Answer: <span className="font-medium text-green-700">{correctAnswerText}</span></p>
+          <div className="flex items-start mt-1 ml-7"> 
+            <span className="font-medium text-green-700 mr-1 shrink-0">Correct Answer:</span> 
+             <TooltipProvider delayDuration={100}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="font-medium text-green-700 truncate block flex-1 min-w-0"> 
+                    {correctAnswerText}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs break-words shadow-lg">
+                  <p>{correctAnswerText}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         )}
       </div>
     );
@@ -94,7 +120,7 @@ export default function QuestionDisplay({
       <CardContent className="space-y-6">
         {question.type === 'mcq' && (
           <RadioGroup
-            value={currentAnswer as string || ""} // currentAnswer for live mode, studentAttempt.answer for review
+            value={currentAnswer as string || ""} 
             onValueChange={handleMcqChange}
             disabled={isReviewMode}
             className="space-y-3"
@@ -108,10 +134,6 @@ export default function QuestionDisplay({
                 if (option.id === studentAttempt?.answer && !(studentAttempt?.isCorrect)) {
                   optionStyle = 'border-red-500 bg-red-500/10 text-red-700';
                 }
-                 if (option.id === studentAttempt?.answer && studentAttempt?.isCorrect) {
-                  // If student's answer is correct, green border is already applied by correctOptionId match
-                  // No need for specific red styling here if it's correct
-                }
               } else if (currentAnswer === option.id) {
                  optionStyle = 'border-primary bg-primary/10';
               }
@@ -120,7 +142,7 @@ export default function QuestionDisplay({
                 <Label
                   key={option.id}
                   htmlFor={`${question.id}-${option.id}`}
-                  className={`flex items-start space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`} // Changed items-center to items-start
+                  className={`flex items-start space-x-3 p-3 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`}
                 >
                   <RadioGroupItem 
                     value={option.id} 
@@ -128,9 +150,9 @@ export default function QuestionDisplay({
                     disabled={isReviewMode} 
                     checked={isReviewMode ? (studentAttempt?.answer === option.id) : (currentAnswer === option.id)}
                     aria-label={option.text}
-                    className="mt-1" // Align radio button slightly with the start of the text
+                    className="mt-1" 
                   />
-                  <span className="flex-1">{option.text}</span> {/* Ensure span can take space and wrap */}
+                  <span className="flex-1">{option.text}</span> 
                 </Label>
               );
             })}
@@ -163,10 +185,10 @@ export default function QuestionDisplay({
               let optionStyle = 'border-border';
                if (isReviewMode) {
                 const qCorrectAnswerStr = String((question as TrueFalseQuestion).correctAnswer);
-                if (option.value === qCorrectAnswerStr) { // This option is the correct answer
+                if (option.value === qCorrectAnswerStr) { 
                   optionStyle = 'border-green-500 bg-green-500/10 text-green-700 font-medium';
                 }
-                if (String(studentAttempt?.answer) === option.value && !(studentAttempt?.isCorrect)) { // Student picked this, and it was wrong
+                if (String(studentAttempt?.answer) === option.value && !(studentAttempt?.isCorrect)) { 
                   optionStyle = 'border-red-500 bg-red-500/10 text-red-700';
                 }
               } else if (String(currentAnswer) === option.value) {
@@ -177,7 +199,7 @@ export default function QuestionDisplay({
                <Label
                 key={option.value}
                 htmlFor={`${question.id}-${option.value}`}
-                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`} // items-center is fine for T/F
+                className={`flex items-center space-x-3 p-3 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`} 
               >
                 <RadioGroupItem 
                   value={option.value} 

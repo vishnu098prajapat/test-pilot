@@ -102,7 +102,7 @@ export default function StudentResultsPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center">
-        <Card className="w-full max-w-2xl shadow-xl">
+        <Card className="w-full max-w-xl shadow-xl"> {/* Adjusted from max-w-2xl */}
           <CardHeader className="text-center">
             <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
             <Skeleton className="h-8 w-3/4 mx-auto mb-2" />
@@ -147,7 +147,7 @@ export default function StudentResultsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center">
-      <Card className="w-full max-w-2xl shadow-xl">
+      <Card className="w-full max-w-xl shadow-xl"> {/* Adjusted from max-w-2xl */}
         <CardHeader className="text-center">
           <Award className="w-16 h-16 text-primary mx-auto mb-4" />
           <CardTitle className="text-3xl font-bold font-headline">Test Results</CardTitle>
@@ -201,7 +201,7 @@ export default function StudentResultsPage() {
       </Card>
 
       {showReview && results && (
-        <div className="w-full max-w-2xl mt-8 space-y-6">
+        <div className="w-full max-w-3xl mt-8 space-y-6"> {/* Changed from max-w-2xl to max-w-3xl */}
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
@@ -211,7 +211,6 @@ export default function StudentResultsPage() {
                     {results.questions.map((q, index) => {
                         const studentAnswerValue = results.studentRawAnswers[q.id];
                         const isActuallyCorrect = calculateCorrectness(q, studentAnswerValue);
-                        // Create a StudentAnswer-like object for QuestionDisplay
                         const studentAttemptForDisplay: StudentAnswer = {
                             questionId: q.id,
                             answer: studentAnswerValue,
@@ -226,7 +225,7 @@ export default function StudentResultsPage() {
                                     questionNumber={index + 1}
                                     totalQuestions={results.questions.length}
                                     currentAnswer={studentAnswerValue} 
-                                    onAnswerChange={() => {}} // No-op as it's review mode
+                                    onAnswerChange={() => {}} 
                                     isReviewMode={true}
                                     studentAttempt={studentAttemptForDisplay}
                                     isCorrect={isActuallyCorrect}
@@ -242,5 +241,3 @@ export default function StudentResultsPage() {
     </div>
   );
 }
-
-    
