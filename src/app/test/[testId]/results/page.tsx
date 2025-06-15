@@ -12,12 +12,12 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home, Save } from "lucide-react"; 
+import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home, Eye, EyeOff } from "lucide-react"; 
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; 
-import type { Question } from '@/lib/types'; 
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import type { Question, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion, StudentAnswer } from '@/lib/types';
+import QuestionDisplay from '@/components/student/question-display';
+import { Separator } from '@/components/ui/separator';
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
@@ -32,18 +32,16 @@ interface StoredTestResults {
   scorePercentage: number;
   questions: Question[]; 
   studentRawAnswers: Record<string, any>; 
-  notes?: string; // Added notes field
 }
 
 export default function StudentResultsPage() {
   const params = useParams();
   const router = useRouter(); 
-  const { toast } = useToast();
   const testId = params.testId as string;
   const [results, setResults] = useState<StoredTestResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [studentNotes, setStudentNotes] = useState<string>('');
+  const [showReview, setShowReview] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -73,7 +71,6 @@ export default function StudentResultsPage() {
           typeof parsedResults.studentRawAnswers === 'object' 
         ) {
           setResults(parsedResults);
-          setStudentNotes(parsedResults.notes || ''); // Load existing notes
         } else {
           setError("Test result data is invalid or incomplete. Please try taking the test again.");
           console.warn("[ResultsPage] Invalid results structure in localStorage:", parsedResults);
@@ -89,20 +86,16 @@ export default function StudentResultsPage() {
     }
   }, [testId]);
 
-  const handleSaveNotes = () => {
-    if (!results) {
-      toast({ title: "Error", description: "Result data not loaded, cannot save notes.", variant: "destructive" });
-      return;
+  const calculateCorrectness = (question: Question, studentAnswerValue: any): boolean => {
+    if (studentAnswerValue === undefined || studentAnswerValue === null) return false;
+    if (question.type === 'mcq') {
+      return studentAnswerValue === (question as MCQQuestion).correctOptionId;
+    } else if (question.type === 'true-false') {
+      return studentAnswerValue === (question as TrueFalseQuestion).correctAnswer;
+    } else if (question.type === 'short-answer') {
+      return String(studentAnswerValue).trim().toLowerCase() === String((question as ShortAnswerQuestion).correctAnswer).trim().toLowerCase();
     }
-    const updatedResults: StoredTestResults = { ...results, notes: studentNotes };
-    try {
-      localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testId}`, JSON.stringify(updatedResults));
-      toast({ title: "Notes Saved", description: "Your personal notes for this test have been saved locally.", duration: 2000 });
-      setResults(updatedResults); // Update local state to reflect saved notes
-    } catch (e) {
-      toast({ title: "Error Saving Notes", description: "Could not save your notes to local storage.", variant: "destructive" });
-      console.error("[ResultsPage] Error saving notes to localStorage:", e);
-    }
+    return false;
   };
 
 
@@ -153,7 +146,7 @@ export default function StudentResultsPage() {
   const displayTotalQuestions = results.questions.length;
 
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center">
+    <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center">
       <Card className="w-full max-w-2xl shadow-xl">
         <CardHeader className="text-center">
           <Award className="w-16 h-16 text-primary mx-auto mb-4" />
@@ -187,16 +180,16 @@ export default function StudentResultsPage() {
           </div>
 
           <div className="text-center mt-6">
-             <p className="text-muted-foreground">Detailed question review feature is coming soon!</p>
-             <Button variant="outline" className="mt-2" disabled>
-              Review Answers (Coming Soon)
+             <Button variant="outline" className="mt-2" onClick={() => setShowReview(!showReview)}>
+              {showReview ? <EyeOff className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
+              {showReview ? 'Hide Review' : 'Review My Answers'}
             </Button>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
            <Button asChild>
             <Link href={`/test/${testId}/leaderboard`}>
-              <BarChart3 className="mr-2 h-4 w-4" /> View All Results
+              <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
             </Link>
           </Button>
            <Button asChild variant="outline">
@@ -207,28 +200,47 @@ export default function StudentResultsPage() {
         </CardFooter>
       </Card>
 
-      {/* Student Notes Card */}
-      <Card className="w-full max-w-2xl shadow-xl mt-8">
-        <CardHeader>
-          <CardTitle className="text-2xl font-headline">My Personal Notes</CardTitle>
-          <CardDescription>Jot down your thoughts, areas for improvement, or key takeaways from this test.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={studentNotes}
-            onChange={(e) => setStudentNotes(e.target.value)}
-            placeholder="Type your notes here..."
-            rows={6}
-            className="bg-background"
-          />
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button onClick={handleSaveNotes}>
-            <Save className="mr-2 h-4 w-4" /> Save Notes
-          </Button>
-        </CardFooter>
-      </Card>
+      {showReview && results && (
+        <div className="w-full max-w-2xl mt-8 space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
+                    <CardDescription>Review each question, your answer, and the correct answer.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {results.questions.map((q, index) => {
+                        const studentAnswerValue = results.studentRawAnswers[q.id];
+                        const isActuallyCorrect = calculateCorrectness(q, studentAnswerValue);
+                        // Create a StudentAnswer-like object for QuestionDisplay
+                        const studentAttemptForDisplay: StudentAnswer = {
+                            questionId: q.id,
+                            answer: studentAnswerValue,
+                            isCorrect: isActuallyCorrect,
+                            pointsScored: isActuallyCorrect ? q.points : 0
+                        };
 
+                        return (
+                            <React.Fragment key={q.id}>
+                                <QuestionDisplay
+                                    question={q}
+                                    questionNumber={index + 1}
+                                    totalQuestions={results.questions.length}
+                                    currentAnswer={studentAnswerValue} 
+                                    onAnswerChange={() => {}} // No-op as it's review mode
+                                    isReviewMode={true}
+                                    studentAttempt={studentAttemptForDisplay}
+                                    isCorrect={isActuallyCorrect}
+                                />
+                                {index < results.questions.length - 1 && <Separator className="my-6" />}
+                            </React.Fragment>
+                        );
+                    })}
+                </CardContent>
+            </Card>
+        </div>
+      )}
     </div>
   );
 }
+
+    

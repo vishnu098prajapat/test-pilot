@@ -750,5 +750,46 @@
     "suspiciousReason": "The activity log shows repeated failures to enter fullscreen mode at the beginning of the test. This could indicate the student was attempting to access other applications or resources during the test, which is a form of cheating. Although answer changes are normal, the failed fullscreen requests raise a red flag.",
     "id": "attempt-1749976788459-xuji08y",
     "submittedAt": "2025-06-15T08:39:48.459Z"
+  },
+  {
+    "testId": "test-1749979578410-wswq0",
+    "testTitle": "AI Gen (medium) MCQ Test on java",
+    "studentIdentifier": "Anonymous Student",
+    "startTime": "2025-06-15T09:27:10.774Z",
+    "endTime": "2025-06-15T09:27:41.850Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749979564574-0-b0xvori",
+        "answer": "ai-opt_q0_idx1_1749979564574_ba0krc6ug",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749979564574-1-sve9os6",
+        "answer": "ai-opt_q1_idx1_1749979564574_e8wzchv27",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749979564574-2-ytrdeb2",
+        "answer": "ai-opt_q2_idx3_1749979564574_3tgu5g1pr",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749979564574-3-5e26goc",
+        "answer": "ai-opt_q3_idx0_1749979564574_u7np1mbzm",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 40,
+    "scorePercentage": 50,
+    "activityLog": "[2025-06-15T09:27:10.820Z] Test started by Anonymous Student. Anti-cheat measures active based on test settings.\n[2025-06-15T09:27:10.823Z] Test started by Anonymous Student. Anti-cheat measures active based on test settings.\n[2025-06-15T09:27:20.228Z] Answer changed for question ID ai-q-1749979564574-0-b0xvori.\n[2025-06-15T09:27:31.903Z] Answer changed for question ID ai-q-1749979564574-1-sve9os6.\n[2025-06-15T09:27:34.709Z] Answer changed for question ID ai-q-1749979564574-2-ytrdeb2.\n[2025-06-15T09:27:37.253Z] Answer changed for question ID ai-q-1749979564574-3-5e26goc.\n[2025-06-15T09:27:38.447Z] Answer changed for question ID ai-q-1749979564574-3-5e26goc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student changed answers multiple times in a short period, which could indicate uncertainty but isn't necessarily suspicious. The repeated entries at the start of the log are also unusual, but do not necessarily indicate suspicious activity.",
+    "id": "attempt-1749979394052-rof8uw7",
+    "submittedAt": "2025-06-15T09:23:14.052Z"
   }
 ]

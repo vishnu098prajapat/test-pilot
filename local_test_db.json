@@ -1,4 +1,3 @@
-
 [
   {
     "id": "test1",
@@ -2916,5 +2915,121 @@
     "id": "test-1749976923558-ch74i",
     "createdAt": "2025-06-15T08:42:03.558Z",
     "updatedAt": "2025-06-15T08:42:03.558Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on java",
+    "subject": "java",
+    "duration": 35,
+    "questions": [
+      {
+        "id": "ai-q-1749979564574-0-b0xvori",
+        "text": "What exception is thrown when you try to access an array element with an index that is less than 0 or greater than or equal to the array's length?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749979564574_96r953187",
+            "text": "NullPointerException"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749979564574_ba0krc6ug",
+            "text": "ArrayIndexOutOfBoundsException"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749979564574_qxvbtnb0r",
+            "text": "IllegalArgumentException"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749979564574_oofeagoqw",
+            "text": "IOException"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1749979564574_ba0krc6ug"
+      },
+      {
+        "id": "ai-q-1749979564574-1-sve9os6",
+        "text": "Which of the following is the correct way to declare and initialize an integer array of size 5 in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749979564574_o5w8b3r4b",
+            "text": "int arr = new int(5);"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749979564574_e8wzchv27",
+            "text": "int[] arr = new int[5];"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749979564574_pp38xa9bd",
+            "text": "int arr[] = new int{5};"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749979564574_y4m5q7tx9",
+            "text": "array arr = new int[5];"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1749979564574_e8wzchv27"
+      },
+      {
+        "id": "ai-q-1749979564574-2-ytrdeb2",
+        "text": "Which method is best suited to create a new array with a different size, copying the elements from an existing array?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749979564574_g4kvqs1x9",
+            "text": "array.clone()"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749979564574_txcu2e835",
+            "text": "Arrays.copy()"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749979564574_rb2uo8g8c",
+            "text": "Arrays.copyOf()"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749979564574_3tgu5g1pr",
+            "text": "System.arraycopy()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1749979564574_rb2uo8g8c"
+      },
+      {
+        "id": "ai-q-1749979564574-3-5e26goc",
+        "text": "What does the `length` property of an array in Java represent?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749979564574_u7np1mbzm",
+            "text": "The data type of the array"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749979564574_di17rfx98",
+            "text": "The memory address of the array"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749979564574_j08feiuye",
+            "text": "The length of the array"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749979564574_nt9rrc22d",
+            "text": "The number of dimensions in the array"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1749979564574_j08feiuye"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1749979578410-wswq0",
+    "createdAt": "2025-06-15T09:26:18.411Z",
+    "updatedAt": "2025-06-15T09:26:18.411Z"
   }
 ]

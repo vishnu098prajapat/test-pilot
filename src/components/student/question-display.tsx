@@ -1,23 +1,25 @@
+
 "use client";
 
 import React from 'react';
-import type { Question, Option as OptionType, StudentAnswer } from '@/lib/types';
+import type { Question, Option as OptionType, StudentAnswer, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input'; // For short answer if preferred over textarea
-import { Badge } from '@/components/ui/badge'; // Added Badge import
+import { Input } from '@/components/ui/input'; 
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 interface QuestionDisplayProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
-  currentAnswer: any; // Can be string for short answer, optionId for MCQ, boolean for T/F
+  currentAnswer: any; 
   onAnswerChange: (questionId: string, answer: any) => void;
-  isReviewMode?: boolean; // If true, disable inputs and show correct answers
-  studentAttempt?: StudentAnswer; // Student's answer during review
-  isCorrect?: boolean; // If the student's answer was correct in review mode
+  isReviewMode?: boolean; 
+  studentAttempt?: StudentAnswer; 
+  isCorrect?: boolean; 
 }
 
 export default function QuestionDisplay({
@@ -27,8 +29,8 @@ export default function QuestionDisplay({
   currentAnswer,
   onAnswerChange,
   isReviewMode = false,
-  studentAttempt,
-  isCorrect
+  studentAttempt, // This will be the student's actual recorded answer object for this question
+  isCorrect // This directly tells if studentAttempt was correct for the overall question
 }: QuestionDisplayProps) {
   
   const handleMcqChange = (value: string) => {
@@ -43,32 +45,40 @@ export default function QuestionDisplay({
     if (!isReviewMode) onAnswerChange(question.id, value === 'true');
   };
 
-  let reviewAnswerDisplay = null;
+  // This section is for displaying feedback in review mode
+  let reviewFeedbackDisplay = null;
   if (isReviewMode && studentAttempt) {
+    let studentAnswerText = "Not Answered";
+    let correctAnswerText = "";
+    const qIsCorrect = studentAttempt.isCorrect; // Use the isCorrect from the processed studentAttempt
+
     if (question.type === 'mcq') {
-      const studentSelectedOption = question.options.find(opt => opt.id === studentAttempt.answer);
-      const correctOption = question.options.find(opt => opt.id === question.correctOptionId);
-      reviewAnswerDisplay = (
-        <>
-          <p>Your answer: <span className={isCorrect ? 'text-green-600' : 'text-red-600'}>{studentSelectedOption?.text || 'Not answered'}</span></p>
-          {!isCorrect && <p>Correct answer: <span className="text-green-600">{correctOption?.text}</span></p>}
-        </>
-      );
+      const mcqQuestion = question as MCQQuestion;
+      const studentSelectedOption = mcqQuestion.options.find(opt => opt.id === studentAttempt.answer);
+      studentAnswerText = studentSelectedOption ? studentSelectedOption.text : "Not Answered";
+      const correctOption = mcqQuestion.options.find(opt => opt.id === mcqQuestion.correctOptionId);
+      correctAnswerText = correctOption ? correctOption.text : "N/A";
     } else if (question.type === 'short-answer') {
-       reviewAnswerDisplay = (
-        <>
-          <p>Your answer: <span className={isCorrect ? 'text-green-600' : 'text-red-600'}>{studentAttempt.answer || 'Not answered'}</span></p>
-          {!isCorrect && <p>Correct answer: <span className="text-green-600">{question.correctAnswer}</span></p>}
-        </>
-      );
+      const saQuestion = question as ShortAnswerQuestion;
+      studentAnswerText = studentAttempt.answer ? String(studentAttempt.answer) : "Not Answered";
+      correctAnswerText = String(saQuestion.correctAnswer);
     } else if (question.type === 'true-false') {
-       reviewAnswerDisplay = (
-        <>
-          <p>Your answer: <span className={isCorrect ? 'text-green-600' : 'text-red-600'}>{studentAttempt.answer === undefined ? 'Not answered' : studentAttempt.answer ? 'True' : 'False'}</span></p>
-          {!isCorrect && <p>Correct answer: <span className="text-green-600">{question.correctAnswer ? 'True' : 'False'}</span></p>}
-        </>
-      );
+      const tfQuestion = question as TrueFalseQuestion;
+      studentAnswerText = studentAttempt.answer === undefined ? "Not Answered" : (studentAttempt.answer ? "True" : "False");
+      correctAnswerText = tfQuestion.correctAnswer ? "True" : "False";
     }
+
+    reviewFeedbackDisplay = (
+      <div className={`mt-4 p-3 border rounded-md text-sm ${qIsCorrect ? 'bg-green-500/10 border-green-500' : 'bg-red-500/10 border-red-500'}`}>
+        <h4 className="font-semibold mb-2 flex items-center">
+          {qIsCorrect ? <CheckCircle className="h-5 w-5 mr-2 text-green-700" /> : <XCircle className="h-5 w-5 mr-2 text-red-700" />}
+          Your Answer: <span className={`ml-1 font-medium ${qIsCorrect ? 'text-green-700' : 'text-red-700'}`}>{studentAnswerText}</span>
+        </h4>
+        {!qIsCorrect && (
+          <p>Correct Answer: <span className="font-medium text-green-700">{correctAnswerText}</span></p>
+        )}
+      </div>
+    );
   }
 
 
@@ -76,7 +86,7 @@ export default function QuestionDisplay({
     <Card className="w-full shadow-lg">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl md:text-2xl font-headline">Question {questionNumber} of {totalQuestions}</CardTitle>
+          <CardTitle className="text-xl md:text-2xl font-headline">Question {questionNumber} <span className="text-base md:text-lg text-muted-foreground">of {totalQuestions}</span></CardTitle>
           <Badge variant="secondary" className="text-sm">{question.points} Points</Badge>
         </div>
         <CardDescription className="pt-4 text-base md:text-lg">{question.text}</CardDescription>
@@ -84,24 +94,45 @@ export default function QuestionDisplay({
       <CardContent className="space-y-6">
         {question.type === 'mcq' && (
           <RadioGroup
-            value={currentAnswer as string || ""}
+            value={currentAnswer as string || ""} // currentAnswer for live mode, studentAttempt.answer for review
             onValueChange={handleMcqChange}
             disabled={isReviewMode}
             className="space-y-3"
           >
-            {question.options.map((option) => (
-              <Label
-                key={option.id}
-                htmlFor={`${question.id}-${option.id}`}
-                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50
-                  ${isReviewMode && option.id === question.correctOptionId ? 'border-green-500 bg-green-500/10' : ''}
-                  ${isReviewMode && option.id === studentAttempt?.answer && option.id !== question.correctOptionId ? 'border-red-500 bg-red-500/10' : ''}
-                  ${currentAnswer === option.id && !isReviewMode ? 'border-primary bg-primary/10' : 'border-border'}`}
-              >
-                <RadioGroupItem value={option.id} id={`${question.id}-${option.id}`} disabled={isReviewMode} />
-                <span>{option.text}</span>
-              </Label>
-            ))}
+            {(question as MCQQuestion).options.map((option) => {
+              let optionStyle = 'border-border';
+              if (isReviewMode) {
+                if (option.id === (question as MCQQuestion).correctOptionId) {
+                  optionStyle = 'border-green-500 bg-green-500/10 text-green-700 font-medium';
+                }
+                if (option.id === studentAttempt?.answer && !(studentAttempt?.isCorrect)) {
+                  optionStyle = 'border-red-500 bg-red-500/10 text-red-700';
+                }
+                 if (option.id === studentAttempt?.answer && studentAttempt?.isCorrect) {
+                  // If student's answer is correct, green border is already applied by correctOptionId match
+                  // No need for specific red styling here if it's correct
+                }
+              } else if (currentAnswer === option.id) {
+                 optionStyle = 'border-primary bg-primary/10';
+              }
+
+              return (
+                <Label
+                  key={option.id}
+                  htmlFor={`${question.id}-${option.id}`}
+                  className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`}
+                >
+                  <RadioGroupItem 
+                    value={option.id} 
+                    id={`${question.id}-${option.id}`} 
+                    disabled={isReviewMode} 
+                    checked={isReviewMode ? (studentAttempt?.answer === option.id) : (currentAnswer === option.id)}
+                    aria-label={option.text}
+                  />
+                  <span>{option.text}</span>
+                </Label>
+              );
+            })}
           </RadioGroup>
         )}
 
@@ -110,45 +141,61 @@ export default function QuestionDisplay({
             <Label htmlFor={`${question.id}-shortanswer`} className="mb-2 block">Your Answer:</Label>
             <Textarea
               id={`${question.id}-shortanswer`}
-              value={currentAnswer as string || ""}
+              value={isReviewMode ? (studentAttempt?.answer as string || "") : (currentAnswer as string || "")}
               onChange={handleShortAnswerChange}
               placeholder="Type your answer here..."
               rows={4}
               disabled={isReviewMode}
-              className={isReviewMode ? 'bg-muted' : ''}
+              className={isReviewMode ? `bg-muted ${studentAttempt?.isCorrect ? 'border-green-500' : 'border-red-500'}` : ''}
             />
           </div>
         )}
 
         {question.type === 'true-false' && (
           <RadioGroup
-            value={(currentAnswer !== undefined && currentAnswer !== null) ? String(currentAnswer) : ""}
+            value={isReviewMode ? String(studentAttempt?.answer) : (currentAnswer !== undefined && currentAnswer !== null) ? String(currentAnswer) : ""}
             onValueChange={handleTrueFalseChange}
             disabled={isReviewMode}
             className="space-y-3"
           >
-            {[ {label: "True", value: "true"}, {label: "False", value: "false"} ].map((option) => (
+            {[ {label: "True", value: "true"}, {label: "False", value: "false"} ].map((option) => {
+              let optionStyle = 'border-border';
+               if (isReviewMode) {
+                const qCorrectAnswerStr = String((question as TrueFalseQuestion).correctAnswer);
+                if (option.value === qCorrectAnswerStr) { // This option is the correct answer
+                  optionStyle = 'border-green-500 bg-green-500/10 text-green-700 font-medium';
+                }
+                if (String(studentAttempt?.answer) === option.value && !(studentAttempt?.isCorrect)) { // Student picked this, and it was wrong
+                  optionStyle = 'border-red-500 bg-red-500/10 text-red-700';
+                }
+              } else if (String(currentAnswer) === option.value) {
+                 optionStyle = 'border-primary bg-primary/10';
+              }
+
+              return (
                <Label
                 key={option.value}
                 htmlFor={`${question.id}-${option.value}`}
-                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50
-                  ${isReviewMode && String(question.correctAnswer) === option.value ? 'border-green-500 bg-green-500/10' : ''}
-                  ${isReviewMode && String(studentAttempt?.answer) === option.value && String(studentAttempt?.answer) !== String(question.correctAnswer) ? 'border-red-500 bg-red-500/10' : ''}
-                  ${String(currentAnswer) === option.value && !isReviewMode ? 'border-primary bg-primary/10' : 'border-border'}`}
+                className={`flex items-center space-x-3 p-4 border rounded-md cursor-pointer transition-colors hover:bg-accent/50 ${optionStyle}`}
               >
-                <RadioGroupItem value={option.value} id={`${question.id}-${option.value}`} disabled={isReviewMode} />
+                <RadioGroupItem 
+                  value={option.value} 
+                  id={`${question.id}-${option.value}`} 
+                  disabled={isReviewMode}
+                  checked={isReviewMode ? (String(studentAttempt?.answer) === option.value) : (String(currentAnswer) === option.value)}
+                  aria-label={option.label}
+                />
                 <span>{option.label}</span>
               </Label>
-            ))}
+              );
+            })}
           </RadioGroup>
         )}
-        {isReviewMode && reviewAnswerDisplay && (
-          <div className="mt-4 p-3 border rounded-md bg-muted/50 text-sm">
-            <h4 className="font-semibold mb-1">Review:</h4>
-            {reviewAnswerDisplay}
-          </div>
-        )}
+        {isReviewMode && reviewFeedbackDisplay}
       </CardContent>
     </Card>
   );
 }
+
+
+    
