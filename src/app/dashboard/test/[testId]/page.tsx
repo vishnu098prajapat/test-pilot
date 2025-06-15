@@ -254,7 +254,6 @@ export default function TestManagementPage() {
           <InfoCard icon={<Users />} label="Attempts Allowed" value={test.attemptsAllowed === 0 ? "Unlimited" : test.attemptsAllowed.toString()} />
           <InfoCard icon={<ShieldCheck />} label="Tab Switch Detection" value={test.enableTabSwitchDetection ? "Enabled" : "Disabled"} />
           <InfoCard icon={<ShieldCheck />} label="Copy/Paste Disabled" value={test.enableCopyPasteDisable ? "Enabled" : "Disabled"} />
-          <InfoCard icon={<ShieldCheck />} label="Fullscreen Enforced" value={test.enforceFullScreen ? "Enabled" : "Disabled"} />
         </div>
 
         <Separator className="my-8" />

@@ -55,7 +55,6 @@ export interface Test {
   // Anti-cheat
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  enforceFullScreen: boolean;
 }
 
 export interface StudentAnswer {

@@ -73,7 +73,6 @@ const testBuilderSchema = z.object({
   randomizeQuestions: z.boolean(),
   enableTabSwitchDetection: z.boolean(),
   enableCopyPasteDisable: z.boolean(),
-  enforceFullScreen: z.boolean(),
   published: z.boolean(),
 });
 
@@ -112,7 +111,6 @@ export default function TestBuilderForm() {
       randomizeQuestions: false,
       enableTabSwitchDetection: true,
       enableCopyPasteDisable: true,
-      enforceFullScreen: false,
       published: false,
     },
   });
@@ -134,7 +132,7 @@ export default function TestBuilderForm() {
           if (aiData.questions && aiData.questions.length > 0) {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
-            replaceQuestions(aiData.questions); // This should correctly set questions with their correctOptionId
+            replaceQuestions(aiData.questions); 
             toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form.", duration: 2000});
           } else {
             toast({ title: "AI Data Issue", description: "AI data found but no questions were present.", variant: "destructive", duration: 2000});
@@ -417,21 +415,6 @@ export default function TestBuilderForm() {
                     </div>
                     <FormControl>
                       <Switch id="enableCopyPasteDisable" checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="enforceFullScreen"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="enforceFullScreen">Enforce Fullscreen</Label>
-                      <p className="text-xs text-muted-foreground">Attempt to keep student in fullscreen mode.</p>
-                    </div>
-                    <FormControl>
-                      <Switch id="enforceFullScreen" checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}

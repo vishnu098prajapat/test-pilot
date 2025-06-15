@@ -47,14 +47,13 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
   }, []);
 
   useEffect(() => {
-    // Clear any previous results for this test ID from localStorage to avoid confusion
     try {
         localStorage.removeItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`);
     } catch (e) {
         console.warn("Could not clear previous test results from localStorage:", e);
     }
 
-    if (!testData.enableTabSwitchDetection && !testData.enableCopyPasteDisable && !testData.enforceFullScreen) return;
+    if (!testData.enableTabSwitchDetection && !testData.enableCopyPasteDisable) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden && testData.enableTabSwitchDetection) {
@@ -73,14 +72,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       document.addEventListener('paste', preventDefaultHandler);
       document.addEventListener('cut', preventDefaultHandler);
     }
-    if (testData.enforceFullScreen) {
-      try {
-        document.documentElement.requestFullscreen?.().catch(err => logActivity(`Fullscreen request failed: ${err.message}`));
-      } catch (e) {
-        logActivity(`Fullscreen not supported or error: ${(e as Error).message}`);
-      }
-    }
-
+    
     logActivity(`Test started by ${studentIdentifier}. Anti-cheat measures active based on test settings.`);
 
     return () => {
@@ -89,9 +81,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
         document.removeEventListener('copy', preventDefaultHandler);
         document.removeEventListener('paste', preventDefaultHandler);
         document.removeEventListener('cut', preventDefaultHandler);
-      }
-      if (testData.enforceFullScreen && document.fullscreenElement) {
-        document.exitFullscreen?.();
       }
     };
   }, [logActivity, testData, toast, studentIdentifier]);
@@ -107,7 +96,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
     logActivity(autoSubmit ? "Test auto-submitted due to time up." : `Test submitted by ${studentIdentifier}.`);
     const endTime = new Date();
 
-    // CRITICAL LOG: Check testData.questions at the moment of submission
     console.log('[StudentTestArea] handleSubmitTest: testData.questions:', JSON.stringify(testData.questions, null, 2));
     console.log('[StudentTestArea] handleSubmitTest: testData.questions.length:', testData.questions.length);
     console.log('[StudentTestArea] handleSubmitTest: answers state:', JSON.stringify(answers, null, 2));
@@ -168,7 +156,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
     });
     
     const scorePercentage = totalPossiblePoints > 0 ? Math.round((totalPointsAchieved / totalPossiblePoints) * 100) : 0;
-    const totalQuestionsInTest = testData.questions.length; // This is based on the current testData
+    const totalQuestionsInTest = testData.questions.length; 
     const incorrectOrUnansweredQuestionsCount = totalQuestionsInTest - correctQuestionsCount;
 
     console.log(`[StudentTestArea] CALCULATION: Total Qs in Test: ${totalQuestionsInTest}, Correct: ${correctQuestionsCount}, Incorrect/Unanswered: ${incorrectOrUnansweredQuestionsCount}, Score: ${totalPointsAchieved}/${totalPossiblePoints} (${scorePercentage}%)`);
@@ -370,5 +358,3 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
     </div>
   );
 }
-
-    

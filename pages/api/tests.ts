@@ -50,7 +50,6 @@ const initialMockTests: Test[] = [
     randomizeQuestions: false,
     enableTabSwitchDetection: true,
     enableCopyPasteDisable: true,
-    enforceFullScreen: false,
   },
   {
     id: 'test2',
@@ -80,7 +79,6 @@ const initialMockTests: Test[] = [
     randomizeQuestions: true,
     enableTabSwitchDetection: true,
     enableCopyPasteDisable: false,
-    enforceFullScreen: true,
   },
 ];
 
