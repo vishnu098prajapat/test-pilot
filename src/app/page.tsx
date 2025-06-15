@@ -136,25 +136,10 @@ export default function HomePage() {
                 title="Progressive Loading"
                 description="Experience fast, progressive loading for a smooth and uninterrupted testing experience."
               />
-              <FeatureCard
-                icon={<UserRoundCheck className="w-10 h-10 text-primary" />}
-                title="Parent Dashboard"
-                description="Provide parents with a dedicated dashboard to track their child's progress and performance."
-              />
-              <FeatureCard
-                icon={<MessageSquareText className="w-10 h-10 text-primary" />}
-                title="Answer Explanations"
-                description="Enable 'Explanation Mode' to provide detailed explanations for incorrect answers, aiding learning."
-              />
                <FeatureCard
                 icon={<Briefcase className="w-10 h-10 text-primary" />}
                 title="Teacher Dashboard"
                 description="Teachers can efficiently manage multiple classes, assign tests, and view analytics separately."
-              />
-              <FeatureCard
-                icon={<FileText className="w-10 h-10 text-primary" />}
-                title="Student Notes"
-                description="Allow students to jot down and save personal notes after completing a quiz for review."
               />
             </div>
           </div>
