@@ -129,7 +129,7 @@ export default function DashboardPage() {
   };
 
   const SummaryCard = ({ title, value, icon, description }: { title: string, value: string | number, icon: React.ReactNode, description: string }) => (
-    <Card>
+    <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
@@ -147,7 +147,7 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.displayName || user?.email || "User"}!</p>
+            {/* Removed welcome message: <p className="text-muted-foreground">Welcome back, {user?.displayName || user?.email || "User"}!</p> */}
           </div>
           <Button asChild size="lg">
             <Link href="/dashboard/create-test">
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                           <AlertDialogTrigger asChild>
                             <DropdownMenuItem 
                               className="text-destructive focus:text-destructive focus:bg-destructive/10"
-                              onSelect={(event) => event.preventDefault()} // Prevents DropdownMenu from closing
+                              onSelect={(event) => event.preventDefault()} 
                             >
                               <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
@@ -308,4 +308,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
