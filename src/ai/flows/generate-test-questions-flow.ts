@@ -9,7 +9,7 @@
  * - AIQuestion - The type for a single AI-generated question.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai}from '@/ai/genkit';
 import {z} from 'genkit';
 
 // Base schema for common AI question properties
@@ -73,17 +73,17 @@ const generateTestQuestionsPrompt = ai.definePrompt({
   name: 'generateTestQuestionsPrompt',
   input: {schema: GenerateTestQuestionsInputSchema},
   output: {schema: GenerateTestQuestionsOutputSchema},
-  prompt: `You are an expert test creator specializing in generating high-quality assessment questions.
-Your task is to generate {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}", focusing on the following topics:
+  prompt: `You are an expert test creator specializing in generating high-quality assessment questions with extreme speed.
+Your task is to generate EXACTLY {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}", focusing on the following topics:
 {{#each topics}}
 - {{{this}}}
 {{/each}}
 
-Please generate these questions as quickly as possible.
-It is CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number. The final output must contain precisely {{numberOfQuestions}} question objects in the 'generatedQuestions' array.
+Please generate these questions as quickly as possible, aiming for completion within seconds.
+It is ABSOLUTELY CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number. The final output MUST contain precisely {{numberOfQuestions}} question objects in the 'generatedQuestions' array. If this prompt is similar to a previous one you've processed, ensure the generated questions are distinct and novel.
 
 Key Instructions for Question Generation:
-1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty.
+1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty. Focus on relevance and significance.
 2.  **Depth of Understanding:** Craft questions that assess a genuine understanding of the subject matter, not just superficial recall. They should be similar in style and analytical depth to questions found in well-designed educational assessments or typical previous year papers for this level.
 3.  **Clarity and Precision:** Ensure each question is clearly worded, unambiguous, and directly addresses the specified topics and difficulty.
 4.  **Points Allocation:** Each question must be worth 10 points by default, unless the schema specifies otherwise.
@@ -125,7 +125,7 @@ Please ensure your entire output is a single JSON object containing a key "gener
 "generatedQuestions" must be an array of question objects.
 Each question object in the array must strictly adhere to the structure and types outlined above for the specified "{{questionType}}".
 The questions should reflect the requested "{{difficulty}}" level and the key instructions provided above.
-Ensure you fulfill the request for EXACTLY {{numberOfQuestions}} questions; do not provide fewer or more, even if the topics are challenging or easy. The final count must be {{numberOfQuestions}}.
+Ensure you fulfill the request for EXACTLY {{numberOfQuestions}} questions; do not provide fewer or more. The final count must be {{numberOfQuestions}}.
 `,
 });
 
@@ -141,10 +141,10 @@ const generateTestQuestionsFlow = ai.defineFlow(
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
         throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject or difficulty, or try a different question type.");
     }
-    // We can add a strict check here if preferred, though the user's main concern is the AI's generation, not post-validation.
-    // if (output.generatedQuestions.length !== input.numberOfQuestions) {
-    //   throw new Error(`AI generated ${output.generatedQuestions.length} questions, but exactly ${input.numberOfQuestions} were requested. Please try again.`);
-    // }
+    
+    if (output.generatedQuestions.length !== input.numberOfQuestions) {
+      throw new Error(`AI generated ${output.generatedQuestions.length} questions, but exactly ${input.numberOfQuestions} were requested. Please try adjusting your input or regenerating.`);
+    }
     return output;
   }
 );

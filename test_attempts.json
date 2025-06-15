@@ -791,5 +791,46 @@
     "suspiciousReason": "The student changed answers multiple times in a short period, which could indicate uncertainty but isn't necessarily suspicious. The repeated entries at the start of the log are also unusual, but do not necessarily indicate suspicious activity.",
     "id": "attempt-1749979394052-rof8uw7",
     "submittedAt": "2025-06-15T09:23:14.052Z"
+  },
+  {
+    "testId": "test-1749979578410-wswq0",
+    "testTitle": "AI Gen (medium) MCQ Test on java",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-15T09:49:28.823Z",
+    "endTime": "2025-06-15T09:51:52.972Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749979564574-0-b0xvori",
+        "answer": "ai-opt_q0_idx1_1749979564574_ba0krc6ug",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749979564574-1-sve9os6",
+        "answer": "ai-opt_q1_idx2_1749979564574_pp38xa9bd",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749979564574-2-ytrdeb2",
+        "answer": "ai-opt_q2_idx1_1749979564574_txcu2e835",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749979564574-3-5e26goc",
+        "answer": "ai-opt_q3_idx2_1749979564574_j08feiuye",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 40,
+    "scorePercentage": 50,
+    "activityLog": "[2025-06-15T09:49:28.847Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-15T09:49:28.847Z] Test started by vishnu praajapat. Anti-cheat measures active based on test settings.\n[2025-06-15T09:49:30.323Z] Tab switched / minimized.\n[2025-06-15T09:51:41.676Z] Answer changed for question ID ai-q-1749979564574-0-b0xvori.\n[2025-06-15T09:51:44.824Z] Answer changed for question ID ai-q-1749979564574-1-sve9os6.\n[2025-06-15T09:51:46.925Z] Answer changed for question ID ai-q-1749979564574-2-ytrdeb2.\n[2025-06-15T09:51:50.061Z] Answer changed for question ID ai-q-1749979564574-3-5e26goc.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student switched tabs/minimized the test window shortly after the test started. This could indicate an attempt to access external resources or communicate with others, which is a violation of test rules.",
+    "id": "attempt-1749980846359-hyuhy5l",
+    "submittedAt": "2025-06-15T09:47:26.359Z"
   }
 ]
