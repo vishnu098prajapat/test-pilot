@@ -147,7 +147,6 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
-            {/* Removed welcome message: <p className="text-muted-foreground">Welcome back, {user?.displayName || user?.email || "User"}!</p> */}
           </div>
           <Button asChild size="lg">
             <Link href="/dashboard/create-test">
@@ -156,7 +155,7 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <SummaryCard title="Total Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : tests.length} icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />} description="Number of tests you've created" />
           <SummaryCard title="Published Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.publishedTests} icon={<Eye className="h-4 w-4 text-muted-foreground" />} description="Tests available to students" />
           <SummaryCard title="Total Submissions" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.totalSubmissions} icon={<Users className="h-4 w-4 text-muted-foreground" />} description="Across all your published tests" />

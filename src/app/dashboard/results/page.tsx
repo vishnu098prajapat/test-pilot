@@ -106,9 +106,12 @@ export default function ResultsDashboardPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {tests.map((test) => (
-            <Card key={test.id} className="flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+            <Card 
+              key={test.id} 
+              className="flex flex-col justify-between shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out cursor-pointer"
+            >
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="font-headline text-xl">{test.title}</CardTitle>

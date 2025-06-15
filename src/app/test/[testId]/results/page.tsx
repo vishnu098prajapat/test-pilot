@@ -120,11 +120,11 @@ export default function StudentResultsPage() {
               <Skeleton className="h-4 w-1/4 mx-auto mb-1" />
               <Skeleton className="h-16 w-1/3 mx-auto" />
             </div>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               {[1,2,3].map(i => (
-                <div key={i}>
-                  <Skeleton className="h-8 w-1/2 mx-auto mb-1" />
-                  <Skeleton className="h-4 w-3/4 mx-auto" />
+                <div key={i} className="flex flex-col items-center">
+                  <Skeleton className="h-8 w-1/2 mb-1" />
+                  <Skeleton className="h-4 w-3/4" />
                 </div>
               ))}
             </div>
@@ -167,18 +167,18 @@ export default function StudentResultsPage() {
             <p className="text-xs text-muted-foreground mt-1">({results.totalPointsScored} / {results.maxPossiblePoints} Points)</p>
           </div>
           
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div className="flex flex-col items-center">
               <p className="text-2xl font-semibold">{displayTotalQuestions}</p>
               <p className="text-sm text-muted-foreground">Total Questions</p>
             </div>
-            <div>
+            <div className="flex flex-col items-center">
               <p className="text-2xl font-semibold text-green-600 flex items-center justify-center gap-1">
                 <CheckCircle className="h-6 w-6" /> {results.correctAnswersCount}
               </p>
               <p className="text-sm text-muted-foreground">Correct</p>
             </div>
-            <div>
+            <div className="flex flex-col items-center">
               <p className="text-2xl font-semibold text-red-600 flex items-center justify-center gap-1">
                  <XCircle className="h-6 w-6" /> {results.incorrectOrUnansweredCount}
               </p>
@@ -232,5 +232,3 @@ export default function StudentResultsPage() {
     </div>
   );
 }
-
-    

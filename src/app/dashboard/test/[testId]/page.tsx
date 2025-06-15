@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import QrCodeModal from "@/components/common/qr-code-modal"; // Import QrCodeModal
+import QrCodeModal from "@/components/common/qr-code-modal"; 
 
 export default function TestManagementPage() {
   const params = useParams();
@@ -248,7 +248,7 @@ export default function TestManagementPage() {
           </Card>
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <InfoCard icon={<ListChecks />} label="Questions" value={`${test.questions.length} Questions`} />
           <InfoCard icon={<Clock />} label="Duration" value={`${test.duration} Minutes`} />
           <InfoCard icon={<Users />} label="Attempts Allowed" value={test.attemptsAllowed === 0 ? "Unlimited" : test.attemptsAllowed.toString()} />
@@ -308,7 +308,7 @@ interface InfoCardProps {
   value: string;
 }
 const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
-  <Card className="shadow-sm">
+  <Card className="shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out cursor-pointer">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">{label}</CardTitle>
       <div className="text-muted-foreground">{icon}</div>
