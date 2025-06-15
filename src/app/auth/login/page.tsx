@@ -25,7 +25,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const authContext = useAuth(); // Get the whole context
+  const authContext = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
       console.log("LoginPage: signInWithNameAndDob result:", result);
 
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
-        authContext.login(result.user); // Call login from the context
+        authContext.login(result.user);
         toast({
           title: "Login Successful",
           description: `Welcome, ${result.user.displayName}! Redirecting to dashboard...`,
@@ -59,7 +59,7 @@ export default function LoginPage() {
           variant: "destructive",
           duration: 2000,
         });
-         console.error("LoginPage: Login failed or user data invalid. Result:", result);
+         console.error("LoginPage: Login failed or user data invalid. Result:", JSON.stringify(result, null, 2));
       }
     } catch (error) {
       console.error("LoginPage: Login error", error);
@@ -76,11 +76,14 @@ export default function LoginPage() {
   
   const getMaxDate = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0];
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <div className="absolute top-4 left-4">
         <Button variant="ghost" asChild className="text-primary hover:bg-primary/10">
           <Link href="/">
