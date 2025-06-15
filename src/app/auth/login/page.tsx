@@ -25,7 +25,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const authContext = useAuth(); // Get the whole context
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,8 +44,8 @@ export default function LoginPage() {
       const result = await signInWithNameAndDob(data.name, data.dob);
       console.log("LoginPage: signInWithNameAndDob result:", result);
 
-      if (result.success && result.user) {
-        login(result.user);
+      if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
+        authContext.login(result.user); // Call login from the context
         toast({
           title: "Login Successful",
           description: `Welcome, ${result.user.displayName}! Redirecting to dashboard...`,
@@ -55,10 +55,11 @@ export default function LoginPage() {
       } else {
         toast({
           title: "Login Failed",
-          description: result.message || "An unexpected error occurred.",
+          description: result.message || "An unexpected error occurred. Ensure user data is valid.",
           variant: "destructive",
           duration: 2000,
         });
+         console.error("LoginPage: Login failed or user data invalid. Result:", result);
       }
     } catch (error) {
       console.error("LoginPage: Login error", error);
@@ -75,7 +76,6 @@ export default function LoginPage() {
   
   const getMaxDate = () => {
     const today = new Date();
-    // Prevent selecting future dates
     return today.toISOString().split("T")[0];
   }
 
@@ -122,8 +122,8 @@ export default function LoginPage() {
                         type="date" 
                         {...field} 
                         className="w-full"
-                        min="1900-01-01" // Set a reasonable minimum year
-                        max={getMaxDate()}   // Set maximum date to today
+                        min="1900-01-01" 
+                        max={getMaxDate()}
                       />
                     </FormControl>
                     <FormMessage />

@@ -26,7 +26,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth(); 
+  const authContext = useAuth(); // Get the whole context
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignupFormValues>({
@@ -44,8 +44,8 @@ export default function SignupPage() {
       const result = await signUpWithNameAndDob(data.name, data.dob);
       console.log("SignupPage: signUpWithNameAndDob result:", result);
 
-      if (result.success && result.user) {
-        login(result.user); 
+      if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
+        authContext.login(result.user);  // Use login from auth context for consistency
         toast({
           title: "Sign Up Successful",
           description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
@@ -55,10 +55,11 @@ export default function SignupPage() {
       } else {
         toast({
           title: "Sign Up Failed",
-          description: result.message || "An unexpected error occurred.",
+          description: result.message || "An unexpected error occurred. Ensure user data is valid.",
           variant: "destructive",
           duration: 2000,
         });
+        console.error("SignupPage: Signup failed or user data invalid. Result:", result);
       }
     } catch (error) {
       console.error("SignupPage: Signup error", error);
@@ -75,7 +76,6 @@ export default function SignupPage() {
   
   const getMaxDate = () => {
     const today = new Date();
-    // Prevent selecting future dates
     return today.toISOString().split("T")[0];
   }
 
@@ -122,8 +122,8 @@ export default function SignupPage() {
                         type="date" 
                         {...field} 
                         className="w-full"
-                        min="1900-01-01" // Set a reasonable minimum year
-                        max={getMaxDate()}   // Set maximum date to today
+                        min="1900-01-01" 
+                        max={getMaxDate()}
                        />
                     </FormControl>
                     <FormMessage />
