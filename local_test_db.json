@@ -2416,5 +2416,522 @@
     "id": "test-1749906628368-dfo1w",
     "createdAt": "2025-06-14T13:10:28.368Z",
     "updatedAt": "2025-06-14T13:10:28.368Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on math",
+    "subject": "math",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1749976881468-0-g2830ju",
+        "text": "Solve for x: 2x + 3 = 13",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1749976881469_kpthx5ve3",
+            "text": "x = 3"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1749976881469_r4nbf46gt",
+            "text": "x = 5"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1749976881469_kssjhcmcx",
+            "text": "x = 7"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1749976881469_uv0owxsax",
+            "text": "x = 9"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1749976881469_r4nbf46gt"
+      },
+      {
+        "id": "ai-q-1749976881469-1-zzlkyc3",
+        "text": "What is the value of 2^4?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1749976881469_mkj95eqn8",
+            "text": "4"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1749976881469_m0afnyovy",
+            "text": "8"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1749976881469_pc5vn38up",
+            "text": "12"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1749976881469_zmhz16fwm",
+            "text": "16"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1749976881469_zmhz16fwm"
+      },
+      {
+        "id": "ai-q-1749976881469-2-0whcca9",
+        "text": "Expand (x + 1)^2",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1749976881469_na4xehl9u",
+            "text": "x^2 + 1"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1749976881469_5mmu3sxgn",
+            "text": "x^2 - 2x + 1"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1749976881469_dxkryewek",
+            "text": "x^2 + 2x + 1"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1749976881469_vvffrfe27",
+            "text": "x^2 - 1"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1749976881469_dxkryewek"
+      },
+      {
+        "id": "ai-q-1749976881469-3-ezh6jwn",
+        "text": "Solve for x: x + 5 = 2",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1749976881469_5n4btxxxq",
+            "text": "x = 3"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1749976881469_79z1f79cv",
+            "text": "x = -3"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1749976881469_jxpqf6gb7",
+            "text": "x = 4"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1749976881469_ogups7bev",
+            "text": "x = -4"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1749976881469_79z1f79cv"
+      },
+      {
+        "id": "ai-q-1749976881469-4-n0sdysm",
+        "text": "Expand (x + 2)(x - 2)",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1749976881469_htzaadyae",
+            "text": "x^2 + 4"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1749976881469_r4h4rkblo",
+            "text": "x^2 - 4"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1749976881469_e1ecq8v70",
+            "text": "x^2 + 2x + 4"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1749976881469_faxco0qud",
+            "text": "x^2 - 2x + 4"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1749976881469_r4h4rkblo"
+      },
+      {
+        "id": "ai-q-1749976881469-5-pz6p4qi",
+        "text": "What is the equation of a line with slope 2 and y-intercept 1?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1749976881469_29yh5imre",
+            "text": "y = x + 2"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1749976881469_5f9tqw5lb",
+            "text": "y = 2x + 1"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1749976881469_ivyj1xrn1",
+            "text": "y = x - 2"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1749976881469_5m74v4cpu",
+            "text": "y = 2x - 1"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx1_1749976881469_5f9tqw5lb"
+      },
+      {
+        "id": "ai-q-1749976881469-6-5c3f3dw",
+        "text": "Solve for x: 3x - 1 = 5",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1749976881469_bjk0w58bs",
+            "text": "x = 0"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1749976881469_fzxgnnww9",
+            "text": "x = 1"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1749976881469_vhb9e4kh5",
+            "text": "x = 2"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1749976881469_v219r4oso",
+            "text": "x = 3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx2_1749976881469_vhb9e4kh5"
+      },
+      {
+        "id": "ai-q-1749976881469-7-6wh88wi",
+        "text": "Factor: (x + 2)(x + 3)",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1749976881469_febxze0wh",
+            "text": "x^2 - 5x + 6"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1749976881469_45rqdi6e6",
+            "text": "x^2 + 5x - 6"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1749976881469_vvzu66o40",
+            "text": "x^2 - 5x - 6"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1749976881469_hzuih75xk",
+            "text": "x^2 + 5x + 6"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx3_1749976881469_hzuih75xk"
+      },
+      {
+        "id": "ai-q-1749976881469-8-f5ek84n",
+        "text": "What is the value of x^0 when x is not zero?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q8_idx0_1749976881469_y8rexywa5",
+            "text": "0"
+          },
+          {
+            "id": "ai-opt_q8_idx1_1749976881469_h3gq7v649",
+            "text": "1"
+          },
+          {
+            "id": "ai-opt_q8_idx2_1749976881469_62inc8k0e",
+            "text": "-1"
+          },
+          {
+            "id": "ai-opt_q8_idx3_1749976881469_ax5gwlos1",
+            "text": "2"
+          }
+        ],
+        "correctOptionId": "ai-opt_q8_idx1_1749976881469_h3gq7v649"
+      },
+      {
+        "id": "ai-q-1749976881469-9-qg369ji",
+        "text": "Solve for x: sqrt(x) = 2",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q9_idx0_1749976881469_yd5isbp3b",
+            "text": "x = 1"
+          },
+          {
+            "id": "ai-opt_q9_idx1_1749976881469_izlxm2o3f",
+            "text": "x = 2"
+          },
+          {
+            "id": "ai-opt_q9_idx2_1749976881469_8ih71s5s0",
+            "text": "x = 3"
+          },
+          {
+            "id": "ai-opt_q9_idx3_1749976881469_qfob3a1ge",
+            "text": "x = 4"
+          }
+        ],
+        "correctOptionId": "ai-opt_q9_idx3_1749976881469_qfob3a1ge"
+      },
+      {
+        "id": "ai-q-1749976881469-10-sodbwkn",
+        "text": "Expand: (2x + 1)(x + 3)",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q10_idx0_1749976881469_6acqxv1zm",
+            "text": "2x^2 + 6x + 3"
+          },
+          {
+            "id": "ai-opt_q10_idx1_1749976881469_6j63b6o5m",
+            "text": "2x^2 + 8x + 3"
+          },
+          {
+            "id": "ai-opt_q10_idx2_1749976881469_5uogznoof",
+            "text": "2x^2 + 7x + 3"
+          },
+          {
+            "id": "ai-opt_q10_idx3_1749976881469_ge3pgksw7",
+            "text": "2x^2 + 5x + 3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q10_idx2_1749976881469_5uogznoof"
+      },
+      {
+        "id": "ai-q-1749976881469-11-2o6fg6g",
+        "text": "Solve for x: x^2 = 1",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q11_idx0_1749976881469_gdpz0ynl9",
+            "text": "x = 1, x = 2"
+          },
+          {
+            "id": "ai-opt_q11_idx1_1749976881469_7je25wt6f",
+            "text": "x = 1, x = -1"
+          },
+          {
+            "id": "ai-opt_q11_idx2_1749976881469_lvu9s2yn1",
+            "text": "x = -1, x = -2"
+          },
+          {
+            "id": "ai-opt_q11_idx3_1749976881469_edp8ht5lh",
+            "text": "x = 2, x = -2"
+          }
+        ],
+        "correctOptionId": "ai-opt_q11_idx1_1749976881469_7je25wt6f"
+      },
+      {
+        "id": "ai-q-1749976881469-12-13to7gy",
+        "text": "What is the equation of line with slope -1 and y-intercept 5?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q12_idx0_1749976881469_1im1pn9w1",
+            "text": "y = x + 5"
+          },
+          {
+            "id": "ai-opt_q12_idx1_1749976881469_3zk9v3l9o",
+            "text": "y = -x - 5"
+          },
+          {
+            "id": "ai-opt_q12_idx2_1749976881469_gpahllhbf",
+            "text": "y = -x + 5"
+          },
+          {
+            "id": "ai-opt_q12_idx3_1749976881469_b4d7gg6uh",
+            "text": "y = x - 5"
+          }
+        ],
+        "correctOptionId": "ai-opt_q12_idx2_1749976881469_gpahllhbf"
+      },
+      {
+        "id": "ai-q-1749976881469-13-2bh998p",
+        "text": "Solve for x: x/2 = 3",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q13_idx0_1749976881469_elnl0c2kn",
+            "text": "x = 2"
+          },
+          {
+            "id": "ai-opt_q13_idx1_1749976881469_vnveau6er",
+            "text": "x = 3"
+          },
+          {
+            "id": "ai-opt_q13_idx2_1749976881469_ay7tspl6q",
+            "text": "x = 6"
+          },
+          {
+            "id": "ai-opt_q13_idx3_1749976881469_iyvcjy6zy",
+            "text": "x = 9"
+          }
+        ],
+        "correctOptionId": "ai-opt_q13_idx2_1749976881469_ay7tspl6q"
+      },
+      {
+        "id": "ai-q-1749976881469-14-8icc0ef",
+        "text": "Expand: (x - 3)(x + 2)",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q14_idx0_1749976881469_jva2dyd6v",
+            "text": "x^2 + x - 6"
+          },
+          {
+            "id": "ai-opt_q14_idx1_1749976881469_ao14ceklq",
+            "text": "x^2 - x + 6"
+          },
+          {
+            "id": "ai-opt_q14_idx2_1749976881469_3m1qo3xd7",
+            "text": "x^2 + x + 6"
+          },
+          {
+            "id": "ai-opt_q14_idx3_1749976881469_iag215m6k",
+            "text": "x^2 - x - 6"
+          }
+        ],
+        "correctOptionId": "ai-opt_q14_idx3_1749976881469_iag215m6k"
+      },
+      {
+        "id": "ai-q-1749976881469-15-r05k3i3",
+        "text": "Solve for x: x^2 - 4x = 0",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q15_idx0_1749976881469_ygihfq3ds",
+            "text": "x = 0, x = -4"
+          },
+          {
+            "id": "ai-opt_q15_idx1_1749976881469_9ukvzmveu",
+            "text": "x = -4, x = 4"
+          },
+          {
+            "id": "ai-opt_q15_idx2_1749976881469_w805h80ra",
+            "text": "x = 0, x = 4"
+          },
+          {
+            "id": "ai-opt_q15_idx3_1749976881469_jzxhdl7p9",
+            "text": "x = -2, x = 2"
+          }
+        ],
+        "correctOptionId": "ai-opt_q15_idx2_1749976881469_w805h80ra"
+      },
+      {
+        "id": "ai-q-1749976881469-16-4wga6l5",
+        "text": "What is the equation of line with slope 3 and y-intercept -2?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q16_idx0_1749976881469_84y44jukc",
+            "text": "y = -3x + 2"
+          },
+          {
+            "id": "ai-opt_q16_idx1_1749976881469_cxuq7g2jr",
+            "text": "y = 3x + 2"
+          },
+          {
+            "id": "ai-opt_q16_idx2_1749976881469_gpbve8wbk",
+            "text": "y = -3x - 2"
+          },
+          {
+            "id": "ai-opt_q16_idx3_1749976881469_hx194rwh",
+            "text": "y = 3x - 2"
+          }
+        ],
+        "correctOptionId": "ai-opt_q16_idx3_1749976881469_hx194rwh"
+      },
+      {
+        "id": "ai-q-1749976881469-17-ana9wsf",
+        "text": "Solve for x: sqrt(x + 4) = 4",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q17_idx0_1749976881469_iscekjggc",
+            "text": "x = 3"
+          },
+          {
+            "id": "ai-opt_q17_idx1_1749976881469_dgj9dejgc",
+            "text": "x = 6"
+          },
+          {
+            "id": "ai-opt_q17_idx2_1749976881469_ohk5hp6fw",
+            "text": "x = 9"
+          },
+          {
+            "id": "ai-opt_q17_idx3_1749976881469_4ixyxycpj",
+            "text": "x = 12"
+          }
+        ],
+        "correctOptionId": "ai-opt_q17_idx3_1749976881469_4ixyxycpj"
+      },
+      {
+        "id": "ai-q-1749976881469-18-zvu5syh",
+        "text": "Expand: (2x - 1)^2",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q18_idx0_1749976881469_50wf83nei",
+            "text": "4x^2 + 4x + 1"
+          },
+          {
+            "id": "ai-opt_q18_idx1_1749976881469_iyca2g2z3",
+            "text": "4x^2 - 4x - 1"
+          },
+          {
+            "id": "ai-opt_q18_idx2_1749976881469_fqcvf3efg",
+            "text": "4x^2 - 4x + 1"
+          },
+          {
+            "id": "ai-opt_q18_idx3_1749976881469_x22cr54o1",
+            "text": "4x^2 + 4x - 1"
+          }
+        ],
+        "correctOptionId": "ai-opt_q18_idx2_1749976881469_fqcvf3efg"
+      },
+      {
+        "id": "ai-q-1749976881469-19-wk8gd6z",
+        "text": "Solve for x: x^2 - x - 6 = 0",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q19_idx0_1749976881469_t098z00as",
+            "text": "x = 2, x = 3"
+          },
+          {
+            "id": "ai-opt_q19_idx1_1749976881469_h62vbvyht",
+            "text": "x = -2, x = -3"
+          },
+          {
+            "id": "ai-opt_q19_idx2_1749976881469_ftgrk2h5o",
+            "text": "x = -2, x = 3"
+          },
+          {
+            "id": "ai-opt_q19_idx3_1749976881469_zhd9cvvlv",
+            "text": "x = 2, x = -3"
+          }
+        ],
+        "correctOptionId": "ai-opt_q19_idx2_1749976881469_ftgrk2h5o"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "enforceFullScreen": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1749976923558-ch74i",
+    "createdAt": "2025-06-15T08:42:03.558Z",
+    "updatedAt": "2025-06-15T08:42:03.558Z"
   }
 ]

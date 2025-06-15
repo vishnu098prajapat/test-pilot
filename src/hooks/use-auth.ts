@@ -15,12 +15,11 @@ interface AuthContextType {
   signup: (userData: User) => void; 
 }
 
-// Helper to ensure user object integrity
-function ensureUserIntegrity(user: User): User {
+// Helper to ensure user object integrity, especially for data from localStorage or passed to login/signup
+function ensureUserIntegrityForContext(user: Partial<User>): User {
   let { id, displayName, email, dob, role } = user;
 
-  // Ensure ID is present (should always be, but as a fallback)
-  id = id || `temp-${Date.now()}`;
+  id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2,7)}`;
 
   if (!displayName) {
     if (email) {
@@ -31,17 +30,26 @@ function ensureUserIntegrity(user: User): User {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     } else {
-      // Fallback if no email and no displayName, use part of ID
       displayName = `User-${id.substring(0, 5)}`;
     }
+  }
+  
+  // Validate DOB format (YYYY-MM-DD) and provide a default if missing/invalid
+  if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+    dob = "1900-01-01"; 
+  }
+
+  role = role || "student";
+  if (role !== "teacher" && role !== "student") {
+      role = "student";
   }
 
   return {
     id,
     displayName,
-    email: email || undefined, // Ensure email is undefined if it's an empty string or null
-    dob: dob || "1900-01-01", // Default DOB if missing
-    role: role || "student", // Default role if missing
+    email: email || undefined,
+    dob,
+    role,
   };
 }
 
@@ -61,13 +69,13 @@ export function useAuth(): AuthContextType {
         if (
           parsedUser && 
           typeof parsedUser.id === 'string' && parsedUser.id.trim() !== '' &&
-          (typeof parsedUser.displayName === 'string' && parsedUser.displayName.trim() !== '') && // displayName is mandatory
-          (typeof parsedUser.dob === 'string' && parsedUser.dob.trim() !== '') && // dob is mandatory
-          (typeof parsedUser.role === 'string' && (parsedUser.role === 'teacher' || parsedUser.role === 'student')) // role is mandatory
+          typeof parsedUser.displayName === 'string' && parsedUser.displayName.trim() !== '' &&
+          typeof parsedUser.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(parsedUser.dob) && // Check DOB format
+          typeof parsedUser.role === 'string' && (parsedUser.role === 'teacher' || parsedUser.role === 'student')
         ) {
-          setUser(ensureUserIntegrity(parsedUser as User));
+          setUser(ensureUserIntegrityForContext(parsedUser as User));
         } else {
-          console.warn("Stored user data in localStorage is invalid or incomplete. Clearing session.", JSON.stringify(parsedUser));
+          console.warn("Stored user data in localStorage is invalid or incomplete. Clearing session. Data:", JSON.stringify(parsedUser));
           localStorage.removeItem(USER_STORAGE_KEY);
           setUser(null);
         }
@@ -83,40 +91,40 @@ export function useAuth(): AuthContextType {
     }
   }, []);
 
-  const login = useCallback((userData: User) => {
+  const login = useCallback((userData: User) => { // Expect a full User object
     try {
       if (
         userData && 
         typeof userData.id === 'string' && userData.id.trim() !== '' &&
         typeof userData.displayName === 'string' && userData.displayName.trim() !== '' &&
-        typeof userData.dob === 'string' && userData.dob.trim() !== '' &&
+        typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
         typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
       ) {
-        const userToStore = ensureUserIntegrity(userData);
+        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity before storing
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
         setUser(userToStore);
       } else {
-        console.error("Attempted to login with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob, role to be valid strings.");
+        console.error("Attempted to login with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob (YYYY-MM-DD), role to be valid strings.");
       }
     } catch (error) {
         console.error("Failed to save user to localStorage on login:", error);
     }
   }, []);
   
-  const signup = useCallback((userData: User) => {
+  const signup = useCallback((userData: User) => { // Expect a full User object
     try {
        if (
         userData && 
         typeof userData.id === 'string' && userData.id.trim() !== '' &&
         typeof userData.displayName === 'string' && userData.displayName.trim() !== '' &&
-        typeof userData.dob === 'string' && userData.dob.trim() !== '' &&
+        typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
         typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
       ) {
-        const userToStore = ensureUserIntegrity(userData);
+        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity before storing
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
         setUser(userToStore);
       } else {
-        console.error("Attempted to signup with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob, role to be valid strings.");
+        console.error("Attempted to signup with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob (YYYY-MM-DD), role to be valid strings.");
       }
     } catch (error) {
         console.error("Failed to save user to localStorage on signup:", error);

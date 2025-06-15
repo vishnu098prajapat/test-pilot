@@ -613,5 +613,142 @@
     "suspiciousReason": "The student's activity log shows consistent answering of questions with some changes, which is normal behavior during a test. There are no indications of tab switching, copy-pasting, or other suspicious activities.",
     "id": "attempt-1749805511628-fmgh3zy",
     "submittedAt": "2025-06-13T09:05:11.628Z"
+  },
+  {
+    "testId": "test-1749976923558-ch74i",
+    "testTitle": "AI Gen (medium) MCQ Test on math",
+    "studentIdentifier": "Anonymous Student",
+    "startTime": "2025-06-15T08:43:01.362Z",
+    "endTime": "2025-06-15T08:44:15.249Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1749976881468-0-g2830ju",
+        "answer": "ai-opt_q0_idx1_1749976881469_r4nbf46gt",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749976881469-1-zzlkyc3",
+        "answer": "ai-opt_q1_idx2_1749976881469_pc5vn38up",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-2-0whcca9",
+        "answer": "ai-opt_q2_idx2_1749976881469_dxkryewek",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749976881469-3-ezh6jwn",
+        "answer": "ai-opt_q3_idx2_1749976881469_jxpqf6gb7",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-4-n0sdysm",
+        "answer": "ai-opt_q4_idx3_1749976881469_faxco0qud",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-5-pz6p4qi",
+        "answer": "ai-opt_q5_idx3_1749976881469_5m74v4cpu",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-6-5c3f3dw",
+        "answer": "ai-opt_q6_idx3_1749976881469_v219r4oso",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-7-6wh88wi",
+        "answer": "ai-opt_q7_idx2_1749976881469_vvzu66o40",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-8-f5ek84n",
+        "answer": "ai-opt_q8_idx2_1749976881469_62inc8k0e",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-9-qg369ji",
+        "answer": "ai-opt_q9_idx2_1749976881469_8ih71s5s0",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-10-sodbwkn",
+        "answer": "ai-opt_q10_idx1_1749976881469_6j63b6o5m",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-11-2o6fg6g",
+        "answer": "ai-opt_q11_idx2_1749976881469_lvu9s2yn1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-12-13to7gy",
+        "answer": "ai-opt_q12_idx2_1749976881469_gpahllhbf",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749976881469-13-2bh998p",
+        "answer": "ai-opt_q13_idx1_1749976881469_vnveau6er",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-14-8icc0ef",
+        "answer": "ai-opt_q14_idx1_1749976881469_ao14ceklq",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-15-r05k3i3",
+        "answer": "ai-opt_q15_idx2_1749976881469_w805h80ra",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1749976881469-16-4wga6l5",
+        "answer": "ai-opt_q16_idx1_1749976881469_cxuq7g2jr",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-17-ana9wsf",
+        "answer": "ai-opt_q17_idx2_1749976881469_ohk5hp6fw",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-18-zvu5syh",
+        "answer": "ai-opt_q18_idx3_1749976881469_x22cr54o1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1749976881469-19-wk8gd6z",
+        "answer": "ai-opt_q19_idx3_1749976881469_zhd9cvvlv",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 200,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-15T08:43:01.596Z] Test started by Anonymous Student. Anti-cheat measures active based on test settings.\n[2025-06-15T08:43:01.601Z] Test started by Anonymous Student. Anti-cheat measures active based on test settings.\n[2025-06-15T08:43:01.644Z] Fullscreen request failed: Permissions check failed\n[2025-06-15T08:43:01.680Z] Fullscreen request failed: Permissions check failed\n[2025-06-15T08:43:07.145Z] Answer changed for question ID ai-q-1749976881468-0-g2830ju.\n[2025-06-15T08:43:10.328Z] Answer changed for question ID ai-q-1749976881469-1-zzlkyc3.\n[2025-06-15T08:43:12.384Z] Answer changed for question ID ai-q-1749976881469-2-0whcca9.\n[2025-06-15T08:43:15.312Z] Answer changed for question ID ai-q-1749976881469-3-ezh6jwn.\n[2025-06-15T08:43:17.867Z] Answer changed for question ID ai-q-1749976881469-4-n0sdysm.\n[2025-06-15T08:43:22.610Z] Answer changed for question ID ai-q-1749976881469-5-pz6p4qi.\n[2025-06-15T08:43:24.928Z] Answer changed for question ID ai-q-1749976881469-6-5c3f3dw.\n[2025-06-15T08:43:27.080Z] Answer changed for question ID ai-q-1749976881469-7-6wh88wi.\n[2025-06-15T08:43:29.180Z] Answer changed for question ID ai-q-1749976881469-8-f5ek84n.\n[2025-06-15T08:43:31.529Z] Answer changed for question ID ai-q-1749976881469-9-qg369ji.\n[2025-06-15T08:43:34.013Z] Answer changed for question ID ai-q-1749976881469-10-sodbwkn.\n[2025-06-15T08:43:38.932Z] Answer changed for question ID ai-q-1749976881469-10-sodbwkn.\n[2025-06-15T08:43:42.109Z] Answer changed for question ID ai-q-1749976881469-11-2o6fg6g.\n[2025-06-15T08:43:45.037Z] Answer changed for question ID ai-q-1749976881469-12-13to7gy.\n[2025-06-15T08:43:47.498Z] Answer changed for question ID ai-q-1749976881469-13-2bh998p.\n[2025-06-15T08:43:50.075Z] Answer changed for question ID ai-q-1749976881469-14-8icc0ef.\n[2025-06-15T08:43:53.530Z] Answer changed for question ID ai-q-1749976881469-15-r05k3i3.\n[2025-06-15T08:43:55.891Z] Answer changed for question ID ai-q-1749976881469-16-4wga6l5.\n[2025-06-15T08:43:58.333Z] Answer changed for question ID ai-q-1749976881469-17-ana9wsf.\n[2025-06-15T08:44:03.308Z] Answer changed for question ID ai-q-1749976881469-18-zvu5syh.\n[2025-06-15T08:44:11.360Z] Answer changed for question ID ai-q-1749976881469-19-wk8gd6z.",
+    "isSuspicious": true,
+    "suspiciousReason": "The activity log shows repeated failures to enter fullscreen mode at the beginning of the test. This could indicate the student was attempting to access other applications or resources during the test, which is a form of cheating. Although answer changes are normal, the failed fullscreen requests raise a red flag.",
+    "id": "attempt-1749976788459-xuji08y",
+    "submittedAt": "2025-06-15T08:39:48.459Z"
   }
 ]
