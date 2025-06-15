@@ -2,18 +2,57 @@
 "use client";
 
 import Link from "next/link";
-// Removed useRouter and React as they are not directly used by the simplified button logic
-// import { useRouter } from "next/navigation"; 
-// import React from "react"; 
+import { useRouter } from "next/navigation";
+import React, { useState } from "react"; // Added useState
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast"; // Added useToast
+import { useAuth } from "@/hooks/use-auth"; // Added useAuth
+import { signInWithGoogleAction } from "@/lib/auth-actions"; // Added server action
 
 export default function LoginPage() {
-  // const router = useRouter(); // No longer needed for this button's primary action
+  const router = useRouter();
+  const { login } = useAuth();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // The handleGoogleSignIn function is removed as we are using a direct Link now.
-  // const handleGoogleSignIn = () => { ... };
+  const handleGoogleSignIn = async () => {
+    console.log("LoginPage: handleGoogleSignIn >>> STARTED");
+    setIsSubmitting(true);
+    try {
+      const result = await signInWithGoogleAction();
+      console.log("LoginPage: signInWithGoogleAction result:", result);
+
+      if (result.success && result.user) {
+        login(result.user); // Set user in auth context
+        toast({
+          title: "Login Successful",
+          description: `Welcome, ${result.user.displayName || result.user.email}! Redirecting to dashboard...`,
+          duration: 2000,
+        });
+        router.push("/dashboard");
+      } else {
+        toast({
+          title: "Login Failed",
+          description: result.message || "An unexpected error occurred with Google Sign-In.",
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("LoginPage: Google Sign-In error", error);
+      toast({
+        title: "Login Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+        duration: 2000,
+      });
+    } finally {
+      setIsSubmitting(false);
+      console.log("LoginPage: handleGoogleSignIn >>> FINISHED");
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
@@ -32,12 +71,17 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Changed Button to use asChild with Link */}
-          <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Link href="/auth/select-account">
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path></svg>
-              Continue with Google
-            </Link>
+          <Button 
+            onClick={handleGoogleSignIn} 
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : (
+              <>
+                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 0 1-5.279-5.28 5.27 5.27 0 0 1 5.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599c-1.584-1.381-3.615-2.233-5.89-2.233a8.908 8.908 0 0 0-8.934 8.934 8.907 8.907 0 0 0 8.934 8.934c4.467 0 8.529-3.249 8.529-8.934 0-.528-.081-1.097-.202-1.625z"></path></svg>
+                Continue with Google
+              </>
+            )}
           </Button>
            <p className="mt-4 text-center text-sm text-muted-foreground">
             Need an account?{" "}
