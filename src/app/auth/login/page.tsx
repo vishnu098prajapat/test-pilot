@@ -18,7 +18,7 @@ import { signInWithNameAndDob } from "@/lib/auth-actions";
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { format, subYears } from "date-fns"
 import { cn } from "@/lib/utils"
 
 
@@ -34,6 +34,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const twentyYearsAgo = subYears(new Date(), 20);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -146,6 +147,7 @@ export default function LoginPage() {
                           disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                           }
+                          defaultMonth={field.value || twentyYearsAgo}
                           initialFocus
                           captionLayout="dropdown-buttons"
                           fromYear={1900}

@@ -18,7 +18,7 @@ import { signUpWithNameAndDob } from "@/lib/auth-actions";
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { format, subYears } from "date-fns"
 import { cn } from "@/lib/utils"
 
 const signupSchema = z.object({
@@ -31,8 +31,9 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { login } = useAuth(); // Use login from useAuth for consistency after signup
+  const { login } = useAuth(); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const twentyYearsAgo = subYears(new Date(), 20);
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -52,7 +53,7 @@ export default function SignupPage() {
       console.log("SignupPage: signUpWithNameAndDob result:", result);
 
       if (result.success && result.user) {
-        login(result.user); // Log the user in using the auth context
+        login(result.user); 
         toast({
           title: "Sign Up Successful",
           description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
@@ -145,6 +146,7 @@ export default function SignupPage() {
                           disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                           }
+                          defaultMonth={field.value || twentyYearsAgo}
                           initialFocus
                           captionLayout="dropdown-buttons"
                           fromYear={1900}
