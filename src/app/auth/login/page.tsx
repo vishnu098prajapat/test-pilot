@@ -59,7 +59,7 @@ export default function LoginPage() {
           variant: "destructive",
           duration: 2000,
         });
-         console.error("LoginPage: Login failed or user data invalid. Result:", JSON.stringify(result, null, 2));
+         console.warn("LoginPage: Login attempt failed. Details:", JSON.stringify(result, null, 2));
       }
     } catch (error) {
       console.error("LoginPage: Login error", error);
