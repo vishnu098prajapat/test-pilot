@@ -14,7 +14,7 @@ import {z} from 'genkit';
 
 // Base schema for common AI question properties
 const BaseAIQuestionSchema = z.object({
-  text: z.string().describe("The question text."),
+  text: z.string().describe("The question text, or main instruction for drag-and-drop."),
   points: z.number().default(10).describe("The points allocated to the question."),
 });
 
@@ -39,19 +39,37 @@ const AIQuestionTrueFalseSchema = BaseAIQuestionSchema.extend({
   correctAnswer: z.boolean().describe("The correct answer, which MUST be a boolean (true or false). This field is mandatory for true/false questions."),
 });
 
+// Schema for AI-generated Drag & Drop questions
+const AIDraggableItemSchema = z.string().describe("The text content of a draggable item.");
+const AIDropTargetSchema = z.string().describe("The label/text of a drop target zone.");
+const AICorrectMappingSchema = z.object({
+  draggableItemText: z.string().describe("The text of the draggable item."),
+  dropTargetLabel: z.string().describe("The label of the drop target where this item should be placed."),
+}).describe("Defines a correct pairing between a draggable item and a drop target.");
+
+const AIQuestionDragDropSchema = BaseAIQuestionSchema.extend({
+  type: z.enum(['drag-and-drop']).describe("The type of the question, must be 'drag-and-drop'."),
+  instruction: z.string().optional().describe("Optional specific instruction for the drag and drop task, if the main 'text' field is a general title/context."),
+  draggableItems: z.array(AIDraggableItemSchema).min(2).describe("An array of at least 2 texts for draggable items."),
+  dropTargets: z.array(AIDropTargetSchema).min(2).describe("An array of at least 2 labels for drop target zones. The number of drop targets should ideally match the number of draggable items for a one-to-one mapping task, or be appropriate for categorization."),
+  correctMappings: z.array(AICorrectMappingSchema).min(1).describe("An array defining the correct pairings. Each draggable item text must be mapped to one of the drop target labels."),
+});
+
+
 // Discriminated union for AIQuestionSchema
 const AIQuestionSchema = z.discriminatedUnion("type", [
   AIQuestionMCQSchema,
   AIQuestionShortAnswerSchema,
   AIQuestionTrueFalseSchema,
-]).describe("A single AI-generated question, structured based on its 'type' field (mcq, short-answer, or true-false).");
+  AIQuestionDragDropSchema, // Added Drag & Drop
+]).describe("A single AI-generated question, structured based on its 'type' field (mcq, short-answer, true-false, or drag-and-drop).");
 export type AIQuestion = z.infer<typeof AIQuestionSchema>;
 
 
 // Input schema for the flow
 const GenerateTestQuestionsInputSchema = z.object({
   subject: z.string().describe("The general subject of the test (e.g., Mathematics, History)."),
-  questionType: z.enum(['mcq', 'short-answer', 'true-false']).describe("The desired type for all generated questions (mcq, short-answer, or true-false)."),
+  questionType: z.enum(['mcq', 'short-answer', 'true-false', 'drag-and-drop']).describe("The desired type for all generated questions."),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe("The desired difficulty level for the questions (easy, medium, or hard)."),
   topics: z.array(z.string()).min(1).describe("An array of specific topics to generate questions about."),
   numberOfQuestions: z.number().int().min(1).max(50).describe("The number of questions to generate (integer between 1 and 50)."),
@@ -120,6 +138,23 @@ Each question object MUST be structured as follows:
   "correctAnswer": false // MANDATORY: A boolean value (true or false).
 }
 The 'options' field MUST NOT be present for "true-false" questions.
+
+If "{{questionType}}" is "drag-and-drop":
+Each question object MUST be structured as follows:
+{
+  "text": "Example: Match the animals to their categories.", // This is the main question or context.
+  "type": "drag-and-drop",
+  "points": 10,
+  "instruction": "Optional: Drag each animal name to the correct category box below.", // Optional specific instruction.
+  "draggableItems": ["Lion", "Shark", "Eagle"], // MANDATORY: Array of strings for draggable items. At least 2.
+  "dropTargets": ["Mammal", "Fish", "Bird"], // MANDATORY: Array of strings for drop target labels. At least 2.
+  "correctMappings": [ // MANDATORY: Array defining correct pairings. Each draggable item must appear.
+    { "draggableItemText": "Lion", "dropTargetLabel": "Mammal" },
+    { "draggableItemText": "Shark", "dropTargetLabel": "Fish" },
+    { "draggableItemText": "Eagle", "dropTargetLabel": "Bird" }
+  ]
+}
+The 'options' and 'correctAnswer' (single string/boolean) fields MUST NOT be present for "drag-and-drop" questions. Ensure the number of draggableItems and dropTargets are sensible for the task (e.g., for matching, they should be equal).
 
 Please ensure your entire output is a single JSON object containing a key "generatedQuestions".
 "generatedQuestions" must be an array of question objects.

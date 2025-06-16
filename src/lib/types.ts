@@ -8,7 +8,7 @@ export interface User {
   profileImageUrl?: string; 
 }
 
-export type QuestionType = 'mcq' | 'short-answer' | 'true-false';
+export type QuestionType = 'mcq' | 'short-answer' | 'true-false' | 'drag-and-drop';
 
 export interface Option {
   id: string;
@@ -18,14 +18,14 @@ export interface Option {
 export interface BaseQuestion {
   id: string;
   type: QuestionType;
-  text: string;
+  text: string; // This will serve as the main instruction/question for drag-and-drop
   points: number;
 }
 
 export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
-  correctOptionId: string | null;
+  correctOptionId: string | null; // Store the ID of the correct option
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -38,7 +38,31 @@ export interface TrueFalseQuestion extends BaseQuestion {
   correctAnswer: boolean;
 }
 
-export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion;
+// Types for Drag & Drop Question
+export interface DraggableItem {
+  id: string;
+  text: string; // For now, draggable items are text-based
+}
+
+export interface DropTarget {
+  id: string;
+  label: string; // This is the text/label for the drop zone
+}
+
+export interface CorrectMapping {
+  draggableItemId: string;
+  dropTargetId: string;
+}
+
+export interface DragDropQuestion extends BaseQuestion {
+  type: 'drag-and-drop';
+  instruction?: string; // Optional: Specific instruction for the drag and drop task if `text` is a general title
+  draggableItems: DraggableItem[];
+  dropTargets: DropTarget[];
+  correctMappings: CorrectMapping[]; // Array defining which draggable item goes to which drop target
+}
+
+export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
 
 export interface Test {
   id: string;
@@ -82,3 +106,4 @@ export interface TestAttempt {
   submittedAt: string; // ISO string for when the attempt was recorded
   ipAddress?: string; // Added IP address
 }
+
