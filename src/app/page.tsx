@@ -22,7 +22,7 @@ export default function HomePage() {
                 <LogIn className="mr-2 h-4 w-4"/> Login
               </Link>
             </Button>
-            <Button asChild className="w-full sm:w-auto">
+            <Button asChild className="w-full sm:w-auto hidden md:inline-flex">
               <Link href="/auth/signup">
                 <UserPlus className="mr-2 h-4 w-4"/> Create Account
               </Link>
@@ -51,7 +51,6 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-6xl font-bold font-headline mb-6 text-primary-foreground">
               Navigate Your Success with Test Pilot.
             </h1>
-            {/* Removed the long subtitle text below */}
              <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
               <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
               World's Fastest Quiz Generator: Topic to Quiz in 5 Seconds – <span className="text-yellow-300 underline">FREE Forever!</span>
@@ -60,7 +59,7 @@ export default function HomePage() {
             <Button
               size="lg"
               asChild
-              className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3 px-8 rounded-lg shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hidden md:inline-flex"
             >
               <Link href="/auth/signup">
                 <span>
