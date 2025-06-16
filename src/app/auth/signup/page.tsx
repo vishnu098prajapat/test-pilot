@@ -45,7 +45,7 @@ export default function SignupPage() {
       console.log("SignupPage: signUpWithNameAndDob result:", result);
 
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
-        authContext.login(result.user);
+        authContext.login(result.user); // Use login from context to set user state
         toast({
           title: "Sign Up Successful",
           description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
@@ -59,7 +59,7 @@ export default function SignupPage() {
           variant: "destructive",
           duration: 2000,
         });
-        console.warn("SignupPage: Signup failed. Result:", result);
+        console.warn("SignupPage: Signup failed. Result:", JSON.stringify(result, null, 2));
       }
     } catch (error) {
       console.error("SignupPage: Signup error", error);

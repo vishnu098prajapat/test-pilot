@@ -23,7 +23,7 @@ export default function DashboardHeader() {
   const getInitials = (displayName?: string, email?: string) => {
     if (displayName) {
       const names = displayName.split(' ');
-      if (names.length > 1) {
+      if (names.length > 1 && names[0] && names[names.length - 1]) {
         return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
       }
       return displayName.substring(0, 2).toUpperCase();
@@ -31,7 +31,7 @@ export default function DashboardHeader() {
     if (email) {
       return email.substring(0, 2).toUpperCase();
     }
-    return "TP";
+    return "TP"; // Test Pilot initials
   };
   
   return (
@@ -47,7 +47,8 @@ export default function DashboardHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
               <Avatar className="h-7 w-7">
-                <AvatarImage src={undefined /* No actual avatar URL, so use undefined to trigger fallback */} />
+                {/* Use user.profileImageUrl if available, otherwise fallback */}
+                <AvatarImage src={user?.profileImageUrl || undefined} alt={user?.displayName || "User Profile"} />
                 <AvatarFallback>{getInitials(user?.displayName, user?.email)}</AvatarFallback>
               </Avatar>
               <span className="hidden sm:inline">{user?.displayName || user?.email || "User"}</span>
@@ -61,7 +62,7 @@ export default function DashboardHeader() {
                   {user?.displayName || user?.email || "Test Pilot User"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  User Account
+                  {user?.role === 'teacher' ? 'Teacher Account' : 'Student Account'}
                 </p>
               </div>
             </DropdownMenuLabel>
