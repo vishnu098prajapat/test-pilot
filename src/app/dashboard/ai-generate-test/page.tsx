@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
-import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion } from '@/lib/types';
+import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion, DraggableItem, DropTarget, CorrectMapping } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 
 const AIGenerateTestSchema = z.object({
@@ -148,7 +148,7 @@ export default function AIGenerateTestPage() {
           type: 'mcq',
           options,
           correctOptionId: correctOptionMatched ? correctOptionMatched.id : null,
-          correctAnswer: aiQ.correctAnswer, // Store AI's original text for reference in QuestionForm
+          correctAnswer: aiQ.correctAnswer, 
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -163,17 +163,31 @@ export default function AIGenerateTestPage() {
           correctAnswer: aiQ.correctAnswer as boolean,
         } as TrueFalseQuestion;
       } else if (aiQ.type === 'drag-and-drop') {
-        // Placeholder for Drag & Drop transformation - to be implemented
+         const draggableItems: DraggableItem[] = (aiQ.draggableItems || []).map((itemText, i) => ({
+          id: `ditem-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+          text: itemText
+        }));
+        const dropTargets: DropTarget[] = (aiQ.dropTargets || []).map((targetLabel, i) => ({
+          id: `dtarget-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+          label: targetLabel
+        }));
+
+        const correctMappings: CorrectMapping[] = (aiQ.correctMappings || []).map(mapping => {
+          const mappedDraggableItem = draggableItems.find(di => di.text === mapping.draggableItemText);
+          const mappedDropTarget = dropTargets.find(dt => dt.label === mapping.dropTargetLabel);
+          return {
+            draggableItemId: mappedDraggableItem ? mappedDraggableItem.id : `unknown-draggable-${mapping.draggableItemText}`,
+            dropTargetId: mappedDropTarget ? mappedDropTarget.id : `unknown-target-${mapping.dropTargetLabel}`,
+          };
+        });
+        
         return {
           ...baseQuestion,
           type: 'drag-and-drop',
           instruction: aiQ.instruction || "",
-          draggableItems: (aiQ.draggableItems || []).map((item, i) => ({id: `ditem-${questionId}-${i}`, text: item})),
-          dropTargets: (aiQ.dropTargets || []).map((item, i) => ({id: `dtarget-${questionId}-${i}`, label: item})),
-          correctMappings: (aiQ.correctMappings || []).map(m => ({
-            draggableItemId: m.draggableItemText, // Placeholder, will need mapping to IDs in builder
-            dropTargetId: m.dropTargetLabel,     // Placeholder
-          }))
+          draggableItems,
+          dropTargets,
+          correctMappings
         } as DragDropQuestion;
       }
       // Fallback for unknown types, though Zod schema should prevent this
@@ -279,7 +293,7 @@ export default function AIGenerateTestPage() {
                           <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
                           <SelectItem value="short-answer">Short Answer</SelectItem>
                           <SelectItem value="true-false">True/False</SelectItem>
-                          <SelectItem value="drag-and-drop">Drag & Drop (Experimental)</SelectItem>
+                          <SelectItem value="drag-and-drop">Drag & Drop</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -406,3 +420,4 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
+

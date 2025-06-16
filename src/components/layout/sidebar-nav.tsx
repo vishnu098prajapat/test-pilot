@@ -28,7 +28,7 @@ const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
-  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, // New Item
+  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
   { href: "/dashboard/results", label: "Results", icon: BarChart3 }, 
 ];
 

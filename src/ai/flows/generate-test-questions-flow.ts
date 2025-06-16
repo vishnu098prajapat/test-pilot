@@ -148,7 +148,7 @@ Each question object MUST be structured as follows:
   "instruction": "Optional: Drag each animal name to the correct category box below.", // Optional specific instruction.
   "draggableItems": ["Lion", "Shark", "Eagle"], // MANDATORY: Array of strings for draggable items. At least 2.
   "dropTargets": ["Mammal", "Fish", "Bird"], // MANDATORY: Array of strings for drop target labels. At least 2.
-  "correctMappings": [ // MANDATORY: Array defining correct pairings. Each draggable item must appear.
+  "correctMappings": [ // MANDATORY: Array defining correct pairings. Each draggable item text must appear.
     { "draggableItemText": "Lion", "dropTargetLabel": "Mammal" },
     { "draggableItemText": "Shark", "dropTargetLabel": "Fish" },
     { "draggableItemText": "Eagle", "dropTargetLabel": "Bird" }

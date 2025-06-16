@@ -26,6 +26,7 @@ export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
   correctOptionId: string | null; // Store the ID of the correct option
+  correctAnswer?: string; // To hold AI's original text answer for initial matching
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -50,8 +51,8 @@ export interface DropTarget {
 }
 
 export interface CorrectMapping {
-  draggableItemId: string;
-  dropTargetId: string;
+  draggableItemId: string; // In the Test object, this will be the ID of the DraggableItem
+  dropTargetId: string;   // In the Test object, this will be the ID of the DropTarget
 }
 
 export interface DragDropQuestion extends BaseQuestion {
@@ -104,6 +105,5 @@ export interface TestAttempt {
   isSuspicious?: boolean;
   suspiciousReason?: string;
   submittedAt: string; // ISO string for when the attempt was recorded
-  ipAddress?: string; // Added IP address
+  ipAddress?: string; 
 }
-
