@@ -26,8 +26,7 @@ export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
   correctOptionId: string | null; 
-  correctAnswer?: string; // AI's original text answer
-  isAiPreselected?: boolean; // Flag to indicate if AI preselected an answer
+  correctAnswer?: string; // AI's original text answer, used for initial matching
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -105,3 +104,4 @@ export interface TestAttempt {
   submittedAt: string; 
   ipAddress?: string; 
 }
+
