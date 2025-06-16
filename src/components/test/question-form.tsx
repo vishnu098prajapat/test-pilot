@@ -10,39 +10,25 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Trash2, Edit3 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import type { Question, Option as OptionType, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from "@/lib/types";
 import type { TestBuilderFormValues } from "./test-builder-form";
+import { cn } from "@/lib/utils";
 
 interface QuestionFormProps {
   questionIndex: number;
   form: UseFormReturn<TestBuilderFormValues, any, undefined>;
   removeQuestion: (index: number) => void;
-  initialCorrectOptionIdFromAI: string | null | undefined; // Added this prop
 }
 
-export function QuestionForm({ questionIndex, form, removeQuestion, initialCorrectOptionIdFromAI }: QuestionFormProps) {
+export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFormProps) {
   const { register, control, watch, setValue, formState: { errors } } = form;
   const question = watch(`questions.${questionIndex}`);
   const questionType = question.type;
   const questionId = question.id;
   
-  // State to manage if we are editing the correct answer for an AI-prefilled MCQ
-  const [isEditingMcqCorrectAnswer, setIsEditingMcqCorrectAnswer] = useState(false);
-
   const currentCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
-  const aiProvidedCorrectAnswerText = watch(`questions.${questionIndex}.correctAnswer`); // This holds the AI's textual answer
-
-  // Determine if this MCQ was likely AI-generated and had a correct answer pre-filled
-  const isAiPrefilledMcq = questionType === 'mcq' && initialCorrectOptionIdFromAI !== null && initialCorrectOptionIdFromAI !== undefined && !isEditingMcqCorrectAnswer;
-
-  useEffect(() => {
-    // If the question type changes away from MCQ, reset the editing state
-    if (questionType !== 'mcq') {
-      setIsEditingMcqCorrectAnswer(false);
-    }
-  }, [questionType]);
-
+  // const aiProvidedCorrectAnswerText = watch(`questions.${questionIndex}.correctAnswer`); // Still watched for Zod schema if needed
 
   const {
     fields: mcqOptionFields,
@@ -59,7 +45,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
 
     setValue(`questions.${questionIndex}.type`, type);
     setValue(`questions.${questionIndex}.id`, newId);
-    setIsEditingMcqCorrectAnswer(false); // Reset editing state on type change
 
     if (type === 'mcq') {
       const existingOptions = (currentQuestionData as MCQQuestion).options;
@@ -71,11 +56,11 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
       } else {
          setValue(`questions.${questionIndex}.options`, existingOptions.map((opt, i) => ({ ...opt, id: `opt-${newId}-${Date.now()+i}` })));
       }
-      // Set correctOptionId if AI provided one and it matched, otherwise null
-      // The initialCorrectOptionIdFromAI prop helps here
-      setValue(`questions.${questionIndex}.correctOptionId`, initialCorrectOptionIdFromAI || null);
-      // Keep AI's textual answer if present, it's used for display/logic
-      setValue(`questions.${questionIndex}.correctAnswer`, (currentQuestionData as MCQQuestion).correctAnswer || undefined);
+      // If switching TO MCQ, correctOptionId might need to be nulled if no AI preselection happened.
+      // It will be set by transformAIQuestions if applicable, or by user.
+      // Ensure correctAnswer (text) is cleared if switching to MCQ to avoid confusion
+      setValue(`questions.${questionIndex}.correctOptionId`, (currentQuestionData as MCQQuestion).correctOptionId || null); // Preserve if already set
+      setValue(`questions.${questionIndex}.correctAnswer`, undefined); 
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
       setValue(`questions.${questionIndex}.options`, []); 
@@ -152,53 +137,32 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options</Label>
-            {isAiPrefilledMcq && !isEditingMcqCorrectAnswer ? (
-              // Display mode for AI-prefilled MCQs
-              <>
-                {mcqOptionFields.map((optionField, optionIdx) => (
-                  <div key={optionField.id} className="flex items-center gap-2">
-                    <Input
-                      placeholder={`Option ${optionIdx + 1}`}
-                      {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                      className={`flex-grow ${optionField.id === currentCorrectOptionId ? 'bg-green-100 dark:bg-green-900 border-green-500' : ''}`}
-                    />
-                    {optionField.id === currentCorrectOptionId && <span className="text-sm text-green-600 font-medium">(Correct)</span>}
-                     {mcqOptionFields.length > 2 && (
-                       <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                           <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                       </Button>
+            <Label>Options & Correct Answer</Label>
+            <RadioGroup
+              value={currentCorrectOptionId || ""}
+              onValueChange={handleMcqCorrectAnswerChange}
+            >
+              {mcqOptionFields.map((optionField, optionIdx) => (
+                <div key={optionField.id} className="flex items-center gap-2">
+                  <RadioGroupItem value={optionField.id} id={`${questionId}-opt-${optionField.id}-correct`} />
+                  <Label htmlFor={`${questionId}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
+                  <Input
+                    placeholder={`Option ${optionIdx + 1}`}
+                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                    className={cn(
+                        "flex-grow",
+                        optionField.id === currentCorrectOptionId ? "bg-green-100 dark:bg-green-800 border-green-500 dark:border-green-600 ring-2 ring-green-500 dark:ring-green-600" : ""
                     )}
-                  </div>
-                ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => setIsEditingMcqCorrectAnswer(true)}>
-                  <Edit3 className="mr-2 h-4 w-4" /> Change Correct Answer
-                </Button>
-              </>
-            ) : (
-              // Editing mode (radio buttons)
-              <RadioGroup
-                value={currentCorrectOptionId || ""}
-                onValueChange={handleMcqCorrectAnswerChange}
-              >
-                {mcqOptionFields.map((optionField, optionIdx) => (
-                  <div key={optionField.id} className="flex items-center gap-2">
-                    <RadioGroupItem value={optionField.id} id={`${questionId}-opt-${optionField.id}-correct`} />
-                    <Label htmlFor={`${questionId}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
-                    <Input
-                      placeholder={`Option ${optionIdx + 1}`}
-                      {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                      className="flex-grow"
-                    />
-                    {mcqOptionFields.length > 2 && (
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </RadioGroup>
-            )}
+                  />
+                  {optionField.id === currentCorrectOptionId && <span className="text-xs text-green-600 font-medium">(Correct)</span>}
+                  {mcqOptionFields.length > 2 && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                      <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </RadioGroup>
             
             {/* Validation Messages */}
             {errors?.questions?.[questionIndex]?.correctOptionId && (
@@ -282,4 +246,3 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
     </Card>
   );
 }
-

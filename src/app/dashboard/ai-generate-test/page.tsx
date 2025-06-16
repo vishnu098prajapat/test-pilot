@@ -138,7 +138,7 @@ export default function AIGenerateTestPage() {
         }));
         
         let matchedCorrectOptionId = null;
-        const aiCorrectAnswerText = aiQ.correctAnswer; // This is the TEXT of the correct answer from AI
+        const aiCorrectAnswerText = aiQ.correctAnswer; 
 
         if (aiCorrectAnswerText && options.length > 0) {
             const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
@@ -152,7 +152,7 @@ export default function AIGenerateTestPage() {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: matchedCorrectOptionId, // This will be null if no match, or the ID of the matched option
+          correctOptionId: matchedCorrectOptionId, 
           correctAnswer: aiCorrectAnswerText, // Store AI's original text answer for reference in QuestionForm
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
@@ -425,4 +425,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-
