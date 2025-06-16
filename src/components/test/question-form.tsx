@@ -49,14 +49,12 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       const existingOptions = (currentQuestionData as MCQQuestion).options;
       let newCorrectOptionId = null;
       
-      // Create new option structures with unique IDs based on the new question ID
       const newOptions = Array.from({ length: Math.max(2, existingOptions?.length || 2) }).map((_, i) => ({
         id: `opt-${newId}-${i}-${Date.now() + i}`,
         text: existingOptions?.[i]?.text || ""
       }));
       
-      // Attempt to match AI's textual answer to one of the new option IDs
-      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer; // This is the text, not ID
+      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer; 
       if (aiTextAnswer) {
         const matchedOption = newOptions.find(opt => opt.text.trim().toLowerCase() === aiTextAnswer.trim().toLowerCase());
         if (matchedOption) {
@@ -66,7 +64,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       
       setValue(`questions.${questionIndex}.options`, newOptions);
       setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
-      // Keep AI's text answer for potential reference, though correctOptionId is primary
       setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); 
 
     } else if (type === 'short-answer') {
@@ -144,19 +141,32 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
             <Label>Options & Correct Answer</Label>
             {mcqOptionFields.map((optionField, optionIdx) => (
               <div key={optionField.id} className="flex items-center gap-2">
-                <Input
-                  placeholder={`Option ${optionIdx + 1}`}
-                  {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                <div 
+                  className={cn(
+                    "flex-grow p-2 border rounded-md cursor-pointer transition-colors",
+                    "focus-within:ring-2 focus-within:ring-ring focus-within:border-primary", // Ring for focus on the div
+                    optionField.id === currentCorrectOptionId 
+                      ? "bg-green-100 dark:bg-green-700/30 border-green-500 dark:border-green-600" 
+                      : "bg-background hover:bg-muted/50 border-input"
+                  )}
                   onClick={() => {
                     setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
                   }}
-                  className={cn(
-                      "flex-grow cursor-pointer focus:ring-primary focus:border-primary",
-                      optionField.id === currentCorrectOptionId 
-                        ? "bg-green-100 dark:bg-green-700/30 border-green-400 dark:border-green-600 text-foreground dark:text-green-100" 
-                        : "hover:bg-muted/50"
-                  )}
-                />
+                  tabIndex={0} // Make div focusable for keyboard navigation if needed
+                  onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') {
+                      setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
+                      e.preventDefault();
+                  }}}
+                >
+                  <Input
+                    placeholder={`Option ${optionIdx + 1}`}
+                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                     className={cn(
+                      "w-full border-none focus:ring-0 focus:outline-none p-0 h-auto bg-transparent", // Remove default input styling
+                      optionField.id === currentCorrectOptionId ? "text-green-800 dark:text-green-100 placeholder:text-green-700/80" : "text-foreground placeholder:text-muted-foreground"
+                    )}
+                  />
+                </div>
                 {mcqOptionFields.length > 2 && (
                   <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
                     <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
@@ -247,3 +257,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
+
+
+    
