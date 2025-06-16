@@ -55,7 +55,7 @@ export default function LoginPage() {
       } else {
         toast({
           title: "Login Failed",
-          description: result.message || "An unexpected error occurred. Ensure user data is valid.",
+          description: result.message || "An unexpected error occurred. Please check your details.",
           variant: "destructive",
           duration: 2000,
         });

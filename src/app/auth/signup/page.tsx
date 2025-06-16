@@ -26,7 +26,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const authContext = useAuth(); // Get the whole context
+  const authContext = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignupFormValues>({
@@ -45,7 +45,7 @@ export default function SignupPage() {
       console.log("SignupPage: signUpWithNameAndDob result:", result);
 
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
-        authContext.login(result.user);  // Use login from auth context for consistency
+        authContext.login(result.user);
         toast({
           title: "Sign Up Successful",
           description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
@@ -55,11 +55,11 @@ export default function SignupPage() {
       } else {
         toast({
           title: "Sign Up Failed",
-          description: result.message || "An unexpected error occurred. Ensure user data is valid.",
+          description: result.message || "An unexpected error occurred. Please check your details.",
           variant: "destructive",
           duration: 2000,
         });
-        console.warn("SignupPage: Signup failed or user data invalid. Result:", result);
+        console.warn("SignupPage: Signup failed. Result:", result);
       }
     } catch (error) {
       console.error("SignupPage: Signup error", error);
