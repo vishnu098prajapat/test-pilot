@@ -41,23 +41,26 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   const handleTypeChange = (type: Question["type"]) => {
     setValue(`questions.${questionIndex}.type`, type);
     const currentQuestionId = watch(`questions.${questionIndex}.id`);
-    const isCurrentAi = typeof currentQuestionId === 'string' && currentQuestionId.startsWith('ai-q-');
-
+    // const isCurrentAi = typeof currentQuestionId === 'string' && currentQuestionId.startsWith('ai-q-');
+    // For AI questions, we trust the initial structure from AI.
+    // For manual changes, we adjust.
+    
     if (type === 'mcq') {
       const existingOptions = watch(`questions.${questionIndex}.options`);
-      if (!existingOptions || existingOptions.length === 0) {
+      // Only add default options if not an AI question with existing options or if options are empty
+      if (!isAiQuestion || !existingOptions || existingOptions.length === 0) {
         setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }, { id: `opt-${Date.now()+1}`, text: "" }]);
-      }
-      if (!isCurrentAi) {
         setValue(`questions.${questionIndex}.correctOptionId`, null);
       }
     } else if (type === 'short-answer') {
-      if (!isCurrentAi) { 
+      // If not an AI question with a pre-filled answer, set to empty string
+      if (!isAiQuestion || watch(`questions.${questionIndex}.correctAnswer`) === undefined) {
          setValue(`questions.${questionIndex}.correctAnswer`, "");
       }
       setValue(`questions.${questionIndex}.options`, []); 
     } else if (type === 'true-false') {
-       if (!isCurrentAi) { 
+      // If not an AI question with a pre-filled answer, set to true (or any default)
+       if (!isAiQuestion || watch(`questions.${questionIndex}.correctAnswer`) === undefined) { 
         setValue(`questions.${questionIndex}.correctAnswer`, true);
        }
       setValue(`questions.${questionIndex}.options`, []);
@@ -129,7 +132,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
                 return (
                   <div 
                     key={optionField.id} 
-                    className={`flex items-center justify-between gap-2 p-2 border rounded-md min-h-[2.5rem]  // Reduced padding, added min-height
+                    className={`flex items-center justify-between gap-2 p-2 border rounded-md min-h-[2.5rem]
                                 ${isCorrectAiSelected ? 'bg-green-100 dark:bg-green-900/30 border-green-500' : 'bg-muted/40'}`}
                   >
                     <span className="flex-grow text-sm">{optionField.text}</span>
@@ -190,8 +193,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               id={`questions.${questionIndex}.correctAnswer`}
               placeholder="Enter the correct answer"
               {...register(`questions.${questionIndex}.correctAnswer`)}
-              readOnly={isAiQuestion} 
-              className={isAiQuestion ? 'bg-muted/50' : ''}
             />
             {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
                 <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctAnswer?.message}</p>
@@ -202,28 +203,20 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         {questionType === "true-false" && (
           <div>
             <Label>Correct Answer</Label>
-            {isAiQuestion ? (
-                <Input 
-                    readOnly 
-                    value={watch(`questions.${questionIndex}.correctAnswer`) ? "True" : "False"} 
-                    className="bg-muted/50"
-                />
-            ) : (
-                <RadioGroup
-                value={String(watch(`questions.${questionIndex}.correctAnswer`))}
-                onValueChange={(value) => setValue(`questions.${questionIndex}.correctAnswer`, value === "true")}
-                className="flex space-x-4 mt-2"
-                >
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="true" id={`${questionIndex}-true`} />
-                    <Label htmlFor={`${questionIndex}-true`}>True</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="false" id={`${questionIndex}-false`} />
-                    <Label htmlFor={`${questionIndex}-false`}>False</Label>
-                </div>
-                </RadioGroup>
-            )}
+            <RadioGroup
+              value={String(watch(`questions.${questionIndex}.correctAnswer`))}
+              onValueChange={(value) => setValue(`questions.${questionIndex}.correctAnswer`, value === "true")}
+              className="flex space-x-4 mt-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id={`${questionIndex}-true`} />
+                <Label htmlFor={`${questionIndex}-true`}>True</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id={`${questionIndex}-false`} />
+                <Label htmlFor={`${questionIndex}-false`}>False</Label>
+              </div>
+            </RadioGroup>
              {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
                 <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctAnswer?.message}</p>
             )}
