@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -48,21 +49,14 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       const existingOptions = (currentQuestionData as MCQQuestion).options;
       let newCorrectOptionId = null;
       
-      const newOptions = [
-        { id: `opt-${newId}-1-${Date.now()}`, text: "" },
-        { id: `opt-${newId}-2-${Date.now()+1}`, text: "" }
-      ];
-      
-      if (existingOptions && existingOptions.length >= 2) {
-        // Try to retain existing options if possible, but with new IDs
-         newOptions.splice(0, newOptions.length); // Clear default new options
-         existingOptions.forEach((opt, i) => {
-           newOptions.push({ id: `opt-${newId}-${i}-${Date.now()+i}`, text: opt.text });
-         });
-      }
+      // Create new option structures with unique IDs based on the new question ID
+      const newOptions = Array.from({ length: Math.max(2, existingOptions?.length || 2) }).map((_, i) => ({
+        id: `opt-${newId}-${i}-${Date.now() + i}`,
+        text: existingOptions?.[i]?.text || ""
+      }));
       
       // Attempt to match AI's textual answer to one of the new option IDs
-      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer;
+      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer; // This is the text, not ID
       if (aiTextAnswer) {
         const matchedOption = newOptions.find(opt => opt.text.trim().toLowerCase() === aiTextAnswer.trim().toLowerCase());
         if (matchedOption) {
@@ -72,15 +66,16 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       
       setValue(`questions.${questionIndex}.options`, newOptions);
       setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
-      setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); // Keep AI's text answer for reference
+      // Keep AI's text answer for potential reference, though correctOptionId is primary
+      setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); 
 
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
-      setValue(`questions.${questionIndex}.options`, []); 
+      setValue(`questions.${questionIndex}.options`, undefined); 
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     } else if (type === 'true-false') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as TrueFalseQuestion).correctAnswer === 'boolean' ? (currentQuestionData as TrueFalseQuestion).correctAnswer : true);
-      setValue(`questions.${questionIndex}.options`, []);
+      setValue(`questions.${questionIndex}.options`, undefined);
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     }
   };
@@ -146,18 +141,20 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options & Correct Answer (Click option text to mark as correct)</Label>
+            <Label>Options & Correct Answer</Label>
             {mcqOptionFields.map((optionField, optionIdx) => (
               <div key={optionField.id} className="flex items-center gap-2">
                 <Input
                   placeholder={`Option ${optionIdx + 1}`}
                   {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
                   onClick={() => {
-                    setValue(`questions.${questionIndex}.correctOptionId`, optionField.id);
+                    setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
                   }}
                   className={cn(
                       "flex-grow cursor-pointer focus:ring-primary focus:border-primary",
-                      optionField.id === currentCorrectOptionId ? "bg-green-100 dark:bg-green-900/30 border-green-500 dark:border-green-600 font-medium text-green-800 dark:text-green-300" : "hover:bg-muted/50"
+                      optionField.id === currentCorrectOptionId 
+                        ? "bg-green-100 dark:bg-green-700/30 border-green-400 dark:border-green-600 text-foreground dark:text-green-100" 
+                        : "hover:bg-muted/50"
                   )}
                 />
                 {mcqOptionFields.length > 2 && (
@@ -171,11 +168,11 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
             {errors?.questions?.[questionIndex]?.correctOptionId && (
                 <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
             )}
-            {errors?.questions?.[questionIndex]?.options?.root?.message && (
-                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.root?.message}</p>
+             {errors?.questions?.[questionIndex]?.options && typeof errors.questions[questionIndex].options === 'object' && 'root' in errors.questions[questionIndex].options && errors.questions[questionIndex].options.root?.message && (
+                <p className="text-sm text-destructive mt-1">{ (errors.questions[questionIndex].options as any).root.message }</p>
             )}
-            {errors?.questions?.[questionIndex]?.options?.message && (
-                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.message}</p>
+            {errors?.questions?.[questionIndex]?.options && typeof errors.questions[questionIndex].options === 'object' && 'message' in errors.questions[questionIndex].options && errors.questions[questionIndex].options.message && (
+                <p className="text-sm text-destructive mt-1">{ (errors.questions[questionIndex].options as any).message }</p>
             )}
             {mcqOptionFields.map((_, optIdx) => {
                 const error = errors?.questions?.[questionIndex]?.options?.[optIdx]?.text;
@@ -250,4 +247,3 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
-
