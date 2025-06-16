@@ -11,8 +11,8 @@ export default function HomePage() {
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center text-2xl font-bold font-headline text-primary">
-            <span>Test Pilot</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2 h-7 w-7 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span className="ml-2">Test Pilot</span>
           </Link>
           <nav className="flex items-center space-x-2">
             <Button variant="ghost" asChild>
@@ -31,7 +31,7 @@ export default function HomePage() {
 
       <main className="flex-grow">
         {/* Hero Section Updated */}
-        <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-[60vh] md:min-h-[70vh] flex items-center justify-center">
+        <section className="relative py-20 md:py-32 text-center overflow-hidden min-h-screen flex items-center justify-center"> {/* Changed min-h */}
           {/* Background Image */}
           <Image
             src="/home2.jpg"
@@ -120,11 +120,6 @@ export default function HomePage() {
                 icon={<Lightbulb className="w-10 h-10 text-primary" />}
                 title="Smart Topic Suggestions"
                 description="Get AI-powered suggestions for related topics to create more comprehensive tests."
-              />
-              <FeatureCard
-                icon={<Eye className="w-10 h-10 text-primary" />}
-                title="Instant Test Preview"
-                description="Instantly preview your tests exactly as students will see them while you build."
               />
               <FeatureCard
                 icon={<Zap className="w-10 h-10 text-primary" />}
