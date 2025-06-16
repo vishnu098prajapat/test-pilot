@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,16 +46,34 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
 
     if (type === 'mcq') {
       const existingOptions = (currentQuestionData as MCQQuestion).options;
-      if (!existingOptions || existingOptions.length < 2) {
-        setValue(`questions.${questionIndex}.options`, [
-          { id: `opt-${newId}-${Date.now()}`, text: "" },
-          { id: `opt-${newId}-${Date.now()+1}`, text: "" }
-        ]);
-      } else {
-         setValue(`questions.${questionIndex}.options`, existingOptions.map((opt, i) => ({ ...opt, id: `opt-${newId}-${Date.now()+i}` })));
+      let newCorrectOptionId = null;
+      
+      const newOptions = [
+        { id: `opt-${newId}-1-${Date.now()}`, text: "" },
+        { id: `opt-${newId}-2-${Date.now()+1}`, text: "" }
+      ];
+      
+      if (existingOptions && existingOptions.length >= 2) {
+        // Try to retain existing options if possible, but with new IDs
+         newOptions.splice(0, newOptions.length); // Clear default new options
+         existingOptions.forEach((opt, i) => {
+           newOptions.push({ id: `opt-${newId}-${i}-${Date.now()+i}`, text: opt.text });
+         });
       }
-      setValue(`questions.${questionIndex}.correctOptionId`, (currentQuestionData as MCQQuestion).correctOptionId || null);
-      setValue(`questions.${questionIndex}.correctAnswer`, undefined); 
+      
+      // Attempt to match AI's textual answer to one of the new option IDs
+      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer;
+      if (aiTextAnswer) {
+        const matchedOption = newOptions.find(opt => opt.text.trim().toLowerCase() === aiTextAnswer.trim().toLowerCase());
+        if (matchedOption) {
+          newCorrectOptionId = matchedOption.id;
+        }
+      }
+      
+      setValue(`questions.${questionIndex}.options`, newOptions);
+      setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
+      setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); // Keep AI's text answer for reference
+
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
       setValue(`questions.${questionIndex}.options`, []); 
@@ -80,10 +97,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     removeMcqOption(optionIndex);
   };
   
-  const handleMcqCorrectAnswerChange = (selectedOptionId: string) => {
-    setValue(`questions.${questionIndex}.correctOptionId`, selectedOptionId);
-  };
-
   return (
     <Card className="mb-6 border-border shadow-md">
       <CardHeader className="flex flex-row items-center justify-between bg-muted/50 p-4">
@@ -133,19 +146,18 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options & Correct Answer</Label>
+            <Label>Options & Correct Answer (Click option text to mark as correct)</Label>
             {mcqOptionFields.map((optionField, optionIdx) => (
               <div key={optionField.id} className="flex items-center gap-2">
                 <Input
                   placeholder={`Option ${optionIdx + 1}`}
                   {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
                   onClick={() => {
-                    // Set this option as correct when its input field is clicked
                     setValue(`questions.${questionIndex}.correctOptionId`, optionField.id);
                   }}
                   className={cn(
-                      "flex-grow cursor-pointer", // Added cursor-pointer
-                      optionField.id === currentCorrectOptionId ? "bg-green-100 dark:bg-green-900 border-green-500 dark:border-green-700 font-medium" : "hover:bg-muted/50"
+                      "flex-grow cursor-pointer focus:ring-primary focus:border-primary",
+                      optionField.id === currentCorrectOptionId ? "bg-green-100 dark:bg-green-900/30 border-green-500 dark:border-green-600 font-medium text-green-800 dark:text-green-300" : "hover:bg-muted/50"
                   )}
                 />
                 {mcqOptionFields.length > 2 && (
@@ -156,7 +168,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               </div>
             ))}
             
-            {/* Validation Messages for MCQ */}
             {errors?.questions?.[questionIndex]?.correctOptionId && (
                 <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
             )}

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -19,6 +18,7 @@ import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
 import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion, DraggableItem, DropTarget, CorrectMapping } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -138,7 +138,7 @@ export default function AIGenerateTestPage() {
         }));
         
         let matchedCorrectOptionId: string | null = null;
-        const aiCorrectAnswerText = aiQ.correctAnswer; 
+        const aiCorrectAnswerText = (aiQ as MCQQuestion).correctAnswer; // Store AI's textual answer
 
         if (aiCorrectAnswerText && options.length > 0) {
             const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
@@ -153,31 +153,31 @@ export default function AIGenerateTestPage() {
           type: 'mcq',
           options,
           correctOptionId: matchedCorrectOptionId,
-          correctAnswer: aiCorrectAnswerText, // Store AI's original text answer for reference if needed
+          correctAnswer: aiCorrectAnswerText, // Keep AI's original text answer for reference in QuestionForm
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
           ...baseQuestion,
           type: 'short-answer',
-          correctAnswer: aiQ.correctAnswer as string,
+          correctAnswer: (aiQ as ShortAnswerQuestion).correctAnswer as string,
         } as ShortAnswerQuestion;
       } else if (aiQ.type === 'true-false') {
         return {
           ...baseQuestion,
           type: 'true-false',
-          correctAnswer: aiQ.correctAnswer as boolean,
+          correctAnswer: (aiQ as TrueFalseQuestion).correctAnswer as boolean,
         } as TrueFalseQuestion;
       } else if (aiQ.type === 'drag-and-drop') {
-         const draggableItems: DraggableItem[] = (aiQ.draggableItems || []).map((itemText, i) => ({
+         const draggableItems: DraggableItem[] = ((aiQ as DragDropQuestion).draggableItems || []).map((itemText, i) => ({
           id: `ditem-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          text: itemText
+          text: typeof itemText === 'string' ? itemText : (itemText as any).text || "Draggable", // Handle potential object vs string
         }));
-        const dropTargets: DropTarget[] = (aiQ.dropTargets || []).map((targetLabel, i) => ({
+        const dropTargets: DropTarget[] = ((aiQ as DragDropQuestion).dropTargets || []).map((targetLabel, i) => ({
           id: `dtarget-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          label: targetLabel
+          label: typeof targetLabel === 'string' ? targetLabel : (targetLabel as any).label || "Target", // Handle potential object vs string
         }));
 
-        const correctMappings: CorrectMapping[] = (aiQ.correctMappings || []).map(mapping => {
+        const correctMappings: CorrectMapping[] = ((aiQ as DragDropQuestion).correctMappings || []).map(mapping => {
           const mappedDraggableItem = draggableItems.find(di => di.text === mapping.draggableItemText);
           const mappedDropTarget = dropTargets.find(dt => dt.label === mapping.dropTargetLabel);
           return {
@@ -189,13 +189,14 @@ export default function AIGenerateTestPage() {
         return {
           ...baseQuestion,
           type: 'drag-and-drop',
-          instruction: aiQ.instruction || "",
+          instruction: (aiQ as DragDropQuestion).instruction || "",
           draggableItems,
           dropTargets,
           correctMappings
         } as DragDropQuestion;
       }
-      return baseQuestion as TestBuilderQuestion;
+      // Fallback for unknown types, though schema should prevent this
+      return { ...baseQuestion, type: aiQ.type } as TestBuilderQuestion;
     });
   };
 
@@ -385,26 +386,26 @@ export default function AIGenerateTestPage() {
             {generatedQuestions.map((q, index) => (
               <div key={index} className="p-3 border rounded-md bg-muted/50">
                 <p className="font-semibold">{index + 1}. ({q.type.toUpperCase()}) {q.text}</p>
-                {q.type === 'mcq' && q.options && (
+                {q.type === 'mcq' && (q as MCQQuestion).options && (
                   <ul className="list-disc pl-5 mt-1 text-sm">
-                    {q.options.map((opt, optIndex) => (
-                      <li key={optIndex} className={normalizeText(opt) === normalizeText(q.correctAnswer) ? 'text-green-600 font-medium' : ''}>
-                        {opt} {normalizeText(opt) === normalizeText(q.correctAnswer) ? '(Correct)' : ''}
+                    {(q as MCQQuestion).options.map((optText, optIndex) => ( // optText directly used
+                      <li key={optIndex} className={normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? 'text-green-600 font-medium' : ''}>
+                        {optText} {normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? '(Correct)' : ''}
                       </li>
                     ))}
                   </ul>
                 )}
                 {(q.type === 'short-answer' || q.type === 'true-false') && (
-                  <p className="text-sm mt-1">Correct Answer: <span className="text-green-600 font-medium">{String(q.correctAnswer)}</span></p>
+                  <p className="text-sm mt-1">Correct Answer: <span className="text-green-600 font-medium">{String((q as ShortAnswerQuestion | TrueFalseQuestion).correctAnswer)}</span></p>
                 )}
                 {q.type === 'drag-and-drop' && (
                   <div className="text-sm mt-1">
-                    <p>Instruction: {q.instruction || 'N/A'}</p>
-                    <p>Draggable Items: {q.draggableItems?.join(", ")}</p>
-                    <p>Drop Targets: {q.dropTargets?.join(", ")}</p>
+                    <p>Instruction: {(q as DragDropQuestion).instruction || 'N/A'}</p>
+                    <p>Draggable Items: {(q as DragDropQuestion).draggableItems?.map(di => typeof di === 'string' ? di : (di as any).text).join(", ")}</p>
+                    <p>Drop Targets: {(q as DragDropQuestion).dropTargets?.map(dt => typeof dt === 'string' ? dt : (dt as any).label).join(", ")}</p>
                     <p>Correct Mappings:</p>
                     <ul className="list-disc pl-5">
-                      {q.correctMappings?.map((m, mi) => (
+                      {(q as DragDropQuestion).correctMappings?.map((m, mi) => (
                         <li key={mi}>{m.draggableItemText} &rarr; {m.dropTargetLabel}</li>
                       ))}
                     </ul>

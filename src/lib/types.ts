@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email?: string; 
@@ -26,7 +25,7 @@ export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
   correctOptionId: string | null; 
-  correctAnswer?: string; // AI's original text answer, used for initial matching
+  correctAnswer?: string; // AI's original text answer, for initial matching and reference
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
