@@ -64,8 +64,10 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       
       setValue(`questions.${questionIndex}.options`, newOptions);
       setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
-      // Keep AI's textual answer for reference if needed, or clear it
-      // setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); 
+      // Make sure correctAnswer (text) is also reset or handled for non-AI generated MCQs
+      if (!(currentQuestionData as MCQQuestion).correctAnswer) {
+        setValue(`questions.${questionIndex}.correctAnswer`, undefined);
+      }
 
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
@@ -139,36 +141,22 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options & Correct Answer</Label>
+            <Label>Options & Correct Answer Selection</Label>
             {mcqOptionFields.map((optionField, optionIdx) => (
               <div key={optionField.id} className="flex items-center gap-2">
-                <div 
+                <Input
+                  placeholder={`Option ${optionIdx + 1}`}
+                  {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
                   className={cn(
-                    "flex-grow rounded-md cursor-pointer transition-all",
+                    "w-full h-auto p-2 bg-background text-foreground placeholder:text-muted-foreground", 
                     optionField.id === currentCorrectOptionId 
-                      ? "border-2 border-primary p-0.5" // Purple border when selected
-                      : "border border-input p-0.5" // Standard border otherwise
+                      ? "border-primary ring-2 ring-primary" // Purple border for correct option
+                      : "border-input"
                   )}
                   onClick={() => {
                     setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
                   }}
-                  tabIndex={0} 
-                  onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') {
-                      setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
-                      e.preventDefault();
-                  }}}
-                >
-                  <Input
-                    placeholder={`Option ${optionIdx + 1}`}
-                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                     className={cn(
-                      "w-full h-auto p-2", 
-                      optionField.id === currentCorrectOptionId 
-                        ? "bg-green-50 dark:bg-green-700/20 text-green-800 dark:text-green-200 placeholder:text-green-700/70" // Light green background for selected correct
-                        : "bg-background text-foreground placeholder:text-muted-foreground"
-                    )}
-                  />
-                </div>
+                />
                 {mcqOptionFields.length > 2 && (
                   <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
                     <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
@@ -259,3 +247,4 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
+
