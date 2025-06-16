@@ -64,7 +64,8 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       
       setValue(`questions.${questionIndex}.options`, newOptions);
       setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
-      setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); 
+      // Keep AI's textual answer for reference if needed, or clear it
+      // setValue(`questions.${questionIndex}.correctAnswer`, aiTextAnswer); 
 
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
@@ -143,16 +144,15 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               <div key={optionField.id} className="flex items-center gap-2">
                 <div 
                   className={cn(
-                    "flex-grow p-2 border rounded-md cursor-pointer transition-colors",
-                    "focus-within:ring-2 focus-within:ring-ring focus-within:border-primary", // Ring for focus on the div
+                    "flex-grow rounded-md cursor-pointer transition-all",
                     optionField.id === currentCorrectOptionId 
-                      ? "bg-green-100 dark:bg-green-700/30 border-green-500 dark:border-green-600" 
-                      : "bg-background hover:bg-muted/50 border-input"
+                      ? "border-2 border-primary p-0.5" // Purple border when selected
+                      : "border border-input p-0.5" // Standard border otherwise
                   )}
                   onClick={() => {
                     setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
                   }}
-                  tabIndex={0} // Make div focusable for keyboard navigation if needed
+                  tabIndex={0} 
                   onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') {
                       setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
                       e.preventDefault();
@@ -162,8 +162,10 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
                     placeholder={`Option ${optionIdx + 1}`}
                     {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
                      className={cn(
-                      "w-full border-none focus:ring-0 focus:outline-none p-0 h-auto bg-transparent", // Remove default input styling
-                      optionField.id === currentCorrectOptionId ? "text-green-800 dark:text-green-100 placeholder:text-green-700/80" : "text-foreground placeholder:text-muted-foreground"
+                      "w-full h-auto p-2", 
+                      optionField.id === currentCorrectOptionId 
+                        ? "bg-green-50 dark:bg-green-700/20 text-green-800 dark:text-green-200 placeholder:text-green-700/70" // Light green background for selected correct
+                        : "bg-background text-foreground placeholder:text-muted-foreground"
                     )}
                   />
                 </div>
@@ -257,6 +259,3 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
-
-
-    
