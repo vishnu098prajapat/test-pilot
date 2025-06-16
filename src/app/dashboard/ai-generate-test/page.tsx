@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, ListChecks, Send, Activity, Lightbulb } from 'lucide-react';
+import { Sparkles, Loader2, ListChecks, Send, Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
@@ -137,21 +137,23 @@ export default function AIGenerateTestPage() {
           text: optText,
         }));
         
-        let correctOptionMatched = null;
-        // Store the AI's original textual correct answer for reference in the form
-        const aiCorrectAnswerText = aiQ.correctAnswer; 
+        let matchedCorrectOptionId = null;
+        const aiCorrectAnswerText = aiQ.correctAnswer; // This is the TEXT of the correct answer from AI
 
         if (aiCorrectAnswerText && options.length > 0) {
             const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
-            correctOptionMatched = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
+            const matchedOption = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
+            if (matchedOption) {
+              matchedCorrectOptionId = matchedOption.id;
+            }
         }
 
         return {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: correctOptionMatched ? correctOptionMatched.id : null,
-          correctAnswer: aiCorrectAnswerText, // Keep the AI's textual answer for reference in the form
+          correctOptionId: matchedCorrectOptionId, // This will be null if no match, or the ID of the matched option
+          correctAnswer: aiCorrectAnswerText, // Store AI's original text answer for reference in QuestionForm
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -423,3 +425,4 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
+
