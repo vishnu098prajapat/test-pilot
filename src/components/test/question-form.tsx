@@ -25,9 +25,11 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   const questionType = watch(`questions.${questionIndex}.type`);
   
   const questionIdFromWatch = watch(`questions.${questionIndex}.id`);
-  const isAiQuestion = typeof questionIdFromWatch === 'string' && questionIdFromWatch.startsWith('ai-q-');
+  // We don't strictly need isAiQuestion for conditional rendering of MCQ options anymore,
+  // but it can be useful for other logic if needed.
+  // const isAiQuestion = typeof questionIdFromWatch === 'string' && questionIdFromWatch.startsWith('ai-q-');
 
-  console.log(`QuestionForm Render [Q Index: ${questionIndex}]: ID: "${questionIdFromWatch}", Type: ${questionType}, Is AI Question: ${isAiQuestion}`);
+  // console.log(`QuestionForm Render [Q Index: ${questionIndex}]: ID: "${questionIdFromWatch}", Type: ${questionType}`);
 
   const {
     fields: mcqOptionFields,
@@ -40,30 +42,31 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
 
   const handleTypeChange = (type: Question["type"]) => {
     setValue(`questions.${questionIndex}.type`, type);
-    const currentQuestionId = watch(`questions.${questionIndex}.id`);
-    // const isCurrentAi = typeof currentQuestionId === 'string' && currentQuestionId.startsWith('ai-q-');
-    // For AI questions, we trust the initial structure from AI.
-    // For manual changes, we adjust.
     
+    // Get existing options and correct answer to preserve AI data if possible
+    const existingOptions = watch(`questions.${questionIndex}.options`);
+    const existingCorrectAnswer = watch(`questions.${questionIndex}.correctAnswer`);
+    const existingCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
+
     if (type === 'mcq') {
-      const existingOptions = watch(`questions.${questionIndex}.options`);
-      // Only add default options if not an AI question with existing options or if options are empty
-      if (!isAiQuestion || !existingOptions || existingOptions.length === 0) {
+      // If not already MCQ or options are missing, initialize/reset options and correctOptionId
+      if (questionType !== 'mcq' || !existingOptions || existingOptions.length === 0) {
         setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }, { id: `opt-${Date.now()+1}`, text: "" }]);
         setValue(`questions.${questionIndex}.correctOptionId`, null);
+      } else {
+        // If it was AI generated and had options, keep them.
+        // The correctOptionId should have been set by transformAIQuestionsToTestBuilderFormat
+        // If it's null, user will need to select one.
       }
+       setValue(`questions.${questionIndex}.correctAnswer`, undefined); // Clear non-MCQ correct answer
     } else if (type === 'short-answer') {
-      // If not an AI question with a pre-filled answer, set to empty string
-      if (!isAiQuestion || watch(`questions.${questionIndex}.correctAnswer`) === undefined) {
-         setValue(`questions.${questionIndex}.correctAnswer`, "");
-      }
+      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'string' ? existingCorrectAnswer : "");
       setValue(`questions.${questionIndex}.options`, []); 
+      setValue(`questions.${questionIndex}.correctOptionId`, null);
     } else if (type === 'true-false') {
-      // If not an AI question with a pre-filled answer, set to true (or any default)
-       if (!isAiQuestion || watch(`questions.${questionIndex}.correctAnswer`) === undefined) { 
-        setValue(`questions.${questionIndex}.correctAnswer`, true);
-       }
+      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'boolean' ? existingCorrectAnswer : true);
       setValue(`questions.${questionIndex}.options`, []);
+      setValue(`questions.${questionIndex}.correctOptionId`, null);
     }
   };
 
@@ -72,6 +75,11 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   };
 
   const removeOption = (optionIndex: number) => {
+    // If removing the currently selected correct option, reset correctOptionId
+    const currentCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
+    if (mcqOptionFields[optionIndex]?.id === currentCorrectOptionId) {
+      setValue(`questions.${questionIndex}.correctOptionId`, null);
+    }
     removeMcqOption(optionIndex);
   };
 
@@ -124,67 +132,54 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         </div>
         
         {questionType === "mcq" && (
-          isAiQuestion ? (
-            <div className="space-y-2">
-              <Label>Options (AI Generated - Correct Answer Pre-selected)</Label>
-              {mcqOptionFields.map((optionField, optionIdx) => {
-                const isCorrectAiSelected = optionField.id === watch(`questions.${questionIndex}.correctOptionId`);
-                return (
-                  <div 
-                    key={optionField.id} 
-                    className={`flex items-center justify-between gap-2 p-2 border rounded-md min-h-[2.5rem]
-                                ${isCorrectAiSelected ? 'bg-green-100 dark:bg-green-900/30 border-green-500' : 'bg-muted/40'}`}
-                  >
-                    <span className="flex-grow text-sm">{optionField.text}</span>
-                    {isCorrectAiSelected && (
-                      <span className="text-xs font-semibold text-green-700 dark:text-green-400 whitespace-nowrap">(AI Selected - Correct)</span>
-                    )}
-                  </div>
-                );
-              })}
-              {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
-                  <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <Label>Options & Correct Answer</Label>
-              {mcqOptionFields.map((optionField, optionIdx) => (
-                <div key={optionField.id} className="flex items-center gap-2">
-                  <RadioGroup
-                      value={watch(`questions.${questionIndex}.correctOptionId`) || ""}
-                      onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
-                      className="flex items-center"
-                  >
-                      <RadioGroupItem value={optionField.id} id={`${questionIndex}-opt-${optionIdx}-correct`} />
-                  </RadioGroup>
-                  <Label htmlFor={`${questionIndex}-opt-${optionIdx}-correct`} className="sr-only">Mark as correct</Label>
-                  <Input
-                    placeholder={`Option ${optionIdx + 1}`}
-                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                    defaultValue={optionField.text}
-                    className="flex-grow"
-                  />
-                  {mcqOptionFields.length > 1 && (
-                     <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                      <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-               {form.formState.errors?.questions?.[questionIndex]?.options && (
-                  <p className="text-sm text-destructive mt-1">Each option text is required, and at least two options are needed.</p>
-              )}
-               {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
-                  <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
-              )}
+          <div className="space-y-3">
+            <Label>Options & Correct Answer</Label>
+            {mcqOptionFields.map((optionField, optionIdx) => (
+              <div key={optionField.id} className="flex items-center gap-2">
+                <RadioGroup
+                    value={watch(`questions.${questionIndex}.correctOptionId`) || ""}
+                    onValueChange={(value) => {
+                        // Ensure the selected value is one of the current option IDs
+                        const isValidOptionId = mcqOptionFields.some(opt => opt.id === value);
+                        if (isValidOptionId) {
+                           setValue(`questions.${questionIndex}.correctOptionId`, value);
+                        } else {
+                           // This case should ideally not happen if UI reflects backend IDs
+                           setValue(`questions.${questionIndex}.correctOptionId`, null); 
+                        }
+                    }}
+                    className="flex items-center"
+                >
+                    <RadioGroupItem value={optionField.id} id={`${questionIdFromWatch}-opt-${optionField.id}-correct`} />
+                </RadioGroup>
+                <Label htmlFor={`${questionIdFromWatch}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
+                <Input
+                  placeholder={`Option ${optionIdx + 1}`}
+                  {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                  defaultValue={optionField.text} // Handles pre-fill from AI or manual entry
+                  className="flex-grow"
+                />
+                {mcqOptionFields.length > 2 && ( // Only allow removal if more than 2 options
+                   <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            {form.formState.errors?.questions?.[questionIndex]?.options && (
+                <p className="text-sm text-destructive mt-1">Each option text is required. At least two options are needed.</p>
+            )}
+            {/* Ensure correctOptionId specific error is shown */}
+            {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
+                <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
+            )}
+            {mcqOptionFields.length < 4 && ( // Limit to 4 options for MCQs
               <Button type="button" variant="outline" size="sm" onClick={addOption}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Option
               </Button>
-            </div>
-          )
+            )}
+          </div>
         )}
-
 
         {questionType === "short-answer" && (
           <div>
@@ -204,17 +199,21 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
           <div>
             <Label>Correct Answer</Label>
             <RadioGroup
+              // Watch the value; ensure it's a string for RadioGroup value comparison
               value={String(watch(`questions.${questionIndex}.correctAnswer`))}
-              onValueChange={(value) => setValue(`questions.${questionIndex}.correctAnswer`, value === "true")}
+              onValueChange={(value) => {
+                // Convert string value from RadioGroup ("true" or "false") back to boolean
+                setValue(`questions.${questionIndex}.correctAnswer`, value === "true");
+              }}
               className="flex space-x-4 mt-2"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="true" id={`${questionIndex}-true`} />
-                <Label htmlFor={`${questionIndex}-true`}>True</Label>
+                <RadioGroupItem value="true" id={`${questionIdFromWatch}-true`} />
+                <Label htmlFor={`${questionIdFromWatch}-true`}>True</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="false" id={`${questionIndex}-false`} />
-                <Label htmlFor={`${questionIndex}-false`}>False</Label>
+                <RadioGroupItem value="false" id={`${questionIdFromWatch}-false`} />
+                <Label htmlFor={`${questionIdFromWatch}-false`}>False</Label>
               </div>
             </RadioGroup>
              {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
@@ -240,3 +239,4 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
+
