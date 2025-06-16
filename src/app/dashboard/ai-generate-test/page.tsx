@@ -17,12 +17,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
-import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
+import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
-  questionType: z.enum(['mcq', 'short-answer', 'true-false'], { required_error: "Question type is required." }),
+  questionType: z.enum(['mcq', 'short-answer', 'true-false', 'drag-and-drop'], { required_error: "Question type is required." }),
   difficulty: z.enum(['easy', 'medium', 'hard'], { required_error: "Difficulty level is required."}),
   topics: z.string().min(3, "Please provide at least one topic.").transform(val => val.split(',').map(t => t.trim()).filter(t => t.length > 0)),
   numberOfQuestions: z.coerce.number().int().min(1, "Minimum 1 question.").max(50, "Maximum 50 questions."),
@@ -137,18 +137,18 @@ export default function AIGenerateTestPage() {
           text: optText,
         }));
         
-        let correctOptionFound = null;
+        let correctOptionMatched = null;
         if (aiQ.correctAnswer && options.length > 0) {
             const normalizedAICorrectAnswer = normalizeText(aiQ.correctAnswer);
-            correctOptionFound = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
+            correctOptionMatched = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
         }
 
         return {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: correctOptionFound ? correctOptionFound.id : null, // Set to null if no match
-          correctAnswer: aiQ.correctAnswer, // Keep AI's text for reference, though not directly used by form for ID
+          correctOptionId: correctOptionMatched ? correctOptionMatched.id : null,
+          correctAnswer: aiQ.correctAnswer, // Store AI's original text for reference in QuestionForm
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -156,13 +156,28 @@ export default function AIGenerateTestPage() {
           type: 'short-answer',
           correctAnswer: aiQ.correctAnswer as string,
         } as ShortAnswerQuestion;
-      } else { // true-false
+      } else if (aiQ.type === 'true-false') {
         return {
           ...baseQuestion,
           type: 'true-false',
           correctAnswer: aiQ.correctAnswer as boolean,
         } as TrueFalseQuestion;
+      } else if (aiQ.type === 'drag-and-drop') {
+        // Placeholder for Drag & Drop transformation - to be implemented
+        return {
+          ...baseQuestion,
+          type: 'drag-and-drop',
+          instruction: aiQ.instruction || "",
+          draggableItems: (aiQ.draggableItems || []).map((item, i) => ({id: `ditem-${questionId}-${i}`, text: item})),
+          dropTargets: (aiQ.dropTargets || []).map((item, i) => ({id: `dtarget-${questionId}-${i}`, label: item})),
+          correctMappings: (aiQ.correctMappings || []).map(m => ({
+            draggableItemId: m.draggableItemText, // Placeholder, will need mapping to IDs in builder
+            dropTargetId: m.dropTargetLabel,     // Placeholder
+          }))
+        } as DragDropQuestion;
       }
+      // Fallback for unknown types, though Zod schema should prevent this
+      return baseQuestion as TestBuilderQuestion;
     });
   };
 
@@ -177,13 +192,12 @@ export default function AIGenerateTestPage() {
       title: aiGeneratedTitle,
       subject: generationParams.subject,
       questions: testBuilderQuestions,
-      // Include other relevant test settings from generationParams if needed
-      duration: 30, // Default or make this part of AI generation form
+      duration: 30, 
       attemptsAllowed: 1,
       randomizeQuestions: false,
       enableTabSwitchDetection: true,
       enableCopyPasteDisable: true,
-      published: false, // Default to draft
+      published: false, 
     };
 
     try {
@@ -265,6 +279,7 @@ export default function AIGenerateTestPage() {
                           <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
                           <SelectItem value="short-answer">Short Answer</SelectItem>
                           <SelectItem value="true-false">True/False</SelectItem>
+                          <SelectItem value="drag-and-drop">Drag & Drop (Experimental)</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -364,6 +379,19 @@ export default function AIGenerateTestPage() {
                 {(q.type === 'short-answer' || q.type === 'true-false') && (
                   <p className="text-sm mt-1">Correct Answer: <span className="text-green-600 font-medium">{String(q.correctAnswer)}</span></p>
                 )}
+                {q.type === 'drag-and-drop' && (
+                  <div className="text-sm mt-1">
+                    <p>Instruction: {q.instruction || 'N/A'}</p>
+                    <p>Draggable Items: {q.draggableItems?.join(", ")}</p>
+                    <p>Drop Targets: {q.dropTargets?.join(", ")}</p>
+                    <p>Correct Mappings:</p>
+                    <ul className="list-disc pl-5">
+                      {q.correctMappings?.map((m, mi) => (
+                        <li key={mi}>{m.draggableItemText} &rarr; {m.dropTargetLabel}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                  <p className="text-xs text-muted-foreground mt-1">Points: {q.points}</p>
               </div>
             ))}
@@ -378,4 +406,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-

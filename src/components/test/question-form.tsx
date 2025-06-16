@@ -1,8 +1,8 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { UseFieldArrayReturn, UseFormReturn, useFieldArray } from "react-hook-form";
+import React from "react";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,41 +10,21 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Trash2, Edit3 } from "lucide-react";
-import type { Question, Option as OptionType } from "@/lib/types";
+import { PlusCircle, Trash2 } from "lucide-react";
+import type { Question, Option as OptionType, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from "@/lib/types";
 import type { TestBuilderFormValues } from "./test-builder-form";
-import { cn } from "@/lib/utils";
 
 interface QuestionFormProps {
   questionIndex: number;
   form: UseFormReturn<TestBuilderFormValues, any, undefined>;
   removeQuestion: (index: number) => void;
-  initialCorrectOptionIdFromAI: string | null | undefined; 
 }
 
-export function QuestionForm({ questionIndex, form, removeQuestion, initialCorrectOptionIdFromAI }: QuestionFormProps) {
+export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFormProps) {
   const { register, control, watch, setValue, formState: { errors } } = form;
   const questionType = watch(`questions.${questionIndex}.type`);
-  const questionId = watch(`questions.${questionIndex}.id`);
+  const questionId = watch(`questions.${questionIndex}.id`); // Used for unique IDs for options if needed
   const currentCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
-  const options = watch(`questions.${questionIndex}.options`);
-
-  // State to manage if the correct answer for an AI-preselected MCQ is being edited
-  const [isEditingCorrectMcqAnswer, setIsEditingCorrectMcqAnswer] = useState(
-    questionType === 'mcq' && !initialCorrectOptionIdFromAI 
-  );
-
-  useEffect(() => {
-    // If question type changes from MCQ or initialCorrectOptionIdFromAI changes,
-    // reset editing state for MCQs.
-    // If it's an MCQ and initialCorrectOptionIdFromAI is null (meaning AI didn't match or it's manual),
-    // then start in editing mode for correct answer.
-    if (questionType === 'mcq') {
-      setIsEditingCorrectMcqAnswer(!initialCorrectOptionIdFromAI);
-    } else {
-      setIsEditingCorrectMcqAnswer(false);
-    }
-  }, [questionType, initialCorrectOptionIdFromAI]);
 
 
   const {
@@ -59,44 +39,35 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
   const handleTypeChange = (type: Question["type"]) => {
     setValue(`questions.${questionIndex}.type`, type);
     
-    const existingCorrectAnswer = watch(`questions.${questionIndex}.correctAnswer`);
-    const existingCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
-    const currentOptions = watch(`questions.${questionIndex}.options`);
+    // Preserve existing text if user switches type and then back, where applicable
+    const existingTextCorrectAnswer = watch(`questions.${questionIndex}.correctAnswer`);
+    const existingOptions = watch(`questions.${questionIndex}.options`);
 
     if (type === 'mcq') {
-      // Ensure options array exists and has at least 2 options for MCQs
-      if (!currentOptions || currentOptions.length < 2) {
-        const defaultOpts = [
+      if (!existingOptions || existingOptions.length < 2) {
+        setValue(`questions.${questionIndex}.options`, [
           { id: `opt-${questionId}-${Date.now()}`, text: "" },
           { id: `opt-${questionId}-${Date.now()+1}`, text: "" }
-        ];
-        setValue(`questions.${questionIndex}.options`, defaultOpts);
-        setValue(`questions.${questionIndex}.correctOptionId`, null); 
-      } else {
-         // Retain existing options. If a text correctAnswer was there, try to match.
-         if (typeof existingCorrectAnswer === 'string' && existingCorrectAnswer && currentOptions.length > 0) {
-            const matchedOption = currentOptions.find(opt => opt.text.toLowerCase() === existingCorrectAnswer.toLowerCase());
-            setValue(`questions.${questionIndex}.correctOptionId`, matchedOption ? matchedOption.id : null);
-         } else {
-            // Otherwise, keep existing correctOptionId or null if it wasn't set
-            setValue(`questions.${questionIndex}.correctOptionId`, existingCorrectOptionId || null);
-         }
+        ]);
       }
-      // Clear text-based correctAnswer for MCQs
-      setValue(`questions.${questionIndex}.correctAnswer`, undefined);
-      setIsEditingCorrectMcqAnswer(!watch(`questions.${questionIndex}.correctOptionId`));
-
-
+      // If AI provided a text answer, try to match it to an option and set correctOptionId
+      // This logic is primarily handled in `ai-generate-test/page.tsx` before data reaches here
+      // Here, we ensure correctOptionId is null if no options exist or type changes away from MCQ.
+      setValue(`questions.${questionIndex}.correctAnswer`, undefined); // Clear text-based correctAnswer
+      if (existingOptions && existingOptions.length > 0 && typeof existingTextCorrectAnswer === 'string') {
+          const matchedOption = existingOptions.find(opt => opt.text.toLowerCase() === existingTextCorrectAnswer.toLowerCase());
+          setValue(`questions.${questionIndex}.correctOptionId`, matchedOption ? matchedOption.id : null);
+      } else {
+          setValue(`questions.${questionIndex}.correctOptionId`, watch(`questions.${questionIndex}.correctOptionId`) || null);
+      }
     } else if (type === 'short-answer') {
-      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'string' ? existingCorrectAnswer : "");
+      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingTextCorrectAnswer === 'string' ? existingTextCorrectAnswer : "");
       setValue(`questions.${questionIndex}.options`, []); 
       setValue(`questions.${questionIndex}.correctOptionId`, null);
-      setIsEditingCorrectMcqAnswer(false);
     } else if (type === 'true-false') {
-      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'boolean' ? existingCorrectAnswer : true);
+      setValue(`questions.${questionIndex}.correctAnswer`, typeof existingTextCorrectAnswer === 'boolean' ? existingTextCorrectAnswer : true);
       setValue(`questions.${questionIndex}.options`, []);
       setValue(`questions.${questionIndex}.correctOptionId`, null);
-      setIsEditingCorrectMcqAnswer(false);
     }
   };
 
@@ -110,7 +81,6 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
     }
     removeMcqOption(optionIndex);
   };
-
 
   return (
     <Card className="mb-6 border-border shadow-md">
@@ -161,70 +131,38 @@ export function QuestionForm({ questionIndex, form, removeQuestion, initialCorre
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options</Label>
-            {isEditingCorrectMcqAnswer || !currentCorrectOptionId ? (
-              <>
-                <RadioGroup
-                    value={currentCorrectOptionId || ""}
-                    onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
-                >
-                    {mcqOptionFields.map((optionField, optionIdx) => (
-                    <div key={optionField.id} className="flex items-center gap-2">
-                        <RadioGroupItem value={optionField.id} id={`${questionId}-opt-${optionField.id}-correct`} />
-                        <Label htmlFor={`${questionId}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
-                        <Input
-                        placeholder={`Option ${optionIdx + 1}`}
-                        {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                        className="flex-grow"
-                        />
-                        {mcqOptionFields.length > 2 && ( 
-                        <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                        </Button>
-                        )}
-                    </div>
-                    ))}
-                </RadioGroup>
-                {errors?.questions?.[questionIndex]?.correctOptionId && (
-                    <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
-                )}
-              </>
-            ) : (
-              <div className="space-y-2">
+            <Label>Options & Correct Answer</Label>
+            <RadioGroup
+                value={currentCorrectOptionId || ""}
+                onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
+            >
                 {mcqOptionFields.map((optionField, optionIdx) => (
-                  <div 
-                    key={optionField.id} 
-                    className={cn(
-                        "flex items-center gap-2 p-2 border rounded-md",
-                        optionField.id === currentCorrectOptionId ? "bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700" : "bg-muted/30"
-                    )}
-                  >
+                <div key={optionField.id} className="flex items-center gap-2">
+                    <RadioGroupItem value={optionField.id} id={`${questionId}-opt-${optionField.id}-correct`} />
+                    <Label htmlFor={`${questionId}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
                     <Input
-                        placeholder={`Option ${optionIdx + 1}`}
-                        {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                        className={cn("flex-grow", optionField.id === currentCorrectOptionId ? "font-semibold text-green-700 dark:text-green-300" : "")}
+                    placeholder={`Option ${optionIdx + 1}`}
+                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                    className="flex-grow"
                     />
-                    {optionField.id === currentCorrectOptionId && <span className="text-xs text-green-700 dark:text-green-300">(Correct)</span>}
-                     {mcqOptionFields.length > 2 && ( 
-                        <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)} className="opacity-50 hover:opacity-100">
-                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                        </Button>
+                    {mcqOptionFields.length > 2 && ( 
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                    </Button>
                     )}
-                  </div>
+                </div>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => setIsEditingCorrectMcqAnswer(true)}>
-                  <Edit3 className="mr-2 h-4 w-4" /> Change Correct Answer
-                </Button>
-              </div>
+            </RadioGroup>
+            {errors?.questions?.[questionIndex]?.correctOptionId && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
             )}
-
             {errors?.questions?.[questionIndex]?.options?.root?.message && (
                 <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.root?.message}</p>
             )}
             {errors?.questions?.[questionIndex]?.options?.message && (
                 <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.message}</p>
             )}
-             {mcqOptionFields.forEach((_, optIdx) => {
+             {mcqOptionFields.map((_, optIdx) => {
                 if (errors?.questions?.[questionIndex]?.options?.[optIdx]?.text) {
                     return <p key={`err-${optIdx}`} className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.[optIdx]?.text?.message}</p>;
                 }
