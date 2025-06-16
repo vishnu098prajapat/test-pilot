@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import StudentTestArea from '@/components/student/student-test-area';
 import { getTestById } from '@/lib/store'; 
-import type { Test } from '@/lib/types';
+import type { Test, TestAttempt } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle, User } from 'lucide-react';
+import { AlertTriangle, User, Ban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -20,52 +20,80 @@ export default function StudentTestPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  
   const [testData, setTestData] = useState<Test | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const [studentName, setStudentName] = useState('');
   const [isNameSubmitted, setIsNameSubmitted] = useState(false);
+  
+  const [studentIp, setStudentIp] = useState<string | null>(null);
+  const [hasAttempted, setHasAttempted] = useState(false);
+  const [checkingAttemptStatus, setCheckingAttemptStatus] = useState(true); // Start true for initial check
 
   const testId = params.testId as string;
-  const isPracticeMode = searchParams.get('mode') === 'practice';
 
   useEffect(() => {
-    async function fetchTest() {
+    async function fetchInitialData() {
       if (!testId) {
-        console.error("StudentTestPage: No testId provided in URL parameters.");
         setError("Test ID is missing from the link.");
         setIsLoading(false);
+        setCheckingAttemptStatus(false);
         return;
       }
-      
-      setIsLoading(true);
-      setError(null);
-      console.log(`StudentTestPage: Attempting to load test with ID: "${testId}"`);
-      try {
-        const fetchedTest = await getTestById(testId);
-        console.log(`StudentTestPage: Fetched test data for ID "${testId}":`, fetchedTest);
 
-        if (fetchedTest && fetchedTest.published) {
-          setTestData(fetchedTest);
-          setError(null); 
-          console.log(`StudentTestPage: Test ID "${testId}" is published and loaded successfully.`);
-        } else if (fetchedTest && !fetchedTest.published) {
-          console.warn(`StudentTestPage: Test ID "${testId}" found but it is NOT PUBLISHED.`);
-          setError(`This test (ID: ${testId}) is not currently active or published. Please ask the test creator to publish it.`);
-        } else {
-          console.warn(`StudentTestPage: Test ID "${testId}" NOT FOUND in store.`);
-          setError(`Test with ID "${testId}" not found. Please check the link or contact your instructor.`);
+      setIsLoading(true);
+      setCheckingAttemptStatus(true);
+      setError(null);
+
+      try {
+        // 1. Fetch Test Data
+        const fetchedTest = await getTestById(testId);
+        if (!fetchedTest) {
+          setError(`Test with ID "${testId}" not found.`);
+          throw new Error("Test not found");
         }
-      } catch (err) {
-        console.error(`StudentTestPage: Error loading test ID "${testId}":`, err);
-        setError("An error occurred while loading the test. Please try again later.");
+        if (!fetchedTest.published) {
+          setError(`This test (ID: ${testId}) is not currently active or published.`);
+          throw new Error("Test not published");
+        }
+        setTestData(fetchedTest);
+
+        // 2. Fetch Student IP
+        const ipResponse = await fetch('/api/get-ip');
+        if (!ipResponse.ok) throw new Error('Failed to fetch IP address.');
+        const ipData = await ipResponse.json();
+        const currentIp = ipData.ip;
+        setStudentIp(currentIp);
+
+        // 3. Check for Existing Attempts from this IP for this test
+        if (currentIp) {
+          const attemptsResponse = await fetch(`/api/attempts?testId=${testId}`);
+          if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts.');
+          const existingAttempts: TestAttempt[] = await attemptsResponse.json();
+          
+          const alreadyAttempted = existingAttempts.some(attempt => attempt.ipAddress === currentIp);
+          if (alreadyAttempted) {
+            setHasAttempted(true);
+            toast({
+              title: "Already Attempted",
+              description: "You have already attempted this test from this IP address.",
+              variant: "destructive",
+              duration: 5000,
+            });
+          }
+        }
+      } catch (err: any) {
+        console.error(`StudentTestPage: Error during initial data load for test ID "${testId}":`, err);
+        setError(err.message || "An error occurred while loading the test or checking attempts.");
       } finally {
         setIsLoading(false);
+        setCheckingAttemptStatus(false);
       }
     }
-    fetchTest();
-  }, [testId]);
+    fetchInitialData();
+  }, [testId, toast]);
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,10 +109,17 @@ export default function StudentTestPage() {
     setIsNameSubmitted(true);
   };
 
-  if (isLoading) {
+  if (isLoading || checkingAttemptStatus) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 w-full max-w-4xl mx-auto">
-        <div className="w-full flex flex-col md:flex-row gap-8">
+         <svg className="animate-spin h-12 w-12 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p className="text-muted-foreground">
+          {isLoading ? "Loading test data..." : "Checking your attempt status..."}
+        </p>
+        <div className="w-full flex flex-col md:flex-row gap-8 mt-6">
             <div className="w-full md:w-1/3 space-y-4">
                 <Skeleton className="h-32 w-full" />
                 <Skeleton className="h-40 w-full" />
@@ -111,15 +146,34 @@ export default function StudentTestPage() {
     );
   }
   
-  if (!testData) {
+  if (!testData) { // Should be caught by error state, but as a fallback
      return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
          <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
         <h2 className="text-2xl font-bold text-destructive mb-2">Test Not Available</h2>
-        <p className="text-muted-foreground mb-6">The requested test (ID: {testId}) could not be loaded. It might not exist or is not published.</p>
+        <p className="text-muted-foreground mb-6">The requested test (ID: {testId}) could not be loaded.</p>
          <Button asChild variant="outline">
           <Link href="/">Go to Homepage</Link>
         </Button>
+      </div>
+    );
+  }
+
+  if (hasAttempted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <Ban className="w-16 h-16 text-destructive mb-4" />
+        <h2 className="text-2xl font-bold text-destructive mb-2">Attempt Limit Reached</h2>
+        <p className="text-muted-foreground mb-2">You have already attempted this test (ID: {testId}) from your current IP address ({studentIp || 'unknown'}).</p>
+        <p className="text-sm text-muted-foreground mb-6">Multiple attempts from the same IP are not allowed for this test.</p>
+        <div className="flex space-x-4">
+            <Button asChild variant="default">
+                <Link href={`/test/${testId}/leaderboard`}>View Leaderboard</Link>
+            </Button>
+            <Button asChild variant="outline">
+            <Link href="/">Go to Homepage</Link>
+            </Button>
+        </div>
       </div>
     );
   }
@@ -158,5 +212,16 @@ export default function StudentTestPage() {
     );
   }
   
-  return <StudentTestArea testData={testData} studentIdentifier={studentName.trim()} />;
+  if (!studentIp) { // Should ideally not happen if logic above is correct
+     return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <AlertTriangle className="w-16 h-16 text-primary mb-4" />
+        <h2 className="text-2xl font-bold text-primary mb-2">Preparing Test...</h2>
+        <p className="text-muted-foreground mb-6">Could not verify your IP address. Please refresh or try again.</p>
+         <Button onClick={() => window.location.reload()} variant="outline">Refresh Page</Button>
+      </div>
+    );
+  }
+
+  return <StudentTestArea testData={testData} studentIdentifier={studentName.trim()} studentIp={studentIp} />;
 }

@@ -26,12 +26,13 @@ import { useRouter } from 'next/navigation';
 
 interface StudentTestAreaProps {
   testData: Test;
-  studentIdentifier: string; // Student's name or ID
+  studentIdentifier: string; 
+  studentIp: string; // Added studentIp prop
 }
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
-export default function StudentTestArea({ testData, studentIdentifier }: StudentTestAreaProps) {
+export default function StudentTestArea({ testData, studentIdentifier, studentIp }: StudentTestAreaProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({}); 
   const [activityLog, setActivityLog] = useState<string[]>([]);
@@ -43,8 +44,8 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
 
   const logActivity = useCallback((action: string) => {
     const timestamp = new Date().toISOString();
-    setActivityLog(prevLog => [...prevLog, `[${timestamp}] ${action}`]);
-  }, []);
+    setActivityLog(prevLog => [...prevLog, `[${timestamp}] User: ${studentIdentifier} (IP: ${studentIp}) - ${action}`]);
+  }, [studentIdentifier, studentIp]);
 
   useEffect(() => {
     try {
@@ -62,7 +63,11 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       }
     };
 
-    const preventDefaultHandler = (e: Event) => e.preventDefault();
+    const preventDefaultHandler = (e: Event) => {
+        logActivity(`Attempted action: ${e.type}`);
+        e.preventDefault();
+        toast({ title: "Action Blocked", description: `${e.type} action is disabled during the test.`, variant: "destructive", duration: 1500 });
+    };
 
     if (testData.enableTabSwitchDetection) {
       document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -73,7 +78,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       document.addEventListener('cut', preventDefaultHandler);
     }
     
-    logActivity(`Test started by ${studentIdentifier}. Anti-cheat measures active based on test settings.`);
+    logActivity(`Test started. Anti-cheat measures active based on test settings.`);
 
     return () => {
       if (testData.enableTabSwitchDetection) document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -83,7 +88,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
         document.removeEventListener('cut', preventDefaultHandler);
       }
     };
-  }, [logActivity, testData, toast, studentIdentifier]);
+  }, [logActivity, testData, toast]);
 
   const handleAnswerChange = (questionId: string, answer: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
@@ -93,25 +98,13 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
   const handleSubmitTest = useCallback(async (autoSubmit: boolean = false) => {
     if (isSubmitting || isSubmitted) return;
     setIsSubmitting(true);
-    logActivity(autoSubmit ? "Test auto-submitted due to time up." : `Test submitted by ${studentIdentifier}.`);
+    logActivity(autoSubmit ? "Test auto-submitted due to time up." : `Test submitted.`);
     const endTime = new Date();
-
-    console.log('[StudentTestArea] handleSubmitTest: testData.questions:', JSON.stringify(testData.questions, null, 2));
-    console.log('[StudentTestArea] handleSubmitTest: testData.questions.length:', testData.questions.length);
-    console.log('[StudentTestArea] handleSubmitTest: answers state:', JSON.stringify(answers, null, 2));
-
 
     const studentAnswersForStorage: StudentAnswer[] = testData.questions.map(q => {
       const studentAnswerValue = answers[q.id];
       let isQCorrect = false;
       let pointsForQ = 0;
-
-      if (q.type === 'mcq') {
-        console.log(`[StudentTestArea] Evaluating MCQ ID: ${q.id}:`);
-        console.log(`  Stored CorrectOptionId: "${(q as MCQQuestion).correctOptionId}"`);
-        console.log(`  Student's Answer (OptionId): "${studentAnswerValue}"`);
-      }
-
 
       if (studentAnswerValue !== undefined && studentAnswerValue !== null) {
         if (q.type === 'mcq') {
@@ -125,11 +118,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       if (isQCorrect) {
         pointsForQ = q.points;
       }
-
-      if (q.type === 'mcq') {
-        console.log(`  Is Correct? ${isQCorrect}`);
-      }
-
       return {
         questionId: q.id,
         answer: studentAnswerValue,
@@ -137,8 +125,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
         pointsScored: pointsForQ,
       };
     });
-
-    console.log('[StudentTestArea] handleSubmitTest: studentAnswersForStorage:', JSON.stringify(studentAnswersForStorage, null, 2));
 
     let correctQuestionsCount = 0;
     let totalPointsAchieved = 0;
@@ -158,8 +144,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
     const scorePercentage = totalPossiblePoints > 0 ? Math.round((totalPointsAchieved / totalPossiblePoints) * 100) : 0;
     const totalQuestionsInTest = testData.questions.length; 
     const incorrectOrUnansweredQuestionsCount = totalQuestionsInTest - correctQuestionsCount;
-
-    console.log(`[StudentTestArea] CALCULATION: Total Qs in Test: ${totalQuestionsInTest}, Correct: ${correctQuestionsCount}, Incorrect/Unanswered: ${incorrectOrUnansweredQuestionsCount}, Score: ${totalPointsAchieved}/${totalPossiblePoints} (${scorePercentage}%)`);
     
     const resultsForStudentPage = {
       testId: testData.id,
@@ -173,8 +157,6 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       questions: testData.questions, 
       studentRawAnswers: answers, 
     };
-
-    console.log('[StudentTestArea] resultsForStudentPage being saved to localStorage:', JSON.stringify(resultsForStudentPage, null, 2));
 
     try {
       localStorage.setItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`, JSON.stringify(resultsForStudentPage));
@@ -196,6 +178,7 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       activityLog: activityLog.join('\n'),
       isSuspicious: false, 
       suspiciousReason: "", 
+      ipAddress: studentIp, // Include studentIp
     };
 
     const proctorInput: AnalyzeStudentBehaviorInput = {
@@ -215,8 +198,8 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
       console.error("AI Proctoring Error:", proctorError);
       logActivity(`AI Proctoring failed: ${(proctorError as Error).message}`);
       toast({ title: "AI Proctoring Issue", description: "Could not analyze behavior, but test will still be submitted.", variant: "destructive", duration: 2000 });
-      attemptDataForApi.isSuspicious = false;
-      attemptDataForApi.suspiciousReason = "Proctoring analysis failed.";
+      attemptDataForApi.isSuspicious = false; // Default to false on proctoring error
+      attemptDataForApi.suspiciousReason = `Proctoring analysis failed: ${(proctorError as Error).message}`;
     }
 
     try {
@@ -247,10 +230,11 @@ export default function StudentTestArea({ testData, studentIdentifier }: Student
         variant: "destructive",
         duration: 3000,
       });
+      // Still allow user to see their results locally if API submission fails
       setIsSubmitted(true); 
       setTimeout(() => router.push(`/test/${testData.id}/results`), 3500); 
     }
-  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity, studentIdentifier, startTimeRef]);
+  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity, studentIdentifier, studentIp, startTimeRef]);
 
   if (isSubmitted) {
     return (

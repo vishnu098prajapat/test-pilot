@@ -5,7 +5,7 @@ export interface User {
   displayName: string; // Used as "Name" for login
   dob: string; // Date of Birth, e.g., "YYYY-MM-DD"
   role: 'teacher' | 'student';
-  profileImageUrl?: string; // Optional: For future image functionality
+  profileImageUrl?: string; 
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false';
@@ -30,7 +30,7 @@ export interface MCQQuestion extends BaseQuestion {
 
 export interface ShortAnswerQuestion extends BaseQuestion {
   type: 'short-answer';
-  correctAnswer: string; // Could be an array for multiple accepted answers
+  correctAnswer: string; 
 }
 
 export interface TrueFalseQuestion extends BaseQuestion {
@@ -46,7 +46,7 @@ export interface Test {
   subject: string;
   duration: number; // in minutes
   questions: Question[];
-  teacherId: string; // ID of the teacher who created the test
+  teacherId: string; 
   createdAt: Date;
   updatedAt: Date;
   published: boolean;
@@ -60,24 +60,25 @@ export interface Test {
 
 export interface StudentAnswer {
   questionId: string;
-  answer: any; // string for short answer, optionId for MCQ, boolean for T/F
-  isCorrect?: boolean; // Optional: can be calculated or stored
-  pointsScored?: number; // Optional: points for this specific answer
+  answer: any; 
+  isCorrect?: boolean; 
+  pointsScored?: number; 
 }
 
 export interface TestAttempt {
-  id: string; // Unique ID for this attempt
+  id: string; 
   testId: string;
-  testTitle: string; // Denormalized for easier leaderboard display
-  studentIdentifier: string; // Student's name or other ID
+  testTitle: string; 
+  studentIdentifier: string; 
   startTime: string; // ISO string
   endTime: string; // ISO string
   answers: StudentAnswer[];
-  score: number; // Total points scored
+  score: number; 
   maxPossiblePoints: number;
   scorePercentage: number;
-  activityLog?: string; // For AI proctoring
+  activityLog?: string; 
   isSuspicious?: boolean;
   suspiciousReason?: string;
   submittedAt: string; // ISO string for when the attempt was recorded
+  ipAddress?: string; // Added IP address
 }

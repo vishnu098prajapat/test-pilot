@@ -37,24 +37,25 @@ function writeAttemptsDb(data: TestAttempt[]): boolean {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      const newAttempt: Omit<TestAttempt, 'id' | 'submittedAt'> = req.body;
+      const newAttemptData: Omit<TestAttempt, 'id' | 'submittedAt'> = req.body;
 
-      if (!newAttempt.testId || !newAttempt.studentIdentifier || !newAttempt.answers) {
+      if (!newAttemptData.testId || !newAttemptData.studentIdentifier || !newAttemptData.answers) {
         return res.status(400).json({ error: 'Invalid attempt data. Missing required fields.' });
       }
 
-      const attemptWithId: TestAttempt = {
-        ...newAttempt,
+      const attemptWithDetails: TestAttempt = {
+        ...newAttemptData,
         id: `attempt-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         submittedAt: new Date().toISOString(),
+        ipAddress: newAttemptData.ipAddress, // Ensure ipAddress is included
       };
 
       const allAttempts = readAttemptsDb();
-      allAttempts.push(attemptWithId);
+      allAttempts.push(attemptWithDetails);
       const success = writeAttemptsDb(allAttempts);
 
       if (success) {
-        res.status(201).json({ message: 'Attempt recorded successfully', attemptId: attemptWithId.id });
+        res.status(201).json({ message: 'Attempt recorded successfully', attemptId: attemptWithDetails.id });
       } else {
         res.status(500).json({ error: 'Failed to write attempt to database' });
       }
@@ -64,16 +65,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   } else if (req.method === 'GET') {
     try {
-      const { testId } = req.query;
-      const allAttempts = readAttemptsDb();
+      const { testId, ipAddress } = req.query;
+      let allAttempts = readAttemptsDb();
 
       if (testId && typeof testId === 'string') {
-        const filteredAttempts = allAttempts.filter(attempt => attempt.testId === testId);
-        res.status(200).json(filteredAttempts);
-      } else {
-        // If no testId, return all attempts
-        res.status(200).json(allAttempts);
+        allAttempts = allAttempts.filter(attempt => attempt.testId === testId);
       }
+      
+      // New filter for specific IP check if provided
+      if (ipAddress && typeof ipAddress === 'string') {
+        allAttempts = allAttempts.filter(attempt => attempt.ipAddress === ipAddress);
+      }
+
+      res.status(200).json(allAttempts);
     } catch (error) {
       console.error('[API-ATTEMPTS-DB] Failed to read data on GET:', error);
       res.status(500).json({ error: 'Failed to read attempts data' });
