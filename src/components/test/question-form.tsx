@@ -21,10 +21,9 @@ interface QuestionFormProps {
 }
 
 export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFormProps) {
-  const { register, control, watch, setValue } = form;
+  const { register, control, watch, setValue, formState: { errors } } = form;
   const questionType = watch(`questions.${questionIndex}.type`);
-  
-  const questionIdFromWatch = watch(`questions.${questionIndex}.id`);
+  const questionId = watch(`questions.${questionIndex}.id`); // Use watched ID for dynamic parts
 
   const {
     fields: mcqOptionFields,
@@ -40,18 +39,42 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     
     const existingOptions = watch(`questions.${questionIndex}.options`);
     const existingCorrectAnswer = watch(`questions.${questionIndex}.correctAnswer`);
+    const existingCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
 
     if (type === 'mcq') {
       if (questionType !== 'mcq' || !existingOptions || existingOptions.length === 0) {
-        setValue(`questions.${questionIndex}.options`, [{ id: `opt-${Date.now()}`, text: "" }, { id: `opt-${Date.now()+1}`, text: "" }]);
-        setValue(`questions.${questionIndex}.correctOptionId`, null);
+        // If switching to MCQ or options are empty, set default options
+        const defaultOpts = [
+          { id: `opt-${questionId}-${Date.now()}`, text: "" },
+          { id: `opt-${questionId}-${Date.now()+1}`, text: "" }
+        ];
+        setValue(`questions.${questionIndex}.options`, defaultOpts);
+        // Try to set correctOptionId if a correctAnswer text was present and matches new default (unlikely)
+        // Or set to null if no match / no pre-existing correct answer
+        const matchedOption = defaultOpts.find(opt => opt.text.toLowerCase() === String(existingCorrectAnswer).toLowerCase());
+        setValue(`questions.${questionIndex}.correctOptionId`, matchedOption ? matchedOption.id : null);
+      } else {
+        // If already MCQ, retain existing options and try to match correctOptionId
+        // This path implies options already exist. We just ensure correctOptionId is handled.
+        // If there was a correct answer text, ensure correctOptionId is based on it, otherwise keep existing correctOptionId
+        if(typeof existingCorrectAnswer === 'string' && existingCorrectAnswer.length > 0 && existingOptions.length > 0){
+            const matchedOption = existingOptions.find(opt => opt.text.toLowerCase() === existingCorrectAnswer.toLowerCase());
+            setValue(`questions.${questionIndex}.correctOptionId`, matchedOption ? matchedOption.id : existingCorrectOptionId || null);
+        } else {
+            // If no correctAnswer text, keep current correctOptionId or set to null
+            setValue(`questions.${questionIndex}.correctOptionId`, existingCorrectOptionId || null);
+        }
+
       }
-       setValue(`questions.${questionIndex}.correctAnswer`, undefined); 
+      // Clear correctAnswer text field as it's not directly used for MCQ submission logic
+      setValue(`questions.${questionIndex}.correctAnswer`, undefined); 
     } else if (type === 'short-answer') {
+      // If switching to short-answer, use existing correctAnswer text if string, else empty
       setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'string' ? existingCorrectAnswer : "");
       setValue(`questions.${questionIndex}.options`, []); 
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     } else if (type === 'true-false') {
+      // If switching to true-false, use existing correctAnswer boolean if bool, else true
       setValue(`questions.${questionIndex}.correctAnswer`, typeof existingCorrectAnswer === 'boolean' ? existingCorrectAnswer : true);
       setValue(`questions.${questionIndex}.options`, []);
       setValue(`questions.${questionIndex}.correctOptionId`, null);
@@ -59,7 +82,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   };
 
   const addOption = () => {
-    appendMcqOption({ id: `opt-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "" });
+    appendMcqOption({ id: `opt-${questionId}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "" });
   };
 
   const removeOption = (optionIndex: number) => {
@@ -113,43 +136,51 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
             {...register(`questions.${questionIndex}.text`)}
             className="min-h-[80px]"
           />
-           {form.formState.errors?.questions?.[questionIndex]?.text && (
-            <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.text?.message}</p>
+           {errors?.questions?.[questionIndex]?.text && (
+            <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.text?.message}</p>
           )}
         </div>
         
         {questionType === "mcq" && (
           <div className="space-y-3">
             <Label>Options & Correct Answer</Label>
-            {mcqOptionFields.map((optionField, optionIdx) => (
-              <div key={optionField.id} className="flex items-center gap-2">
-                <RadioGroup
-                    value={watch(`questions.${questionIndex}.correctOptionId`) || ""}
-                    onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
-                    className="flex items-center"
-                >
-                    <RadioGroupItem value={optionField.id} id={`${questionIdFromWatch}-opt-${optionField.id}-correct`} />
-                </RadioGroup>
-                <Label htmlFor={`${questionIdFromWatch}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
-                <Input
-                  placeholder={`Option ${optionIdx + 1}`}
-                  {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                  defaultValue={optionField.text} 
-                  className="flex-grow"
-                />
-                {mcqOptionFields.length > 2 && ( 
-                   <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                  </Button>
-                )}
-              </div>
-            ))}
-            {form.formState.errors?.questions?.[questionIndex]?.options && (
-                <p className="text-sm text-destructive mt-1">Each option text is required. At least two options are needed.</p>
+            <RadioGroup
+                value={watch(`questions.${questionIndex}.correctOptionId`) || ""}
+                onValueChange={(value) => setValue(`questions.${questionIndex}.correctOptionId`, value)}
+            >
+                {mcqOptionFields.map((optionField, optionIdx) => (
+                <div key={optionField.id} className="flex items-center gap-2">
+                    <RadioGroupItem value={optionField.id} id={`${questionId}-opt-${optionField.id}-correct`} />
+                    <Label htmlFor={`${questionId}-opt-${optionField.id}-correct`} className="sr-only">Mark option {optionIdx + 1} as correct</Label>
+                    <Input
+                    placeholder={`Option ${optionIdx + 1}`}
+                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                    className="flex-grow"
+                    />
+                    {mcqOptionFields.length > 2 && ( 
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                    </Button>
+                    )}
+                </div>
+                ))}
+            </RadioGroup>
+            {errors?.questions?.[questionIndex]?.options?.root?.message && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.root?.message}</p>
             )}
-            {form.formState.errors?.questions?.[questionIndex]?.correctOptionId && (
-                <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctOptionId?.message}</p>
+            {errors?.questions?.[questionIndex]?.options?.message && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.message}</p>
             )}
+             {mcqOptionFields.forEach((_, optIdx) => {
+                if (errors?.questions?.[questionIndex]?.options?.[optIdx]?.text) {
+                    return <p key={`err-${optIdx}`} className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.options?.[optIdx]?.text?.message}</p>;
+                }
+                return null;
+            })}
+            {errors?.questions?.[questionIndex]?.correctOptionId && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
+            )}
+
             {mcqOptionFields.length < 4 && ( 
               <Button type="button" variant="outline" size="sm" onClick={addOption}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Option
@@ -166,8 +197,8 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               placeholder="Enter the correct answer"
               {...register(`questions.${questionIndex}.correctAnswer`)}
             />
-            {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
-                <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctAnswer?.message}</p>
+            {errors?.questions?.[questionIndex]?.correctAnswer && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctAnswer?.message}</p>
             )}
           </div>
         )}
@@ -183,16 +214,16 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
               className="flex space-x-4 mt-2"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="true" id={`${questionIdFromWatch}-true`} />
-                <Label htmlFor={`${questionIdFromWatch}-true`}>True</Label>
+                <RadioGroupItem value="true" id={`${questionId}-true`} />
+                <Label htmlFor={`${questionId}-true`}>True</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="false" id={`${questionIdFromWatch}-false`} />
-                <Label htmlFor={`${questionIdFromWatch}-false`}>False</Label>
+                <RadioGroupItem value="false" id={`${questionId}-false`} />
+                <Label htmlFor={`${questionId}-false`}>False</Label>
               </div>
             </RadioGroup>
-             {form.formState.errors?.questions?.[questionIndex]?.correctAnswer && (
-                <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.correctAnswer?.message}</p>
+             {errors?.questions?.[questionIndex]?.correctAnswer && (
+                <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctAnswer?.message}</p>
             )}
           </div>
         )}
@@ -206,12 +237,11 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
             placeholder="e.g., 10"
             {...register(`questions.${questionIndex}.points`, { valueAsNumber: true })}
           />
-           {form.formState.errors?.questions?.[questionIndex]?.points && (
-            <p className="text-sm text-destructive mt-1">{form.formState.errors.questions[questionIndex]?.points?.message}</p>
+           {errors?.questions?.[questionIndex]?.points && (
+            <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.points?.message}</p>
           )}
         </div>
       </CardContent>
     </Card>
   );
 }
-
