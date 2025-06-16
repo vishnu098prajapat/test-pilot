@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email?: string; 
@@ -26,6 +27,7 @@ export interface MCQQuestion extends BaseQuestion {
   options: Option[];
   correctOptionId: string | null; 
   correctAnswer?: string; // AI's original text answer, for initial matching and reference
+  isAiPreselected?: boolean; // Flag to indicate if AI pre-selected an answer
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -103,4 +105,3 @@ export interface TestAttempt {
   submittedAt: string; 
   ipAddress?: string; 
 }
-

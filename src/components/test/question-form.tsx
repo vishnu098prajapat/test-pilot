@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react"; // Added useState
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,8 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
   const questionId = question.id;
   
   const currentCorrectOptionId = watch(`questions.${questionIndex}.correctOptionId`);
+  const isAiPreselectedMcq = questionType === 'mcq' && (question as MCQQuestion).isAiPreselected === true && (question as MCQQuestion).correctOptionId !== null;
+
 
   const {
     fields: mcqOptionFields,
@@ -44,6 +46,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
 
     setValue(`questions.${questionIndex}.type`, type);
     setValue(`questions.${questionIndex}.id`, newId);
+    setValue(`questions.${questionIndex}.isAiPreselected`, false); // Reset AI preselection on type change
 
     if (type === 'mcq') {
       const existingOptions = (currentQuestionData as MCQQuestion).options;
@@ -54,20 +57,10 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         text: existingOptions?.[i]?.text || ""
       }));
       
-      const aiTextAnswer = (currentQuestionData as MCQQuestion).correctAnswer; 
-      if (aiTextAnswer) {
-        const matchedOption = newOptions.find(opt => opt.text.trim().toLowerCase() === aiTextAnswer.trim().toLowerCase());
-        if (matchedOption) {
-          newCorrectOptionId = matchedOption.id;
-        }
-      }
-      
       setValue(`questions.${questionIndex}.options`, newOptions);
       setValue(`questions.${questionIndex}.correctOptionId`, newCorrectOptionId);
-      // Make sure correctAnswer (text) is also reset or handled for non-AI generated MCQs
-      if (!(currentQuestionData as MCQQuestion).correctAnswer) {
-        setValue(`questions.${questionIndex}.correctAnswer`, undefined);
-      }
+      setValue(`questions.${questionIndex}.correctAnswer`, undefined);
+
 
     } else if (type === 'short-answer') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as ShortAnswerQuestion).correctAnswer === 'string' ? (currentQuestionData as ShortAnswerQuestion).correctAnswer : "");
@@ -75,7 +68,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     } else if (type === 'true-false') {
       setValue(`questions.${questionIndex}.correctAnswer`, typeof (currentQuestionData as TrueFalseQuestion).correctAnswer === 'boolean' ? (currentQuestionData as TrueFalseQuestion).correctAnswer : true);
-      setValue(`questions.${questionIndex}.options`, undefined);
+      setValue(`questions.${questionIndex}.options`, undefined); 
       setValue(`questions.${questionIndex}.correctOptionId`, null);
     }
   };
@@ -141,31 +134,69 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
         
         {questionType === "mcq" && (
           <div className="space-y-3">
-            <Label>Options & Correct Answer Selection</Label>
-            {mcqOptionFields.map((optionField, optionIdx) => (
-              <div key={optionField.id} className="flex items-center gap-2">
-                <Input
-                  placeholder={`Option ${optionIdx + 1}`}
-                  {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                  className={cn(
-                    "w-full h-auto p-2 bg-background text-foreground placeholder:text-muted-foreground", 
-                    optionField.id === currentCorrectOptionId 
-                      ? "border-primary ring-2 ring-primary" // Purple border for correct option
-                      : "border-input"
+            <Label>Options</Label> {/* Removed "Click option text to mark..." */}
+            {isAiPreselectedMcq ? (
+              // AI Preselected: No radio buttons, correct option border is primary. Non-interactive for selection.
+              mcqOptionFields.map((optionField, optionIdx) => (
+                <div key={optionField.id} className="flex items-center gap-2">
+                  <Input
+                    placeholder={`Option ${optionIdx + 1}`}
+                    {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                    className={cn(
+                      "w-full bg-background", // Standard background
+                      optionField.id === currentCorrectOptionId
+                        ? "border-primary ring-2 ring-primary" // Primary border for AI correct option
+                        : "border-input"
+                    )}
+                    readOnly={false} // Text is always editable
+                  />
+                  {mcqOptionFields.length > 2 && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                      <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                    </Button>
                   )}
-                  onClick={() => {
-                    setValue(`questions.${questionIndex}.correctOptionId`, optionField.id, { shouldValidate: true });
-                  }}
-                />
-                {mcqOptionFields.length > 2 && (
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                  </Button>
-                )}
-              </div>
-            ))}
+                </div>
+              ))
+            ) : (
+              // Manual or AI failed: Show RadioGroup for teacher selection
+              <RadioGroup
+                value={currentCorrectOptionId || ""}
+                onValueChange={(value) => {
+                  setValue(`questions.${questionIndex}.correctOptionId`, value, { shouldValidate: true });
+                }}
+                className="space-y-2"
+              >
+                {mcqOptionFields.map((optionField, optionIdx) => (
+                  <div key={optionField.id} className="flex items-center gap-2">
+                    <RadioGroupItem
+                      value={optionField.id}
+                      id={`${questionId}-opt-${optionField.id}`}
+                      className="shrink-0"
+                    />
+                    <Label htmlFor={`${questionId}-opt-${optionField.id}`} className="flex-grow cursor-pointer">
+                      <Input
+                        placeholder={`Option ${optionIdx + 1}`}
+                        {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                        className={cn(
+                          "w-full bg-background",
+                          optionField.id === currentCorrectOptionId
+                            ? "border-primary ring-2 ring-primary" // Primary border for selected correct option
+                            : "border-input"
+                        )}
+                      />
+                    </Label>
+                    {mcqOptionFields.length > 2 && (
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </RadioGroup>
+            )}
             
-            {errors?.questions?.[questionIndex]?.correctOptionId && (
+            {/* Error messages and Add Option button remain similar */}
+            {errors?.questions?.[questionIndex]?.correctOptionId && !isAiPreselectedMcq && ( // Show only if not AI preselected and error exists
                 <p className="text-sm text-destructive mt-1">{errors.questions[questionIndex]?.correctOptionId?.message}</p>
             )}
              {errors?.questions?.[questionIndex]?.options && typeof errors.questions[questionIndex].options === 'object' && 'root' in errors.questions[questionIndex].options && errors.questions[questionIndex].options.root?.message && (
@@ -247,4 +278,3 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
     </Card>
   );
 }
-

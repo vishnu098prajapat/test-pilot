@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -138,13 +139,15 @@ export default function AIGenerateTestPage() {
         }));
         
         let matchedCorrectOptionId: string | null = null;
-        const aiCorrectAnswerText = (aiQ as MCQQuestion).correctAnswer; // Store AI's textual answer
+        let isAiPreselectedForThisQ = false;
+        const aiCorrectAnswerText = (aiQ as MCQQuestion).correctAnswer; 
 
         if (aiCorrectAnswerText && options.length > 0) {
             const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
             const matchedOption = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
             if (matchedOption) {
               matchedCorrectOptionId = matchedOption.id;
+              isAiPreselectedForThisQ = true; 
             }
         }
 
@@ -153,7 +156,8 @@ export default function AIGenerateTestPage() {
           type: 'mcq',
           options,
           correctOptionId: matchedCorrectOptionId,
-          correctAnswer: aiCorrectAnswerText, // Keep AI's original text answer for reference in QuestionForm
+          correctAnswer: aiCorrectAnswerText, 
+          isAiPreselected: isAiPreselectedForThisQ,
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -170,11 +174,11 @@ export default function AIGenerateTestPage() {
       } else if (aiQ.type === 'drag-and-drop') {
          const draggableItems: DraggableItem[] = ((aiQ as DragDropQuestion).draggableItems || []).map((itemText, i) => ({
           id: `ditem-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          text: typeof itemText === 'string' ? itemText : (itemText as any).text || "Draggable", // Handle potential object vs string
+          text: typeof itemText === 'string' ? itemText : (itemText as any).text || "Draggable", 
         }));
         const dropTargets: DropTarget[] = ((aiQ as DragDropQuestion).dropTargets || []).map((targetLabel, i) => ({
           id: `dtarget-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          label: typeof targetLabel === 'string' ? targetLabel : (targetLabel as any).label || "Target", // Handle potential object vs string
+          label: typeof targetLabel === 'string' ? targetLabel : (targetLabel as any).label || "Target", 
         }));
 
         const correctMappings: CorrectMapping[] = ((aiQ as DragDropQuestion).correctMappings || []).map(mapping => {
@@ -388,7 +392,7 @@ export default function AIGenerateTestPage() {
                 <p className="font-semibold">{index + 1}. ({q.type.toUpperCase()}) {q.text}</p>
                 {q.type === 'mcq' && (q as MCQQuestion).options && (
                   <ul className="list-disc pl-5 mt-1 text-sm">
-                    {(q as MCQQuestion).options.map((optText, optIndex) => ( // optText directly used
+                    {(q as MCQQuestion).options.map((optText, optIndex) => ( 
                       <li key={optIndex} className={normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? 'text-green-600 font-medium' : ''}>
                         {optText} {normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? '(Correct)' : ''}
                       </li>
@@ -425,4 +429,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-
