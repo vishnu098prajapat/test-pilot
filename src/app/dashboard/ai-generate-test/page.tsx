@@ -137,7 +137,8 @@ export default function AIGenerateTestPage() {
           text: optText,
         }));
         
-        let matchedCorrectOptionId = null;
+        let matchedCorrectOptionId: string | null = null;
+        let isAiPreselected = false;
         const aiCorrectAnswerText = aiQ.correctAnswer; 
 
         if (aiCorrectAnswerText && options.length > 0) {
@@ -145,6 +146,7 @@ export default function AIGenerateTestPage() {
             const matchedOption = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
             if (matchedOption) {
               matchedCorrectOptionId = matchedOption.id;
+              isAiPreselected = true;
             }
         }
 
@@ -152,8 +154,9 @@ export default function AIGenerateTestPage() {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: matchedCorrectOptionId, 
-          correctAnswer: aiCorrectAnswerText, // Store AI's original text answer for reference in QuestionForm
+          correctOptionId: matchedCorrectOptionId,
+          correctAnswer: aiCorrectAnswerText, // Store AI's original text answer
+          isAiPreselected: isAiPreselected, // Flag for QuestionForm behavior
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -195,7 +198,6 @@ export default function AIGenerateTestPage() {
           correctMappings
         } as DragDropQuestion;
       }
-      // Fallback for unknown types, though Zod schema should prevent this
       return baseQuestion as TestBuilderQuestion;
     });
   };
