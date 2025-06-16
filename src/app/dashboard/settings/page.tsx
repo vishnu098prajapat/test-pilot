@@ -8,9 +8,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; // Not directly used, FormLabel is from form component
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Settings, UserCircle, CalendarDays, ShieldAlert, Edit, Camera, Loader2 } from "lucide-react";
+import { Settings, ShieldAlert, Edit, Camera, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,7 +18,7 @@ import Image from "next/image";
 const settingsSchema = z.object({
   displayName: z.string().min(1, "Name is required."),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date of Birth must be in YYYY-MM-DD format."),
-  profileImageFile: z.any().optional(), // For storing the File object from input
+  profileImageFile: z.any().optional(), 
 });
 
 type SettingsFormValues = z.infer<typeof settingsSchema>;
@@ -28,7 +27,7 @@ export default function SettingsPage() {
   const { user, isLoading: isAuthLoading, updateUserProfileData } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null); // Stores base64 for preview
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsSchema),
@@ -44,9 +43,9 @@ export default function SettingsPage() {
       form.reset({
         displayName: user.displayName,
         dob: user.dob,
-        profileImageFile: null, // Reset file input on user change
+        profileImageFile: null, 
       });
-      setPreviewImage(user.profileImageUrl || null); // Set preview from existing URL if available
+      setPreviewImage(user.profileImageUrl || null);
     }
   }, [user, form]);
 
@@ -67,13 +66,13 @@ export default function SettingsPage() {
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string); // This is base64 for preview
-        form.setValue("profileImageFile", file); // Store the File object in form
+        setPreviewImage(reader.result as string);
+        form.setValue("profileImageFile", file); 
       };
       reader.readAsDataURL(file);
     } else {
         form.setValue("profileImageFile", null);
-        setPreviewImage(user?.profileImageUrl || null); // Revert if no file selected
+        setPreviewImage(user?.profileImageUrl || null); 
     }
   };
 
@@ -93,11 +92,16 @@ export default function SettingsPage() {
       changed = true;
     }
     
-    // If a new file was selected and previewImage (base64) is set
     if (data.profileImageFile && previewImage && previewImage !== user.profileImageUrl) { 
-      updates.profileImageUrl = previewImage; // Pass base64 string for mock storage
+      updates.profileImageUrl = previewImage; 
       changed = true;
-       console.log("New profile image (base64) prepared for mock saving:", previewImage.substring(0,50) + "...");
+      console.log("New profile image (base64) prepared for mock saving:", previewImage.substring(0,50) + "...");
+    } else if (!data.profileImageFile && !previewImage && user.profileImageUrl) {
+      // This logic is if user wants to REMOVE existing image
+      // For now, we don't have a "remove image" button, so this case isn't directly hit
+      // If we wanted to allow removal, we'd set updates.profileImageUrl = "" or null.
+      // updates.profileImageUrl = ""; // Example for removal
+      // changed = true;
     }
 
 
@@ -109,15 +113,15 @@ export default function SettingsPage() {
     
     try {
       const result = await updateUserProfileData(updates);
-      if (result.success) {
+      if (result.success && result.user) {
         toast({ title: "Profile Updated", description: "Your profile has been successfully updated.", duration: 2000 });
-        if (data.profileImageFile && result.user?.profileImageUrl) {
-           // UI already updated via `setUser` in `useAuth`, which gets `result.user`
-        } else if (!data.profileImageFile && updates.profileImageUrl === undefined && user.profileImageUrl) {
-            // This case might be if we decide to allow "removing" image, setting it to null
-            // For now, if no new image is selected, existing profileImageUrl is preserved unless explicitly cleared
-        }
-         form.setValue("profileImageFile", null); // Clear file input after successful save
+        // Update form defaults and preview again to reflect saved state
+        form.reset({ 
+          displayName: result.user.displayName, 
+          dob: result.user.dob, 
+          profileImageFile: null 
+        });
+        setPreviewImage(result.user.profileImageUrl || null);
       } else {
         toast({ title: "Update Failed", description: result.message || "Could not update profile.", variant: "destructive", duration: 2000 });
       }
@@ -171,7 +175,7 @@ export default function SettingsPage() {
             <CardHeader className="items-center text-center">
               <div className="relative group w-24 h-24 md:w-32 md:h-32 mx-auto mb-4">
                 <Image
-                  src={previewImage || "https://placehold.co/128x128.png"} 
+                  src={previewImage || user.profileImageUrl || "https://placehold.co/128x128.png"} 
                   alt={user.displayName || "User"}
                   width={128}
                   height={128}
@@ -189,15 +193,20 @@ export default function SettingsPage() {
                <FormField
                   control={form.control}
                   name="profileImageFile"
-                  render={({ field }) => ( 
+                  render={({ field: { onChange, onBlur, name, ref }}) => ( // Destructure to avoid passing `value` to file input
                     <FormItem className="hidden">
                       <FormControl>
                         <Input
                           id="profileImageFile"
                           type="file"
                           accept=".png, .jpg, .jpeg"
-                          onChange={handleImageChange} 
-                          ref={field.ref} 
+                          onChange={(e) => {
+                            onChange(e.target.files ? e.target.files[0] : null); // Pass File object or null
+                            handleImageChange(e); // Handle preview separately
+                          }}
+                          onBlur={onBlur}
+                          name={name}
+                          ref={ref}
                         />
                       </FormControl>
                       <FormMessage />
@@ -241,7 +250,7 @@ export default function SettingsPage() {
                 )}
               />
               <p className="text-xs text-muted-foreground">
-                Note: Email and Role cannot be changed. Profile image changes are saved as data URIs in this mock version and may increase local data size.
+                Note: Email and Role cannot be changed. Profile image changes are saved as base64 data URIs in this mock version, which can increase local data size significantly. This is for demonstration purposes only.
               </p>
             </CardContent>
             <CardFooter className="flex justify-end">
@@ -256,4 +265,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
