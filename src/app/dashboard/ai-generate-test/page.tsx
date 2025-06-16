@@ -78,8 +78,6 @@ export default function AIGenerateTestPage() {
 
   const handleAddTopicSuggestion = (suggestion: string) => {
     const currentTopics = form.getValues("topics");
-    // The 'topics' field in the form is a string, which is then transformed to string[] by Zod.
-    // So, we need to manipulate it as a string here.
     const currentTopicsString = Array.isArray(currentTopics) ? (currentTopics as string[]).join(", ") : (currentTopics || "");
     
     let newTopicsString;
@@ -89,8 +87,6 @@ export default function AIGenerateTestPage() {
       newTopicsString = `${currentTopicsString}, ${suggestion}`;
     }
     form.setValue("topics", newTopicsString, { shouldValidate: true });
-    // Optionally, clear suggestions after one is picked or let user pick multiple
-    // setTopicSuggestions(prev => prev.filter(s => s !== suggestion)); 
   };
 
   const onSubmit = async (data: AIGenerateTestFormValues) => {
@@ -147,15 +143,12 @@ export default function AIGenerateTestPage() {
             correctOptionFound = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
         }
 
-        if (!correctOptionFound && aiQ.correctAnswer) {
-          console.warn(`AI Warning (Q: "${aiQ.text}"): AI-provided correctAnswer "${aiQ.correctAnswer}" (normalized: "${normalizeText(aiQ.correctAnswer)}") did not robustly match any of its provided option texts (normalized options: ${JSON.stringify(options.map(o => normalizeText(o.text)))}). CorrectOptionId will be null. User must select manually.`);
-        }
-
         return {
           ...baseQuestion,
           type: 'mcq',
           options,
-          correctOptionId: correctOptionFound ? correctOptionFound.id : null,
+          correctOptionId: correctOptionFound ? correctOptionFound.id : null, // Set to null if no match
+          correctAnswer: aiQ.correctAnswer, // Keep AI's text for reference, though not directly used by form for ID
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -178,12 +171,19 @@ export default function AIGenerateTestPage() {
     
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
     
-    const aiGeneratedTitle = `Test on ${generationParams.subject}`;
+    const aiGeneratedTitle = `AI Gen (${generationParams.difficulty}) ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
     
     const dataToStore = {
       title: aiGeneratedTitle,
       subject: generationParams.subject,
       questions: testBuilderQuestions,
+      // Include other relevant test settings from generationParams if needed
+      duration: 30, // Default or make this part of AI generation form
+      attemptsAllowed: 1,
+      randomizeQuestions: false,
+      enableTabSwitchDetection: true,
+      enableCopyPasteDisable: true,
+      published: false, // Default to draft
     };
 
     try {
@@ -378,3 +378,4 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
+

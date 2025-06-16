@@ -44,6 +44,7 @@ const mcqQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("mcq"),
   options: z.array(optionSchema).min(2, "MCQ must have at least 2 options"),
   correctOptionId: z.string().nullable().refine(val => val !== null, "Correct option must be selected for MCQ"),
+  correctAnswer: z.string().optional(), // To hold AI's text answer for potential pre-selection
 });
 
 const shortAnswerQuestionSchema = baseQuestionSchema.extend({
@@ -83,7 +84,7 @@ const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 const defaultQuestionValues = (type: Question['type']): Question => {
   const base = { id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "", points: 10 };
   if (type === 'mcq') {
-    return { ...base, type, options: [{id: `opt-${Date.now()}`, text: ""}, {id: `opt-${Date.now()+1}`, text: ""}], correctOptionId: null } as MCQQuestion;
+    return { ...base, type, options: [{id: `opt-${Date.now()}`, text: ""}, {id: `opt-${Date.now()+1}`, text: ""}], correctOptionId: null, correctAnswer: undefined } as MCQQuestion;
   }
   if (type === 'short-answer') {
     return { ...base, type, correctAnswer: "" } as ShortAnswerQuestion;
@@ -132,7 +133,14 @@ export default function TestBuilderForm() {
           if (aiData.questions && aiData.questions.length > 0) {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
-            replaceQuestions(aiData.questions); 
+            // Ensure AI-generated MCQs have correctAnswer field for QuestionForm to use
+            const processedAiQuestions = aiData.questions.map(q => {
+              if (q.type === 'mcq') {
+                return { ...q, correctAnswer: (q as MCQQuestion).correctAnswer || undefined };
+              }
+              return q;
+            });
+            replaceQuestions(processedAiQuestions); 
             toast({ title: "AI Data Loaded", description: "AI-generated questions, title, and subject have been added to the form.", duration: 2000});
           } else {
             toast({ title: "AI Data Issue", description: "AI data found but no questions were present.", variant: "destructive", duration: 2000});
@@ -153,15 +161,27 @@ export default function TestBuilderForm() {
       getTestById(editId)
         .then(testData => {
           if (testData && testData.teacherId === user?.id) {
-            const questionsWithStrIds = testData.questions.map(q => {
-              if (q.type === 'mcq' && q.options) {
-                return { ...q, options: q.options.map(opt => ({ ...opt, id: String(opt.id) })), id: String(q.id) };
+            const questionsWithProcessedIds = testData.questions.map(q => {
+              const baseQ = { ...q, id: String(q.id), text: q.text || "", points: q.points || 10 };
+              if (baseQ.type === 'mcq') {
+                return {
+                  ...baseQ,
+                  options: (baseQ.options || []).map(opt => ({ ...opt, id: String(opt.id), text: opt.text || "" })),
+                  correctOptionId: baseQ.correctOptionId || null,
+                  correctAnswer: baseQ.correctAnswer || undefined, // For AI potentially
+                } as MCQQuestion;
               }
-              return { ...q, id: String(q.id) };
+              if(baseQ.type === 'short-answer') {
+                return { ...baseQ, correctAnswer: baseQ.correctAnswer || "" } as ShortAnswerQuestion;
+              }
+              if(baseQ.type === 'true-false') {
+                 return { ...baseQ, correctAnswer: typeof baseQ.correctAnswer === 'boolean' ? baseQ.correctAnswer : true } as TrueFalseQuestion;
+              }
+              return baseQ as Question; // Fallback, should not happen with current types
             });
             form.reset({
               ...testData,
-              questions: questionsWithStrIds as Question[], 
+              questions: questionsWithProcessedIds, 
             });
           } else if (testData) {
             toast({ title: "Unauthorized", description: "You are not authorized to edit this test.", variant: "destructive", duration: 2000 });
@@ -184,16 +204,26 @@ export default function TestBuilderForm() {
     }
     setIsSubmitting(true);
 
-    console.log("[TestBuilderForm] Data being submitted:", JSON.stringify(data, null, 2));
-    data.questions.forEach((q, idx) => {
+    // Clean up: remove correctAnswer text field from MCQs as it's not part of the final Test structure for MCQs
+    const cleanedQuestions = data.questions.map(q => {
+      if (q.type === 'mcq') {
+        const { correctAnswer, ...mcqWithoutTextAnswer } = q;
+        return mcqWithoutTextAnswer;
+      }
+      return q;
+    });
+
+    const finalData = { ...data, questions: cleanedQuestions };
+
+
+    console.log("[TestBuilderForm] Final data for API:", JSON.stringify(finalData, null, 2));
+    finalData.questions.forEach((q, idx) => {
       if (q.type === 'mcq') {
         console.log(`[TestBuilderForm] Submitting Q ${idx + 1} (ID: ${q.id}): Type: MCQ, Text: "${q.text}"`);
         console.log(`  Options:`, JSON.stringify(q.options.map(opt => ({id: opt.id, text: opt.text}))));
         console.log(`  CorrectOptionId: "${q.correctOptionId}"`);
         const selectedOption = q.options.find(opt => opt.id === q.correctOptionId);
-        if (selectedOption) {
-          console.log(`  Selected Option Text (based on ID): "${selectedOption.text}"`);
-        } else {
+        if (!selectedOption) {
           console.error(`  [TestBuilderForm] SUBMISSION ERROR: CorrectOptionId "${q.correctOptionId}" for Q ${idx + 1} does NOT match any of its option IDs! This question will likely be unanswerable or auto-marked wrong.`);
         }
       }
@@ -205,7 +235,7 @@ export default function TestBuilderForm() {
       const teacherUserId = user.id;
 
       if (testIdToEdit) {
-        savedTest = await updateTest(testIdToEdit, { ...data, teacherId: teacherUserId });
+        savedTest = await updateTest(testIdToEdit, { ...finalData, teacherId: teacherUserId });
         if (savedTest) {
           toast({ title: "Success", description: "Test updated successfully!", duration: 2000 });
         } else {
@@ -214,7 +244,7 @@ export default function TestBuilderForm() {
           return;
         }
       } else {
-        savedTest = await addTest({ ...data, teacherId: teacherUserId });
+        savedTest = await addTest({ ...finalData, teacherId: teacherUserId });
         if (savedTest) {
             toast({ title: "Success", description: "Test created successfully!", duration: 2000 });
         } else {
@@ -320,6 +350,7 @@ export default function TestBuilderForm() {
               questionIndex={index}
               form={form}
               removeQuestion={removeQuestion}
+              initialCorrectOptionIdFromAI={(field as MCQQuestion).correctOptionId}
             />
           ))}
            {form.formState.errors.questions && typeof form.formState.errors.questions === 'object' && !Array.isArray(form.formState.errors.questions) && (
@@ -435,3 +466,4 @@ export default function TestBuilderForm() {
     </UIForm>
   );
 }
+
