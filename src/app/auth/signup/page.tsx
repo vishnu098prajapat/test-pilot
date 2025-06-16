@@ -59,7 +59,7 @@ export default function SignupPage() {
           variant: "destructive",
           duration: 2000,
         });
-        console.error("SignupPage: Signup failed or user data invalid. Result:", result);
+        console.warn("SignupPage: Signup failed or user data invalid. Result:", result);
       }
     } catch (error) {
       console.error("SignupPage: Signup error", error);
