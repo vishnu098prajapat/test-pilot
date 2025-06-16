@@ -9,7 +9,7 @@ const MOCK_USERS_DB_FILE_PATH = path.join(process.cwd(), 'mock_users.json');
 
 // Helper to ensure user object integrity from DB or other sources
 function ensureUserIntegrity(user: Partial<User>): User {
-  let { id, displayName, email, dob, role } = user;
+  let { id, displayName, email, dob, role, profileImageUrl } = user;
 
   id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
@@ -26,17 +26,14 @@ function ensureUserIntegrity(user: Partial<User>): User {
     }
   }
 
-  // Ensure DOB is a valid date string or default
   if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
-    // A simple check, could be more robust if needed for date validity
-    dob = "1900-01-01"; // Default DOB if missing or invalid format
+    dob = "1900-01-01"; 
   }
   
-  role = role || "student"; // Default role if missing
+  role = role || "student"; 
   if (role !== "teacher" && role !== "student") {
-      role = "student"; // Force to a valid role
+      role = "student"; 
   }
-
 
   return {
     id,
@@ -44,6 +41,7 @@ function ensureUserIntegrity(user: Partial<User>): User {
     email: email || undefined, 
     dob,
     role,
+    profileImageUrl: profileImageUrl || undefined,
   };
 }
 
@@ -97,7 +95,7 @@ export async function signInWithNameAndDob(name: string, dob: string): Promise<A
 
   if (user) {
     console.log(`[AuthAction] User found for Name/DOB sign-in:`, JSON.stringify(user, null, 2));
-    return { success: true, message: "Login successful", user: ensureUserIntegrity(user) }; // Ensure integrity on return
+    return { success: true, message: "Login successful", user: ensureUserIntegrity(user) };
   } else {
     console.log(`[AuthAction] User not found for Name: "${name}", DOB: "${dob}"`);
     return { success: false, message: "Invalid name or date of birth. Please check your details or sign up." };
@@ -120,9 +118,9 @@ export async function signUpWithNameAndDob(name: string, dob: string): Promise<A
     id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
     displayName: name,
     dob: dob,
-    role: "teacher", // Default new signups to teacher
+    role: "teacher", 
   };
-  const newUser = ensureUserIntegrity(newUserPartial); // Ensure full integrity
+  const newUser = ensureUserIntegrity(newUserPartial); 
 
   const updatedUsers = [...currentUsers, newUser];
   const successWrite = writeUsersDb(updatedUsers);
@@ -133,5 +131,47 @@ export async function signUpWithNameAndDob(name: string, dob: string): Promise<A
   } else {
     console.log(`[AuthAction] Failed to write new user to DB during Name/DOB sign-up.`);
     return { success: false, message: "Failed to create account due to a server error. Please try again." };
+  }
+}
+
+export async function updateUserProfile(
+  userId: string,
+  updates: { displayName?: string; dob?: string; profileImageUrl?: string } // profileImageUrl is for potential future use
+): Promise<AuthResult> {
+  console.log(`[AuthAction] updateUserProfile attempt for UserID: "${userId}" with updates:`, JSON.stringify(updates));
+  const currentUsers = readUsersDb();
+  const userIndex = currentUsers.findIndex((u) => u.id === userId);
+
+  if (userIndex === -1) {
+    console.log(`[AuthAction] User not found for update: UserID "${userId}"`);
+    return { success: false, message: "User not found." };
+  }
+
+  const userToUpdate = currentUsers[userIndex];
+  const updatedUser = ensureUserIntegrity({
+    ...userToUpdate,
+    displayName: updates.displayName !== undefined ? updates.displayName : userToUpdate.displayName,
+    dob: updates.dob !== undefined ? updates.dob : userToUpdate.dob,
+    // profileImageUrl: updates.profileImageUrl !== undefined ? updates.profileImageUrl : userToUpdate.profileImageUrl,
+  });
+  
+  // Basic validation for updates
+  if (updates.displayName && updates.displayName.trim().length < 1) {
+    return { success: false, message: "Display name cannot be empty." };
+  }
+  if (updates.dob && !/^\d{4}-\d{2}-\d{2}$/.test(updates.dob)) {
+    return { success: false, message: "Invalid Date of Birth format. Use YYYY-MM-DD." };
+  }
+
+
+  currentUsers[userIndex] = updatedUser;
+  const successWrite = writeUsersDb(currentUsers);
+
+  if (successWrite) {
+    console.log(`[AuthAction] User profile updated in DB:`, JSON.stringify(updatedUser, null, 2));
+    return { success: true, message: "Profile updated successfully.", user: updatedUser };
+  } else {
+    console.log(`[AuthAction] Failed to write updated user profile to DB.`);
+    return { success: false, message: "Failed to update profile due to a server error." };
   }
 }

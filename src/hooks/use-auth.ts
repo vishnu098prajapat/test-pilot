@@ -4,6 +4,8 @@
 import type { User } from "@/lib/types";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { updateUserProfile as updateUserProfileServerAction } from "@/lib/auth-actions";
+
 
 const USER_STORAGE_KEY = "test_pilot_user";
 
@@ -13,11 +15,12 @@ interface AuthContextType {
   login: (userData: User) => void;
   logout: () => void;
   signup: (userData: User) => void; 
+  updateUserProfileData: (updates: { displayName?: string; dob?: string; profileImageUrl?: string }) => Promise<{success: boolean; message: string; user?: User}>;
 }
 
 // Helper to ensure user object integrity, especially for data from localStorage or passed to login/signup
 function ensureUserIntegrityForContext(user: Partial<User>): User {
-  let { id, displayName, email, dob, role } = user;
+  let { id, displayName, email, dob, role, profileImageUrl } = user;
 
   id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2,7)}`;
 
@@ -34,7 +37,6 @@ function ensureUserIntegrityForContext(user: Partial<User>): User {
     }
   }
   
-  // Validate DOB format (YYYY-MM-DD) and provide a default if missing/invalid
   if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
     dob = "1900-01-01"; 
   }
@@ -50,6 +52,7 @@ function ensureUserIntegrityForContext(user: Partial<User>): User {
     email: email || undefined,
     dob,
     role,
+    profileImageUrl: profileImageUrl || undefined,
   };
 }
 
@@ -65,12 +68,11 @@ export function useAuth(): AuthContextType {
       const storedUserString = localStorage.getItem(USER_STORAGE_KEY);
       if (storedUserString) {
         let parsedUser = JSON.parse(storedUserString) as Partial<User>;
-        // Validate the parsed user object more thoroughly
         if (
           parsedUser && 
           typeof parsedUser.id === 'string' && parsedUser.id.trim() !== '' &&
           typeof parsedUser.displayName === 'string' && parsedUser.displayName.trim() !== '' &&
-          typeof parsedUser.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(parsedUser.dob) && // Check DOB format
+          typeof parsedUser.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(parsedUser.dob) && 
           typeof parsedUser.role === 'string' && (parsedUser.role === 'teacher' || parsedUser.role === 'student')
         ) {
           setUser(ensureUserIntegrityForContext(parsedUser as User));
@@ -91,7 +93,7 @@ export function useAuth(): AuthContextType {
     }
   }, []);
 
-  const login = useCallback((userData: User) => { // Expect a full User object
+  const login = useCallback((userData: User) => { 
     try {
       if (
         userData && 
@@ -100,7 +102,7 @@ export function useAuth(): AuthContextType {
         typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
         typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
       ) {
-        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity before storing
+        const userToStore = ensureUserIntegrityForContext(userData); 
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
         setUser(userToStore);
       } else {
@@ -111,7 +113,7 @@ export function useAuth(): AuthContextType {
     }
   }, []);
   
-  const signup = useCallback((userData: User) => { // Expect a full User object
+  const signup = useCallback((userData: User) => { 
     try {
        if (
         userData && 
@@ -120,7 +122,7 @@ export function useAuth(): AuthContextType {
         typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
         typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
       ) {
-        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity before storing
+        const userToStore = ensureUserIntegrityForContext(userData); 
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
         setUser(userToStore);
       } else {
@@ -141,5 +143,24 @@ export function useAuth(): AuthContextType {
     router.push("/auth/login");
   }, [router]);
 
-  return { user, isLoading, login, logout, signup };
+  const updateUserProfileData = useCallback(async (updates: { displayName?: string; dob?: string; profileImageUrl?: string }) => {
+    if (!user) {
+      return { success: false, message: "No user logged in." };
+    }
+    const result = await updateUserProfileServerAction(user.id, updates);
+    if (result.success && result.user) {
+      const updatedUser = ensureUserIntegrityForContext(result.user);
+      setUser(updatedUser);
+      try {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error("Failed to update user in localStorage:", error);
+        // Non-critical error, proceed
+      }
+    }
+    return result;
+  }, [user]);
+
+
+  return { user, isLoading, login, logout, signup, updateUserProfileData };
 }

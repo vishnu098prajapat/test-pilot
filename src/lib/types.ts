@@ -5,6 +5,7 @@ export interface User {
   displayName: string; // Used as "Name" for login
   dob: string; // Date of Birth, e.g., "YYYY-MM-DD"
   role: 'teacher' | 'student';
+  profileImageUrl?: string; // Optional: For future image functionality
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false';

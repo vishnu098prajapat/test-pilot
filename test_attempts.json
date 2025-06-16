@@ -832,5 +832,52 @@
     "suspiciousReason": "The student switched tabs/minimized the test window shortly after the test started. This could indicate an attempt to access external resources or communicate with others, which is a violation of test rules.",
     "id": "attempt-1749980846359-hyuhy5l",
     "submittedAt": "2025-06-15T09:47:26.359Z"
+  },
+  {
+    "testId": "test-1750065312693-snwce",
+    "testTitle": "Test on biology",
+    "studentIdentifier": "vishnu",
+    "startTime": "2025-06-16T09:16:27.217Z",
+    "endTime": "2025-06-16T09:16:54.297Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750065290394-0-xve5z8w",
+        "answer": false,
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750065290394-1-z4w2r2a",
+        "answer": true,
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750065290394-2-3uxzigq",
+        "answer": true,
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750065290394-3-z6bh8eh",
+        "answer": false,
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750065290394-4-m4ucv5n",
+        "answer": true,
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-16T09:16:27.248Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-16T09:16:27.250Z] Test started by vishnu. Anti-cheat measures active based on test settings.\n[2025-06-16T09:16:36.070Z] Answer changed for question ID ai-q-1750065290394-0-xve5z8w.\n[2025-06-16T09:16:39.648Z] Answer changed for question ID ai-q-1750065290394-1-z4w2r2a.\n[2025-06-16T09:16:43.950Z] Answer changed for question ID ai-q-1750065290394-2-3uxzigq.\n[2025-06-16T09:16:47.938Z] Answer changed for question ID ai-q-1750065290394-3-z6bh8eh.\n[2025-06-16T09:16:51.105Z] Answer changed for question ID ai-q-1750065290394-4-m4ucv5n.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student answered multiple questions in rapid succession at the beginning of the exam. This could indicate that the student had prepared the answers in advance, but it could also simply be a fast test taker. Without more evidence, it is not definitively suspicious.",
+    "id": "attempt-1750065143703-x94d21x",
+    "submittedAt": "2025-06-16T09:12:23.703Z"
   }
 ]

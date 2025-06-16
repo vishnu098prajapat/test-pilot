@@ -3031,5 +3031,61 @@
     "id": "test-1749979578410-wswq0",
     "createdAt": "2025-06-15T09:26:18.411Z",
     "updatedAt": "2025-06-15T09:26:18.411Z"
+  },
+  {
+    "title": "Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750065290394-0-xve5z8w",
+        "text": "The primary function of the Golgi apparatus is protein synthesis.",
+        "points": 10,
+        "type": "true-false",
+        "correctAnswer": false,
+        "options": []
+      },
+      {
+        "id": "ai-q-1750065290394-1-z4w2r2a",
+        "text": "Mitochondria contain their own DNA and ribosomes, suggesting an endosymbiotic origin.",
+        "points": 10,
+        "type": "true-false",
+        "correctAnswer": true,
+        "options": []
+      },
+      {
+        "id": "ai-q-1750065290394-2-3uxzigq",
+        "text": "Prokaryotic cells have membrane-bound organelles, including a nucleus.",
+        "points": 10,
+        "type": "true-false",
+        "correctAnswer": false,
+        "options": []
+      },
+      {
+        "id": "ai-q-1750065290394-3-z6bh8eh",
+        "text": "The smooth endoplasmic reticulum is primarily involved in lipid synthesis and detoxification.",
+        "points": 10,
+        "type": "true-false",
+        "correctAnswer": true,
+        "options": []
+      },
+      {
+        "id": "ai-q-1750065290394-4-m4ucv5n",
+        "text": "Lysosomes are responsible for generating energy through cellular respiration.",
+        "points": 10,
+        "type": "true-false",
+        "correctAnswer": false,
+        "options": []
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750065312693-snwce",
+    "createdAt": "2025-06-16T09:15:12.693Z",
+    "updatedAt": "2025-06-16T09:15:12.693Z"
   }
 ]
