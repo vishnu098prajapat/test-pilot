@@ -138,8 +138,11 @@ export default function AIGenerateTestPage() {
         }));
         
         let correctOptionMatched = null;
-        if (aiQ.correctAnswer && options.length > 0) {
-            const normalizedAICorrectAnswer = normalizeText(aiQ.correctAnswer);
+        // Store the AI's original textual correct answer for reference in the form
+        const aiCorrectAnswerText = aiQ.correctAnswer; 
+
+        if (aiCorrectAnswerText && options.length > 0) {
+            const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
             correctOptionMatched = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
         }
 
@@ -148,7 +151,7 @@ export default function AIGenerateTestPage() {
           type: 'mcq',
           options,
           correctOptionId: correctOptionMatched ? correctOptionMatched.id : null,
-          correctAnswer: aiQ.correctAnswer, 
+          correctAnswer: aiCorrectAnswerText, // Keep the AI's textual answer for reference in the form
         } as MCQQuestion;
       } else if (aiQ.type === 'short-answer') {
         return {
@@ -420,4 +423,3 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
-
