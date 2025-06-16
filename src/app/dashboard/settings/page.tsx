@@ -93,7 +93,8 @@ export default function SettingsPage() {
       changed = true;
     }
     
-    if (data.profileImageFile && previewImage) { // If a new file was selected and preview (base64) exists
+    // If a new file was selected and previewImage (base64) is set
+    if (data.profileImageFile && previewImage && previewImage !== user.profileImageUrl) { 
       updates.profileImageUrl = previewImage; // Pass base64 string for mock storage
       changed = true;
        console.log("New profile image (base64) prepared for mock saving:", previewImage.substring(0,50) + "...");
@@ -137,7 +138,7 @@ export default function SettingsPage() {
       <div className="container mx-auto py-2">
         <div className="flex items-center mb-8"> <Skeleton className="w-10 h-10 rounded-full mr-3" /><Skeleton className="h-8 w-48" /> </div>
         <Card className="w-full max-w-lg mx-auto">
-          <CardHeader className="items-center text-center"> <Skeleton className="w-16 h-16 md:w-32 md:h-32 rounded-full mx-auto mb-4" /> <Skeleton className="h-7 w-1/2 mx-auto" /> <Skeleton className="h-4 w-3/4 mx-auto mt-2" /> </CardHeader>
+          <CardHeader className="items-center text-center"> <Skeleton className="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto mb-4" /> <Skeleton className="h-7 w-1/2 mx-auto" /> <Skeleton className="h-4 w-3/4 mx-auto mt-2" /> </CardHeader>
           <CardContent className="space-y-6">
             <Skeleton className="h-10 w-full" /> <Skeleton className="h-10 w-full" /> <Skeleton className="h-10 w-full" />
           </CardContent>
@@ -170,13 +171,13 @@ export default function SettingsPage() {
             <CardHeader className="items-center text-center">
               <div className="relative group w-24 h-24 md:w-32 md:h-32 mx-auto mb-4">
                 <Image
-                  src={previewImage || "https://placehold.co/128x128.png"} // Use previewImage or fallback
+                  src={previewImage || "https://placehold.co/128x128.png"} 
                   alt={user.displayName || "User"}
                   width={128}
                   height={128}
                   className="rounded-full object-cover border-2 border-muted"
                   data-ai-hint="user profile"
-                  key={previewImage} // Force re-render on previewImage change
+                  key={previewImage || user.profileImageUrl} 
                 />
                 <label
                   htmlFor="profileImageFile"
@@ -188,22 +189,22 @@ export default function SettingsPage() {
                <FormField
                   control={form.control}
                   name="profileImageFile"
-                  render={({ field }) => ( // field properties (value, onChange, onBlur) are not directly used for file input in the same way as text inputs
+                  render={({ field }) => ( 
                     <FormItem className="hidden">
                       <FormControl>
                         <Input
                           id="profileImageFile"
                           type="file"
                           accept=".png, .jpg, .jpeg"
-                          onChange={handleImageChange} // Use custom handler
-                          ref={field.ref} // Important for react-hook-form to manage the input
+                          onChange={handleImageChange} 
+                          ref={field.ref} 
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              <CardTitle className="text-xl md:text-2xl font-headline">{user.displayName}</CardTitle>
+              <CardTitle className="text-xl md:text-2xl font-headline">{form.watch("displayName") || user.displayName}</CardTitle>
               <CardDescription>Update your profile information below.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -255,3 +256,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

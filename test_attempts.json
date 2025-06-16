@@ -925,5 +925,53 @@
     "suspiciousReason": "The student exhibits a pattern of rapidly changing answers for multiple questions within a short period. This behavior could indicate guessing, looking for answers elsewhere, or external assistance. Specifically, multiple answer changes within seconds for question IDs ai-q-1750065290394-0-xve5z8w and ai-q-1750065290394-3-z6bh8eh are observed. Further investigation is required to determine the underlying cause.",
     "id": "attempt-1750065849379-cg0inic",
     "submittedAt": "2025-06-16T09:24:09.379Z"
+  },
+  {
+    "testId": "test-1750065312693-snwce",
+    "testTitle": "Test on biology",
+    "studentIdentifier": "Rawan",
+    "startTime": "2025-06-16T09:31:14.442Z",
+    "endTime": "2025-06-16T09:31:21.973Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750065290394-0-xve5z8w",
+        "answer": true,
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750065290394-1-z4w2r2a",
+        "answer": true,
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750065290394-2-3uxzigq",
+        "answer": true,
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750065290394-3-z6bh8eh",
+        "answer": true,
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750065290394-4-m4ucv5n",
+        "answer": true,
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-16T09:31:14.494Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-16T09:31:14.496Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-16T09:31:16.563Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750065290394-0-xve5z8w.\n[2025-06-16T09:31:17.673Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750065290394-1-z4w2r2a.\n[2025-06-16T09:31:18.584Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750065290394-2-3uxzigq.\n[2025-06-16T09:31:19.362Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750065290394-3-z6bh8eh.\n[2025-06-16T09:31:20.331Z] User: Rawan (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750065290394-4-m4ucv5n.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student activity log shows normal test-taking behavior with consistent answer changes within a short period after the test started. There are no indications of suspicious activities like tab switching, copy-pasting, or unusual keyboard activity.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750066285500-1yq8i55",
+    "submittedAt": "2025-06-16T09:31:25.500Z"
   }
 ]
