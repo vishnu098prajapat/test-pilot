@@ -9,9 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle, QrCode } from "lucide-react";
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle, QrCode, Eye } from "lucide-react";
 import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
-import type { Test } from "@/lib/types";
+import type { Test, TestAttempt } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -33,9 +33,14 @@ export default function TestManagementPage() {
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  
   const [test, setTest] = useState<Test | null>(null);
   const [isFetchingTest, setIsFetchingTest] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const [attempts, setAttempts] = useState<TestAttempt[]>([]);
+  const [isFetchingAttempts, setIsFetchingAttempts] = useState(false);
+  const [attemptsError, setAttemptsError] = useState<string | null>(null);
 
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
@@ -106,6 +111,33 @@ export default function TestManagementPage() {
     };
   }, [testId, user, isAuthLoading, router, toast]);
 
+  useEffect(() => {
+    async function fetchTestAttempts() {
+      if (!testId || !test) return; // Only fetch if testId and test are available
+      setIsFetchingAttempts(true);
+      setAttemptsError(null);
+      try {
+        const response = await fetch(`/api/attempts?testId=${testId}`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to fetch attempts");
+        }
+        const fetchedAttempts: TestAttempt[] = await response.json();
+        setAttempts(fetchedAttempts);
+      } catch (error: any) {
+        console.error("Error fetching attempts:", error);
+        setAttemptsError(error.message || "Could not load attempts data.");
+        toast({ title: "Attempts Error", description: error.message || "Could not load attempts data.", variant: "destructive" });
+      } finally {
+        setIsFetchingAttempts(false);
+      }
+    }
+
+    if (test && user && test.teacherId === user.id) { // Ensure test is loaded and belongs to user
+        fetchTestAttempts();
+    }
+  }, [testId, test, user, toast]);
+
 
   const handleDeleteTest = async () => {
     if (!test) return;
@@ -141,7 +173,6 @@ export default function TestManagementPage() {
       setIsQrModalOpen(true);
     }
   };
-
 
   if (isAuthLoading || (isFetchingTest && !fetchError)) {
     return (
@@ -186,7 +217,6 @@ export default function TestManagementPage() {
       </div>
     );
   }
-
 
   if (!test) {
     return (
@@ -258,6 +288,62 @@ export default function TestManagementPage() {
 
         <Separator className="my-8" />
 
+        {/* Student Attempts & Proctoring Section */}
+        <Card className="border-primary/50">
+            <CardHeader>
+                <CardTitle className="text-xl font-headline flex items-center">
+                    <Eye className="mr-2 h-5 w-5 text-primary" /> Student Attempts & AI Proctoring
+                </CardTitle>
+                <CardDescription>Review student submissions and any AI-flagged suspicious activity.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {isFetchingAttempts ? (
+                    <div className="space-y-3">
+                        {[1,2,3].map(i => <Skeleton key={i} className="h-20 w-full" />)}
+                    </div>
+                ) : attemptsError ? (
+                    <div className="text-destructive flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        <p>{attemptsError}</p>
+                    </div>
+                ) : attempts.length === 0 ? (
+                    <p className="text-muted-foreground">No attempts have been made for this test yet.</p>
+                ) : (
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {attempts.sort((a,b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()).map(attempt => (
+                            <Card key={attempt.id} className={`shadow-sm ${attempt.isSuspicious ? 'border-destructive bg-destructive/5' : ''}`}>
+                                <CardHeader className="pb-2 pt-3 px-4">
+                                    <div className="flex justify-between items-start">
+                                        <CardTitle className="text-base font-semibold">{attempt.studentIdentifier}</CardTitle>
+                                        <Badge variant={attempt.isSuspicious ? "destructive" : "secondary"}>
+                                            {attempt.isSuspicious ? "Suspicious" : "Normal"}
+                                        </Badge>
+                                    </div>
+                                    <CardDescription className="text-xs">
+                                        Submitted: {new Date(attempt.submittedAt).toLocaleString()}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="px-4 pb-3 pt-1 text-sm">
+                                    <p>Score: {attempt.scorePercentage}% ({attempt.score}/{attempt.maxPossiblePoints})</p>
+                                    {attempt.isSuspicious && attempt.suspiciousReason && (
+                                        <p className="mt-1 text-destructive text-xs"><span className="font-medium">Reason:</span> {attempt.suspiciousReason}</p>
+                                    )}
+                                    {attempt.activityLog && (
+                                      <details className="mt-1 text-xs">
+                                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">View Activity Log</summary>
+                                        <pre className="mt-1 p-2 bg-muted/50 rounded-sm whitespace-pre-wrap max-h-40 overflow-auto">{attempt.activityLog}</pre>
+                                      </details>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+
+        <Separator className="my-8" />
+
         <div className="space-y-6">
           <Card className="border-orange-400 dark:border-orange-600">
             <CardHeader>
@@ -318,3 +404,6 @@ const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
     </CardContent>
   </Card>
 );
+
+
+    
