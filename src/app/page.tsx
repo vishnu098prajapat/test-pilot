@@ -9,20 +9,18 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
-        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
-          <Link href="/" className="text-2xl font-bold font-headline text-primary mb-2 sm:mb-0">
-            <span>
-              Test Pilot
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block ml-1 w-6 h-6 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            </span>
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center text-2xl font-bold font-headline text-primary">
+            <span>Test Pilot</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2 h-7 w-7 text-accent"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           </Link>
-          <nav className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 items-center">
-            <Button variant="ghost" asChild className="w-full sm:w-auto">
+          <nav className="flex items-center space-x-2">
+            <Button variant="ghost" asChild>
               <Link href="/auth/login">
                 <LogIn className="mr-2 h-4 w-4"/> Login
               </Link>
             </Button>
-            <Button asChild className="w-full sm:w-auto hidden md:inline-flex">
+            <Button asChild className="hidden md:inline-flex">
               <Link href="/auth/signup">
                 <UserPlus className="mr-2 h-4 w-4"/> Create Account
               </Link>
