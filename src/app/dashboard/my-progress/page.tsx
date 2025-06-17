@@ -46,24 +46,25 @@ export default function MyProgressPage() {
           const errorData = await response.json();
           throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
         }
-        const allAttempts: TestAttempt[] = await response.json();
-        console.log(`[MyProgressPage] All attempts fetched from API: ${allAttempts.length}`);
-        if (allAttempts.length > 0 && allAttempts.length <=5 ) { // Log sample only for small number of attempts to avoid console flooding
-            console.log("[MyProgressPage] Sample of fetched studentIdentifiers (raw):", allAttempts.slice(0, 5).map(a => a.studentIdentifier));
+        const allAttemptsData: TestAttempt[] = await response.json();
+        console.log(`[MyProgressPage] All attempts fetched from API: ${allAttemptsData.length}`);
+        if (allAttemptsData.length > 0 && allAttemptsData.length <=5 ) { 
+            console.log("[MyProgressPage] Sample of fetched studentIdentifiers (raw):", allAttemptsData.slice(0, 5).map(a => a.studentIdentifier));
         }
-
-        const studentSpecificAttempts = allAttempts.filter(attempt => {
+        
+        const studentSpecificAttempts = allAttemptsData.filter(attempt => {
           const attemptIdentifierRaw = attempt.studentIdentifier;
           const attemptIdentifierNormalized = attemptIdentifierRaw?.trim().toLowerCase();
           const match = attemptIdentifierNormalized === userDisplayNameNormalized;
           
-          if (!match && (attemptIdentifierNormalized || userDisplayNameNormalized)) { // Log only if identifiers exist and don't match
+          if (!match && (attemptIdentifierNormalized || userDisplayNameNormalized)) { 
             console.log(`[MyProgressPage] Mismatch Detail: Attempt ID ${attempt.id}, Stored Identifier (Raw): "${attemptIdentifierRaw}", Stored (Normalized): "${attemptIdentifierNormalized || 'undefined'}") vs User DisplayName (Raw): "${user.displayName}", User (Normalized): "${userDisplayNameNormalized}"`);
           }
           return match;
         });
         
-        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after filtering.`);
+        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after filtering for display name: "${userDisplayNameNormalized}".`);
+
 
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
         setAttempts(studentSpecificAttempts);
@@ -117,7 +118,7 @@ export default function MyProgressPage() {
     );
   }
   
-  if (!user) { // This condition might be hit if auth is done loading but user is still null
+  if (!user) { 
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <AlertTriangle className="w-12 h-12 text-primary mx-auto mb-4" />
@@ -166,19 +167,19 @@ export default function MyProgressPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Attempts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Attempts</CardTitle><FileText className="h-4 w-4 text-sky-500" /></CardHeader>
           <CardContent><div className="text-2xl font-bold">{summaryStats.totalAttempts}</div></CardContent>
         </Card>
         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score</CardTitle><Percent className="h-4 w-4 text-sky-500" /></CardHeader>
           <CardContent><div className="text-2xl font-bold">{summaryStats.averageScore}%</div></CardContent>
         </Card>
          <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (>=50%)</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (>=50%)</CardTitle><CheckCircle className="h-4 w-4 text-sky-500" /></CardHeader>
           <CardContent><div className="text-2xl font-bold">{summaryStats.testsPassed}</div></CardContent>
         </Card>
          <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate</CardTitle><BarChart3 className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate</CardTitle><BarChart3 className="h-4 w-4 text-sky-500" /></CardHeader>
           <CardContent><div className="text-2xl font-bold">{summaryStats.passRate}%</div></CardContent>
         </Card>
       </div>
