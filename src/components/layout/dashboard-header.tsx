@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import React, { useState, useEffect } from "react"; // Added useState and useEffect
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,13 +13,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown } from "lucide-react";
+import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown, Moon, Sun } from "lucide-react"; // Added Moon and Sun
 import { useAuth } from "@/hooks/use-auth";
 import { useSidebar } from "@/components/ui/sidebar";
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
   const { toggleSidebar, isMobile } = useSidebar();
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme') as ('light' | 'dark') | null;
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (storedTheme) {
+      setCurrentTheme(storedTheme);
+      if (storedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } else if (systemPrefersDark) {
+      setCurrentTheme('dark');
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      setCurrentTheme('light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setCurrentTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const getInitials = (displayName?: string, email?: string) => {
     if (displayName) {
@@ -43,11 +78,14 @@ export default function DashboardHeader() {
          </Button>
        )}
       <div className="ml-auto flex items-center gap-2">
+        <Button variant="outline" size="icon" onClick={toggleTheme} className="h-9 w-9 sm:h-10 sm:w-10">
+          {currentTheme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          <span className="sr-only">Toggle theme</span>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
               <Avatar className="h-7 w-7">
-                {/* Use user.profileImageUrl if available, otherwise fallback */}
                 <AvatarImage src={user?.profileImageUrl || undefined} alt={user?.displayName || "User Profile"} />
                 <AvatarFallback>{getInitials(user?.displayName, user?.email)}</AvatarFallback>
               </Avatar>
