@@ -1357,5 +1357,101 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750166525112-dlk2rvp",
     "submittedAt": "2025-06-17T13:22:05.112Z"
+  },
+  {
+    "testId": "test-1750167118715-jt9iy",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "Vishnu prajapat",
+    "startTime": "2025-06-17T13:32:33.109Z",
+    "endTime": "2025-06-17T13:32:48.050Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750167108549-0-wzt4f1q",
+        "answer": "ai-opt_q0_idx1_1750167108549_qy70ktm28",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750167108549-1-vyxli83",
+        "answer": "ai-opt_q1_idx2_1750167108549_3abmfvimh",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750167108549-2-3ybkjzb",
+        "answer": "ai-opt_q2_idx2_1750167108549_wx6zoj8if",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750167108549-3-5jnbdsb",
+        "answer": "ai-opt_q3_idx1_1750167108549_8daoxcl81",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750167108549-4-vgmvwpq",
+        "answer": "ai-opt_q4_idx1_1750167108549_5hiib7rmk",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-17T13:32:33.122Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:32:33.123Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:32:34.571Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167108549-0-wzt4f1q.\n[2025-06-17T13:32:36.876Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167108549-1-vyxli83.\n[2025-06-17T13:32:40.288Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167108549-2-3ybkjzb.\n[2025-06-17T13:32:42.355Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167108549-3-5jnbdsb.\n[2025-06-17T13:32:45.570Z] User: Vishnu prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167108549-4-vgmvwpq.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior, with consistent answer changes and no indication of unauthorized resource access or other suspicious actions.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750166896230-ce253fn",
+    "submittedAt": "2025-06-17T13:28:16.230Z"
+  },
+  {
+    "testId": "test-1750167254485-18hev",
+    "testTitle": "AI Gen (medium) MCQ Test on java",
+    "studentIdentifier": "Vishnu Prajapat",
+    "startTime": "2025-06-17T13:34:42.424Z",
+    "endTime": "2025-06-17T13:35:02.863Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750167246121-0-z6pf5jb",
+        "answer": "ai-opt_q0_idx1_1750167246121_9wz1zzda3",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750167246121-1-a42anwy",
+        "answer": "ai-opt_q1_idx1_1750167246121_wnvyf5oci",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750167246121-2-ufkzb8w",
+        "answer": "ai-opt_q2_idx2_1750167246121_6pu1hpskh",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750167246121-3-zjwlr47",
+        "answer": "ai-opt_q3_idx3_1750167246121_fephpa4u3",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750167246121-4-zbhttcu",
+        "answer": "ai-opt_q4_idx1_1750167246121_p0n2dz6aw",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-17T13:34:42.437Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:34:42.438Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:34:43.841Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-0-z6pf5jb.\n[2025-06-17T13:34:46.303Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-1-a42anwy.\n[2025-06-17T13:34:50.567Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-2-ufkzb8w.\n[2025-06-17T13:34:51.590Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-2-ufkzb8w.\n[2025-06-17T13:34:55.938Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-3-zjwlr47.\n[2025-06-17T13:34:59.100Z] User: Vishnu Prajapat (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750167246121-4-zbhttcu.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows regular answer changes within a reasonable timeframe after the test started. There's no indication of any unauthorized activity or deviation from the expected testing environment. Therefore, the behavior is not considered suspicious.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750167031434-025k40w",
+    "submittedAt": "2025-06-17T13:30:31.434Z"
   }
 ]

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react"; // Added AlertTriangle
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -22,18 +22,21 @@ export default function MyProgressPage() {
 
   useEffect(() => {
     async function fetchAttempts() {
-      if (isAuthLoading) { // Wait for auth to finish loading
+      if (isAuthLoading) {
+        console.log("[MyProgressPage] Auth loading, waiting...");
+        setIsLoadingAttempts(true); // Ensure loading state is true while auth is pending
         return;
       }
 
-      if (!user || !user.displayName) {
-        console.warn("[MyProgressPage] User or user.displayName not available. Cannot fetch attempts.");
+      if (!user || !user.displayName || user.displayName.trim() === "") {
+        console.warn("[MyProgressPage] User or user.displayName not available or empty. Cannot fetch attempts. User:", user);
         setIsLoadingAttempts(false);
-        // setError("User details not found. Please log in again."); // Optional: Set error for user
+        setAttempts([]); // Clear any existing attempts
+        // setError("User details not found or invalid. Please log in again."); // Optional: Set error for user
         return;
       }
       
-      console.log("[MyProgressPage] Fetching attempts for user.displayName:", user.displayName);
+      console.log(`[MyProgressPage] Fetching attempts. Current user for filter: "${user.displayName}" (Raw), Normalized: "${user.displayName.trim().toLowerCase()}"`);
 
       setIsLoadingAttempts(true);
       setError(null);
@@ -44,20 +47,32 @@ export default function MyProgressPage() {
           throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
         }
         const allAttempts: TestAttempt[] = await response.json();
-        console.log("[MyProgressPage] All attempts fetched from API:", allAttempts.length);
+        console.log(`[MyProgressPage] All attempts fetched from API: ${allAttempts.length}`);
+        if (allAttempts.length > 0) {
+            console.log("[MyProgressPage] Sample of fetched studentIdentifiers:", allAttempts.slice(0, 5).map(a => a.studentIdentifier));
+        }
+
+        const userDisplayNameNormalized = user.displayName.trim().toLowerCase();
         
-        // Robust filtering: case-insensitive and trim whitespace
-        const studentSpecificAttempts = allAttempts.filter(
-          attempt => attempt.studentIdentifier?.trim().toLowerCase() === user.displayName?.trim().toLowerCase()
-        );
+        const studentSpecificAttempts = allAttempts.filter(attempt => {
+          const attemptIdentifier = attempt.studentIdentifier?.trim().toLowerCase();
+          const match = attemptIdentifier === userDisplayNameNormalized;
+          if (!match) {
+            // Log only if there's a potential mismatch to avoid clutter, and identifiers are not empty
+            if (attemptIdentifier || userDisplayNameNormalized) { 
+                 console.log(`[MyProgressPage] Mismatch Detail: Attempt ID ${attempt.id}, Stored Identifier: "${attempt.studentIdentifier}" (Normalized: "${attemptIdentifier || 'undefined'}") vs User DisplayName: "${user.displayName}" (Normalized: "${userDisplayNameNormalized}")`);
+            }
+          }
+          return match;
+        });
         
-        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} attempts after filtering for displayName: "${user.displayName}" (case-insensitive, trimmed)`);
+        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after filtering.`);
 
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
-
         setAttempts(studentSpecificAttempts);
+
       } catch (e: any) {
-        console.error("Error fetching student attempts:", e);
+        console.error("[MyProgressPage] Error fetching student attempts:", e);
         setError(e.message || "Could not load your progress data.");
         toast({ title: "Error", description: "Failed to load progress data.", variant: "destructive" });
       } finally {
@@ -66,7 +81,7 @@ export default function MyProgressPage() {
     }
 
     fetchAttempts();
-  }, [user, isAuthLoading, toast]);
+  }, [user, isAuthLoading, toast]); // Added user and isAuthLoading as dependencies
 
   const summaryStats = useMemo(() => {
     if (attempts.length === 0) {
@@ -204,3 +219,4 @@ export default function MyProgressPage() {
     </div>
   );
 }
+
