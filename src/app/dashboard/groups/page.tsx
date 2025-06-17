@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Link from 'next/link';
 
 export default function GroupsPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -51,13 +52,14 @@ export default function GroupsPage() {
     if (user && !isAuthLoading) {
       fetchGroups();
     } else if (!isAuthLoading && !user) {
-      setIsLoadingGroups(false); // Not loading if no user
+      setIsLoadingGroups(false); 
     }
   }, [user, isAuthLoading, fetchGroups]);
 
   const handleGroupCreated = (newGroup: Group) => {
     setGroups(prev => [...prev, newGroup].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    fetchGroups(); // Re-fetch to ensure consistency, or just update state
+    // Optionally re-fetch or just update state if API is robust
+    fetchGroups(); 
   };
   
   const handleDeleteGroup = async (groupId: string) => {
@@ -85,13 +87,32 @@ export default function GroupsPage() {
   if (isAuthLoading || (isLoadingGroups && user)) {
     return (
       <div className="container mx-auto py-2">
-        <div className="flex justify-between items-center mb-8">
-          <Skeleton className="h-10 w-1/3" />
-          <Skeleton className="h-10 w-36" />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div className="flex items-center">
+            <Users className="w-10 h-10 text-primary mr-3" />
+            <div>
+              <Skeleton className="h-8 w-48 mb-1" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-44" />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map(i => (
-            <Card key={i}><CardHeader><Skeleton className="h-6 w-3/4" /></CardHeader><CardContent><Skeleton className="h-4 w-1/2" /><Skeleton className="h-4 w-1/3 mt-2" /></CardContent><CardFooter><Skeleton className="h-9 w-full" /></CardFooter></Card>
+            <Card key={i} className="shadow-md">
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardContent>
+              <CardFooter className="border-t pt-4 flex justify-end gap-2">
+                <Skeleton className="h-9 w-28" />
+                <Skeleton className="h-9 w-20" />
+              </CardFooter>
+            </Card>
           ))}
         </div>
       </div>
@@ -109,55 +130,58 @@ export default function GroupsPage() {
     );
   }
 
-
   return (
     <div className="container mx-auto py-2">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-headline flex items-center">
-            <Users className="mr-3 h-8 w-8 text-primary" /> Manage Groups
-          </h1>
-          <p className="text-muted-foreground">Create and manage your student groups.</p>
+        <div className="flex items-center">
+            <Users className="w-10 h-10 text-primary mr-3 hidden sm:block" />
+            <div>
+                <h1 className="text-3xl font-bold font-headline flex items-center">
+                    <Users className="mr-3 h-8 w-8 text-primary sm:hidden" /> Manage Groups
+                </h1>
+                <p className="text-muted-foreground">Create and manage your student groups.</p>
+            </div>
         </div>
-        <Button size="lg" onClick={() => setIsCreateGroupDialogOpen(true)}>
+        <Button size="lg" onClick={() => setIsCreateGroupDialogOpen(true)} className="w-full sm:w-auto">
           <PlusCircle className="mr-2 h-5 w-5" /> Create New Group
         </Button>
       </div>
 
       {groups.length === 0 && !isLoadingGroups ? (
-        <Card className="text-center py-12">
+        <Card className="text-center py-12 shadow-md">
           <CardContent className="flex flex-col items-center gap-4">
             <Users className="w-16 h-16 text-muted-foreground/50" />
-            <p className="text-muted-foreground text-lg">No groups yet.</p>
-            <p className="text-sm text-muted-foreground">Click "Create New Group" to get started.</p>
+            <p className="text-muted-foreground text-lg font-semibold">No groups created yet.</p>
+            <p className="text-sm text-muted-foreground">Get started by clicking the "Create New Group" button.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {groups.map((group) => (
-            <Card key={group.id} className="flex flex-col shadow-md hover:shadow-lg transition-shadow">
+            <Card key={group.id} className="flex flex-col shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out">
               <CardHeader>
                 <CardTitle className="font-headline text-xl">{group.name}</CardTitle>
-                <CardDescription>
+                <CardDescription className="flex items-center">
                   Group Code: 
+                  <span className="font-mono text-primary ml-1 mr-1">{group.groupCode}</span>
                   <Button 
-                    variant="link" 
-                    className="p-1 h-auto text-primary font-mono" 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-6 w-6 text-primary hover:bg-primary/10" 
                     onClick={() => copyToClipboard(group.groupCode, "Group code copied!")}
                     title="Copy group code"
                   >
-                    {group.groupCode} <ClipboardCopy className="ml-2 h-3 w-3"/>
+                    <ClipboardCopy className="h-4 w-4"/>
                   </Button>
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-grow">
+              <CardContent className="flex-grow space-y-1">
                 <p className="text-sm text-muted-foreground">
                   Students: {group.studentIdentifiers.length}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground">
                   Created: {new Date(group.createdAt).toLocaleDateString()}
                 </p>
-                {/* Future: List a few student names or "Manage Members" button */}
               </CardContent>
               <CardFooter className="border-t pt-4 flex justify-end gap-2">
                 <Button variant="outline" size="sm" disabled> {/* Implement later */}
@@ -200,3 +224,4 @@ export default function GroupsPage() {
     </div>
   );
 }
+
