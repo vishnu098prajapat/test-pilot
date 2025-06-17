@@ -15,16 +15,14 @@ function readGroupsDb(): Group[] {
         return [];
       }
       const data = JSON.parse(fileContent);
-      // Ensure dates are parsed correctly
       return (Array.isArray(data) ? data : []).map((group: any) => ({
         ...group,
-        createdAt: new Date(group.createdAt),
+        createdAt: new Date(group.createdAt), // Ensure createdAt is a Date object
       }));
     }
   } catch (error) {
     console.error('[API-GROUPS-DB] Error reading or parsing DB file:', error);
   }
-  // If file doesn't exist or error, initialize with empty array
   fs.writeFileSync(GROUPS_DB_FILE_PATH, JSON.stringify([], null, 2), 'utf-8');
   return [];
 }
@@ -40,34 +38,32 @@ function writeGroupsDb(data: Group[]): boolean {
   }
 }
 
-// Placeholder for generating a unique group code
 function generateGroupCode(length: number = 6): string {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-  // In a real app, you'd check for uniqueness against existing codes here
   return result;
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // TODO: Implement API logic for GET, POST, PUT, DELETE for groups
-  // Example: Create group, join group, get teacher's groups, etc.
-
   if (req.method === 'GET') {
-    // Example: Fetch groups (could be filtered by teacherId or studentIdentifier later)
     try {
       const allGroups = readGroupsDb();
-      // Add filtering logic based on query params if needed
-      // For example: if (req.query.teacherId) { ... }
-      res.status(200).json(allGroups);
+      const { teacherId } = req.query;
+      if (teacherId && typeof teacherId === 'string') {
+        const teacherGroups = allGroups.filter(group => group.teacherId === teacherId);
+        return res.status(200).json(teacherGroups);
+      }
+      // If no teacherId, could return all groups or error, depending on desired behavior
+      // For now, let's assume teacherId is usually expected for fetching "my groups"
+      return res.status(200).json(allGroups); // Or res.status(400).json({ error: 'teacherId is required' });
     } catch (error) {
       console.error('[API-GROUPS-DB] Failed to read data on GET:', error);
       res.status(500).json({ error: 'Failed to read groups data' });
     }
   } else if (req.method === 'POST') {
-    // Example: Create a new group (this is a simplified example)
     try {
       const { name, teacherId } = req.body;
       if (!name || !teacherId) {
@@ -76,9 +72,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const allGroups = readGroupsDb();
       let newGroupCode = generateGroupCode();
-      // Ensure group code is unique (simple retry mechanism)
       while (allGroups.some(group => group.groupCode === newGroupCode)) {
-        newGroupCode = generateGroupCode();
+        newGroupCode = generateGroupCode(); // Ensure uniqueness
       }
       
       const newGroup: Group = {
@@ -91,7 +86,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       };
 
       allGroups.push(newGroup);
-      const success = writeGroupsDb(allGroups);
+      // Sort groups by creation date, newest first, before writing
+      const sortedGroups = allGroups.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const success = writeGroupsDb(sortedGroups);
 
       if (success) {
         res.status(201).json({ message: 'Group created successfully', group: newGroup });
@@ -102,10 +99,34 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       console.error('[API-GROUPS-DB] Failed to process POST request:', error);
       res.status(500).json({ error: 'Internal server error while creating group' });
     }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { groupId } = req.query;
+      if (!groupId || typeof groupId !== 'string') {
+        return res.status(400).json({ error: 'groupId is required for deletion.' });
+      }
+      const allGroups = readGroupsDb();
+      const initialLength = allGroups.length;
+      const filteredGroups = allGroups.filter(group => group.id !== groupId);
+
+      if (filteredGroups.length === initialLength) {
+        return res.status(404).json({ error: `Group with ID ${groupId} not found.`});
+      }
+
+      const success = writeGroupsDb(filteredGroups);
+      if (success) {
+        res.status(200).json({ message: `Group ${groupId} deleted successfully.`});
+      } else {
+        res.status(500).json({ error: 'Failed to update database after deleting group.'});
+      }
+    } catch (error) {
+      console.error('[API-GROUPS-DB] Failed to process DELETE request:', error);
+      res.status(500).json({ error: 'Internal server error while deleting group.'});
+    }
   }
   
   else {
-    res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']); // Adjust as you add more methods
+    res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

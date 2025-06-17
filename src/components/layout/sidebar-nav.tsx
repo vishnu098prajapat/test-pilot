@@ -10,8 +10,8 @@ import {
   PlusCircle, 
   Settings,
   BarChart3,
-  BookOpenCheck,
-  Sparkles // Added Sparkles
+  Users, // Added Users icon
+  Sparkles 
 } from "lucide-react";
 import { 
   SidebarMenu, 
@@ -29,6 +29,7 @@ const mainNavItems = [
   { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
+  { href: "/dashboard/groups", label: "Groups", icon: Users }, // Added Groups link
   { href: "/dashboard/results", label: "Results", icon: BarChart3 }, 
 ];
 
@@ -56,7 +57,7 @@ export function SidebarNav() {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test")}
+                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test" || item.href === "/dashboard/groups")}
                   tooltip={!open ? item.label : undefined}
                 >
                   <Link href={item.href}>
