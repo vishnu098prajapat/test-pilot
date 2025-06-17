@@ -2681,5 +2681,428 @@
     "id": "test-1750156290145-yidxx",
     "createdAt": "2025-06-17T10:31:30.146Z",
     "updatedAt": "2025-06-17T10:31:30.146Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 6,
+    "questions": [
+      {
+        "id": "ai-q-1750158490426-0-7s9q4vs",
+        "text": "Which data type is used to represent text in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750158490426_qrilsqjmk",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750158490426_58ighlnli",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750158490426_0yj7lo8w8",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750158490426_qwtbgrumg",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750158490426_0yj7lo8w8"
+      },
+      {
+        "id": "ai-q-1750158490426-1-fb0plvu",
+        "text": "What is the boolean value that represents 'yes' or 'on'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750158490426_kpdc6gzz4",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750158490426_sh8lgn842",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750158490426_xadh1eowq",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750158490426_tttkmhel8",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1750158490426_kpdc6gzz4"
+      },
+      {
+        "id": "ai-q-1750158490426-2-l4mkyt3",
+        "text": "What is the result of the expression '2 + 2.0' in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750158490426_6gizs2avk",
+            "text": "4"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750158490426_81ht2c3d0",
+            "text": "4.0"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750158490426_gbyliji1q",
+            "text": "4.0f"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750158490426_b5y4c953m",
+            "text": "Four"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750158490426_81ht2c3d0"
+      },
+      {
+        "id": "ai-q-1750158490426-3-o3cqjqj",
+        "text": "Which data type would be most appropriate for storing the number of students in a class?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750158490426_125i5alt2",
+            "text": "Integer"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750158490426_c2mtiekin",
+            "text": "Float"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750158490426_dzc5dpzu8",
+            "text": "String"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750158490426_nft74v6n4",
+            "text": "Boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1750158490426_125i5alt2"
+      },
+      {
+        "id": "ai-q-1750158490426-4-78w3jmg",
+        "text": "What is the value of '5 > 10' in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750158490426_y6ewlzu5d",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750158490426_w80b8w4ym",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750158490426_1xj5npm8n",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750158490426_4xcveobap",
+            "text": "Error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750158490426_w80b8w4ym"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750158539550-o6ror",
+    "createdAt": "2025-06-17T11:08:59.550Z",
+    "updatedAt": "2025-06-17T11:08:59.550Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750158757786-0-5r3oj40",
+        "text": "Which of the following operators is used to assign a value to a variable in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750158757786_d1iywhb6z",
+            "text": "Arithmetic"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750158757786_fp4avfhto",
+            "text": "Logical"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750158757786_3vdjyn6dt",
+            "text": "Comparison"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750158757786_eb7lwvajh",
+            "text": "Assignment"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx3_1750158757786_eb7lwvajh"
+      },
+      {
+        "id": "ai-q-1750158757786-1-8qdyedx",
+        "text": "Which function is used to convert a number to a string in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750158757786_ooy5lbuo0",
+            "text": "int()"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750158757786_uvft2vlvu",
+            "text": "float()"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750158757786_7x7f5ixg9",
+            "text": "bool()"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750158757786_lo6rpuq6h",
+            "text": "str()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750158757786_lo6rpuq6h"
+      },
+      {
+        "id": "ai-q-1750158757786-2-x8890ty",
+        "text": "What type of error occurs when you try to add a string and an integer without explicit type conversion?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750158757786_k4xj1poqa",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750158757786_kqbx4cqnz",
+            "text": "SyntaxError"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750158757786_n8h1ubdpm",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750158757786_obznkxk2m",
+            "text": "IndentationError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750158757786_n8h1ubdpm"
+      },
+      {
+        "id": "ai-q-1750158757786-3-w5sw6eb",
+        "text": "Which operator performs floor division in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750158757786_xtmqzpi3y",
+            "text": "/"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750158757786_t143ud44r",
+            "text": "%"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750158757786_o6suznisy",
+            "text": "**"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750158757786_synvmlgo6",
+            "text": "//"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750158757786_synvmlgo6"
+      },
+      {
+        "id": "ai-q-1750158757786-4-zfh9boy",
+        "text": "Which of the following is a valid rule for naming variables in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750158757786_x85vmwqgd",
+            "text": "Variables must start with a number."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750158757786_b7abd41nx",
+            "text": "Variables can only contain numbers."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750158757786_xaeask0kg",
+            "text": "Variables must start with a letter or underscore."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750158757786_y3s6y66ua",
+            "text": "Variables cannot contain underscores."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750158757786_xaeask0kg"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750158771022-5ne0x",
+    "createdAt": "2025-06-17T11:12:51.022Z",
+    "updatedAt": "2025-06-17T11:12:51.022Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750158860632-0-2b3tjaf",
+        "text": "In Python, what does an 'elif' statement do?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750158860632_ambqf7778",
+            "text": "Executes only if condition1 is true"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750158860632_g5y02roy3",
+            "text": "Executes only if condition1 is false"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750158860632_ldpwnasc6",
+            "text": "Executes only if condition1 is false and condition2 is true"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750158860632_ejdcjbdr1",
+            "text": "Executes only if condition1 and condition2 are true"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750158860632_ldpwnasc6"
+      },
+      {
+        "id": "ai-q-1750158860632-1-8itmg0g",
+        "text": "What is the primary purpose of an 'if' statement in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750158860632_kql69kg3m",
+            "text": "To define a function"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750158860632_79lnb8ls2",
+            "text": "To execute a block of code only if a condition is true"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750158860632_4rv0bcx1i",
+            "text": "To loop through a sequence"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750158860632_0bjnw1g0z",
+            "text": "To handle exceptions"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1750158860632_79lnb8ls2"
+      },
+      {
+        "id": "ai-q-1750158860632-2-t0v23ac",
+        "text": "What happens if none of the conditions in an 'if-elif-else' statement are true?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750158860632_a0dpcb5wq",
+            "text": "The code block under 'if' executes"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750158860632_umusg4aqe",
+            "text": "The code block under 'elif' executes"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750158860632_pexx12ua4",
+            "text": "The code block under 'else' executes"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750158860632_nqkpwto3c",
+            "text": "No code block executes"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750158860632_pexx12ua4"
+      },
+      {
+        "id": "ai-q-1750158860632-3-jmlxzmy",
+        "text": "What will the following code print? a = 5; b = 5; if a > b: print(\"Greater\"); elif a < b: print(\"Less\"); else: print(\"Equal\")",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750158860632_lux3t1dj8",
+            "text": "It will print \"Greater\""
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750158860632_nk7r7c8y0",
+            "text": "It will print \"Less\""
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750158860632_7oh552zyw",
+            "text": "It will print \"Equal\""
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750158860632_63c75qiu2",
+            "text": "It will not print anything"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1750158860632_7oh552zyw"
+      },
+      {
+        "id": "ai-q-1750158860632-4-03wfxaz",
+        "text": "Which keyword is used to specify a block of code to be executed if all preceding conditions in an if-elif-else statement are false?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750158860632_6fkfhrqk3",
+            "text": "if"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750158860632_zjv9s89rs",
+            "text": "elif"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750158860632_3anbzhwx5",
+            "text": "else"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750158860632_w1n54a9nr",
+            "text": "endif"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750158860632_3anbzhwx5"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750158874460-xml8d",
+    "createdAt": "2025-06-17T11:14:34.460Z",
+    "updatedAt": "2025-06-17T11:14:34.460Z"
   }
 ]

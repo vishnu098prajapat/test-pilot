@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Award, AlertTriangle, Home, LayoutDashboard } from 'lucide-react'; // Added LayoutDashboard
+import { Award, AlertTriangle, Home, LayoutDashboard } from 'lucide-react'; 
 import type { TestAttempt, StudentAnswer } from '@/lib/types';
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 interface RankedAttempt extends TestAttempt {
   rank: number | null;
@@ -22,6 +23,7 @@ export default function LeaderboardPage() {
   const params = useParams();
   const router = useRouter();
   const testId = params.testId as string;
+  const { toast } = useToast(); // Initialize useToast
 
   const [attempts, setAttempts] = useState<RankedAttempt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +57,7 @@ export default function LeaderboardPage() {
           let currentRank = 0;
           let lastScore = -1;
           let tiedCount = 1;
+          let hasSuspiciousActivity = false;
 
           sortedAttempts.forEach((attempt) => {
             if (attempt.scorePercentage !== lastScore) {
@@ -65,6 +68,10 @@ export default function LeaderboardPage() {
               tiedCount++;
             }
             
+            if (attempt.isSuspicious) {
+              hasSuspiciousActivity = true;
+            }
+
             let badge;
             if (currentRank === 1) {
               badge = { name: 'Gold', color: 'text-yellow-500', icon: Award };
@@ -87,6 +94,15 @@ export default function LeaderboardPage() {
           });
           setAttempts(rankedAttempts);
 
+          if (hasSuspiciousActivity) {
+            toast({
+              title: "Suspicious Activity Detected",
+              description: "Some students have red flags. This may indicate potential cheating.",
+              variant: "destructive",
+              duration: 5000,
+            });
+          }
+
         } else {
           setTestTitle('Test Leaderboard'); 
           setAttempts([]);
@@ -101,7 +117,7 @@ export default function LeaderboardPage() {
     }
 
     fetchAttempts();
-  }, [testId]);
+  }, [testId, toast]);
 
   if (isLoading) {
     return (
@@ -175,7 +191,14 @@ export default function LeaderboardPage() {
                 {attempts.map((attempt) => (
                   <TableRow key={attempt.id}>
                     <TableCell className="font-medium text-center">{attempt.rank}</TableCell>
-                    <TableCell>{attempt.studentIdentifier}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        {attempt.studentIdentifier}
+                        {attempt.isSuspicious && (
+                          <AlertTriangle className="ml-2 h-4 w-4 text-destructive" title={attempt.suspiciousReason || "Suspicious activity detected"} />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">
                       {attempt.scorePercentage !== undefined ? `${attempt.scorePercentage}%` : 'N/A'}
                       <span className="text-xs text-muted-foreground ml-1">
@@ -212,4 +235,3 @@ export default function LeaderboardPage() {
     </div>
   );
 }
-
