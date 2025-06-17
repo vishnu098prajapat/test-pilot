@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode, MoreVertical } from "lucide-react";
+import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode, MoreVertical, ListFilter, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
@@ -32,6 +32,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import QrCodeModal from "@/components/common/qr-code-modal";
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -43,6 +44,9 @@ export default function DashboardPage() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [qrCodeTitle, setQrCodeTitle] = useState("");
+
+  const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
+  const [selectedTests, setSelectedTests] = useState<string[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -66,18 +70,49 @@ export default function DashboardPage() {
     fetchData();
   }, [user?.id, toast]);
 
-  const handleDeleteTest = async (testId: string) => {
+  const toggleSelectionMode = () => {
+    setIsSelectionModeActive(!isSelectionModeActive);
+    setSelectedTests([]); // Clear selections when toggling mode
+  };
+
+  const handleTestSelection = (testId: string) => {
+    setSelectedTests(prevSelected =>
+      prevSelected.includes(testId)
+        ? prevSelected.filter(id => id !== testId)
+        : [...prevSelected, testId]
+    );
+  };
+
+  const handleBulkDeleteTests = async () => {
+    if (selectedTests.length === 0) {
+      toast({ title: "No Tests Selected", description: "Please select at least one test to delete.", variant: "destructive", duration: 2000 });
+      return;
+    }
+
     try {
-      const success = await deleteTestAction(testId);
-      if (success) {
-        setTests(prevTests => prevTests.filter(test => test.id !== testId));
-        setAllAttempts(prevAttempts => prevAttempts.filter(attempt => attempt.testId !== testId));
-        toast({ title: "Success", description: "Test deleted successfully.", duration: 2000 });
-      } else {
-        toast({ title: "Error", description: "Failed to delete test.", variant: "destructive", duration: 2000 });
+      let successCount = 0;
+      for (const testId of selectedTests) {
+        const success = await deleteTestAction(testId);
+        if (success) {
+          successCount++;
+        }
       }
+      
+      if (successCount > 0) {
+        setTests(prevTests => prevTests.filter(test => !selectedTests.includes(test.id)));
+        setAllAttempts(prevAttempts => prevAttempts.filter(attempt => !selectedTests.includes(attempt.testId)));
+        toast({ title: "Success", description: `${successCount} test(s) deleted successfully.`, duration: 2000 });
+      }
+      
+      if (successCount < selectedTests.length) {
+        toast({ title: "Partial Deletion", description: `${selectedTests.length - successCount} test(s) could not be deleted.`, variant: "destructive", duration: 2000 });
+      }
+
     } catch (error) {
-      toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive", duration: 2000 });
+      toast({ title: "Error", description: "An error occurred while deleting tests.", variant: "destructive", duration: 2000 });
+    } finally {
+      setSelectedTests([]);
+      setIsSelectionModeActive(false);
     }
   };
   
@@ -148,11 +183,13 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-3xl font-bold font-headline">Dashboard</h1>
           </div>
-          <Button asChild size="lg">
-            <Link href="/dashboard/create-test">
-              <PlusCircle className="mr-2 h-5 w-5" /> Create New Test
-            </Link>
-          </Button>
+          {!isSelectionModeActive && (
+            <Button asChild size="lg">
+              <Link href="/dashboard/create-test">
+                <PlusCircle className="mr-2 h-5 w-5" /> Create New Test
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -165,26 +202,66 @@ export default function DashboardPage() {
         <Separator className="my-8" />
 
         <div>
-          <h2 className="text-2xl font-semibold font-headline mb-6">My Tests</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold font-headline">My Tests</h2>
+            <div className="flex gap-2">
+              {!isSelectionModeActive ? (
+                <Button variant="outline" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0}>
+                  <Trash2 className="mr-2 h-4 w-4" /> Select to Delete
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" onClick={toggleSelectionMode}>
+                    <X className="mr-2 h-4 w-4" /> Cancel
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" disabled={selectedTests.length === 0}>
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({selectedTests.length})
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirm Bulk Deletion</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete {selectedTests.length} test(s)? This action cannot be undone and will remove all associated data.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleBulkDeleteTests} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                          Yes, Delete Selected
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              )}
+            </div>
+          </div>
+
           {isLoading ? (
             <div className="space-y-4">
               {[1,2,3].map(i => (
-                <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2 mt-1" />
-                    <div className="flex gap-4 mt-2">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-4 w-1/4" />
-                  </CardContent>
-                  <CardFooter className="flex justify-end gap-2">
+                <Card key={i} className="flex items-center p-4">
+                  {isSelectionModeActive && <Skeleton className="h-5 w-5 mr-4" />}
+                  <div className="flex-grow">
+                    <CardHeader className="p-0">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2 mt-1" />
+                      <div className="flex gap-4 mt-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0 mt-2">
+                      <Skeleton className="h-4 w-1/4" />
+                    </CardContent>
+                  </div>
+                  <div className="flex justify-end gap-2 ml-auto">
                      <Skeleton className="h-9 w-24" />
-                     <Skeleton className="h-9 w-20" />
-                  </CardFooter>
+                     <Skeleton className="h-9 w-9" />
+                  </div>
                 </Card>
               ))}
             </div>
@@ -194,87 +271,74 @@ export default function DashboardPage() {
                 const { numberOfAttempts, averageScore } = getTestStats(test.id);
                 const testLink = typeof window !== "undefined" ? `${window.location.origin}/test/${test.id}` : "";
                 return (
-                <Card key={test.id} className="shadow-sm hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="font-headline text-xl">{test.title}</CardTitle>
-                        <CardDescription>{test.subject} - {test.questions.length} questions - {test.duration} mins</CardDescription>
+                <Card key={test.id} className={`flex items-center p-4 shadow-sm hover:shadow-md transition-shadow ${selectedTests.includes(test.id) ? 'ring-2 ring-primary bg-primary/5' : ''}`}>
+                  {isSelectionModeActive && (
+                    <Checkbox
+                      id={`select-${test.id}`}
+                      checked={selectedTests.includes(test.id)}
+                      onCheckedChange={() => handleTestSelection(test.id)}
+                      className="mr-4 h-5 w-5"
+                      aria-label={`Select test ${test.title}`}
+                    />
+                  )}
+                  <div className="flex-grow">
+                    <CardHeader className="p-0">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="font-headline text-xl">{test.title}</CardTitle>
+                          <CardDescription>{test.subject} - {test.questions.length} questions - {test.duration} mins</CardDescription>
+                        </div>
+                         <Badge variant={test.published ? "default" : "secondary"} className="hidden sm:inline-flex">
+                            {test.published ? "Published" : "Draft"}
+                          </Badge>
                       </div>
-                       <Badge variant={test.published ? "default" : "secondary"}>
-                          {test.published ? "Published" : "Draft"}
-                        </Badge>
-                    </div>
-                    <div className="text-xs text-muted-foreground pt-2 flex gap-4 items-center">
-                        <span>
-                          <Users className="inline h-3 w-3 mr-1"/> Attempts: {numberOfAttempts}
-                        </span>
-                        <span>
-                          <BarChart3 className="inline h-3 w-3 mr-1"/> Avg. Score: {numberOfAttempts > 0 ? `${averageScore}%` : 'N/A'}
-                        </span>
-                      </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      Created: {new Date(test.createdAt).toLocaleDateString()}
-                    </p>
-                  </CardContent>
-                  <CardFooter className="flex flex-wrap justify-end gap-2">
+                      <div className="text-xs text-muted-foreground pt-2 flex flex-wrap gap-x-4 gap-y-1 items-center">
+                          <span>
+                            <Users className="inline h-3 w-3 mr-1"/> Attempts: {numberOfAttempts}
+                          </span>
+                          <span>
+                            <BarChart3 className="inline h-3 w-3 mr-1"/> Avg. Score: {numberOfAttempts > 0 ? `${averageScore}%` : 'N/A'}
+                          </span>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0 mt-2">
+                      <p className="text-sm text-muted-foreground">
+                        Created: {new Date(test.createdAt).toLocaleDateString()}
+                      </p>
+                    </CardContent>
+                  </div>
+                  <CardFooter className="p-0 pl-4 flex justify-end gap-2 ml-auto items-center">
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/dashboard/test/${test.id}`}>
                         <Activity className="mr-1 h-4 w-4" /> Manage
                       </Link>
                     </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                          <span className="sr-only">More actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/create-test?edit=${test.id}`}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => testLink && handleShareLink(testLink)} disabled={!test.published || !testLink}>
-                          <Share2 className="mr-2 h-4 w-4" /> Copy Link
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleShowQrCode(test)} disabled={!test.published}>
-                          <QrCode className="mr-2 h-4 w-4" /> Show QR
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleWhatsAppShare(test)} disabled={!test.published}>
-                          <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem 
-                              className="text-destructive focus:text-destructive focus:bg-destructive/10"
-                              onSelect={(event) => event.preventDefault()} 
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete the test
-                                &quot;{test.title}&quot; and all its associated data.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteTest(test.id)} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {!isSelectionModeActive && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">More actions</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/dashboard/create-test?edit=${test.id}`}>
+                              <Edit className="mr-2 h-4 w-4" /> Edit
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => testLink && handleShareLink(testLink)} disabled={!test.published || !testLink}>
+                            <Share2 className="mr-2 h-4 w-4" /> Copy Link
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleShowQrCode(test)} disabled={!test.published}>
+                            <QrCode className="mr-2 h-4 w-4" /> Show QR
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleWhatsAppShare(test)} disabled={!test.published}>
+                            <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </CardFooter>
                 </Card>
               );
@@ -307,3 +371,4 @@ export default function DashboardPage() {
     </>
   );
 }
+
