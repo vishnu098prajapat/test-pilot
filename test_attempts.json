@@ -1213,5 +1213,53 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750158703808-bwtilsw",
     "submittedAt": "2025-06-17T11:11:43.808Z"
+  },
+  {
+    "testId": "test-1750159697749-z041u",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "honey",
+    "startTime": "2025-06-17T11:28:34.703Z",
+    "endTime": "2025-06-17T11:29:22.867Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750159677233-0-zkjpyet",
+        "answer": "ai-opt_q0_idx2_1750159677233_qt4ojkr1z",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750159677233-1-lxaf6jf",
+        "answer": "ai-opt_q1_idx1_1750159677233_dstydanfn",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750159677233-2-37fr2mu",
+        "answer": "ai-opt_q2_idx1_1750159677233_gm5ersnea",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750159677233-3-igc6b9m",
+        "answer": "ai-opt_q3_idx2_1750159677233_0666lvcvt",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750159677233-4-4mvamct",
+        "answer": "ai-opt_q4_idx1_1750159677233_g01oeeylh",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-17T11:28:34.727Z] User: honey (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T11:28:34.728Z] User: honey (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T11:28:40.762Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-0-zkjpyet.\n[2025-06-17T11:28:42.580Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-0-zkjpyet.\n[2025-06-17T11:28:48.807Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-1-lxaf6jf.\n[2025-06-17T11:28:52.739Z] User: honey (IP: 127.0.0.1 (localhost)) - Tab switched / minimized.\n[2025-06-17T11:28:58.665Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-2-37fr2mu.\n[2025-06-17T11:29:03.174Z] User: honey (IP: 127.0.0.1 (localhost)) - Tab switched / minimized.\n[2025-06-17T11:29:12.543Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-3-igc6b9m.\n[2025-06-17T11:29:17.826Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750159677233-4-4mvamct.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student switched tabs/minimized the test window multiple times during the exam. This behavior is often associated with attempts to access unauthorized resources or communicate with others, which violates test-taking policies.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750159491324-1ovpcqo",
+    "submittedAt": "2025-06-17T11:24:51.324Z"
   }
 ]
