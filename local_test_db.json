@@ -2540,5 +2540,146 @@
     "id": "test-1750080630020-2dq12",
     "createdAt": "2025-06-16T13:30:30.020Z",
     "updatedAt": "2025-06-16T13:30:30.020Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750156250476-0-a7fzn5v",
+        "text": "Which method is the safest way to access the value associated with the key 'city' in the dictionary `my_dict` if you're unsure if the key exists, and want to return 'Unknown' if it doesn't?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750156250476_righr4j3j",
+            "text": "my_dict['city']"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750156250476_ogb1sss6w",
+            "text": "my_dict.city"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750156250476_s2gjr0f2m",
+            "text": "my_dict.get('city', 'Unknown')"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750156250476_cgl8ctmee",
+            "text": "my_dict.fetch('city')"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750156250476_s2gjr0f2m"
+      },
+      {
+        "id": "ai-q-1750156250476-1-ipl37wx",
+        "text": "What is the output of the following code?\n```python\nmy_dict = {'a': 1, 'b': 2}\nmy_dict['c'] = 3\nprint(my_dict)\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750156250476_unidu3wfr",
+            "text": "{'a': 1, 'b': 2, 'c': 3}"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750156250476_v1hlyrs59",
+            "text": "{'a': 1, 'b': 2, 'c': 4}"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750156250476_w6kqhzm7k",
+            "text": "{'a': 1, 'b': 2}"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750156250476_yxwr9thu4",
+            "text": "{'a': 1, 'c': 3}"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1750156250476_unidu3wfr"
+      },
+      {
+        "id": "ai-q-1750156250476-2-sndrrov",
+        "text": "What is the output of the following code?\n```python\nmy_dict = {'a': 1, 'b': 2}\nmy_dict['b'] = 5\nprint(my_dict)\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750156250476_mfyfci3o3",
+            "text": "{'a': 1, 'b': 5}"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750156250476_utfmlpl95",
+            "text": "{'a': 1, 'b': 2}"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750156250476_5aeqehnfh",
+            "text": "Error"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750156250476_lejn0aw2f",
+            "text": "{'b': 5, 'a': 1}"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1750156250476_mfyfci3o3"
+      },
+      {
+        "id": "ai-q-1750156250476-3-tdom4qp",
+        "text": "What is the output of the following code?\n```python\nmy_dict = {'a': 1, 'b': 2}\ndel my_dict['b']\nmy_dict['c'] = 3\nprint(my_dict)\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750156250476_52r10m023",
+            "text": "{'a': 1, 'c': 3}"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750156250476_nis4tvn14",
+            "text": "{'a': 1, 'b': 2, 'c': 3}"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750156250476_hm750ve0b",
+            "text": "{'b': 2, 'c': 3}"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750156250476_gn4swkuxv",
+            "text": "Error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1750156250476_52r10m023"
+      },
+      {
+        "id": "ai-q-1750156250476-4-e6hia2h",
+        "text": "What is the output of the following code?\n```python\nmy_dict = {'a': 1, 'b': 2}\nprint(my_dict['b'])\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750156250476_netgiglo8",
+            "text": "1"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750156250476_hpl0iusah",
+            "text": "2"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750156250476_1n53snaeb",
+            "text": "Error"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750156250476_ax0vx3qj5",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750156250476_hpl0iusah"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750156290145-yidxx",
+    "createdAt": "2025-06-17T10:31:30.146Z",
+    "updatedAt": "2025-06-17T10:31:30.146Z"
   }
 ]

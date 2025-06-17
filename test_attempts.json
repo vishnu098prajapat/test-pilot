@@ -1021,5 +1021,53 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750080422243-7jqdi01",
     "submittedAt": "2025-06-16T13:27:02.243Z"
+  },
+  {
+    "testId": "test-1750156290145-yidxx",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Vip",
+    "startTime": "2025-06-17T10:27:49.443Z",
+    "endTime": "2025-06-17T10:28:20.016Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750156250476-0-a7fzn5v",
+        "answer": "ai-opt_q0_idx2_1750156250476_s2gjr0f2m",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750156250476-1-ipl37wx",
+        "answer": "ai-opt_q1_idx1_1750156250476_v1hlyrs59",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750156250476-2-sndrrov",
+        "answer": "ai-opt_q2_idx1_1750156250476_utfmlpl95",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750156250476-3-tdom4qp",
+        "answer": "ai-opt_q3_idx1_1750156250476_nis4tvn14",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750156250476-4-e6hia2h",
+        "answer": "ai-opt_q4_idx2_1750156250476_1n53snaeb",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-17T10:27:49.514Z] User: Vip (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T10:27:49.519Z] User: Vip (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T10:27:53.037Z] User: Vip (IP: 127.0.0.1 (localhost)) - Tab switched / minimized.\n[2025-06-17T10:27:59.336Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-0-a7fzn5v.\n[2025-06-17T10:28:04.841Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-0-a7fzn5v.\n[2025-06-17T10:28:13.321Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-1-ipl37wx.\n[2025-06-17T10:28:15.929Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-2-sndrrov.\n[2025-06-17T10:28:17.117Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-3-tdom4qp.\n[2025-06-17T10:28:18.666Z] User: Vip (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750156250476-4-e6hia2h.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student switched tabs shortly after the test started. While a single tab switch might not be conclusive, it raises suspicion, especially early in the test. Frequent tab switching is a common indicator of attempts to access unauthorized resources.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750156102889-roc5jk6",
+    "submittedAt": "2025-06-17T10:28:22.889Z"
   }
 ]
