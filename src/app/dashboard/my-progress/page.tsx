@@ -1,0 +1,198 @@
+
+"use client";
+
+import React, { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, BarChart3, FileText, AlertCircle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import type { TestAttempt } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+
+export default function MyProgressPage() {
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { toast } = useToast();
+  const [attempts, setAttempts] = useState<TestAttempt[]>([]);
+  const [isLoadingAttempts, setIsLoadingAttempts] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAttempts() {
+      if (!user || !user.displayName) {
+        setIsLoadingAttempts(false);
+        return;
+      }
+
+      setIsLoadingAttempts(true);
+      setError(null);
+      try {
+        // Fetch all attempts and filter client-side by studentIdentifier (displayName)
+        // In a real DB, you'd filter on the backend: /api/attempts?studentIdentifier=${user.displayName}
+        const response = await fetch(`/api/attempts`); 
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
+        }
+        const allAttempts: TestAttempt[] = await response.json();
+        
+        const studentSpecificAttempts = allAttempts.filter(
+          attempt => attempt.studentIdentifier === user.displayName
+        );
+        
+        // Sort attempts by submission date, newest first
+        studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+
+        setAttempts(studentSpecificAttempts);
+      } catch (e: any) {
+        console.error("Error fetching student attempts:", e);
+        setError(e.message || "Could not load your progress data.");
+        toast({ title: "Error", description: "Failed to load progress data.", variant: "destructive" });
+      } finally {
+        setIsLoadingAttempts(false);
+      }
+    }
+
+    if (!isAuthLoading) {
+      fetchAttempts();
+    }
+  }, [user, isAuthLoading, toast]);
+
+  const summaryStats = useMemo(() => {
+    if (attempts.length === 0) {
+      return { totalAttempts: 0, averageScore: 0, testsPassed: 0, passRate: 0 };
+    }
+    const totalAttempts = attempts.length;
+    const totalScoreSum = attempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const averageScore = totalAttempts > 0 ? Math.round(totalScoreSum / totalAttempts) : 0;
+    const testsPassed = attempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length; // Assuming 50% is passing
+    const passRate = totalAttempts > 0 ? Math.round((testsPassed / totalAttempts) * 100) : 0;
+
+    return { totalAttempts, averageScore, testsPassed, passRate };
+  }, [attempts]);
+
+  const getProgressColor = (percentage: number) => {
+    if (percentage >= 75) return "bg-green-500";
+    if (percentage >= 50) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  if (isAuthLoading || isLoadingAttempts) {
+    return (
+      <div className="container mx-auto py-2 bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
+        <div className="flex items-center mb-8"> <Skeleton className="w-10 h-10 rounded-full mr-3" /><Skeleton className="h-8 w-48" /> </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+        </div>
+        <Skeleton className="h-8 w-1/3 mb-4" />
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <Card key={i}><CardHeader><Skeleton className="h-6 w-3/4" /></CardHeader><CardContent><Skeleton className="h-4 w-1/2" /><Skeleton className="h-8 w-full mt-2" /></CardContent><CardFooter><Skeleton className="h-9 w-24" /></CardFooter></Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  
+  if (!user || user.role === 'teacher') {
+    return (
+      <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
+        <AlertCircle className="w-12 h-12 text-primary mx-auto mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Student Progress Area</h2>
+        <p className="text-muted-foreground">
+          {user?.role === 'teacher' ? "This page is for students to track their progress. Teachers can view aggregated results on the 'Results' page." : "Please log in as a student to view your progress."}
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
+        <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-destructive mb-2">Error Loading Progress</h2>
+        <p className="text-muted-foreground">{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto py-2 bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-md p-4 sm:p-6">
+      <div className="flex items-center mb-8">
+        <TrendingUp className="w-10 h-10 text-primary mr-3" />
+        <div>
+            <h1 className="text-3xl font-bold font-headline">My Progress</h1>
+            <p className="text-muted-foreground">Track your test performance and growth over time.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Attempts</CardTitle><FileText className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.totalAttempts}</div></CardContent>
+        </Card>
+        <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score</CardTitle><Percent className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.averageScore}%</div></CardContent>
+        </Card>
+         <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (>=50%)</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.testsPassed}</div></CardContent>
+        </Card>
+         <Card className="shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate</CardTitle><BarChart3 className="h-4 w-4 text-muted-foreground" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.passRate}%</div></CardContent>
+        </Card>
+      </div>
+
+      <h2 className="text-2xl font-semibold font-headline mb-6">Attempt History</h2>
+      {attempts.length === 0 ? (
+        <Card className="text-center py-10">
+          <CardContent className="flex flex-col items-center gap-3">
+            <BookOpen className="w-12 h-12 text-muted-foreground/70" />
+            <p className="text-muted-foreground">You haven&apos;t attempted any tests yet.</p>
+            <Button asChild variant="link"><Link href="/dashboard">Explore Available Tests</Link></Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {attempts.map((attempt) => (
+            <Card key={attempt.id} className="shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                    <CardTitle className="font-headline text-lg">{attempt.testTitle || `Test ID: ${attempt.testId}`}</CardTitle>
+                    <Badge variant="outline" className="text-xs">
+                        <CalendarDays className="h-3 w-3 mr-1.5" />
+                        {new Date(attempt.submittedAt).toLocaleDateString()}
+                    </Badge>
+                </div>
+                <CardDescription>
+                  Score: <span className="font-semibold text-primary">{attempt.scorePercentage}%</span> ({attempt.score}/{attempt.maxPossiblePoints} points)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={attempt.scorePercentage || 0} className={`h-2.5 ${getProgressColor(attempt.scorePercentage || 0)}`} />
+                 {attempt.isSuspicious && (
+                    <p className="text-xs text-destructive mt-2 flex items-center">
+                        <AlertTriangle className="h-3 w-3 mr-1"/> This attempt was flagged for suspicious activity.
+                    </p>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" size="sm" asChild className="text-primary hover:bg-primary/10">
+                  <Link href={`/test/${attempt.testId}/results`}>
+                    View Detailed Results
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

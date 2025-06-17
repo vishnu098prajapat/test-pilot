@@ -1,11 +1,13 @@
 
+
 export interface User {
   id: string;
   email?: string; 
   displayName: string; 
   dob: string; 
-  role: 'teacher' | 'student';
+  role: 'teacher' | 'student' | 'instituteAdmin'; // Added instituteAdmin
   profileImageUrl?: string; 
+  instituteId?: string; // Added instituteId
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false' | 'drag-and-drop';
@@ -65,7 +67,6 @@ export interface DragDropQuestion extends BaseQuestion {
 
 export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
 
-// Removed Group and GroupAnnouncement types
 
 export interface Test {
   id: string;
@@ -81,7 +82,8 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  // sharedWithGroupIds?: string[]; // Removed this field
+  instituteId?: string; // Added
+  batchId?: string;     // Added
 }
 
 export interface StudentAnswer {
@@ -107,4 +109,19 @@ export interface TestAttempt {
   suspiciousReason?: string;
   submittedAt: string; 
   ipAddress?: string; 
+}
+
+// New types for Institute and Batch
+export interface Institute {
+  id: string;
+  name: string;
+  adminIds: string[]; // Array of User IDs who are admins of this institute
+}
+
+export interface Batch {
+  id: string;
+  name: string; // e.g., "JEE 2025 Physics", "Class 10 - Section A"
+  instituteId: string; // Links to an Institute
+  teacherIds: string[]; // Array of User IDs who teach this batch
+  studentIdentifiers: string[]; // Using array of student display names for simplicity with current auth
 }

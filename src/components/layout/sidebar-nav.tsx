@@ -10,7 +10,7 @@ import {
   PlusCircle, 
   Settings,
   BarChart3,
-  // Users, // Removed Users icon for Groups
+  TrendingUp, // New icon for My Progress
   Sparkles 
 } from "lucide-react";
 import { 
@@ -29,8 +29,8 @@ const mainNavItems = [
   { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
-  // { href: "/dashboard/groups", label: "Groups", icon: Users }, // Removed Groups link
   { href: "/dashboard/results", label: "Results", icon: BarChart3 }, 
+  { href: "/dashboard/my-progress", label: "My Progress", icon: TrendingUp }, // New Link
 ];
 
 const secondaryNavItems = [
@@ -40,7 +40,7 @@ const secondaryNavItems = [
 
 export function SidebarNav() {
   const pathname = usePathname();
-  const { open } = useSidebar(); // Get sidebar state for tooltip logic
+  const { open } = useSidebar(); 
 
   const navLinkClass = (href: string, exact: boolean = false) => {
     const isActive = exact ? pathname === href : pathname.startsWith(href);
@@ -57,7 +57,7 @@ export function SidebarNav() {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test")} // Adjusted exact match logic
+                  isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress"].includes(item.href))} 
                   tooltip={!open ? item.label : undefined}
                 >
                   <Link href={item.href}>
@@ -95,3 +95,4 @@ export function SidebarNav() {
     </nav>
   );
 }
+
