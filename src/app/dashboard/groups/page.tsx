@@ -119,8 +119,8 @@ export default function GroupsPage() {
                 <Skeleton className="h-4 w-1/2" />
               </CardContent>
               <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-end gap-2">
-                <Skeleton className="h-9 w-full sm:w-28" />
-                <Skeleton className="h-9 w-full sm:w-20" />
+                <Skeleton className="h-9 w-full sm:w-auto px-4 py-2" /> {/* Adjusted skeleton */}
+                <Skeleton className="h-9 w-9 sm:w-9" /> {/* Adjusted skeleton for icon button */}
               </CardFooter>
             </Card>
           ))}
@@ -199,8 +199,8 @@ export default function GroupsPage() {
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="w-full sm:w-auto">
-                      <Trash2 className="mr-1 h-4 w-4" /> Delete
+                    <Button variant="destructive" size="icon" className="w-full sm:w-auto sm:h-9 sm:w-9" title="Delete Group">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -242,3 +242,4 @@ export default function GroupsPage() {
     </div>
   );
 }
+
