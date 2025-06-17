@@ -38,17 +38,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
       const newAttemptData: Omit<TestAttempt, 'id' | 'submittedAt'> = req.body;
+      console.log('[API-ATTEMPTS-DB] Received POST request with body:', JSON.stringify(newAttemptData, null, 2).substring(0, 500) + "..."); // Log snippet of body
 
       if (!newAttemptData.testId || !newAttemptData.studentIdentifier || !newAttemptData.answers) {
+        console.error('[API-ATTEMPTS-DB] Invalid attempt data. Missing required fields. Received:', newAttemptData);
         return res.status(400).json({ error: 'Invalid attempt data. Missing required fields.' });
       }
+      
+      // Log key identifiers from the incoming data
+      console.log(`[API-ATTEMPTS-DB] Processing attempt for Test ID: "${newAttemptData.testId}", Student Identifier: "${newAttemptData.studentIdentifier}", IP: "${newAttemptData.ipAddress || 'Not Provided'}"`);
 
       const attemptWithDetails: TestAttempt = {
         ...newAttemptData,
         id: `attempt-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         submittedAt: new Date().toISOString(),
-        ipAddress: newAttemptData.ipAddress, // Ensure ipAddress is included
+        ipAddress: newAttemptData.ipAddress, 
       };
+      
+      console.log(`[API-ATTEMPTS-DB] Attempt object to be saved (ID: ${attemptWithDetails.id}):`, JSON.stringify(attemptWithDetails, null, 2).substring(0, 500) + "...");
 
       const allAttempts = readAttemptsDb();
       allAttempts.push(attemptWithDetails);
@@ -72,7 +79,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         allAttempts = allAttempts.filter(attempt => attempt.testId === testId);
       }
       
-      // New filter for specific IP check if provided
       if (ipAddress && typeof ipAddress === 'string') {
         allAttempts = allAttempts.filter(attempt => attempt.ipAddress === ipAddress);
       }
