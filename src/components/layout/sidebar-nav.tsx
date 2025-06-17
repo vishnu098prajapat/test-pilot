@@ -10,7 +10,7 @@ import {
   PlusCircle, 
   Settings,
   BarChart3,
-  Users, // Added Users icon
+  // Users, // Removed Users icon for Groups
   Sparkles 
 } from "lucide-react";
 import { 
@@ -29,7 +29,7 @@ const mainNavItems = [
   { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
-  { href: "/dashboard/groups", label: "Groups", icon: Users }, // Added Groups link
+  // { href: "/dashboard/groups", label: "Groups", icon: Users }, // Removed Groups link
   { href: "/dashboard/results", label: "Results", icon: BarChart3 }, 
 ];
 
@@ -57,7 +57,7 @@ export function SidebarNav() {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test" || item.href === "/dashboard/groups")}
+                  isActive={navLinkClass(item.href, item.href === "/dashboard" || item.href === "/dashboard/ai-generate-test")} // Adjusted exact match logic
                   tooltip={!open ? item.label : undefined}
                 >
                   <Link href={item.href}>
@@ -95,4 +95,3 @@ export function SidebarNav() {
     </nav>
   );
 }
-

@@ -65,24 +65,7 @@ export interface DragDropQuestion extends BaseQuestion {
 
 export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
 
-export interface GroupAnnouncement {
-  id: string;
-  senderId: string;
-  senderName: string; // To display who sent it
-  content: string;
-  timestamp: Date;
-}
-
-export interface Group {
-  id: string;
-  name: string;
-  teacherId: string;
-  groupCode: string; 
-  studentIdentifiers: string[]; 
-  createdAt: Date;
-  groupImageUrl?: string;
-  announcements?: GroupAnnouncement[];
-}
+// Removed Group and GroupAnnouncement types
 
 export interface Test {
   id: string;
@@ -98,7 +81,7 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  sharedWithGroupIds?: string[]; 
+  // sharedWithGroupIds?: string[]; // Removed this field
 }
 
 export interface StudentAnswer {
