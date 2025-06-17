@@ -12,11 +12,13 @@ import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { startOfMonth, isWithinInterval } from "date-fns";
 
 export default function MyProgressPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const [attempts, setAttempts] = useState<TestAttempt[]>([]);
+  const [allUserAttempts, setAllUserAttempts] = useState<TestAttempt[]>([]);
+  const [currentMonthAttempts, setCurrentMonthAttempts] = useState<TestAttempt[]>([]);
   const [isLoadingAttempts, setIsLoadingAttempts] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,8 @@ export default function MyProgressPage() {
       if (!user || !user.displayName || user.displayName.trim() === "") {
         console.warn("[MyProgressPage] User or user.displayName not available or empty. Cannot fetch attempts. User:", JSON.stringify(user));
         setIsLoadingAttempts(false);
-        setAttempts([]);
+        setAllUserAttempts([]);
+        setCurrentMonthAttempts([]);
         return;
       }
       
@@ -48,9 +51,6 @@ export default function MyProgressPage() {
         }
         const allAttemptsData: TestAttempt[] = await response.json();
         console.log(`[MyProgressPage] All attempts fetched from API: ${allAttemptsData.length}`);
-        if (allAttemptsData.length > 0 && allAttemptsData.length <=5 ) { 
-            console.log("[MyProgressPage] Sample of fetched studentIdentifiers (raw):", allAttemptsData.slice(0, 5).map(a => a.studentIdentifier));
-        }
         
         const studentSpecificAttempts = allAttemptsData.filter(attempt => {
           const attemptIdentifierRaw = attempt.studentIdentifier;
@@ -65,9 +65,17 @@ export default function MyProgressPage() {
         
         console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after filtering for display name: "${userDisplayNameNormalized}".`);
 
-
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
-        setAttempts(studentSpecificAttempts);
+        setAllUserAttempts(studentSpecificAttempts);
+
+        const today = new Date();
+        const currentMonthStart = startOfMonth(today);
+        const filteredCurrentMonthAttempts = studentSpecificAttempts.filter(attempt => {
+          const attemptDate = new Date(attempt.submittedAt);
+          return isWithinInterval(attemptDate, { start: currentMonthStart, end: today });
+        });
+        setCurrentMonthAttempts(filteredCurrentMonthAttempts);
+        console.log(`[MyProgressPage] Found ${filteredCurrentMonthAttempts.length} attempts for the current month.`);
 
       } catch (e: any) {
         console.error("[MyProgressPage] Error fetching student attempts:", e);
@@ -82,17 +90,21 @@ export default function MyProgressPage() {
   }, [user, isAuthLoading, toast]);
 
   const summaryStats = useMemo(() => {
-    if (attempts.length === 0) {
-      return { totalAttempts: 0, averageScore: 0, testsPassed: 0, passRate: 0 };
-    }
-    const totalAttempts = attempts.length;
-    const totalScoreSum = attempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
-    const averageScore = totalAttempts > 0 ? Math.round(totalScoreSum / totalAttempts) : 0;
-    const testsPassed = attempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
-    const passRate = totalAttempts > 0 ? Math.round((testsPassed / totalAttempts) * 100) : 0;
+    const lifetimeTotalAttempts = allUserAttempts.length;
+    const lifetimeTestsPassed = allUserAttempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
 
-    return { totalAttempts, averageScore, testsPassed, passRate };
-  }, [attempts]);
+    const currentMonthTotalScoreSum = currentMonthAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const currentMonthAverageScore = currentMonthAttempts.length > 0 ? Math.round(currentMonthTotalScoreSum / currentMonthAttempts.length) : 0;
+    const currentMonthTestsPassed = currentMonthAttempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
+    const currentMonthPassRate = currentMonthAttempts.length > 0 ? Math.round((currentMonthTestsPassed / currentMonthAttempts.length) * 100) : 0;
+
+    return { 
+      lifetimeTotalAttempts, 
+      currentMonthAverageScore, 
+      lifetimeTestsPassed, 
+      currentMonthPassRate 
+    };
+  }, [allUserAttempts, currentMonthAttempts]);
 
   const getProgressColor = (percentage: number) => {
     if (percentage >= 75) return "bg-green-500";
@@ -104,7 +116,9 @@ export default function MyProgressPage() {
     return (
       <div className="container mx-auto py-2 bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <div className="flex items-center mb-8"> <Skeleton className="w-10 h-10 rounded-full mr-3" /><Skeleton className="h-8 w-48" /> </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
         </div>
@@ -130,27 +144,29 @@ export default function MyProgressPage() {
     );
   }
   
-  if (user.role === 'teacher' && attempts.length === 0) {
+  if (user.role === 'teacher' && currentMonthAttempts.length === 0 && allUserAttempts.length === 0) {
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <Info className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Teacher View</h2>
+        <h2 className="text-xl font-semibold mb-2">Teacher View - My Progress</h2>
         <p className="text-muted-foreground">
-          This page shows progress for attempts made under your teacher name: "{user.displayName}".<br/>
-          To see aggregated results for tests you've created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Results page</Link>.
+          This page displays test attempts you've made under your teacher name: "{user.displayName}".<br/>
+          For aggregated results of tests you've created for students, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Results page</Link>.
         </p>
-         <p className="text-sm text-muted-foreground mt-4">If you've attempted tests using this name, they will appear here. Currently, no attempts found for "{user.displayName}".</p>
+         <p className="text-sm text-muted-foreground mt-4">Currently, no attempts found for "{user.displayName}". If you take a test using this name, it will appear here.</p>
       </div>
     );
   }
 
-
   if (error) {
     return (
-      <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
-        <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-destructive mb-2">Error Loading Progress</h2>
-        <p className="text-muted-foreground">{error}</p>
+      <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center text-center">
+        <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
+        <h2 className="text-2xl font-bold text-destructive mb-2">Error Loading Progress</h2>
+        <p className="text-muted-foreground mb-6">{error}</p>
+        <Button asChild variant="outline">
+          <Link href="/">Go to Homepage</Link>
+        </Button>
       </div>
     );
   }
@@ -167,36 +183,36 @@ export default function MyProgressPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Attempts</CardTitle><FileText className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.totalAttempts}</div></CardContent>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Attempts (Lifetime)</CardTitle><FileText className="h-4 w-4 text-sky-500" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.lifetimeTotalAttempts}</div></CardContent>
         </Card>
         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score</CardTitle><Percent className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.averageScore}%</div></CardContent>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score (Current Month)</CardTitle><Percent className="h-4 w-4 text-sky-500" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.currentMonthAverageScore}%</div></CardContent>
         </Card>
          <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (>=50%)</CardTitle><CheckCircle className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.testsPassed}</div></CardContent>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (Lifetime)</CardTitle><CheckCircle className="h-4 w-4 text-sky-500" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.lifetimeTestsPassed}</div></CardContent>
         </Card>
          <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate</CardTitle><BarChart3 className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.passRate}%</div></CardContent>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate (Current Month)</CardTitle><BarChart3 className="h-4 w-4 text-sky-500" /></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{summaryStats.currentMonthPassRate}%</div></CardContent>
         </Card>
       </div>
 
-      <h2 className="text-2xl font-semibold font-headline mb-6">Attempt History</h2>
-      {attempts.length === 0 ? (
+      <h2 className="text-2xl font-semibold font-headline mb-6">Attempt History (Current Month)</h2>
+      {currentMonthAttempts.length === 0 ? (
         <Card className="text-center py-10">
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
-            <p className="text-muted-foreground">No test attempts found for "{user.displayName}".</p>
-            <p className="text-sm text-muted-foreground">Make sure the name used to take tests matches your login name.</p>
+            <p className="text-muted-foreground">No test attempts found for "{user.displayName}" in the current month.</p>
+            <p className="text-sm text-muted-foreground">Take a test to see your progress here!</p>
             <Button asChild variant="link"><Link href="/dashboard">Explore Available Tests</Link></Button>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
-          {attempts.map((attempt) => (
+          {currentMonthAttempts.map((attempt) => (
             <Card key={attempt.id} className="shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -232,4 +248,3 @@ export default function MyProgressPage() {
     </div>
   );
 }
-
