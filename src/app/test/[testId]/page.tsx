@@ -29,15 +29,15 @@ export default function StudentTestPage() {
   const [isNameSubmitted, setIsNameSubmitted] = useState(false);
   
   const [studentIp, setStudentIp] = useState<string | null>(null);
-  const [hasAttempted, setHasAttempted] = useState(false);
-  const [checkingAttemptStatus, setCheckingAttemptStatus] = useState(true); // Start true for initial check
+  const [hasReachedAttemptLimit, setHasReachedAttemptLimit] = useState(false);
+  const [checkingAttemptStatus, setCheckingAttemptStatus] = useState(true);
 
   const testId = params.testId as string;
 
   useEffect(() => {
     async function fetchInitialData() {
       if (!testId) {
-        setError("Test ID is missing from the link.");
+        setError("Test ID is missing from the link. Please check the URL.");
         setIsLoading(false);
         setCheckingAttemptStatus(false);
         return;
@@ -49,51 +49,62 @@ export default function StudentTestPage() {
 
       try {
         // 1. Fetch Test Data
+        console.log(`[StudentTestPage] Fetching test data for ID: ${testId}`);
         const fetchedTest = await getTestById(testId);
         if (!fetchedTest) {
-          setError(`Test with ID "${testId}" not found.`);
+          setError(`Test not found. It might have been deleted or the ID is incorrect (ID: ${testId}).`);
           throw new Error("Test not found");
         }
         if (!fetchedTest.published) {
-          setError(`This test (ID: ${testId}) is not currently active or published.`);
+          setError(`This test (Title: "${fetchedTest.title}") is not currently published by the teacher. Please contact the teacher if you believe this is an error.`);
           throw new Error("Test not published");
         }
         setTestData(fetchedTest);
+        console.log(`[StudentTestPage] Test data loaded: "${fetchedTest.title}", Attempts Allowed: ${fetchedTest.attemptsAllowed}`);
 
         // 2. Fetch Student IP
         const ipResponse = await fetch('/api/get-ip');
-        if (!ipResponse.ok) throw new Error('Failed to fetch IP address.');
+        if (!ipResponse.ok) throw new Error('Failed to fetch your IP address. Please check your network connection.');
         const ipData = await ipResponse.json();
         const currentIp = ipData.ip;
         setStudentIp(currentIp);
+        console.log(`[StudentTestPage] Student IP fetched: ${currentIp}`);
 
         // 3. Check for Existing Attempts from this IP for this test
-        if (currentIp) {
-          const attemptsResponse = await fetch(`/api/attempts?testId=${testId}`);
-          if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts.');
-          const existingAttempts: TestAttempt[] = await attemptsResponse.json();
+        if (currentIp && fetchedTest.attemptsAllowed > 0) { // Only check if attempts are limited
+          console.log(`[StudentTestPage] Checking existing attempts for testId: ${testId} and IP: ${currentIp}`);
+          const attemptsResponse = await fetch(`/api/attempts?testId=${testId}&ipAddress=${currentIp}`);
+          if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts. Please try again.');
+          const existingAttemptsForIp: TestAttempt[] = await attemptsResponse.json();
           
-          const alreadyAttempted = existingAttempts.some(attempt => attempt.ipAddress === currentIp);
-          if (alreadyAttempted) {
-            setHasAttempted(true);
+          console.log(`[StudentTestPage] Found ${existingAttemptsForIp.length} existing attempts from IP ${currentIp} for this test.`);
+
+          if (existingAttemptsForIp.length >= fetchedTest.attemptsAllowed) {
+            setHasReachedAttemptLimit(true);
+            const message = `You have reached the maximum number of attempts (${fetchedTest.attemptsAllowed}) for this test from your current IP address.`;
+            setError(message); // Set error to display specific message
             toast({
-              title: "Already Attempted",
-              description: "You have already attempted this test from this IP address.",
+              title: "Attempt Limit Reached",
+              description: message,
               variant: "destructive",
-              duration: 5000,
+              duration: 7000,
             });
           }
+        } else if (fetchedTest.attemptsAllowed === 0) {
+            console.log("[StudentTestPage] Attempts allowed is 0 (unlimited). Skipping IP check for previous attempts.");
         }
       } catch (err: any) {
-        console.error(`StudentTestPage: Error during initial data load for test ID "${testId}":`, err);
-        setError(err.message || "An error occurred while loading the test or checking attempts.");
+        console.error(`[StudentTestPage] Error during initial data load for test ID "${testId}":`, err);
+        if (!error) { // Set error only if not already set by a more specific condition
+            setError(err.message || "An error occurred while loading the test. Please ensure the link is correct and the test is active.");
+        }
       } finally {
         setIsLoading(false);
         setCheckingAttemptStatus(false);
       }
     }
     fetchInitialData();
-  }, [testId, toast]);
+  }, [testId, toast, error]); // Added 'error' to dependency array to avoid re-fetching if error is already set
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,8 +148,8 @@ export default function StudentTestPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold text-destructive mb-2">Error Loading Test</h2>
-        <p className="text-muted-foreground mb-6">{error}</p>
+        <h2 className="text-2xl font-bold text-destructive mb-2">Could Not Start Test</h2>
+        <p className="text-muted-foreground mb-6 max-w-md">{error}</p>
         <Button asChild variant="outline">
           <Link href="/">Go to Homepage</Link>
         </Button>
@@ -146,12 +157,12 @@ export default function StudentTestPage() {
     );
   }
   
-  if (!testData) { // Should be caught by error state, but as a fallback
+  if (!testData) { 
      return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
          <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
         <h2 className="text-2xl font-bold text-destructive mb-2">Test Not Available</h2>
-        <p className="text-muted-foreground mb-6">The requested test (ID: {testId}) could not be loaded.</p>
+        <p className="text-muted-foreground mb-6">The requested test could not be loaded. It may have been removed or the link is incorrect.</p>
          <Button asChild variant="outline">
           <Link href="/">Go to Homepage</Link>
         </Button>
@@ -159,13 +170,13 @@ export default function StudentTestPage() {
     );
   }
 
-  if (hasAttempted) {
+  if (hasReachedAttemptLimit && testData.attemptsAllowed > 0) { // Ensure this check happens after testData is loaded
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <Ban className="w-16 h-16 text-destructive mb-4" />
         <h2 className="text-2xl font-bold text-destructive mb-2">Attempt Limit Reached</h2>
-        <p className="text-muted-foreground mb-2">You have already attempted this test (ID: {testId}) from your current IP address ({studentIp || 'unknown'}).</p>
-        <p className="text-sm text-muted-foreground mb-6">Multiple attempts from the same IP are not allowed for this test.</p>
+        <p className="text-muted-foreground mb-2">You have already used all allowed attempts ({testData.attemptsAllowed}) for the test: "{testData.title}" from your current IP address ({studentIp || 'unknown'}).</p>
+        <p className="text-sm text-muted-foreground mb-6">Multiple attempts beyond the set limit are not allowed.</p>
         <div className="flex space-x-4">
             <Button asChild variant="default">
                 <Link href={`/test/${testId}/leaderboard`}>View Leaderboard</Link>
@@ -184,7 +195,7 @@ export default function StudentTestPage() {
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-2xl font-headline text-center">Welcome to: {testData.title}</CardTitle>
-            <CardDescription className="text-center pt-2">Please enter your name to begin the test.</CardDescription>
+            <CardDescription className="text-center pt-2">Please enter your full name as it should appear on the leaderboard to begin the test.</CardDescription>
           </CardHeader>
           <form onSubmit={handleNameSubmit}>
             <CardContent className="space-y-4">
@@ -212,12 +223,12 @@ export default function StudentTestPage() {
     );
   }
   
-  if (!studentIp) { // Should ideally not happen if logic above is correct
+  if (!studentIp) { 
      return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <AlertTriangle className="w-16 h-16 text-primary mb-4" />
         <h2 className="text-2xl font-bold text-primary mb-2">Preparing Test...</h2>
-        <p className="text-muted-foreground mb-6">Could not verify your IP address. Please refresh or try again.</p>
+        <p className="text-muted-foreground mb-6">Could not verify your network details. Please refresh or try again.</p>
          <Button onClick={() => window.location.reload()} variant="outline">Refresh Page</Button>
       </div>
     );

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react";
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -24,19 +24,19 @@ export default function MyProgressPage() {
     async function fetchAttempts() {
       if (isAuthLoading) {
         console.log("[MyProgressPage] Auth loading, waiting...");
-        setIsLoadingAttempts(true); // Ensure loading state is true while auth is pending
+        setIsLoadingAttempts(true);
         return;
       }
 
       if (!user || !user.displayName || user.displayName.trim() === "") {
-        console.warn("[MyProgressPage] User or user.displayName not available or empty. Cannot fetch attempts. User:", user);
+        console.warn("[MyProgressPage] User or user.displayName not available or empty. Cannot fetch attempts. User:", JSON.stringify(user));
         setIsLoadingAttempts(false);
-        setAttempts([]); // Clear any existing attempts
-        // setError("User details not found or invalid. Please log in again."); // Optional: Set error for user
+        setAttempts([]);
         return;
       }
       
-      console.log(`[MyProgressPage] Fetching attempts. Current user for filter: "${user.displayName}" (Raw), Normalized: "${user.displayName.trim().toLowerCase()}"`);
+      const userDisplayNameNormalized = user.displayName.trim().toLowerCase();
+      console.log(`[MyProgressPage] Fetching attempts. Current user for filter: "${user.displayName}" (Raw), Normalized: "${userDisplayNameNormalized}"`);
 
       setIsLoadingAttempts(true);
       setError(null);
@@ -48,20 +48,17 @@ export default function MyProgressPage() {
         }
         const allAttempts: TestAttempt[] = await response.json();
         console.log(`[MyProgressPage] All attempts fetched from API: ${allAttempts.length}`);
-        if (allAttempts.length > 0) {
-            console.log("[MyProgressPage] Sample of fetched studentIdentifiers:", allAttempts.slice(0, 5).map(a => a.studentIdentifier));
+        if (allAttempts.length > 0 && allAttempts.length <=5 ) { // Log sample only for small number of attempts to avoid console flooding
+            console.log("[MyProgressPage] Sample of fetched studentIdentifiers (raw):", allAttempts.slice(0, 5).map(a => a.studentIdentifier));
         }
 
-        const userDisplayNameNormalized = user.displayName.trim().toLowerCase();
-        
         const studentSpecificAttempts = allAttempts.filter(attempt => {
-          const attemptIdentifier = attempt.studentIdentifier?.trim().toLowerCase();
-          const match = attemptIdentifier === userDisplayNameNormalized;
-          if (!match) {
-            // Log only if there's a potential mismatch to avoid clutter, and identifiers are not empty
-            if (attemptIdentifier || userDisplayNameNormalized) { 
-                 console.log(`[MyProgressPage] Mismatch Detail: Attempt ID ${attempt.id}, Stored Identifier: "${attempt.studentIdentifier}" (Normalized: "${attemptIdentifier || 'undefined'}") vs User DisplayName: "${user.displayName}" (Normalized: "${userDisplayNameNormalized}")`);
-            }
+          const attemptIdentifierRaw = attempt.studentIdentifier;
+          const attemptIdentifierNormalized = attemptIdentifierRaw?.trim().toLowerCase();
+          const match = attemptIdentifierNormalized === userDisplayNameNormalized;
+          
+          if (!match && (attemptIdentifierNormalized || userDisplayNameNormalized)) { // Log only if identifiers exist and don't match
+            console.log(`[MyProgressPage] Mismatch Detail: Attempt ID ${attempt.id}, Stored Identifier (Raw): "${attemptIdentifierRaw}", Stored (Normalized): "${attemptIdentifierNormalized || 'undefined'}") vs User DisplayName (Raw): "${user.displayName}", User (Normalized): "${userDisplayNameNormalized}"`);
           }
           return match;
         });
@@ -81,7 +78,7 @@ export default function MyProgressPage() {
     }
 
     fetchAttempts();
-  }, [user, isAuthLoading, toast]); // Added user and isAuthLoading as dependencies
+  }, [user, isAuthLoading, toast]);
 
   const summaryStats = useMemo(() => {
     if (attempts.length === 0) {
@@ -120,17 +117,32 @@ export default function MyProgressPage() {
     );
   }
   
-  if (!user || user.role === 'teacher') {
+  if (!user) { // This condition might be hit if auth is done loading but user is still null
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <AlertTriangle className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Student Progress Area</h2>
+        <h2 className="text-xl font-semibold mb-2">Please Log In</h2>
         <p className="text-muted-foreground">
-          {user?.role === 'teacher' ? "This page is for students to track their progress. Teachers can view aggregated results on the 'Results' page." : "Please log in as a student to view your progress."}
+          You need to be logged in to view your progress.
         </p>
       </div>
     );
   }
+  
+  if (user.role === 'teacher' && attempts.length === 0) {
+    return (
+      <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
+        <Info className="w-12 h-12 text-primary mx-auto mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Teacher View</h2>
+        <p className="text-muted-foreground">
+          This page shows progress for attempts made under your teacher name: "{user.displayName}".<br/>
+          To see aggregated results for tests you've created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Results page</Link>.
+        </p>
+         <p className="text-sm text-muted-foreground mt-4">If you've attempted tests using this name, they will appear here. Currently, no attempts found for "{user.displayName}".</p>
+      </div>
+    );
+  }
+
 
   if (error) {
     return (
@@ -148,7 +160,7 @@ export default function MyProgressPage() {
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
             <h1 className="text-3xl font-bold font-headline">My Progress</h1>
-            <p className="text-muted-foreground">Track your test performance and growth over time for: {user.displayName}</p>
+            <p className="text-muted-foreground">Track your test performance for: {user.displayName}</p>
         </div>
       </div>
 
