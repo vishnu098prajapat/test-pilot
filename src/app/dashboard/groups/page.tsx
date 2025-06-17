@@ -10,6 +10,7 @@ import type { Group } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateGroupDialog from '@/components/groups/create-group-dialog';
+import ManageGroupMembersDialog from '@/components/groups/manage-group-members-dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +30,7 @@ export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
   const [isCreateGroupDialogOpen, setIsCreateGroupDialogOpen] = useState(false);
+  const [selectedGroupForMembers, setSelectedGroupForMembers] = useState<Group | null>(null);
 
   const fetchGroups = useCallback(async () => {
     if (!user?.id) return;
@@ -57,8 +59,6 @@ export default function GroupsPage() {
   }, [user, isAuthLoading, fetchGroups]);
 
   const handleGroupCreated = (newGroup: Group) => {
-    setGroups(prev => [...prev, newGroup].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    // Optionally re-fetch or just update state if API is robust
     fetchGroups(); 
   };
   
@@ -84,6 +84,16 @@ export default function GroupsPage() {
     });
   };
 
+  const handleOpenManageMembers = (group: Group) => {
+    setSelectedGroupForMembers(group);
+  };
+
+  const handleMembersUpdated = (updatedGroup: Group) => {
+    setGroups(prev => prev.map(g => g.id === updatedGroup.id ? {...g, studentIdentifiers: updatedGroup.studentIdentifiers} : g));
+    setSelectedGroupForMembers(null); // Close dialog
+  };
+
+
   if (isAuthLoading || (isLoadingGroups && user)) {
     return (
       <div className="container mx-auto py-2">
@@ -108,9 +118,9 @@ export default function GroupsPage() {
                 <Skeleton className="h-4 w-2/3" />
                 <Skeleton className="h-4 w-1/2" />
               </CardContent>
-              <CardFooter className="border-t pt-4 flex justify-end gap-2">
-                <Skeleton className="h-9 w-28" />
-                <Skeleton className="h-9 w-20" />
+              <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-end gap-2">
+                <Skeleton className="h-9 w-full sm:w-28" />
+                <Skeleton className="h-9 w-full sm:w-20" />
               </CardFooter>
             </Card>
           ))}
@@ -183,13 +193,13 @@ export default function GroupsPage() {
                   Created: {new Date(group.createdAt).toLocaleDateString()}
                 </p>
               </CardContent>
-              <CardFooter className="border-t pt-4 flex justify-end gap-2">
-                <Button variant="outline" size="sm" disabled> {/* Implement later */}
+              <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => handleOpenManageMembers(group)} className="w-full sm:w-auto">
                   <UserPlusIcon className="mr-1 h-4 w-4" /> Manage Members
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" className="w-full sm:w-auto">
                       <Trash2 className="mr-1 h-4 w-4" /> Delete
                     </Button>
                   </AlertDialogTrigger>
@@ -221,7 +231,14 @@ export default function GroupsPage() {
         onClose={() => setIsCreateGroupDialogOpen(false)}
         onGroupCreated={handleGroupCreated}
       />
+      {selectedGroupForMembers && (
+        <ManageGroupMembersDialog
+          group={selectedGroupForMembers}
+          isOpen={!!selectedGroupForMembers}
+          onClose={() => setSelectedGroupForMembers(null)}
+          onMembersUpdate={handleMembersUpdated}
+        />
+      )}
     </div>
   );
 }
-

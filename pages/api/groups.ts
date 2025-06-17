@@ -17,7 +17,7 @@ function readGroupsDb(): Group[] {
       const data = JSON.parse(fileContent);
       return (Array.isArray(data) ? data : []).map((group: any) => ({
         ...group,
-        createdAt: new Date(group.createdAt), // Ensure createdAt is a Date object
+        createdAt: new Date(group.createdAt), 
       }));
     }
   } catch (error) {
@@ -51,14 +51,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
       const allGroups = readGroupsDb();
-      const { teacherId } = req.query;
+      const { teacherId, groupId } = req.query;
+      if (groupId && typeof groupId === 'string') {
+        const group = allGroups.find(g => g.id === groupId);
+        return group ? res.status(200).json(group) : res.status(404).json({ error: 'Group not found' });
+      }
       if (teacherId && typeof teacherId === 'string') {
         const teacherGroups = allGroups.filter(group => group.teacherId === teacherId);
         return res.status(200).json(teacherGroups);
       }
-      // If no teacherId, could return all groups or error, depending on desired behavior
-      // For now, let's assume teacherId is usually expected for fetching "my groups"
-      return res.status(200).json(allGroups); // Or res.status(400).json({ error: 'teacherId is required' });
+      return res.status(200).json(allGroups);
     } catch (error) {
       console.error('[API-GROUPS-DB] Failed to read data on GET:', error);
       res.status(500).json({ error: 'Failed to read groups data' });
@@ -73,7 +75,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const allGroups = readGroupsDb();
       let newGroupCode = generateGroupCode();
       while (allGroups.some(group => group.groupCode === newGroupCode)) {
-        newGroupCode = generateGroupCode(); // Ensure uniqueness
+        newGroupCode = generateGroupCode();
       }
       
       const newGroup: Group = {
@@ -86,7 +88,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       };
 
       allGroups.push(newGroup);
-      // Sort groups by creation date, newest first, before writing
       const sortedGroups = allGroups.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       const success = writeGroupsDb(sortedGroups);
 
@@ -123,9 +124,42 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       console.error('[API-GROUPS-DB] Failed to process DELETE request:', error);
       res.status(500).json({ error: 'Internal server error while deleting group.'});
     }
-  }
-  
-  else {
+  } else if (req.method === 'PUT') {
+    try {
+      const { groupId } = req.query;
+      const { studentIdentifiers } = req.body;
+
+      if (!groupId || typeof groupId !== 'string') {
+        return res.status(400).json({ error: 'groupId is required for updating members.' });
+      }
+      if (!Array.isArray(studentIdentifiers) || !studentIdentifiers.every(id => typeof id === 'string')) {
+        return res.status(400).json({ error: 'studentIdentifiers must be an array of strings.' });
+      }
+
+      const allGroups = readGroupsDb();
+      const groupIndex = allGroups.findIndex(g => g.id === groupId);
+
+      if (groupIndex === -1) {
+        return res.status(404).json({ error: `Group with ID ${groupId} not found.` });
+      }
+      
+      // Keep other properties, only update studentIdentifiers
+      allGroups[groupIndex] = {
+        ...allGroups[groupIndex],
+        studentIdentifiers: studentIdentifiers,
+      };
+
+      const success = writeGroupsDb(allGroups);
+      if (success) {
+        res.status(200).json({ message: `Group ${groupId} members updated successfully.`, group: allGroups[groupIndex] });
+      } else {
+        res.status(500).json({ error: 'Failed to update database after modifying group members.' });
+      }
+    } catch (error) {
+      console.error('[API-GROUPS-DB] Failed to process PUT request for members:', error);
+      res.status(500).json({ error: 'Internal server error while updating group members.' });
+    }
+  } else {
     res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
