@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertCircle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react";
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen } from "lucide-react"; // Added AlertTriangle
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -22,28 +22,37 @@ export default function MyProgressPage() {
 
   useEffect(() => {
     async function fetchAttempts() {
-      if (!user || !user.displayName) {
-        setIsLoadingAttempts(false);
+      if (isAuthLoading) { // Wait for auth to finish loading
         return;
       }
+
+      if (!user || !user.displayName) {
+        console.warn("[MyProgressPage] User or user.displayName not available. Cannot fetch attempts.");
+        setIsLoadingAttempts(false);
+        // setError("User details not found. Please log in again."); // Optional: Set error for user
+        return;
+      }
+      
+      console.log("[MyProgressPage] Fetching attempts for user.displayName:", user.displayName);
 
       setIsLoadingAttempts(true);
       setError(null);
       try {
-        // Fetch all attempts and filter client-side by studentIdentifier (displayName)
-        // In a real DB, you'd filter on the backend: /api/attempts?studentIdentifier=${user.displayName}
         const response = await fetch(`/api/attempts`); 
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
         }
         const allAttempts: TestAttempt[] = await response.json();
+        console.log("[MyProgressPage] All attempts fetched from API:", allAttempts.length);
         
+        // Robust filtering: case-insensitive and trim whitespace
         const studentSpecificAttempts = allAttempts.filter(
-          attempt => attempt.studentIdentifier === user.displayName
+          attempt => attempt.studentIdentifier?.trim().toLowerCase() === user.displayName?.trim().toLowerCase()
         );
         
-        // Sort attempts by submission date, newest first
+        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} attempts after filtering for displayName: "${user.displayName}" (case-insensitive, trimmed)`);
+
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
 
         setAttempts(studentSpecificAttempts);
@@ -56,9 +65,7 @@ export default function MyProgressPage() {
       }
     }
 
-    if (!isAuthLoading) {
-      fetchAttempts();
-    }
+    fetchAttempts();
   }, [user, isAuthLoading, toast]);
 
   const summaryStats = useMemo(() => {
@@ -68,7 +75,7 @@ export default function MyProgressPage() {
     const totalAttempts = attempts.length;
     const totalScoreSum = attempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
     const averageScore = totalAttempts > 0 ? Math.round(totalScoreSum / totalAttempts) : 0;
-    const testsPassed = attempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length; // Assuming 50% is passing
+    const testsPassed = attempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
     const passRate = totalAttempts > 0 ? Math.round((testsPassed / totalAttempts) * 100) : 0;
 
     return { totalAttempts, averageScore, testsPassed, passRate };
@@ -101,7 +108,7 @@ export default function MyProgressPage() {
   if (!user || user.role === 'teacher') {
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
-        <AlertCircle className="w-12 h-12 text-primary mx-auto mb-4" />
+        <AlertTriangle className="w-12 h-12 text-primary mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2">Student Progress Area</h2>
         <p className="text-muted-foreground">
           {user?.role === 'teacher' ? "This page is for students to track their progress. Teachers can view aggregated results on the 'Results' page." : "Please log in as a student to view your progress."}
@@ -126,7 +133,7 @@ export default function MyProgressPage() {
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
             <h1 className="text-3xl font-bold font-headline">My Progress</h1>
-            <p className="text-muted-foreground">Track your test performance and growth over time.</p>
+            <p className="text-muted-foreground">Track your test performance and growth over time for: {user.displayName}</p>
         </div>
       </div>
 
@@ -154,7 +161,8 @@ export default function MyProgressPage() {
         <Card className="text-center py-10">
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
-            <p className="text-muted-foreground">You haven&apos;t attempted any tests yet.</p>
+            <p className="text-muted-foreground">No test attempts found for "{user.displayName}".</p>
+            <p className="text-sm text-muted-foreground">Make sure the name used to take tests matches your login name.</p>
             <Button asChild variant="link"><Link href="/dashboard">Explore Available Tests</Link></Button>
           </CardContent>
         </Card>

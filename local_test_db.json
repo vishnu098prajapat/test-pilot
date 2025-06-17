@@ -3245,5 +3245,287 @@
     "id": "test-1750159697749-z041u",
     "createdAt": "2025-06-17T11:28:17.749Z",
     "updatedAt": "2025-06-17T11:28:17.749Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750166485066-0-a4mu6x2",
+        "text": "What is the output of the expression: 2 + 3?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750166485066_dwycup42b",
+            "text": "3"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750166485066_f7uj9doc6",
+            "text": "4"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750166485066_trh2rzlo0",
+            "text": "5"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750166485066_r4bw898me",
+            "text": "6"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750166485066_trh2rzlo0"
+      },
+      {
+        "id": "ai-q-1750166485066-1-bofztq5",
+        "text": "Which error occurs when you try to assign a value to a literal?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750166485066_l7ljksd0b",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750166485066_dblpyyro5",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750166485066_b9w683zbb",
+            "text": "NameError"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750166485066_b4g3e99sg",
+            "text": "SyntaxError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750166485066_b4g3e99sg"
+      },
+      {
+        "id": "ai-q-1750166485066-2-ygw20zy",
+        "text": "Which operator has the highest precedence in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750166485066_0agvuhajj",
+            "text": "Addition"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750166485066_3b3c98qa3",
+            "text": "Subtraction"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750166485066_dv8vnm6il",
+            "text": "Multiplication"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750166485066_fw50ik0dp",
+            "text": "Division"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750166485066_dv8vnm6il"
+      },
+      {
+        "id": "ai-q-1750166485066-3-lb9pfy3",
+        "text": "What is the data type of 'Hello World' in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750166485066_2tu91vwdf",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750166485066_h89tnxyt5",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750166485066_jrfip1m09",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750166485066_xqtvrsdap",
+            "text": "str"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750166485066_xqtvrsdap"
+      },
+      {
+        "id": "ai-q-1750166485066-4-i4pmv5u",
+        "text": "What type of operator is '=' in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750166485066_h0l9npk1g",
+            "text": "Comparison"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750166485066_5855sbwf4",
+            "text": "Arithmetic"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750166485066_xk55be2hb",
+            "text": "Logical"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750166485066_g958gtw6j",
+            "text": "Assignment"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1750166485066_g958gtw6j"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750166544030-0lnm3",
+    "createdAt": "2025-06-17T13:22:24.030Z",
+    "updatedAt": "2025-06-17T13:22:24.030Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750166731596-0-zf9e9gx",
+        "text": "Which function is used to convert a value to an integer in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750166731596_haucj62id",
+            "text": "str()"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750166731596_unkxt0vy8",
+            "text": "float()"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750166731596_fl7vwqhd8",
+            "text": "bool()"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750166731596_pz5ykj27h",
+            "text": "int()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx3_1750166731596_pz5ykj27h"
+      },
+      {
+        "id": "ai-q-1750166731596-1-ouuwbim",
+        "text": "Which of the following statements about strings in Python is correct?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750166731596_v1tmipje7",
+            "text": "Strings are mutable."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750166731596_jw7xp1w5t",
+            "text": "Strings are immutable."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750166731596_i3iob1kde",
+            "text": "Strings can only contain numbers."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750166731596_xcylnkkev",
+            "text": "Strings cannot be indexed."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1750166731596_jw7xp1w5t"
+      },
+      {
+        "id": "ai-q-1750166731596-2-zlpkmik",
+        "text": "What is the boolean value of the expression `5 > 3`?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750166731596_xnn4owexm",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750166731596_zkmcpfe81",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750166731596_1sjjyvq29",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750166731596_glci9icoc",
+            "text": "None of the above"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1750166731596_xnn4owexm"
+      },
+      {
+        "id": "ai-q-1750166731596-3-i85x4mp",
+        "text": "What is the result of the expression `4 / 2` in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750166731596_29acsres7",
+            "text": "2"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750166731596_gu3kj5q3l",
+            "text": "2.0"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750166731596_9dpwhe3wy",
+            "text": "2.00"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750166731596_owrtxwsx2",
+            "text": "Error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750166731596_gu3kj5q3l"
+      },
+      {
+        "id": "ai-q-1750166731597-4-8u2a2z0",
+        "text": "What is a string in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750166731597_qmcfha9qg",
+            "text": "A whole number."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750166731597_95s2stvm3",
+            "text": "A floating-point number."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750166731597_pxxbzyzxz",
+            "text": "A sequence of characters."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750166731597_3y57yfpke",
+            "text": "A boolean value."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750166731597_pxxbzyzxz"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750166741083-bv6w7",
+    "createdAt": "2025-06-17T13:25:41.083Z",
+    "updatedAt": "2025-06-17T13:25:41.083Z"
   }
 ]

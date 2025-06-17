@@ -1261,5 +1261,101 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750159491324-1ovpcqo",
     "submittedAt": "2025-06-17T11:24:51.324Z"
+  },
+  {
+    "testId": "test-1750166544030-0lnm3",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Sandeep",
+    "startTime": "2025-06-17T13:18:39.583Z",
+    "endTime": "2025-06-17T13:19:03.121Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750166485066-0-a4mu6x2",
+        "answer": "ai-opt_q0_idx2_1750166485066_trh2rzlo0",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750166485066-1-bofztq5",
+        "answer": "ai-opt_q1_idx1_1750166485066_dblpyyro5",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750166485066-2-ygw20zy",
+        "answer": "ai-opt_q2_idx2_1750166485066_dv8vnm6il",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750166485066-3-lb9pfy3",
+        "answer": "ai-opt_q3_idx1_1750166485066_h89tnxyt5",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750166485066-4-i4pmv5u",
+        "answer": "ai-opt_q4_idx0_1750166485066_h0l9npk1g",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-17T13:18:39.649Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:18:39.651Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:18:53.297Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-0-a4mu6x2.\n[2025-06-17T13:18:55.652Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-1-bofztq5.\n[2025-06-17T13:18:56.362Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-2-ygw20zy.\n[2025-06-17T13:18:56.993Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-3-lb9pfy3.\n[2025-06-17T13:18:57.861Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-4-i4pmv5u.\n[2025-06-17T13:19:00.474Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-4-i4pmv5u.\n[2025-06-17T13:19:01.384Z] User: Sandeep (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166485066-4-i4pmv5u.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student changed answers rapidly for multiple questions, particularly question ID ai-q-1750166485066-4-i4pmv5u, which was changed three times within a few seconds. This behavior suggests the student might be consulting external resources or receiving assistance, which violates the anti-cheat measures.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750166347666-c18cp7n",
+    "submittedAt": "2025-06-17T13:19:07.666Z"
+  },
+  {
+    "testId": "test-1750166741083-bv6w7",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "shinu",
+    "startTime": "2025-06-17T13:25:53.577Z",
+    "endTime": "2025-06-17T13:26:35.544Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750166731596-0-zf9e9gx",
+        "answer": "ai-opt_q0_idx3_1750166731596_pz5ykj27h",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750166731596-1-ouuwbim",
+        "answer": "ai-opt_q1_idx0_1750166731596_v1tmipje7",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750166731596-2-zlpkmik",
+        "answer": "ai-opt_q2_idx1_1750166731596_zkmcpfe81",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750166731596-3-i85x4mp",
+        "answer": "ai-opt_q3_idx0_1750166731596_29acsres7",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750166731597-4-8u2a2z0",
+        "answer": "ai-opt_q4_idx2_1750166731597_pxxbzyzxz",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-17T13:25:53.620Z] User: shinu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:25:53.622Z] User: shinu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-17T13:25:57.784Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-0-zf9e9gx.\n[2025-06-17T13:26:08.465Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-1-ouuwbim.\n[2025-06-17T13:26:10.947Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-1-ouuwbim.\n[2025-06-17T13:26:13.129Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-1-ouuwbim.\n[2025-06-17T13:26:18.418Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-2-zlpkmik.\n[2025-06-17T13:26:27.864Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731596-3-i85x4mp.\n[2025-06-17T13:26:32.979Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750166731597-4-8u2a2z0.",
+    "isSuspicious": false,
+    "suspiciousReason": "The activity log shows normal test-taking behavior, with the student answering questions and changing answers within a reasonable timeframe. No suspicious tab switches, copy-pasting, or unusual keyboard activity were detected.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750166525112-dlk2rvp",
+    "submittedAt": "2025-06-17T13:22:05.112Z"
   }
 ]
