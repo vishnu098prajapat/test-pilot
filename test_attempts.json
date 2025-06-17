@@ -973,5 +973,53 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750066285500-1yq8i55",
     "submittedAt": "2025-06-16T09:31:25.500Z"
+  },
+  {
+    "testId": "test-1750080630020-2dq12",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "vishnu",
+    "startTime": "2025-06-16T13:31:15.519Z",
+    "endTime": "2025-06-16T13:31:30.744Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750080614523-0-f1knhlw",
+        "answer": "ai-opt_q0_idx2_1750080614523_3b4hc61i8",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750080614523-1-oejinuv",
+        "answer": "ai-opt_q1_idx3_1750080614523_1tm58thij",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750080614523-2-tmtdegl",
+        "answer": "ai-opt_q2_idx2_1750080614523_rtt4l161u",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750080614523-3-xo7on74",
+        "answer": "ai-opt_q3_idx3_1750080614523_r44j76ez2",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750080614523-4-vcgbnvo",
+        "answer": "ai-opt_q4_idx3_1750080614523_x7gk9hf0u",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-16T13:31:15.537Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-16T13:31:15.538Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-16T13:31:17.559Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750080614523-0-f1knhlw.\n[2025-06-16T13:31:20.033Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750080614523-1-oejinuv.\n[2025-06-16T13:31:22.857Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750080614523-2-tmtdegl.\n[2025-06-16T13:31:25.319Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750080614523-3-xo7on74.\n[2025-06-16T13:31:28.259Z] User: vishnu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1750080614523-4-vcgbnvo.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior. The student answered questions without any detected anomalies.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1750080422243-7jqdi01",
+    "submittedAt": "2025-06-16T13:27:02.243Z"
   }
 ]

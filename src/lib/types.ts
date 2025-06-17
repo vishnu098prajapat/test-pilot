@@ -26,8 +26,8 @@ export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
   correctOptionId: string | null; 
-  correctAnswer?: string; // AI's original text answer, for initial matching and reference
-  isAiPreselected?: boolean; // Flag to indicate if AI pre-selected an answer
+  correctAnswer?: string; 
+  isAiPreselected?: boolean;
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -65,6 +65,15 @@ export interface DragDropQuestion extends BaseQuestion {
 
 export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
 
+export interface Group {
+  id: string;
+  name: string;
+  teacherId: string;
+  groupCode: string; // Unique code for students to join
+  studentIdentifiers: string[]; // For now, student names. Could be IDs later.
+  createdAt: Date;
+}
+
 export interface Test {
   id: string;
   title: string;
@@ -79,6 +88,7 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
+  sharedWithGroupIds?: string[]; // IDs of groups this test is shared with
 }
 
 export interface StudentAnswer {
@@ -105,3 +115,4 @@ export interface TestAttempt {
   submittedAt: string; 
   ipAddress?: string; 
 }
+

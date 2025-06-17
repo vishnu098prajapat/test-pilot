@@ -2399,5 +2399,146 @@
     "id": "test-1749906628368-dfo1w",
     "createdAt": "2025-06-14T13:10:28.368Z",
     "updatedAt": "2025-06-14T13:10:28.368Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750080614523-0-f1knhlw",
+        "text": "Which type of blood cell is responsible for carrying oxygen?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750080614523_o13sng9r5",
+            "text": "Leukocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750080614523_osst4agd6",
+            "text": "Thrombocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750080614523_3b4hc61i8",
+            "text": "Erythrocytes"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750080614523_whmail3sm",
+            "text": "Plasma"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750080614523_3b4hc61i8"
+      },
+      {
+        "id": "ai-q-1750080614523-1-oejinuv",
+        "text": "Which organelle is responsible for generating energy in the cell?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750080614523_nkgy7w1ie",
+            "text": "Nucleus"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750080614523_fr5jx5fpu",
+            "text": "Endoplasmic Reticulum"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750080614523_u4j1vzg28",
+            "text": "Golgi Apparatus"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750080614523_1tm58thij",
+            "text": "Mitochondria"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750080614523_1tm58thij"
+      },
+      {
+        "id": "ai-q-1750080614523-2-tmtdegl",
+        "text": "Which component of blood is primarily involved in the immune response?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750080614523_3c2ta24gj",
+            "text": "Hormones"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750080614523_v2o5m31fx",
+            "text": "Enzymes"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750080614523_rtt4l161u",
+            "text": "Antibodies"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750080614523_qkawzgwi9",
+            "text": "Nutrients"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750080614523_rtt4l161u"
+      },
+      {
+        "id": "ai-q-1750080614523-3-xo7on74",
+        "text": "Which structure controls the movement of substances in and out of a cell?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750080614523_n2qyita65",
+            "text": "Cell wall"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750080614523_ts78l3fxp",
+            "text": "Nucleolus"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750080614523_rn035vt9m",
+            "text": "Cytoplasm"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750080614523_r44j76ez2",
+            "text": "Cell membrane"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750080614523_r44j76ez2"
+      },
+      {
+        "id": "ai-q-1750080614523-4-vcgbnvo",
+        "text": "Which blood component is essential for blood clotting?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750080614523_kwm5fdyuz",
+            "text": "Red blood cells"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750080614523_m8qf7z31e",
+            "text": "Plasma"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750080614523_bmi1lqtgy",
+            "text": "Platelets"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750080614523_x7gk9hf0u",
+            "text": "White blood cells"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750080614523_bmi1lqtgy"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750080630020-2dq12",
+    "createdAt": "2025-06-16T13:30:30.020Z",
+    "updatedAt": "2025-06-16T13:30:30.020Z"
   }
 ]
