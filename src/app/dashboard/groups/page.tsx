@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PlusCircle, Users, Trash2, UserPlus as UserPlusIcon, ClipboardCopy, Loader2, Info } from 'lucide-react';
+import { PlusCircle, Users, Trash2, UserPlus as UserPlusIcon, ClipboardCopy, Loader2, Info, MessageSquare, Eye } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import type { Group } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -90,7 +90,7 @@ export default function GroupsPage() {
 
   const handleMembersUpdated = (updatedGroup: Group) => {
     setGroups(prev => prev.map(g => g.id === updatedGroup.id ? {...g, studentIdentifiers: updatedGroup.studentIdentifiers} : g));
-    setSelectedGroupForMembers(null); // Close dialog
+    setSelectedGroupForMembers(null); 
   };
 
 
@@ -119,8 +119,8 @@ export default function GroupsPage() {
                 <Skeleton className="h-4 w-1/2" />
               </CardContent>
               <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-end gap-2">
-                <Skeleton className="h-9 w-full sm:w-auto px-4 py-2" /> {/* Adjusted skeleton */}
-                <Skeleton className="h-9 w-9 sm:w-9" /> {/* Adjusted skeleton for icon button */}
+                <Skeleton className="h-9 w-full sm:w-auto px-4 py-2" />
+                <Skeleton className="h-9 w-9 sm:w-9" /> 
               </CardFooter>
             </Card>
           ))}
@@ -170,7 +170,11 @@ export default function GroupsPage() {
           {groups.map((group) => (
             <Card key={group.id} className="flex flex-col shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out">
               <CardHeader>
-                <CardTitle className="font-headline text-xl">{group.name}</CardTitle>
+                <CardTitle className="font-headline text-xl hover:text-primary transition-colors">
+                  <Link href={`/dashboard/groups/${group.id}`} passHref>
+                    {group.name}
+                  </Link>
+                </CardTitle>
                 <CardDescription className="flex items-center">
                   Group Code: 
                   <span className="font-mono text-primary ml-1 mr-1">{group.groupCode}</span>
@@ -196,6 +200,11 @@ export default function GroupsPage() {
               <CardFooter className="border-t pt-4 flex flex-col sm:flex-row justify-end gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleOpenManageMembers(group)} className="w-full sm:w-auto">
                   <UserPlusIcon className="mr-1 h-4 w-4" /> Manage Members
+                </Button>
+                 <Button variant="secondary" size="sm" asChild className="w-full sm:w-auto">
+                  <Link href={`/dashboard/groups/${group.id}`}>
+                    <MessageSquare className="mr-1 h-4 w-4" /> View/Post
+                  </Link>
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -242,4 +251,3 @@ export default function GroupsPage() {
     </div>
   );
 }
-

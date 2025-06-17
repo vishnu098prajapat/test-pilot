@@ -1,18 +1,17 @@
 [
   {
-    "id": "group-1750152127118-q6jbh2m",
+    "id": "group-1750154457963-x5zzeaz",
     "name": "class12",
     "teacherId": "user-1749975115744-fa007kc",
-    "groupCode": "PO9V0Y",
-    "studentIdentifiers": [],
-    "createdAt": "2025-06-17T09:22:07.118Z"
-  },
-  {
-    "id": "group-1750151293015-5cqmutq",
-    "name": "class10",
-    "teacherId": "user-1749975115744-fa007kc",
-    "groupCode": "0WED8K",
-    "studentIdentifiers": [],
-    "createdAt": "2025-06-17T09:08:13.015Z"
+    "groupCode": "IBUSN8",
+    "studentIdentifiers": [
+      "vishnu",
+      "deepak",
+      "sonu",
+      "rinku",
+      "honey",
+      "shinu"
+    ],
+    "createdAt": "2025-06-17T10:00:57.963Z"
   }
 ]

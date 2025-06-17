@@ -26,8 +26,8 @@ export interface MCQQuestion extends BaseQuestion {
   type: 'mcq';
   options: Option[];
   correctOptionId: string | null; 
-  correctAnswer?: string; // For AI initial suggestion, text form
-  isAiPreselected?: boolean; // If AI set the correctOptionId initially
+  correctAnswer?: string; 
+  isAiPreselected?: boolean; 
 }
 
 export interface ShortAnswerQuestion extends BaseQuestion {
@@ -65,6 +65,14 @@ export interface DragDropQuestion extends BaseQuestion {
 
 export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
 
+export interface GroupAnnouncement {
+  id: string;
+  senderId: string;
+  senderName: string; // To display who sent it
+  content: string;
+  timestamp: Date;
+}
+
 export interface Group {
   id: string;
   name: string;
@@ -72,6 +80,8 @@ export interface Group {
   groupCode: string; 
   studentIdentifiers: string[]; 
   createdAt: Date;
+  groupImageUrl?: string;
+  announcements?: GroupAnnouncement[];
 }
 
 export interface Test {

@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
-import type { Group } from '@/lib/types';
+import type { Group, GroupAnnouncement } from '@/lib/types';
 
 const GROUPS_DB_FILE_PATH = path.join(process.cwd(), 'groups_db.json');
 
@@ -17,7 +17,11 @@ function readGroupsDb(): Group[] {
       const data = JSON.parse(fileContent);
       return (Array.isArray(data) ? data : []).map((group: any) => ({
         ...group,
-        createdAt: new Date(group.createdAt), 
+        createdAt: new Date(group.createdAt),
+        announcements: (group.announcements || []).map((anc: any) => ({
+            ...anc,
+            timestamp: new Date(anc.timestamp)
+        })),
       }));
     }
   } catch (error) {
@@ -29,7 +33,9 @@ function readGroupsDb(): Group[] {
 
 function writeGroupsDb(data: Group[]): boolean {
   try {
-    fs.writeFileSync(GROUPS_DB_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    // Sort groups by creation date, newest first, before writing
+    const sortedData = data.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    fs.writeFileSync(GROUPS_DB_FILE_PATH, JSON.stringify(sortedData, null, 2), 'utf-8');
     console.log(`[API-GROUPS-DB] Group data successfully written. Total groups: ${data.length}`);
     return true;
   } catch (error) {
@@ -85,11 +91,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         groupCode: newGroupCode,
         studentIdentifiers: [],
         createdAt: new Date(),
+        announcements: [],
+        groupImageUrl: '', // Initialize with empty string
       };
 
       allGroups.push(newGroup);
-      const sortedGroups = allGroups.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      const success = writeGroupsDb(sortedGroups);
+      const success = writeGroupsDb(allGroups); // writeGroupsDb now handles sorting
 
       if (success) {
         res.status(201).json({ message: 'Group created successfully', group: newGroup });
@@ -127,13 +134,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === 'PUT') {
     try {
       const { groupId } = req.query;
-      const { studentIdentifiers } = req.body;
+      const { studentIdentifiers, announcementContent, senderId, senderName, groupImageUrl } = req.body;
 
       if (!groupId || typeof groupId !== 'string') {
-        return res.status(400).json({ error: 'groupId is required for updating members.' });
-      }
-      if (!Array.isArray(studentIdentifiers) || !studentIdentifiers.every(id => typeof id === 'string')) {
-        return res.status(400).json({ error: 'studentIdentifiers must be an array of strings.' });
+        return res.status(400).json({ error: 'groupId is required for updating.' });
       }
 
       const allGroups = readGroupsDb();
@@ -143,21 +147,42 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ error: `Group with ID ${groupId} not found.` });
       }
       
-      // Keep other properties, only update studentIdentifiers
-      allGroups[groupIndex] = {
-        ...allGroups[groupIndex],
-        studentIdentifiers: studentIdentifiers,
-      };
+      let updatedGroup = { ...allGroups[groupIndex] };
+
+      if (studentIdentifiers !== undefined) {
+        if (!Array.isArray(studentIdentifiers) || !studentIdentifiers.every(id => typeof id === 'string')) {
+          return res.status(400).json({ error: 'studentIdentifiers must be an array of strings.' });
+        }
+        updatedGroup.studentIdentifiers = studentIdentifiers;
+      }
+
+      if (announcementContent && senderId && senderName) {
+        const newAnnouncement: GroupAnnouncement = {
+          id: `anc-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          senderId,
+          senderName,
+          content: announcementContent,
+          timestamp: new Date(),
+        };
+        updatedGroup.announcements = [...(updatedGroup.announcements || []), newAnnouncement];
+      }
+      
+      if (groupImageUrl !== undefined) { // Allows setting to empty string to remove image
+         updatedGroup.groupImageUrl = groupImageUrl;
+      }
+
+
+      allGroups[groupIndex] = updatedGroup;
 
       const success = writeGroupsDb(allGroups);
       if (success) {
-        res.status(200).json({ message: `Group ${groupId} members updated successfully.`, group: allGroups[groupIndex] });
+        res.status(200).json({ message: `Group ${groupId} updated successfully.`, group: allGroups[groupIndex] });
       } else {
-        res.status(500).json({ error: 'Failed to update database after modifying group members.' });
+        res.status(500).json({ error: 'Failed to update database after modifying group.' });
       }
     } catch (error) {
-      console.error('[API-GROUPS-DB] Failed to process PUT request for members:', error);
-      res.status(500).json({ error: 'Internal server error while updating group members.' });
+      console.error('[API-GROUPS-DB] Failed to process PUT request:', error);
+      res.status(500).json({ error: 'Internal server error while updating group.' });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
