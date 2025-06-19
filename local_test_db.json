@@ -2540,5 +2540,146 @@
     "id": "test-1750329801375-zlzfs",
     "createdAt": "2025-06-19T10:43:21.375Z",
     "updatedAt": "2025-06-19T10:43:21.375Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750334319770-0-05bv1nb",
+        "text": "Which of the following statements is true regarding the difference between arrays and vectors in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750334319770_740e488wf",
+            "text": "Vectors have a fixed size at compile time."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750334319770_lzpz0oxyi",
+            "text": "Arrays can dynamically resize."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750334319770_nfs36mjrp",
+            "text": "Arrays have a fixed size at compile time."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750334319770_8tga15yi8",
+            "text": "Vectors are only accessible using pointers."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750334319770_nfs36mjrp"
+      },
+      {
+        "id": "ai-q-1750334319770-1-tlnsyrd",
+        "text": "How do you add an element to the end of a vector in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750334319770_mai2j27va",
+            "text": "By directly assigning to an index beyond the current size."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750334319770_tini8egm4",
+            "text": "By using the push_back() method."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750334319770_hfbr7ztek",
+            "text": "By using the resize() method to reduce size."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750334319770_x7510vjve",
+            "text": "Vectors cannot be modified after creation."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1750334319770_tini8egm4"
+      },
+      {
+        "id": "ai-q-1750334319770-2-ellg9kt",
+        "text": "Which of the following is the correct way to declare a vector of integers with an initial size of 5 in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750334319770_32jviqrkw",
+            "text": "vector myVector[5];"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750334319770_h4js1bydo",
+            "text": "int myVector<5>;"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750334319770_9yegpwik9",
+            "text": "vector<int> myVector(5);"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750334319770_tblgzd6tr",
+            "text": "int myVector(5);"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750334319770_9yegpwik9"
+      },
+      {
+        "id": "ai-q-1750334319770-3-jrhdey2",
+        "text": "What type of exception is thrown when you try to access an element in a vector using the at() method with an index that is out of bounds?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750334319770_npqh4c4my",
+            "text": "segmentation fault"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750334319770_f3g91geia",
+            "text": "null pointer exception"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750334319770_21lfjbsnc",
+            "text": "index_error"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750334319770_ob41j7ho6",
+            "text": "out_of_range"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750334319770_ob41j7ho6"
+      },
+      {
+        "id": "ai-q-1750334319770-4-se8mx5y",
+        "text": "What is a major advantage of using vectors over arrays in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750334319770_szempktci",
+            "text": "Arrays provide automatic memory management."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750334319770_bussqbdvc",
+            "text": "Arrays are generally faster for random access."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750334319770_2zjrx48pw",
+            "text": "Vectors are declared using square brackets."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750334319770_hgyhtav51",
+            "text": "Vectors provide automatic memory management."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1750334319770_hgyhtav51"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750334333526-aj62h",
+    "createdAt": "2025-06-19T11:58:53.526Z",
+    "updatedAt": "2025-06-19T11:58:53.526Z"
   }
 ]
