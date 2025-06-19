@@ -57,7 +57,7 @@ export default function LoginPage() {
           title: "Login Failed",
           description: result.message || "An unexpected error occurred. Please check your details.",
           variant: "destructive",
-          duration: 2000,
+          duration: 3000, 
         });
          console.warn("LoginPage: Login attempt failed. Details:", JSON.stringify(result, null, 2));
       }
@@ -67,7 +67,7 @@ export default function LoginPage() {
         title: "Login Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-        duration: 2000,
+        duration: 3000,
       });
     } finally {
       setIsSubmitting(false);
@@ -95,7 +95,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-foreground">Account Login</CardTitle>
           <CardDescription className="text-center text-muted-foreground pt-2">
-            Enter your Name and Date of Birth to continue.
+            Enter the Name and Date of Birth you used during sign up.
           </CardDescription>
         </CardHeader>
         <CardContent>

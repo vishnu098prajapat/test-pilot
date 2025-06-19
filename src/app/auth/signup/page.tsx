@@ -57,7 +57,7 @@ export default function SignupPage() {
           title: "Sign Up Failed",
           description: result.message || "An unexpected error occurred. Please check your details.",
           variant: "destructive",
-          duration: 2000,
+          duration: 3000, // Increased duration for error messages
         });
         console.warn("SignupPage: Signup failed. Result:", JSON.stringify(result, null, 2));
       }
@@ -67,7 +67,7 @@ export default function SignupPage() {
         title: "Sign Up Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-        duration: 2000,
+        duration: 3000,
       });
     } finally {
       setIsSubmitting(false);
@@ -92,7 +92,7 @@ export default function SignupPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-foreground">Create Account</CardTitle>
           <CardDescription className="text-center text-muted-foreground pt-2">
-            Provide your Name and Date of Birth to create an account.
+            Provide your Name and Date of Birth. Please choose a unique name as it will be used to identify you across the platform.
           </CardDescription>
         </CardHeader>
         <CardContent>
