@@ -53,7 +53,7 @@ const plans = [
       { text: "50 Manual Tests/Month", icon: Edit3 },
       { text: "10 AI-Generated Tests/Month", icon: Sparkles },
       { text: "Basic Student Performance Dashboard", icon: UsersIcon },
-      { text: "Ad-Free (for Teacher & their tests)", icon: Shield },
+      { text: "Ad-Free", icon: Shield },
     ],
     cta: "Upgrade to Basic",
     variant: "default" as "default",
@@ -70,7 +70,7 @@ const plans = [
       { text: "Advanced Student Performance Dashboard", icon: Briefcase },
       { text: "Detailed Reports & Data Export", icon: Download },
       { text: "Priority Support", icon: Star },
-      { text: "Ad-Free (for Teacher & their tests)", icon: Shield },
+      { text: "Ad-Free", icon: Shield },
     ],
     cta: "Go Premium",
     variant: "default" as "default",
@@ -84,7 +84,7 @@ export default function PlansPage() {
 
   const handleChoosePlan = (plan: typeof plans[0]) => {
     if (plan.id === "free") {
-      router.push("/dashboard"); // Or a specific free activation confirmation
+      router.push("/dashboard"); 
       return;
     }
     router.push(`/dashboard/mock-payment/${plan.id}?name=${encodeURIComponent(plan.name)}&price=${encodeURIComponent(plan.price)}`);
@@ -113,7 +113,7 @@ export default function PlansPage() {
                 <span className="text-3xl font-extrabold text-foreground">{plan.price}</span>
                 <span className="text-muted-foreground text-sm">{plan.priceDetails}</span>
               </div>
-              <CardDescription className="text-xs text-muted-foreground h-10"> {/* Fixed height for description */}
+              <CardDescription className="text-xs text-muted-foreground h-10"> 
                 {plan.mainDescription}
               </CardDescription>
             </CardHeader>
