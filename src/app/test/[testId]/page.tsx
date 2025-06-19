@@ -15,6 +15,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
+// TEMPORARY FLAG FOR TESTING: Set to false to re-enable IP-based attempt limits
+const DISABLE_IP_BASED_ATTEMPT_LIMIT = true;
+
 export default function StudentTestPage() {
   const params = useParams();
   const router = useRouter();
@@ -47,6 +50,8 @@ export default function StudentTestPage() {
       setCheckingAttemptStatus(true);
       setError(null);
 
+      let currentIp: string | null = null;
+
       try {
         // 1. Fetch Test Data
         console.log(`[StudentTestPage] Fetching test data for ID: ${testId}`);
@@ -62,40 +67,52 @@ export default function StudentTestPage() {
         setTestData(fetchedTest);
         console.log(`[StudentTestPage] Test data loaded: "${fetchedTest.title}", Attempts Allowed: ${fetchedTest.attemptsAllowed}`);
 
-        // 2. Fetch Student IP
-        const ipResponse = await fetch('/api/get-ip');
-        if (!ipResponse.ok) throw new Error('Failed to fetch your IP address. Please check your network connection.');
-        const ipData = await ipResponse.json();
-        const currentIp = ipData.ip;
-        setStudentIp(currentIp);
-        console.log(`[StudentTestPage] Student IP fetched: ${currentIp}`);
+        // 2. Fetch Student IP (conditionally, if IP check is enabled)
+        if (!DISABLE_IP_BASED_ATTEMPT_LIMIT || fetchedTest.attemptsAllowed === 0) {
+          const ipResponse = await fetch('/api/get-ip');
+          if (!ipResponse.ok) throw new Error('Failed to fetch your IP address. Please check your network connection.');
+          const ipData = await ipResponse.json();
+          currentIp = ipData.ip;
+          setStudentIp(currentIp);
+          console.log(`[StudentTestPage] Student IP fetched: ${currentIp}`);
+        } else {
+          currentIp = "IP_CHECK_DISABLED_FOR_TESTING"; // Placeholder IP when check is disabled
+          setStudentIp(currentIp);
+          console.log(`[StudentTestPage] IP-based attempt limit check is DISABLED. Using placeholder IP: ${currentIp}`);
+        }
 
-        // 3. Check for Existing Attempts from this IP for this test
-        if (currentIp && fetchedTest.attemptsAllowed > 0) { // Only check if attempts are limited
-          console.log(`[StudentTestPage] Checking existing attempts for testId: ${testId} and IP: ${currentIp}`);
-          const attemptsResponse = await fetch(`/api/attempts?testId=${testId}&ipAddress=${currentIp}`);
-          if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts. Please try again.');
-          const existingAttemptsForIp: TestAttempt[] = await attemptsResponse.json();
-          
-          console.log(`[StudentTestPage] Found ${existingAttemptsForIp.length} existing attempts from IP ${currentIp} for this test.`);
 
-          if (existingAttemptsForIp.length >= fetchedTest.attemptsAllowed) {
-            setHasReachedAttemptLimit(true);
-            const message = `You have reached the maximum number of attempts (${fetchedTest.attemptsAllowed}) for this test from your current IP address.`;
-            setError(message); // Set error to display specific message
-            toast({
-              title: "Attempt Limit Reached",
-              description: message,
-              variant: "destructive",
-              duration: 7000,
-            });
+        // 3. Check for Existing Attempts (conditionally, if IP check is enabled AND attempts are limited)
+        if (currentIp && fetchedTest.attemptsAllowed > 0) {
+          if (DISABLE_IP_BASED_ATTEMPT_LIMIT) {
+            console.log("[StudentTestPage] IP-based attempt limit checking is currently disabled. Skipping IP-based check.");
+            setHasReachedAttemptLimit(false); // Assume not reached limit when IP check is off
+          } else {
+            console.log(`[StudentTestPage] Checking existing attempts for testId: ${testId} and IP: ${currentIp}`);
+            const attemptsResponse = await fetch(`/api/attempts?testId=${testId}&ipAddress=${currentIp}`);
+            if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts. Please try again.');
+            const existingAttemptsForIp: TestAttempt[] = await attemptsResponse.json();
+            
+            console.log(`[StudentTestPage] Found ${existingAttemptsForIp.length} existing attempts from IP ${currentIp} for this test.`);
+
+            if (existingAttemptsForIp.length >= fetchedTest.attemptsAllowed) {
+              setHasReachedAttemptLimit(true);
+              const message = `You have reached the maximum number of attempts (${fetchedTest.attemptsAllowed}) for this test from your current IP address.`;
+              setError(message);
+              toast({
+                title: "Attempt Limit Reached",
+                description: message,
+                variant: "destructive",
+                duration: 7000,
+              });
+            }
           }
         } else if (fetchedTest.attemptsAllowed === 0) {
             console.log("[StudentTestPage] Attempts allowed is 0 (unlimited). Skipping IP check for previous attempts.");
         }
       } catch (err: any) {
         console.error(`[StudentTestPage] Error during initial data load for test ID "${testId}":`, err);
-        if (!error) { // Set error only if not already set by a more specific condition
+        if (!error) { 
             setError(err.message || "An error occurred while loading the test. Please ensure the link is correct and the test is active.");
         }
       } finally {
@@ -104,7 +121,7 @@ export default function StudentTestPage() {
       }
     }
     fetchInitialData();
-  }, [testId, toast, error]); // Added 'error' to dependency array to avoid re-fetching if error is already set
+  }, [testId, toast, error]); 
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,7 +187,7 @@ export default function StudentTestPage() {
     );
   }
 
-  if (hasReachedAttemptLimit && testData.attemptsAllowed > 0) { // Ensure this check happens after testData is loaded
+  if (hasReachedAttemptLimit && testData.attemptsAllowed > 0 && !DISABLE_IP_BASED_ATTEMPT_LIMIT) { 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <Ban className="w-16 h-16 text-destructive mb-4" />
