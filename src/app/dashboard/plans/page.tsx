@@ -3,46 +3,49 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Added useRouter
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'; // CardDescription removed as it's not directly used for each plan's title section now
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Download, Users as UsersIcon, Briefcase, Edit2, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const plans = [
   {
+    id: "free",
     name: "Free Trial",
     price: "₹0",
     priceDetails: "First 3 Tests Free",
-    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.", // Kept for internal structure, but won't be displayed directly under title
+    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.",
     features: [
-      { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
+      { text: "3 Total Test Creations (Manual or AI-assisted)", icon: Edit3 },
       { text: "Basic Results Viewing", icon: BarChart3 },
       { text: "My Personal Progress Tracking", icon: TrendingUpIcon },
       { text: "Contains Ads", icon: Zap, iconColor: "text-yellow-500" },
     ],
     cta: "Activate Free Plan",
-    ctaLink: "/dashboard",
-    variant: "default" as "default", // Purple button
+    ctaLink: "/dashboard", // This can remain a direct link or be handled by a function if needed
+    variant: "default" as "default",
     buttonSize: "default" as "default",
   },
   {
-    name: "Student Lite", // Changed from Creator Lite
+    id: "student_lite",
+    name: "Student Lite",
     price: "₹69",
     priceDetails: "per month",
-    mainDescription: "For students needing more test attempt flexibility and progress tracking.", // Updated description
+    mainDescription: "For students needing more test attempt flexibility and progress tracking.",
     features: [
-      { text: "30 Manual Test Creations/Month", icon: Edit3 }, // As per user's last detailed plan
       { text: "Unlimited Test Attempts (as student)", icon: CheckCircle },
       { text: "Full 'My Personal Progress' Tracking", icon: TrendingUpIcon },
-      { text: "Basic Results Viewing (for created tests)", icon: BarChart3 }, // If they create tests
+      { text: "Live Leaderboard Access", icon: BarChart3 },
       { text: "Minimal Ads", icon: Zap, iconColor: "text-yellow-500" },
     ],
     cta: "Choose Student Lite",
-    ctaLink: "#", 
+    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
   },
   {
+    id: "teacher_basic",
     name: "Teacher Basic",
     price: "₹499",
     priceDetails: "per month",
@@ -54,11 +57,12 @@ const plans = [
       { text: "Ad-Free (Teacher & their Tests)", icon: Shield },
     ],
     cta: "Upgrade to Basic",
-    ctaLink: "#",
+    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
   },
   {
+    id: "teacher_premium",
     name: "Teacher Premium",
     price: "₹1999",
     priceDetails: "per month",
@@ -71,7 +75,7 @@ const plans = [
       { text: "Ad-Free (Teacher & their Tests)", icon: Shield },
     ],
     cta: "Go Premium",
-    ctaLink: "#",
+    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
     isPopular: true,
@@ -79,35 +83,45 @@ const plans = [
 ];
 
 export default function PlansPage() {
+  const router = useRouter();
+
+  const handleChoosePlan = (planId: string, planName: string) => {
+    // For free plan, can directly navigate or handle differently if needed
+    if (planId === "free" && plans.find(p => p.id === planId)?.ctaLink === "/dashboard") {
+      router.push("/dashboard");
+      return;
+    }
+    // For paid plans, navigate to a mock payment page
+    router.push(`/dashboard/mock-payment/${planId}?name=${encodeURIComponent(planName)}`);
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold font-headline text-primary mb-3">Test Pilot Plans</h1>
-        {/* Removed the introductory paragraph as requested */}
       </div>
 
-      {/* Adjusted grid for better responsiveness: md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <Card 
             key={plan.name} 
             className={`relative flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
           >
-            <CardHeader className="text-center pt-6 pb-4 bg-muted/20 relative"> {/* Added relative for badge positioning */}
+            <CardHeader className="text-center pt-6 pb-4 bg-muted/20 relative">
               {plan.isPopular && (
                 <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-0.5 text-xs font-semibold z-10">
                   MOST POPULAR
                 </Badge>
               )}
-              <CardTitle className="text-2xl font-bold font-headline mt-2 mb-1">{plan.name}</CardTitle> {/* Added mt-2 to give space for badge if needed */}
+              <CardTitle className="text-2xl font-bold font-headline mt-2 mb-1">{plan.name}</CardTitle>
               <div className="my-1">
                 <span className="text-3xl font-extrabold text-primary">{plan.price}</span>
                 <span className="text-muted-foreground text-sm">{plan.priceDetails.startsWith("per") ? "/" : ""} {plan.priceDetails.replace("per month", "mo")}</span>
               </div>
             </CardHeader>
-            <CardContent className="flex-grow space-y-2.5 p-6">
-              {/* Removed plan.mainDescription from here */}
-              <ul className="space-y-2 text-sm">
+            <CardContent className="flex-grow space-y-3.5 p-6">
+              <p className="text-sm text-muted-foreground mb-4">{plan.mainDescription}</p>
+              <ul className="space-y-2.5 text-sm">
                 {plan.features.map((feature, i) => {
                   const IconComponent = feature.icon;
                   return (
@@ -124,13 +138,9 @@ export default function PlansPage() {
                 className="w-full" 
                 variant={plan.variant} 
                 size={plan.buttonSize || 'lg'}
-                asChild={plan.ctaLink === "/dashboard"}
+                onClick={() => handleChoosePlan(plan.id, plan.name)}
               >
-                {plan.ctaLink === "/dashboard" ? (
-                  <Link href={plan.ctaLink}>{plan.cta}</Link>
-                ) : (
-                  <a href={plan.ctaLink} onClick={(e) => { if (plan.ctaLink === "#") e.preventDefault(); alert('Payment integration coming soon!'); }}>{plan.cta}</a>
-                )}
+                {plan.cta}
               </Button>
             </CardFooter>
           </Card>
