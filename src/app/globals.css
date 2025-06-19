@@ -67,7 +67,7 @@ body {
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 278 80% 55%;  /* Lighter Indigo for dark mode */
+    --primary: 278 80% 65%;  /* Lighter Indigo for dark mode primary */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 20%;
@@ -76,7 +76,7 @@ body {
     --muted: 0 0% 22%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 180 100% 45.1%;   /* Lighter Teal for dark mode */
+    --accent: 180 80% 45%;   /* Lighter Teal for dark mode accent */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 70% 50.2%;
@@ -84,7 +84,7 @@ body {
 
     --border: 0 0% 25%;
     --input: 0 0% 25%;
-    --ring: 278 80% 55%; /* Ring color (Lighter Indigo) */
+    --ring: 278 80% 65%; /* Ring color (Lighter Indigo for dark) */
 
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -103,7 +103,7 @@ body {
     --sidebar-accent-foreground: 0 0% 95%; 
     
     --sidebar-border: 278 45% 22%;        
-    --sidebar-ring: 180 100% 45.1%; /* Lighter Teal */
+    --sidebar-ring: 180 80% 45%; /* Lighter Teal for dark accent */
   }
 }
 

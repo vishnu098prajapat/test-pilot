@@ -5,9 +5,9 @@ export interface User {
   email?: string; 
   displayName: string; 
   dob: string; 
-  role: 'teacher' | 'student' | 'instituteAdmin'; // Added instituteAdmin
+  role: 'teacher' | 'student' | 'instituteAdmin';
   profileImageUrl?: string; 
-  instituteId?: string; // Added instituteId
+  instituteId?: string; 
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false' | 'drag-and-drop';
@@ -82,8 +82,8 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  instituteId?: string; // Added
-  batchId?: string;     // Added
+  instituteId?: string; 
+  batchId?: string;     
 }
 
 export interface StudentAnswer {

@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Loader2, ListChecks, Send, Lightbulb } from 'lucide-react';
+import { Sparkles, Loader2, ListChecks, Send, Lightbulb, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
@@ -20,6 +20,8 @@ import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flo
 import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion, DraggableItem, DropTarget, CorrectMapping } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert components
+
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -235,6 +237,16 @@ export default function AIGenerateTestPage() {
 
   return (
     <div className="container mx-auto py-2">
+       <Alert className="mb-6 border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
+        <Info className="h-4 w-4" />
+        <AlertTitle className="font-semibold">Free Trial Information</AlertTitle>
+        <AlertDescription>
+          AI question generation may be limited on the free trial. 
+          Users can create up to 3 tests in total (manual or AI). 
+          Upgrade to a paid plan for more creations and features!
+          <span className="italic text-xs block mt-1">(This is a UI note; actual limits are not yet enforced.)</span>
+        </AlertDescription>
+      </Alert>
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center">
