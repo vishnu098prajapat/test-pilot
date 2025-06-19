@@ -4,10 +4,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, Eye, UserX, UserMinus, ShieldAlert, ClipboardList } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, UserX, UserMinus, ShieldAlert, ClipboardList } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
@@ -316,7 +316,6 @@ export default function StudentPerformancePage() {
                   <TableHead className="text-center">Tests Attempted</TableHead>
                   <TableHead className="text-center">Total Score (Points)</TableHead>
                   <TableHead className="text-center w-[180px]">Average Score</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -346,15 +345,10 @@ export default function StudentPerformancePage() {
                     <TableCell className="text-center">{student.testsAttemptedCount}</TableCell>
                     <TableCell className="text-center">{student.totalPointsScored} / {student.totalMaxPointsPossible}</TableCell>
                     <TableCell className="text-center">
-                      <div className="flex items-center justify-end gap-2"> {/* Changed to justify-end */}
+                      <div className="flex items-center justify-end gap-2">
                         <span>{student.averageScorePercentage}%</span>
                         <Progress value={student.averageScorePercentage} className="w-20 h-2 [&>div]:bg-primary" />
                       </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button variant="ghost" size="sm" onClick={() => toast({ title: "Detailed View (Coming Soon)", description: `Detailed performance for ${student.studentIdentifier} will be available in a future update.`, duration: 3000 })}>
-                        <Eye className="h-4 w-4 mr-1" /> Details
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -367,3 +361,4 @@ export default function StudentPerformancePage() {
   );
 }
     
+

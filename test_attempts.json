@@ -1453,5 +1453,292 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1750167031434-025k40w",
     "submittedAt": "2025-06-17T13:30:31.434Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Krishna",
+    "startTime": "2025-06-19T10:39:34.687Z",
+    "endTime": "2025-06-19T10:40:19.566Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx0_1750329785797_2sil8jub0",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx0_1750329785797_xk8lq7s0m",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "answer": "ai-opt_q3_idx1_1750329785798_5bojm6p5n",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx1_1750329785798_0yezollkq",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-19T10:39:34.746Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:39:34.750Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:39:41.975Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:39:55.094Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:39:55.536Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:40:00.209Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:40:08.597Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:40:13.760Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-3-8jtbo3k.\n[2025-06-19T10:40:17.690Z] User: Krishna (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student changed answers multiple times within short intervals for the same question. This could indicate uncertainty or a review of their initial response, but does not necessarily indicate cheating. The activity log shows only answer changes and normal test progression, with no explicit evidence of accessing unauthorized resources.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329622920-gsxwy7t",
+    "submittedAt": "2025-06-19T10:40:22.920Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Ram",
+    "startTime": "2025-06-19T10:41:06.440Z",
+    "endTime": "2025-06-19T10:41:13.427Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx0_1750329785797_r1996tw79",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx2_1750329785797_oldeu8z8a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx2_1750329785798_wryrjxg1s",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "answer": "ai-opt_q3_idx3_1750329785798_eapgw7w5k",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx2_1750329785798_swq2xfrcv",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-19T10:41:06.491Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:41:06.494Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:41:08.749Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:41:10.992Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:41:11.514Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:41:11.937Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-3-8jtbo3k.\n[2025-06-19T10:41:12.341Z] User: Ram (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior. The student answered several questions in quick succession, which is not inherently suspicious, especially at the start of a test. There is no evidence of tab switching, copy-pasting, or any other unusual activity.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329677200-xjjh8l1",
+    "submittedAt": "2025-06-19T10:41:17.200Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Shinu",
+    "startTime": "2025-06-19T10:41:40.970Z",
+    "endTime": "2025-06-19T10:41:46.402Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx1_1750329785797_wv43fr7zx",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx2_1750329785798_wryrjxg1s",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx2_1750329785798_swq2xfrcv",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-19T10:41:41.025Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:41:41.028Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:41:41.946Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:41:43.851Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:41:44.246Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:41:45.200Z] User: Shinu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal progress through the test, with answers being changed for different questions in a timely manner. There are no indications of suspicious behavior, such as frequent tab switches, copy-pasting, or unusual keyboard activity.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329709168-ns1o5l1",
+    "submittedAt": "2025-06-19T10:41:49.168Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Sandeep",
+    "startTime": "2025-06-19T10:42:05.588Z",
+    "endTime": "2025-06-19T10:42:12.028Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx0_1750329785797_2sil8jub0",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx3_1750329785798_g0ec74vmu",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "answer": "ai-opt_q3_idx1_1750329785798_5bojm6p5n",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx2_1750329785798_swq2xfrcv",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-19T10:42:05.645Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:42:05.648Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:42:06.537Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:42:08.616Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:42:09.286Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:42:10.083Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-3-8jtbo3k.\n[2025-06-19T10:42:10.847Z] User: Sandeep (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior, with answers being changed in a timely manner. There are no indications of cheating or unusual activity.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329734860-r07npdw",
+    "submittedAt": "2025-06-19T10:42:14.860Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Vishnu",
+    "startTime": "2025-06-19T10:42:33.663Z",
+    "endTime": "2025-06-19T10:42:40.187Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx3_1750329785797_xozb6hte2",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx3_1750329785798_g0ec74vmu",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "answer": "ai-opt_q3_idx3_1750329785798_eapgw7w5k",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx3_1750329785798_au70gp0cl",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-19T10:42:33.717Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:42:33.719Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:42:34.745Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:42:36.829Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:42:37.548Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:42:38.381Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-3-8jtbo3k.\n[2025-06-19T10:42:39.199Z] User: Vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior, with regular answer changes and no indication of unauthorized resource access or unusual activity.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329762679-kzu0l8l",
+    "submittedAt": "2025-06-19T10:42:42.679Z"
+  },
+  {
+    "testId": "test-1750329801375-zlzfs",
+    "testTitle": "AI Gen (medium) MCQ Test on Python",
+    "studentIdentifier": "Janu",
+    "startTime": "2025-06-19T10:44:42.534Z",
+    "endTime": "2025-06-19T10:45:00.150Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750329785797-0-ujyuvy3",
+        "answer": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785797-1-r8gos1g",
+        "answer": "ai-opt_q1_idx3_1750329785797_xozb6hte2",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785797-2-24n9aot",
+        "answer": "ai-opt_q2_idx1_1750329785797_u16unavkv",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750329785798-3-8jtbo3k",
+        "answer": "ai-opt_q3_idx1_1750329785798_5bojm6p5n",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750329785798-4-fr3rclc",
+        "answer": "ai-opt_q4_idx0_1750329785798_lcmotwhua",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-19T10:44:42.591Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:44:42.594Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-19T10:44:44.761Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-0-ujyuvy3.\n[2025-06-19T10:44:47.246Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Tab switched / minimized.\n[2025-06-19T10:44:51.125Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-1-r8gos1g.\n[2025-06-19T10:44:52.708Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785797-2-24n9aot.\n[2025-06-19T10:44:53.839Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Tab switched / minimized.\n[2025-06-19T10:44:57.396Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-3-8jtbo3k.\n[2025-06-19T10:44:58.923Z] User: Janu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750329785798-4-fr3rclc.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student switched tabs twice within a short period during the test. This behavior is often indicative of attempts to access unauthorized resources or communicate with others, which is a violation of test-taking policies. The tab switches occurred at 10:44:47.246Z and 10:44:53.839Z.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750329903206-fzpsttm",
+    "submittedAt": "2025-06-19T10:45:03.207Z"
   }
 ]

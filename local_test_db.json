@@ -2399,5 +2399,146 @@
     "id": "test-1749906628368-dfo1w",
     "createdAt": "2025-06-14T13:10:28.368Z",
     "updatedAt": "2025-06-14T13:10:28.368Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750329785797-0-ujyuvy3",
+        "text": "Which data type is used to represent whole numbers in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750329785797_r1996tw79",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750329785797_jvwwdxz61",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750329785797_l87q8up1a",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750329785797_dc1ijmp0b",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750329785797_l87q8up1a"
+      },
+      {
+        "id": "ai-q-1750329785797-1-r8gos1g",
+        "text": "Which data type is used to represent text in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750329785797_2sil8jub0",
+            "text": "Integer"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750329785797_wv43fr7zx",
+            "text": "Float"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750329785797_oldeu8z8a",
+            "text": "String"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750329785797_xozb6hte2",
+            "text": "Boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750329785797_oldeu8z8a"
+      },
+      {
+        "id": "ai-q-1750329785797-2-24n9aot",
+        "text": "What is the boolean value representing a true statement?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750329785797_xk8lq7s0m",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750329785797_u16unavkv",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750329785798_wryrjxg1s",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750329785798_g0ec74vmu",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1750329785797_xk8lq7s0m"
+      },
+      {
+        "id": "ai-q-1750329785798-3-8jtbo3k",
+        "text": "Which data type is used to represent numbers with decimal points in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750329785798_8jka9h3to",
+            "text": "Integer"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750329785798_5bojm6p5n",
+            "text": "Float"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750329785798_wwd6lyhtp",
+            "text": "String"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750329785798_eapgw7w5k",
+            "text": "Boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750329785798_5bojm6p5n"
+      },
+      {
+        "id": "ai-q-1750329785798-4-fr3rclc",
+        "text": "What is the boolean value representing a false statement?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750329785798_lcmotwhua",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750329785798_0yezollkq",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750329785798_swq2xfrcv",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750329785798_au70gp0cl",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750329785798_0yezollkq"
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750329801375-zlzfs",
+    "createdAt": "2025-06-19T10:43:21.375Z",
+    "updatedAt": "2025-06-19T10:43:21.375Z"
   }
 ]
