@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card'; // Added CardFooter
 import { CheckCircle, Zap, Star, DollarSign, ArrowLeft } from 'lucide-react';
 
 const plans = [
