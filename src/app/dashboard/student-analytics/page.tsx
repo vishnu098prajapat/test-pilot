@@ -3,25 +3,22 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Users, BarChartBig, PieChart, Info } from 'lucide-react';
+import { Users, BarChartBig, Info } from 'lucide-react'; // Changed PieChart to BarChartBig for relevance
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// This is a placeholder page for the "Student Analytics" feature for teachers.
-// It will be expanded upon when plan-based features are fully implemented.
-
-export default function StudentAnalyticsPage() {
+export default function StudentPerformancePage() { // Renamed component
   return (
     <div className="container mx-auto py-2">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div className="flex items-center">
-          <BarChartBig className="w-10 h-10 text-primary mr-3 hidden sm:block" />
+          <Users className="w-10 h-10 text-primary mr-3 hidden sm:block" /> {/* Changed Icon */}
           <div>
             <h1 className="text-3xl font-bold font-headline flex items-center">
-              <BarChartBig className="mr-3 h-8 w-8 text-primary sm:hidden" /> Student Performance
+              <Users className="mr-3 h-8 w-8 text-primary sm:hidden" /> Student Performance {/* Changed Icon */}
             </h1>
             <p className="text-muted-foreground">
-              Track and analyze your students' progress across your tests.
+              Track and analyze your students' overall progress across all your tests.
             </p>
           </div>
         </div>
@@ -35,36 +32,23 @@ export default function StudentAnalyticsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground max-w-lg mx-auto">
-            The comprehensive Student Performance Dashboard is part of our Teacher Basic and Premium plans. 
+            The comprehensive Student Performance Dashboard is a premium feature.
             It will provide detailed insights into how your students are performing on the tests you've created, including:
           </p>
           <ul className="list-disc list-inside text-left max-w-md mx-auto text-muted-foreground space-y-1">
-            <li>Overall class performance per test</li>
-            <li>Individual student progress tracking</li>
-            <li>Question-wise analysis</li>
-            <li>Identifying areas where students might be struggling</li>
+            <li>Overall class performance metrics</li>
+            <li>Individual student progress tracking over time</li>
+            <li>Identifying common areas of difficulty</li>
             <li>(Premium) Advanced trends, comparisons, and data export</li>
           </ul>
           <Button asChild className="mt-6">
-            <Link href="/dashboard">Explore Other Features</Link>
+            <Link href="/dashboard/plans">View Upgrade Options</Link>
           </Button>
            <p className="text-xs text-muted-foreground mt-4">
-            For now, you can view individual test leaderboards from the &quot;Results&quot; page or your main dashboard.
+            For now, you can view individual test leaderboards from the &quot;Results & Leaderboards&quot; page or your main Dashboard.
           </p>
         </CardContent>
       </Card>
-
-      {/* Placeholder for future content based on plan */}
-      {/* 
-      Example of what might be shown based on plan:
-      if (user.plan === 'Teacher Basic') {
-        // Show basic student analytics
-      } else if (user.plan === 'Teacher Premium') {
-        // Show advanced student analytics
-      } else {
-        // Show upgrade prompt
-      }
-      */}
     </div>
   );
 }

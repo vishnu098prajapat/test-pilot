@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect } from "react"; // Added useState and useEffect
+import React, { useState, useEffect } from "react"; 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown, Moon, Sun } from "lucide-react"; // Added Moon and Sun
+import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown, Moon, Sun, DollarSign } from "lucide-react"; 
 import { useAuth } from "@/hooks/use-auth";
 import { useSidebar } from "@/components/ui/sidebar";
 
@@ -66,7 +66,7 @@ export default function DashboardHeader() {
     if (email) {
       return email.substring(0, 2).toUpperCase();
     }
-    return "TP"; // Test Pilot initials
+    return "TP"; 
   };
   
   return (
@@ -111,6 +111,13 @@ export default function DashboardHeader() {
                 <span>Settings</span>
               </Link>
             </DropdownMenuItem>
+             <DropdownMenuItem asChild>
+              <Link href="/dashboard/plans">
+                <DollarSign className="mr-2 h-4 w-4" />
+                <span>View Plans</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>

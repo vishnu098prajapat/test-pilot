@@ -12,7 +12,8 @@ import {
   BarChart3,
   TrendingUp, 
   Sparkles,
-  Users // New icon for Student Analytics
+  Users, // Existing icon, good for Student Performance
+  DollarSign // New icon for Plans
 } from "lucide-react";
 import { 
   SidebarMenu, 
@@ -24,7 +25,7 @@ import {
   useSidebar, 
 } from "@/components/ui/sidebar";
 import React from "react";
-import { useAuth } from "@/hooks/use-auth"; // Import useAuth
+import { useAuth } from "@/hooks/use-auth"; 
 
 const mainNavItemsTeacher = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -32,34 +33,33 @@ const mainNavItemsTeacher = [
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
   { href: "/dashboard/results", label: "Results & Leaderboards", icon: BarChart3 }, 
-  { href: "/dashboard/student-analytics", label: "Student Analytics", icon: Users }, // New for Teacher
+  { href: "/dashboard/student-analytics", label: "Student Performance", icon: Users }, // Renamed from Student Analytics
   { href: "/dashboard/my-progress", label: "My Personal Progress", icon: TrendingUp },
 ];
 
 const mainNavItemsStudent = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, // Or a student-specific dashboard
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, 
   { href: "/dashboard/my-progress", label: "My Progress", icon: TrendingUp },
-  // Students might see available tests or a different view for "tests"
-  // { href: "/dashboard/available-tests", label: "Available Tests", icon: ClipboardList }, 
 ];
 
 
 const secondaryNavItems = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings }, 
+  { href: "/dashboard/plans", label: "View Plans", icon: DollarSign }, // Added Plans link
 ];
 
 
 export function SidebarNav() {
   const pathname = usePathname();
   const { open } = useSidebar(); 
-  const { user } = useAuth(); // Get user role
+  const { user } = useAuth(); 
 
   const currentNavItems = user?.role === 'teacher' ? mainNavItemsTeacher : mainNavItemsStudent;
 
   const navLinkClass = (href: string, exact: boolean = false) => {
     const isActive = exact 
       ? pathname === href 
-      : (href === "/dashboard/tests" && pathname.startsWith("/dashboard/test/")) // Special case for individual test management
+      : (href === "/dashboard/tests" && pathname.startsWith("/dashboard/test/")) 
       ? true 
       : pathname.startsWith(href);
     return isActive;
@@ -75,7 +75,7 @@ export function SidebarNav() {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics"].includes(item.href))} 
+                  isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
                   tooltip={!open ? item.label : undefined}
                 >
                   <Link href={item.href}>
@@ -91,13 +91,13 @@ export function SidebarNav() {
 
       <SidebarMenu className="mt-auto">
          <SidebarGroup>
-          <SidebarGroupLabel className={open ? "" : "hidden"}>Account</SidebarGroupLabel>
+          <SidebarGroupLabel className={open ? "" : "hidden"}>Account & Billing</SidebarGroupLabel>
            <SidebarGroupContent>
             {secondaryNavItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={navLinkClass(item.href)}
+                    isActive={navLinkClass(item.href, item.href === "/dashboard/plans")}
                     tooltip={!open ? item.label : undefined}
                   >
                     <Link href={item.href}>
