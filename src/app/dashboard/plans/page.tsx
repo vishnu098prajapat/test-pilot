@@ -8,29 +8,30 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { CheckCircle, Zap, Star, DollarSign, ArrowLeft, BarChart3, Edit3, Eye, User, Shield, Sparkles, Download, Users as UsersIcon, Package, Edit2, TrendingUp as TrendingUpIcon, Briefcase } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-// Updated plan details based on latest feedback
 const plans = [
   {
     name: "Free Trial",
     price: "₹0",
     priceDetails: "First 3 Tests Free",
-    description: "Get a taste of Test Pilot with essential features.",
+    // description removed from here, was: "Get a taste of Test Pilot with essential features."
+    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.",
     features: [
-      { text: "3 Total Test Creations (Manual or AI-assisted)", icon: Edit3 },
-      { text: "Basic Results Viewing (Leaderboards)", icon: BarChart3 },
+      { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
+      { text: "Basic Results Viewing", icon: BarChart3 },
       { text: "My Personal Progress Tracking", icon: TrendingUpIcon },
       { text: "Contains Ads", icon: Zap, iconColor: "text-yellow-500" },
     ],
     cta: "Activate Free Plan",
     ctaLink: "/dashboard",
-    variant: "default" as "default", // Changed to default for purple button
+    variant: "default" as "default",
     buttonSize: "default" as "default",
   },
   {
     name: "Creator Lite",
     price: "₹69",
     priceDetails: "per month",
-    description: "For individual creators and students who need more flexibility.",
+    // description removed from here
+    mainDescription: "For individual creators and students needing more test creation and attempt flexibility.",
     features: [
       { text: "30 Manual Test Creations/Month", icon: Edit3 },
       { text: "Unlimited Test Attempts (as student)", icon: CheckCircle },
@@ -47,7 +48,8 @@ const plans = [
     name: "Teacher Basic",
     price: "₹499",
     priceDetails: "per month",
-    description: "Essential tools for educators to create and manage tests.",
+    // description removed from here
+    mainDescription: "Essential tools for educators to create, manage tests, and track student performance.",
     features: [
       { text: "50 Manual Tests/Month", icon: Edit3 },
       { text: "10 AI-Generated Tests/Month", icon: Sparkles },
@@ -63,7 +65,8 @@ const plans = [
     name: "Teacher Premium",
     price: "₹1999",
     priceDetails: "per month",
-    description: "Comprehensive features for educators and institutions.",
+    // description removed from here
+    mainDescription: "Comprehensive features for educators and institutions requiring advanced capabilities.",
     features: [
       { text: "Unlimited Manual & AI Test Creation", icon: Edit2 },
       { text: "Advanced Student Performance Dashboard", icon: Briefcase },
@@ -84,29 +87,28 @@ export default function PlansPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold font-headline text-primary mb-3">Test Pilot Plans</h1>
-        {/* Removed the introductory paragraph as requested */}
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch"> {/* Changed gap-8 to gap-6 */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <Card 
             key={plan.name} 
             className={`relative flex flex-col shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
           >
             {plan.isPopular && (
-              <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold z-10">
+              <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold z-10">
                 MOST POPULAR
               </Badge>
             )}
-            <CardHeader className="text-center pt-6 pb-4 bg-muted/20"> {/* Adjusted padding */}
+            <CardHeader className="text-center pt-6 pb-4 bg-muted/20">
               <CardTitle className="text-2xl font-bold font-headline mb-1">{plan.name}</CardTitle>
               <div className="my-1">
                 <span className="text-3xl font-extrabold text-primary">{plan.price}</span>
                 <span className="text-muted-foreground text-sm">{plan.priceDetails.startsWith("per") ? "/" : ""} {plan.priceDetails.replace("per month", "mo")}</span>
               </div>
-              <CardDescription className="min-h-[40px] px-2 text-sm">{plan.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow space-y-2.5 p-6">
+              <p className="text-sm text-muted-foreground mb-4 min-h-[60px]">{plan.mainDescription}</p>
               <ul className="space-y-2 text-sm">
                 {plan.features.map((feature, i) => {
                   const IconComponent = feature.icon;
@@ -123,7 +125,7 @@ export default function PlansPage() {
               <Button 
                 className="w-full" 
                 variant={plan.variant} 
-                size={plan.buttonSize || 'lg'} // Ensure all buttons have a size
+                size={plan.buttonSize || 'lg'}
                 asChild={plan.ctaLink === "/dashboard"}
               >
                 {plan.ctaLink === "/dashboard" ? (

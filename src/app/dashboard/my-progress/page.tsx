@@ -97,12 +97,6 @@ export default function MyProgressPage() {
     };
   }, [allUserAttempts, currentMonthAttempts]);
 
-  const getProgressColor = (percentage: number) => {
-    if (percentage >= 75) return "bg-green-500";
-    if (percentage >= 50) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-
   if (isAuthLoading || isLoadingAttempts) {
     return (
       <div className="container mx-auto py-2 bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
@@ -135,18 +129,18 @@ export default function MyProgressPage() {
     );
   }
   
-  if (user.role === 'teacher' && currentMonthAttempts.length === 0 && allUserAttempts.length === 0) {
+  if (user.role === 'teacher' && allUserAttempts.length === 0) {
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <Info className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Your Personal Test Attempts</h2>
+        <h2 className="text-xl font-semibold mb-2">Your Personal Test Attempts Summary</h2>
         <p className="text-muted-foreground">
-          This page displays results for tests you (<b>{user.displayName}</b>) have personally taken.
+          This page displays a summary of tests you (<b>{user.displayName}</b>) have personally taken.
         </p>
         <p className="text-muted-foreground mt-2">
           To view the performance of students on tests you&apos;ve created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results & Analytics</Link> page.
         </p>
-         <p className="text-sm text-muted-foreground mt-4">Currently, no personal attempts found for "{user.displayName}". If you take a test, your results will appear here.</p>
+         <p className="text-sm text-muted-foreground mt-4">Currently, no personal attempts found for "{user.displayName}". If you take a test, your summary will appear here.</p>
       </div>
     );
   }
@@ -169,9 +163,9 @@ export default function MyProgressPage() {
       <div className="flex items-center mb-8">
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
-            <h1 className="text-3xl font-bold font-headline">My Personal Progress</h1>
-            <p className="text-muted-foreground">Track your personal test performance for: <b>{user.displayName}</b>.</p>
-             <p className="text-xs text-muted-foreground mt-1">This page shows results for tests you have personally attempted.</p>
+            <h1 className="text-3xl font-bold font-headline">My Personal Progress Summary</h1>
+            <p className="text-muted-foreground">A summary of your personal test performance for: <b>{user.displayName}</b>.</p>
+            <p className="text-xs text-muted-foreground mt-1">This page shows a summary for tests you have personally attempted.</p>
         </div>
       </div>
 
@@ -194,50 +188,19 @@ export default function MyProgressPage() {
         </Card>
       </div>
 
-      <h2 className="text-2xl font-semibold font-headline mb-6">My Attempt History (Current Month)</h2>
-      {currentMonthAttempts.length === 0 ? (
-        <Card className="text-center py-10">
+      {allUserAttempts.length === 0 ? (
+        <Card className="text-center py-10 mt-8">
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
-            <p className="text-muted-foreground">No personal test attempts found for "{user.displayName}" in the current month.</p>
-            <p className="text-sm text-muted-foreground">Take a test to see your progress here!</p>
+            <p className="text-muted-foreground">No personal test attempts found for "{user.displayName}".</p>
+            <p className="text-sm text-muted-foreground">Take a test to see your progress summary here!</p>
             <Button asChild variant="link"><Link href="/dashboard">Explore Available Tests</Link></Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {currentMonthAttempts.map((attempt) => (
-            <Card key={attempt.id} className="shadow-sm hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                    <CardTitle className="font-headline text-lg">{attempt.testTitle || `Test ID: ${attempt.testId}`}</CardTitle>
-                    <Badge variant="outline" className="text-xs">
-                        <CalendarDays className="h-3 w-3 mr-1.5" />
-                        {new Date(attempt.submittedAt).toLocaleDateString()}
-                    </Badge>
-                </div>
-                <CardDescription>
-                  Score: <span className="font-semibold text-primary">{attempt.scorePercentage}%</span> ({attempt.score}/{attempt.maxPossiblePoints} points)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Progress value={attempt.scorePercentage || 0} className={`h-2.5 ${getProgressColor(attempt.scorePercentage || 0)}`} />
-                 {attempt.isSuspicious && (
-                    <p className="text-xs text-destructive mt-2 flex items-center">
-                        <AlertTriangle className="h-3 w-3 mr-1"/> This attempt was flagged for suspicious activity.
-                    </p>
-                )}
-              </CardContent>
-              <CardFooter>
-                <Button variant="ghost" size="sm" asChild className="text-primary hover:bg-primary/10">
-                  <Link href={`/test/${attempt.testId}/results`}>
-                    View Detailed Results
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+         <p className="text-sm text-muted-foreground text-center mt-8">
+           Detailed history of individual attempts is not shown on this summary page.
+         </p>
       )}
     </div>
   );
