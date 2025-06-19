@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, ShieldAlert, Download, Eye, Clock, Target } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, ShieldAlert, Download, Eye, Clock, Target, UserMinus, UserX } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
@@ -168,17 +168,13 @@ export default function StudentPerformancePage() {
         return sum + (isNaN(duration) ? 0 : duration);
     }, 0);
     const averageTimePerAttemptOverallSeconds = totalSubmissions > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissions) : 0;
-    
-    const totalCorrectAnswers = relevantAttempts.reduce((sum, attempt) => sum + attempt.answers.filter(a => a.isCorrect).length, 0);
-    const totalAnsweredQuestions = relevantAttempts.reduce((sum, attempt) => sum + attempt.answers.length, 0);
-    const overallClassAccuracy = totalAnsweredQuestions > 0 ? Math.round((totalCorrectAnswers / totalAnsweredQuestions) * 100) : 0;
-
+        
     const redFlaggedAttemptsCount = relevantAttempts.filter(a => a.isSuspicious).length;
     
     const studentsFailedCount = studentPerformance.filter(s => s.averageScorePercentage < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScorePercentage < 30).length;
 
-    return { averageClassScore, totalSubmissions, uniqueStudents, redFlaggedAttemptsCount, studentsFailedCount, lowPerformersCount, averageTimePerAttemptOverallSeconds, overallClassAccuracy };
+    return { averageClassScore, totalSubmissions, uniqueStudents, redFlaggedAttemptsCount, studentsFailedCount, lowPerformersCount, averageTimePerAttemptOverallSeconds };
   }, [studentPerformance, teacherTests, allAttempts]);
 
   const getRankBadge = (rank: number) => {
@@ -190,7 +186,7 @@ export default function StudentPerformancePage() {
 
   const formatTime = (totalSeconds: number) => {
     const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
+    const seconds = Math.floor(totalSeconds % 60); // Use Math.floor for consistent integer display
     return `${minutes}m ${seconds}s`;
   };
 
@@ -200,7 +196,7 @@ export default function StudentPerformancePage() {
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {[1, 2, 3, 4, 5, 6].map(i => <Card key={i} className="p-4 h-28"><Skeleton className="h-6 w-1/2 mb-2" /><Skeleton className="h-8 w-1/4" /></Card>)}
         </div>
         <Card><CardContent className="p-4"><Skeleton className="h-64 w-full" /></CardContent></Card>
@@ -246,13 +242,11 @@ const StatCard = ({ title, value, icon, description, colorClass = "text-primary"
       } else if (typeof value === 'number') {
         targetValueNum = value;
       } else if (typeof value === 'string' && /^\d+m \d+s$/.test(value)) {
-        // Handle "Xm Ys" format for animation - convert to total seconds
         const parts = value.match(/(\d+)m (\d+)s/);
         if (parts) {
             targetValueNum = parseInt(parts[1]) * 60 + parseInt(parts[2]);
-            // Suffix will be handled by formatTime after animation
         } else {
-            setDisplayValue(value); // Fallback if parsing fails
+            setDisplayValue(value);
             return;
         }
       } else {
@@ -273,8 +267,8 @@ const StatCard = ({ title, value, icon, description, colorClass = "text-primary"
       setDisplayValue(suffix ? `0${suffix}` : (value.toString().includes('s') ? formatTime(0) : 0) );
 
 
-      const duration = 1000; // Animation duration in ms
-      const frameRate = 30; // Frames per second
+      const duration = 1000; 
+      const frameRate = 30; 
       const totalFrames = (duration / 1000) * frameRate;
       const increment = targetValueNum / totalFrames;
       let currentAnimatedValue = 0;
@@ -330,7 +324,7 @@ const StatCard = ({ title, value, icon, description, colorClass = "text-primary"
           </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Submissions" value={overallClassStats.totalSubmissions} icon={FileText} description="Across all your active tests" animate={true} />
         <TooltipProvider>
           <Tooltip>
@@ -346,7 +340,8 @@ const StatCard = ({ title, value, icon, description, colorClass = "text-primary"
         </TooltipProvider>
         <StatCard title="Avg. Class Score" value={`${overallClassStats.averageClassScore}%`} icon={Percent} description="Average across all attempts" animate={true} />
         <StatCard title="Avg. Time / Attempt" value={formatTime(overallClassStats.averageTimePerAttemptOverallSeconds)} icon={Clock} description="Average duration of test attempts" animate={true} />
-        <StatCard title="Overall Class Accuracy" value={`${overallClassStats.overallClassAccuracy}%`} icon={Target} description="Total correct answers / Total answered" animate={true} />
+        <StatCard title="Students Below Passing (<50%)" value={overallClassStats.studentsFailedCount} icon={UserMinus} description="Students with avg. score below 50%" colorClass="text-orange-500" animate={true}/>
+        <StatCard title="Needs Attention (<30%)" value={overallClassStats.lowPerformersCount} icon={UserX} description="Students with avg. score below 30%" colorClass="text-red-600" animate={true}/>
         
         <Dialog>
           <DialogTrigger asChild>
