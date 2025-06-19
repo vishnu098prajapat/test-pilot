@@ -92,7 +92,7 @@ export default function SignupPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline text-center text-foreground">Create Account</CardTitle>
           <CardDescription className="text-center text-muted-foreground pt-2">
-            Provide your Name and Date of Birth. Please choose a unique name as it will be used to identify you across the platform.
+            Please choose a unique name as it will be used to identify you across the platform.
           </CardDescription>
         </CardHeader>
         <CardContent>
