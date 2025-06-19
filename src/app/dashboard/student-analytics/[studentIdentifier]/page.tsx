@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User, BarChart3, AlertTriangle, ArrowLeft, Clock, CheckCircle, XCircle, FileText, CalendarDays, ShieldAlert } from 'lucide-react';
+import { User, BarChart3, AlertTriangle, ArrowLeft, Clock, CheckCircle, XCircle, FileText, CalendarDays, ShieldAlert, Percent } from 'lucide-react'; // Added Percent here
 import { useAuth } from '@/hooks/use-auth';
 import type { Test, TestAttempt, StudentAnswer } from '@/lib/types';
 import { getTestsByTeacher } from '@/lib/store'; // To get test titles if not in attempt
