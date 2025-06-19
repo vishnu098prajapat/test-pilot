@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info, User } from "lucide-react"; // Added User icon
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -44,7 +44,6 @@ export default function MyProgressPage() {
       setIsLoadingAttempts(true);
       setError(null);
       try {
-        // Fetch attempts specifically for the current logged-in user's identifier
         const response = await fetch(`/api/attempts?studentIdentifier=${encodeURIComponent(userDisplayNameNormalized)}`);
         if (!response.ok) {
           const errorData = await response.json();
@@ -53,7 +52,6 @@ export default function MyProgressPage() {
         const allAttemptsData: TestAttempt[] = await response.json();
         console.log(`[MyProgressPage] All attempts fetched from API for ${userDisplayNameNormalized}: ${allAttemptsData.length}`);
         
-        // No client-side filtering by displayName needed here as API does it
         const studentSpecificAttempts = allAttemptsData;
         
         console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after API filtering for display name: "${userDisplayNameNormalized}".`);
@@ -80,7 +78,7 @@ export default function MyProgressPage() {
     }
 
     fetchAttempts();
-  }, [user, isAuthLoading, toast]); // Removed isLoading from dependency array as it's handled by isAuthLoading
+  }, [user, isAuthLoading, toast]);
 
   const summaryStats = useMemo(() => {
     const lifetimeTotalAttempts = allUserAttempts.length;
@@ -137,15 +135,16 @@ export default function MyProgressPage() {
     );
   }
   
-  // Specific message for teachers viewing their own attempts (or lack thereof)
   if (user.role === 'teacher' && currentMonthAttempts.length === 0 && allUserAttempts.length === 0) {
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <Info className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Your Personal Attempts</h2>
+        <h2 className="text-xl font-semibold mb-2">Your Personal Test Attempts</h2>
         <p className="text-muted-foreground">
-          This page shows test attempts you've personally made using your account: "{user.displayName}".<br/>
-          To see how your students are performing on tests you've created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results</Link> page.
+          This page displays results for tests you (<b>{user.displayName}</b>) have personally taken.
+        </p>
+        <p className="text-muted-foreground mt-2">
+          To view the performance of students on tests you&apos;ve created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results & Analytics</Link> page.
         </p>
          <p className="text-sm text-muted-foreground mt-4">Currently, no personal attempts found for "{user.displayName}". If you take a test, your results will appear here.</p>
       </div>
@@ -171,7 +170,8 @@ export default function MyProgressPage() {
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
             <h1 className="text-3xl font-bold font-headline">My Personal Progress</h1>
-            <p className="text-muted-foreground">Track your personal test performance for: {user.displayName}</p>
+            <p className="text-muted-foreground">Track your personal test performance for: <b>{user.displayName}</b>.</p>
+             <p className="text-xs text-muted-foreground mt-1">This page shows results for tests you have personally attempted.</p>
         </div>
       </div>
 
@@ -242,6 +242,3 @@ export default function MyProgressPage() {
     </div>
   );
 }
-
-
-    
