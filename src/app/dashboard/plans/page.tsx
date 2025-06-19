@@ -4,8 +4,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { CheckCircle, Zap, Star, DollarSign, ArrowLeft, BarChart3, Edit3, Eye, User, Shield, Sparkles, Download, Users as UsersIcon, Package, Edit2, TrendingUp as TrendingUpIcon, Briefcase } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'; // CardDescription removed as it's not directly used for each plan's title section now
+import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Download, Users as UsersIcon, Briefcase, Edit2, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const plans = [
@@ -13,8 +13,7 @@ const plans = [
     name: "Free Trial",
     price: "₹0",
     priceDetails: "First 3 Tests Free",
-    // description removed from here, was: "Get a taste of Test Pilot with essential features."
-    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.",
+    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.", // Kept for internal structure, but won't be displayed directly under title
     features: [
       { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
       { text: "Basic Results Viewing", icon: BarChart3 },
@@ -23,23 +22,22 @@ const plans = [
     ],
     cta: "Activate Free Plan",
     ctaLink: "/dashboard",
-    variant: "default" as "default",
+    variant: "default" as "default", // Purple button
     buttonSize: "default" as "default",
   },
   {
-    name: "Creator Lite",
+    name: "Student Lite", // Changed from Creator Lite
     price: "₹69",
     priceDetails: "per month",
-    // description removed from here
-    mainDescription: "For individual creators and students needing more test creation and attempt flexibility.",
+    mainDescription: "For students needing more test attempt flexibility and progress tracking.", // Updated description
     features: [
-      { text: "30 Manual Test Creations/Month", icon: Edit3 },
+      { text: "30 Manual Test Creations/Month", icon: Edit3 }, // As per user's last detailed plan
       { text: "Unlimited Test Attempts (as student)", icon: CheckCircle },
       { text: "Full 'My Personal Progress' Tracking", icon: TrendingUpIcon },
-      { text: "Basic Results Viewing (for created tests)", icon: Eye },
+      { text: "Basic Results Viewing (for created tests)", icon: BarChart3 }, // If they create tests
       { text: "Minimal Ads", icon: Zap, iconColor: "text-yellow-500" },
     ],
-    cta: "Choose Creator Lite",
+    cta: "Choose Student Lite",
     ctaLink: "#", 
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
@@ -48,7 +46,6 @@ const plans = [
     name: "Teacher Basic",
     price: "₹499",
     priceDetails: "per month",
-    // description removed from here
     mainDescription: "Essential tools for educators to create, manage tests, and track student performance.",
     features: [
       { text: "50 Manual Tests/Month", icon: Edit3 },
@@ -65,7 +62,6 @@ const plans = [
     name: "Teacher Premium",
     price: "₹1999",
     priceDetails: "per month",
-    // description removed from here
     mainDescription: "Comprehensive features for educators and institutions requiring advanced capabilities.",
     features: [
       { text: "Unlimited Manual & AI Test Creation", icon: Edit2 },
@@ -87,28 +83,30 @@ export default function PlansPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold font-headline text-primary mb-3">Test Pilot Plans</h1>
+        {/* Removed the introductory paragraph as requested */}
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+      {/* Adjusted grid for better responsiveness: md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <Card 
             key={plan.name} 
-            className={`relative flex flex-col shadow-md hover:shadow-lg transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
+            className={`relative flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
           >
-            {plan.isPopular && (
-              <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-semibold z-10">
-                MOST POPULAR
-              </Badge>
-            )}
-            <CardHeader className="text-center pt-6 pb-4 bg-muted/20">
-              <CardTitle className="text-2xl font-bold font-headline mb-1">{plan.name}</CardTitle>
+            <CardHeader className="text-center pt-6 pb-4 bg-muted/20 relative"> {/* Added relative for badge positioning */}
+              {plan.isPopular && (
+                <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-0.5 text-xs font-semibold z-10">
+                  MOST POPULAR
+                </Badge>
+              )}
+              <CardTitle className="text-2xl font-bold font-headline mt-2 mb-1">{plan.name}</CardTitle> {/* Added mt-2 to give space for badge if needed */}
               <div className="my-1">
                 <span className="text-3xl font-extrabold text-primary">{plan.price}</span>
                 <span className="text-muted-foreground text-sm">{plan.priceDetails.startsWith("per") ? "/" : ""} {plan.priceDetails.replace("per month", "mo")}</span>
               </div>
             </CardHeader>
             <CardContent className="flex-grow space-y-2.5 p-6">
-              <p className="text-sm text-muted-foreground mb-4 min-h-[60px]">{plan.mainDescription}</p>
+              {/* Removed plan.mainDescription from here */}
               <ul className="space-y-2 text-sm">
                 {plan.features.map((feature, i) => {
                   const IconComponent = feature.icon;
