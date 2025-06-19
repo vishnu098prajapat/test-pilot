@@ -211,7 +211,7 @@ export default function StudentPerformancePage() {
 
   return (
     <div className="container mx-auto py-2">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+      <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
         <div className="flex items-center">
           <BarChartBig className="w-10 h-10 text-primary mr-3 hidden sm:block" />
           <div>
@@ -228,12 +228,12 @@ export default function StudentPerformancePage() {
           </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Submissions" value={overallClassStats.totalSubmissions} icon={FileText} description="Across all your active tests" />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div> {/* Wrap StatCard in a div for TooltipTrigger if StatCard itself doesn't forward ref properly */}
+              <div> 
                 <StatCard title="Unique Student Participants" value={overallClassStats.uniqueStudents} icon={Users} description="Distinct students taking your tests" />
               </div>
             </TooltipTrigger>
@@ -246,7 +246,7 @@ export default function StudentPerformancePage() {
         
         <Dialog>
           <DialogTrigger asChild>
-            <div> {/* Wrap StatCard for DialogTrigger */}
+            <div> 
               <StatCard 
                 title="Potentially Dishonest Attempts" 
                 value={overallClassStats.redFlaggedAttemptsCount} 
@@ -292,7 +292,6 @@ export default function StudentPerformancePage() {
           <CardContent className="flex flex-col items-center gap-3">
             <ClipboardList className="w-12 h-12 text-muted-foreground/70" />
             <p className="text-muted-foreground">You haven't created any tests yet.</p>
-             <p className="text-sm text-muted-foreground">Create tests to see student performance data here.</p>
           </CardContent>
         </Card>
       ) : studentPerformance.length === 0 ? (
@@ -367,5 +366,3 @@ export default function StudentPerformancePage() {
   );
 }
     
-
-
