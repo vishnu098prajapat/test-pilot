@@ -3,10 +3,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Added useRouter
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Download, Users as UsersIcon, Briefcase, Edit2, ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Download, Users as UsersIcon, Briefcase, Edit2, ArrowLeft, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const plans = [
@@ -14,16 +14,15 @@ const plans = [
     id: "free",
     name: "Free Trial",
     price: "₹0",
-    priceDetails: "First 3 Tests Free",
-    mainDescription: "Get a taste of Test Pilot with essential features for creating and taking tests.",
+    priceDetails: "First 3 Tests",
+    mainDescription: "For individuals trying out Test Pilot.",
     features: [
-      { text: "3 Total Test Creations (Manual or AI-assisted)", icon: Edit3 },
+      { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
       { text: "Basic Results Viewing", icon: BarChart3 },
-      { text: "My Personal Progress Tracking", icon: TrendingUpIcon },
-      { text: "Contains Ads", icon: Zap, iconColor: "text-yellow-500" },
+      { text: "Personal Progress Tracking", icon: TrendingUpIcon },
+      { text: "Contains Ads", icon: Info, iconColor: "text-muted-foreground" },
     ],
-    cta: "Activate Free Plan",
-    ctaLink: "/dashboard", // This can remain a direct link or be handled by a function if needed
+    cta: "Activate Free Trial",
     variant: "default" as "default",
     buttonSize: "default" as "default",
   },
@@ -31,16 +30,16 @@ const plans = [
     id: "student_lite",
     name: "Student Lite",
     price: "₹69",
-    priceDetails: "per month",
-    mainDescription: "For students needing more test attempt flexibility and progress tracking.",
+    priceDetails: "/month",
+    mainDescription: "For students who primarily take tests.",
     features: [
-      { text: "Unlimited Test Attempts (as student)", icon: CheckCircle },
+      { text: "30 Manual Test Creations/Month", icon: Edit3 },
+      { text: "Unlimited Test Attempts", icon: CheckCircle },
       { text: "Full 'My Personal Progress' Tracking", icon: TrendingUpIcon },
       { text: "Live Leaderboard Access", icon: BarChart3 },
       { text: "Minimal Ads", icon: Zap, iconColor: "text-yellow-500" },
     ],
     cta: "Choose Student Lite",
-    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
   },
@@ -48,16 +47,15 @@ const plans = [
     id: "teacher_basic",
     name: "Teacher Basic",
     price: "₹499",
-    priceDetails: "per month",
-    mainDescription: "Essential tools for educators to create, manage tests, and track student performance.",
+    priceDetails: "/month",
+    mainDescription: "For educators needing more test creation and student tracking.",
     features: [
       { text: "50 Manual Tests/Month", icon: Edit3 },
       { text: "10 AI-Generated Tests/Month", icon: Sparkles },
       { text: "Basic Student Performance Dashboard", icon: UsersIcon },
-      { text: "Ad-Free (Teacher & their Tests)", icon: Shield },
+      { text: "Ad-Free (for Teacher & their tests)", icon: Shield },
     ],
     cta: "Upgrade to Basic",
-    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
   },
@@ -65,17 +63,16 @@ const plans = [
     id: "teacher_premium",
     name: "Teacher Premium",
     price: "₹1999",
-    priceDetails: "per month",
-    mainDescription: "Comprehensive features for educators and institutions requiring advanced capabilities.",
+    priceDetails: "/month",
+    mainDescription: "For educators & institutions needing advanced capabilities.",
     features: [
       { text: "Unlimited Manual & AI Test Creation", icon: Edit2 },
       { text: "Advanced Student Performance Dashboard", icon: Briefcase },
       { text: "Detailed Reports & Data Export", icon: Download },
       { text: "Priority Support", icon: Star },
-      { text: "Ad-Free (Teacher & their Tests)", icon: Shield },
+      { text: "Ad-Free (for Teacher & their tests)", icon: Shield },
     ],
     cta: "Go Premium",
-    ctaLink: "#", // Will be handled by onClick
     variant: "default" as "default",
     buttonSize: "lg" as "lg",
     isPopular: true,
@@ -85,14 +82,12 @@ const plans = [
 export default function PlansPage() {
   const router = useRouter();
 
-  const handleChoosePlan = (planId: string, planName: string) => {
-    // For free plan, can directly navigate or handle differently if needed
-    if (planId === "free" && plans.find(p => p.id === planId)?.ctaLink === "/dashboard") {
-      router.push("/dashboard");
+  const handleChoosePlan = (plan: typeof plans[0]) => {
+    if (plan.id === "free") {
+      router.push("/dashboard"); // Or a specific free activation confirmation
       return;
     }
-    // For paid plans, navigate to a mock payment page
-    router.push(`/dashboard/mock-payment/${planId}?name=${encodeURIComponent(planName)}`);
+    router.push(`/dashboard/mock-payment/${plan.id}?name=${encodeURIComponent(plan.name)}&price=${encodeURIComponent(plan.price)}`);
   };
 
   return (
@@ -104,23 +99,25 @@ export default function PlansPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <Card 
-            key={plan.name} 
+            key={plan.id} 
             className={`relative flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
           >
-            <CardHeader className="text-center pt-6 pb-4 bg-muted/20 relative">
+            <CardHeader className="text-center pt-6 pb-4 bg-muted/30 relative">
               {plan.isPopular && (
                 <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-0.5 text-xs font-semibold z-10">
                   MOST POPULAR
                 </Badge>
               )}
               <CardTitle className="text-2xl font-bold font-headline mt-2 mb-1">{plan.name}</CardTitle>
-              <div className="my-1">
-                <span className="text-3xl font-extrabold text-primary">{plan.price}</span>
-                <span className="text-muted-foreground text-sm">{plan.priceDetails.startsWith("per") ? "/" : ""} {plan.priceDetails.replace("per month", "mo")}</span>
+               <div className="my-1">
+                <span className="text-3xl font-extrabold text-foreground">{plan.price}</span>
+                <span className="text-muted-foreground text-sm">{plan.priceDetails}</span>
               </div>
+              <CardDescription className="text-xs text-muted-foreground h-10"> {/* Fixed height for description */}
+                {plan.mainDescription}
+              </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow space-y-3.5 p-6">
-              <p className="text-sm text-muted-foreground mb-4">{plan.mainDescription}</p>
               <ul className="space-y-2.5 text-sm">
                 {plan.features.map((feature, i) => {
                   const IconComponent = feature.icon;
@@ -133,12 +130,12 @@ export default function PlansPage() {
                 })}
               </ul>
             </CardContent>
-            <CardFooter className="mt-auto p-6 bg-muted/20 border-t">
+            <CardFooter className="mt-auto p-6 bg-muted/30 border-t">
               <Button 
                 className="w-full" 
                 variant={plan.variant} 
                 size={plan.buttonSize || 'lg'}
-                onClick={() => handleChoosePlan(plan.id, plan.name)}
+                onClick={() => handleChoosePlan(plan)}
               >
                 {plan.cta}
               </Button>
