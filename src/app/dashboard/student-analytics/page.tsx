@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, Edit3, Download } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress"; // Added Progress component
 
 interface StudentPerformanceData {
   studentIdentifier: string;
@@ -78,26 +78,29 @@ export default function StudentPerformancePage() {
         teacherTestIds.has(attempt.testId) && attempt.studentIdentifier
       );
 
-      const performanceMap = new Map<string, { totalScore: number, attemptsCount: number, totalMaxPoints: number }>();
+      const performanceMap = new Map<string, { totalScorePercentageSum: number, attemptsCount: number, totalPointsScoredSum: number, totalMaxPointsPossibleSum: number }>();
 
       relevantAttempts.forEach(attempt => {
         const studentId = attempt.studentIdentifier;
-        const currentData = performanceMap.get(studentId) || { totalScore: 0, attemptsCount: 0, totalMaxPoints: 0 };
-        currentData.totalScore += attempt.scorePercentage || 0;
+        const currentData = performanceMap.get(studentId) || { totalScorePercentageSum: 0, attemptsCount: 0, totalPointsScoredSum: 0, totalMaxPointsPossibleSum: 0 };
+        
+        currentData.totalScorePercentageSum += attempt.scorePercentage || 0;
         currentData.attemptsCount += 1;
-        currentData.totalMaxPoints += attempt.maxPossiblePoints || 0; // Assuming maxPossiblePoints is part of attempt
+        currentData.totalPointsScoredSum += attempt.score || 0; // Use raw score
+        currentData.totalMaxPointsPossibleSum += attempt.maxPossiblePoints || 0;
+        
         performanceMap.set(studentId, currentData);
       });
       
       const calculatedPerformance: StudentPerformanceData[] = Array.from(performanceMap.entries()).map(([identifier, data]) => ({
         studentIdentifier: identifier,
         testsAttemptedCount: data.attemptsCount,
-        averageScorePercentage: data.attemptsCount > 0 ? Math.round(data.totalScore / data.attemptsCount) : 0,
-        totalPointsScored: relevantAttempts.filter(a => a.studentIdentifier === identifier).reduce((sum,a) => sum + (a.score || 0),0), // Recalculate raw points for accuracy
-        totalMaxPointsPossible: data.totalMaxPoints,
+        averageScorePercentage: data.attemptsCount > 0 ? Math.round(data.totalScorePercentageSum / data.attemptsCount) : 0,
+        totalPointsScored: data.totalPointsScoredSum,
+        totalMaxPointsPossible: data.totalMaxPointsPossibleSum,
       }));
 
-      calculatedPerformance.sort((a, b) => b.averageScorePercentage - a.averageScorePercentage);
+      calculatedPerformance.sort((a, b) => b.averageScorePercentage - a.averageScorePercentage || b.totalPointsScored - a.totalPointsScored);
       setStudentPerformance(calculatedPerformance);
     } else {
       setStudentPerformance([]);
@@ -109,21 +112,32 @@ export default function StudentPerformancePage() {
       return { averageClassScore: 0, totalSubmissions: 0, uniqueStudents: 0 };
     }
     const totalSubmissions = studentPerformance.reduce((sum, s) => sum + s.testsAttemptedCount, 0);
-    const totalScoreSum = studentPerformance.reduce((sum, s) => sum + (s.averageScorePercentage * s.testsAttemptedCount), 0); // Weighted average
-    const averageClassScore = totalSubmissions > 0 ? Math.round(totalScoreSum / totalSubmissions) : 0;
+    // To calculate average class score correctly, sum all individual attempt percentages and divide by total attempts
+    const teacherTestIds = new Set(teacherTests.map(t => t.id));
+    const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
+    const totalScoreSum = relevantAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const averageClassScore = relevantAttempts.length > 0 ? Math.round(totalScoreSum / relevantAttempts.length) : 0;
+
     const uniqueStudents = studentPerformance.length;
     return { averageClassScore, totalSubmissions, uniqueStudents };
-  }, [studentPerformance]);
+  }, [studentPerformance, teacherTests, allAttempts]);
+
+  const getRankBadge = (rank: number) => {
+    if (rank === 1) return <Award className="h-5 w-5 text-yellow-500" />;
+    if (rank === 2) return <Award className="h-5 w-5 text-gray-400" />;
+    if (rank === 3) return <Award className="h-5 w-5 text-orange-400" />;
+    return null;
+  };
 
   if (isLoadingData || isAuthLoading) {
     return (
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 w-full" />)}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {[1, 2, 3].map(i => <Card key={i} className="p-4"><Skeleton className="h-6 w-1/2 mb-2" /><Skeleton className="h-8 w-1/4" /></Card>)}
         </div>
-        <Skeleton className="h-96 w-full" />
+        <Card><CardContent className="p-4"><Skeleton className="h-64 w-full" /></CardContent></Card>
       </div>
     );
   }
@@ -167,32 +181,32 @@ export default function StudentPerformancePage() {
         </div>
       </div>
 
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Submissions</CardTitle><FileText className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{overallClassStats.totalSubmissions}</div></CardContent>
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Submissions</CardTitle><FileText className="h-5 w-5 text-primary" /></CardHeader>
+          <CardContent><div className="text-3xl font-bold">{overallClassStats.totalSubmissions}</div></CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Students</CardTitle><Users className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{overallClassStats.uniqueStudents}</div></CardContent>
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Unique Students</CardTitle><Users className="h-5 w-5 text-primary" /></CardHeader>
+          <CardContent><div className="text-3xl font-bold">{overallClassStats.uniqueStudents}</div></CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Class Score</CardTitle><TrendingUp className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{overallClassStats.averageClassScore}%</div></CardContent>
+        <Card className="bg-card shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Avg. Class Score</CardTitle><Percent className="h-5 w-5 text-primary" /></CardHeader>
+          <CardContent><div className="text-3xl font-bold">{overallClassStats.averageClassScore}%</div></CardContent>
         </Card>
       </div>
 
 
       {teacherTests.length === 0 ? (
-         <Card className="text-center py-12">
+         <Card className="text-center py-12 shadow-md">
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
             <p className="text-muted-foreground">You haven't created any tests yet.</p>
-            <Button asChild variant="default"><Link href="/dashboard/create-test">Create a Test</Link></Button>
+            {/* Removed "Create a Test" button from here */}
           </CardContent>
         </Card>
       ) : studentPerformance.length === 0 ? (
-        <Card className="text-center py-12">
+        <Card className="text-center py-12 shadow-md">
           <CardContent className="flex flex-col items-center gap-3">
              <Info className="w-12 h-12 text-primary mx-auto mb-4" />
             <p className="text-muted-foreground">No students have attempted your tests yet.</p>
@@ -200,28 +214,38 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Student Leaderboard</CardTitle>
-            <CardDescription>Overall performance of students on your tests.</CardDescription>
+            <CardTitle className="font-headline text-2xl">Student Leaderboard</CardTitle>
+            <CardDescription>Overall performance of students on tests you've created.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Rank</TableHead>
+                  <TableHead className="w-[60px] text-center">Rank</TableHead>
                   <TableHead>Student Name</TableHead>
                   <TableHead className="text-center">Tests Attempted</TableHead>
-                  <TableHead className="text-right">Average Score</TableHead>
+                  <TableHead className="text-center">Total Score (Points)</TableHead>
+                  <TableHead className="text-right w-[150px]">Average Score</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {studentPerformance.map((student, index) => (
-                  <TableRow key={student.studentIdentifier}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{student.studentIdentifier}</TableCell>
+                  <TableRow key={student.studentIdentifier} className="hover:bg-muted/50">
+                    <TableCell className="font-medium text-center flex items-center justify-center">
+                        {getRankBadge(index + 1)}
+                        <span className="ml-1">{index + 1}</span>
+                    </TableCell>
+                    <TableCell className="font-medium">{student.studentIdentifier}</TableCell>
                     <TableCell className="text-center">{student.testsAttemptedCount}</TableCell>
-                    <TableCell className="text-right">{student.averageScorePercentage}%</TableCell>
+                    <TableCell className="text-center">{student.totalPointsScored} / {student.totalMaxPointsPossible}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end">
+                        <span className="mr-2">{student.averageScorePercentage}%</span>
+                        <Progress value={student.averageScorePercentage} className="w-20 h-2 [&>div]:bg-primary" />
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -229,26 +253,27 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       )}
-      <Card className="mt-8 text-center py-6 shadow-md">
+      <Card className="mt-8 text-center py-6 shadow-md bg-secondary/30">
         <CardHeader>
           <CardTitle className="text-xl font-semibold flex items-center justify-center">
-            <Info className="mr-2 h-6 w-6 text-primary" /> Advanced Analytics
+            <TrendingUp className="mr-2 h-6 w-6 text-primary" /> More Analytics Coming Soon!
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-muted-foreground">
-            Looking for more detailed insights, trends, and data export?
+            Looking for detailed question-wise breakdowns, individual student reports, and data export?
           </p>
           <p className="text-muted-foreground">
-            Our **Teacher Premium** plan offers advanced analytics to help you dive deeper into student performance.
+            Our <strong className="text-primary">Teacher Premium</strong> plan will offer these advanced analytics tools.
           </p>
           <Button asChild className="mt-4">
-            <Link href="/dashboard/plans">View Premium Features</Link>
+            <Link href="/dashboard/plans">
+                <Edit3 className="mr-2 h-4 w-4" /> Upgrade to Premium
+            </Link>
           </Button>
         </CardContent>
       </Card>
     </div>
   );
 }
-
     
