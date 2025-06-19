@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, UserX, UserMinus, ShieldAlert, ClipboardList } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, UserX, UserMinus, ShieldAlert, ClipboardList, Download, Eye } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
@@ -162,7 +162,7 @@ export default function StudentPerformancePage() {
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {[1, 2, 3, 4, 5, 6].map(i => <Card key={i} className="p-4 h-28"><Skeleton className="h-6 w-1/2 mb-2" /><Skeleton className="h-8 w-1/4" /></Card>)}
         </div>
         <Card><CardContent className="p-4"><Skeleton className="h-64 w-full" /></CardContent></Card>
@@ -196,9 +196,9 @@ export default function StudentPerformancePage() {
   const StatCard = ({ title, value, icon, description, colorClass = "text-primary", onClick }: { title: string, value: string | number, icon: React.ElementType, description?: string, colorClass?: string, onClick?: () => void }) => {
     const IconComponent = icon;
     return (
-      <Card className={`shadow-md hover:shadow-lg transition-shadow ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
+      <Card className={`bg-card shadow-md hover:shadow-lg transition-shadow ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <CardTitle className="text-sm font-medium text-card-foreground">{title}</CardTitle>
           <IconComponent className={`h-5 w-5 ${colorClass}`} />
         </CardHeader>
         <CardContent>
@@ -223,9 +223,12 @@ export default function StudentPerformancePage() {
             </p>
           </div>
         </div>
+         <Button variant="outline" onClick={() => toast({ title: "Export Feature", description: "Data export functionality is coming soon!"})}>
+            <Download className="mr-2 h-4 w-4" /> Export Data (Coming Soon)
+          </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Submissions" value={overallClassStats.totalSubmissions} icon={FileText} description="Across all your active tests" />
         <TooltipProvider>
           <Tooltip>
@@ -250,7 +253,6 @@ export default function StudentPerformancePage() {
                 icon={ShieldAlert} 
                 description="Attempts flagged for review" 
                 colorClass="text-destructive" 
-                onClick={() => { /* The DialogTrigger handles opening */ }} 
               />
             </div>
           </DialogTrigger>
@@ -308,52 +310,56 @@ export default function StudentPerformancePage() {
             <CardDescription>Performance of students across all tests you've created, ranked by average score.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[60px] text-center">Rank</TableHead>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead className="text-center">Tests Attempted</TableHead>
-                  <TableHead className="text-center">Total Score (Points)</TableHead>
-                  <TableHead className="text-center w-[180px]">Average Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {studentPerformance.map((student, index) => (
-                  <TableRow key={student.studentIdentifier} className={`hover:bg-muted/50 ${student.hasSuspiciousAttempt ? 'bg-red-500/5 dark:bg-red-900/20 hover:bg-red-500/10' : ''}`}>
-                    <TableCell className="font-medium text-center flex items-center justify-center">
-                        {getRankBadge(index + 1)}
-                        <span className="ml-1">{index + 1}</span>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center">
-                        {student.studentIdentifier}
-                        {student.hasSuspiciousAttempt && 
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <ShieldAlert className="ml-2 h-4 w-4 text-destructive cursor-help" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>This student has one or more suspicious attempts.</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        }
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">{student.testsAttemptedCount}</TableCell>
-                    <TableCell className="text-center">{student.totalPointsScored} / {student.totalMaxPointsPossible}</TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-end gap-2">
-                        <span>{student.averageScorePercentage}%</span>
-                        <Progress value={student.averageScorePercentage} className="w-20 h-2 [&>div]:bg-primary" />
-                      </div>
-                    </TableCell>
+            <div className="relative w-full overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[60px] text-center">Rank</TableHead>
+                    <TableHead>Student Name</TableHead>
+                    <TableHead className="text-center">Tests Attempted</TableHead>
+                    <TableHead className="text-center">Total Score (Points)</TableHead>
+                    <TableHead className="text-right w-[180px] sm:w-auto">Average Score</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {studentPerformance.map((student, index) => (
+                    <TableRow key={student.studentIdentifier} className={`hover:bg-muted/50 ${student.hasSuspiciousAttempt ? 'bg-red-500/5 dark:bg-red-900/20 hover:bg-red-500/10' : ''}`}>
+                      <TableCell className="font-medium text-center">
+                        <div className="flex items-center justify-center">
+                            {getRankBadge(index + 1)}
+                            <span className="ml-1">{index + 1}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center">
+                          {student.studentIdentifier}
+                          {student.hasSuspiciousAttempt && 
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <ShieldAlert className="ml-2 h-4 w-4 text-destructive cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>This student has one or more suspicious attempts.</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          }
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">{student.testsAttemptedCount}</TableCell>
+                      <TableCell className="text-center">{student.totalPointsScored} / {student.totalMaxPointsPossible}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <span>{student.averageScorePercentage}%</span>
+                          <Progress value={student.averageScorePercentage} className="w-16 sm:w-20 h-2 [&>div]:bg-primary" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -361,4 +367,5 @@ export default function StudentPerformancePage() {
   );
 }
     
+
 
