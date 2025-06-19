@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, UserX, UserMinus, ShieldAlert, Download, Eye, Clock, Target } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, ShieldAlert, Download, Eye, Clock, Target } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
@@ -24,8 +24,8 @@ interface StudentPerformanceData {
   totalPointsScored: number;
   totalMaxPointsPossible: number;
   hasSuspiciousAttempt: boolean;
-  totalTimeSpentSeconds: number; // New: Sum of durations of all attempts by this student
-  averageTimePerAttemptSeconds: number; // New: Average time per attempt
+  totalTimeSpentSeconds: number;
+  averageTimePerAttemptSeconds: number;
 }
 
 interface RedFlaggedAttemptDetails {
@@ -98,7 +98,7 @@ export default function StudentPerformancePage() {
         totalPointsScoredSum: number; 
         totalMaxPointsPossibleSum: number; 
         hasSuspicious: boolean;
-        totalTimeSpent: number; // in seconds
+        totalTimeSpent: number;
       }>();
       const flagged: RedFlaggedAttemptDetails[] = [];
 
@@ -173,8 +173,8 @@ export default function StudentPerformancePage() {
     const totalAnsweredQuestions = relevantAttempts.reduce((sum, attempt) => sum + attempt.answers.length, 0);
     const overallClassAccuracy = totalAnsweredQuestions > 0 ? Math.round((totalCorrectAnswers / totalAnsweredQuestions) * 100) : 0;
 
-
     const redFlaggedAttemptsCount = relevantAttempts.filter(a => a.isSuspicious).length;
+    
     const studentsFailedCount = studentPerformance.filter(s => s.averageScorePercentage < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScorePercentage < 30).length;
 
@@ -231,21 +231,85 @@ export default function StudentPerformancePage() {
     );
   }
 
-  const StatCard = ({ title, value, icon, description, colorClass = "text-primary", onClick }: { title: string, value: string | number, icon: React.ElementType, description?: string, colorClass?: string, onClick?: () => void }) => {
-    const IconComponent = icon;
-    return (
-      <Card className={`bg-card shadow-md hover:shadow-lg transition-shadow ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-card-foreground">{title}</CardTitle>
-          <IconComponent className={`h-5 w-5 ${colorClass}`} />
-        </CardHeader>
-        <CardContent>
-          <div className={`text-3xl font-bold ${colorClass}`}>{value}</div>
-          {description && <p className="text-xs text-muted-foreground">{description}</p>}
-        </CardContent>
-      </Card>
-    );
-  };
+const StatCard = ({ title, value, icon, description, colorClass = "text-primary", onClick, animate = false }: { title: string, value: string | number, icon: React.ElementType, description?: string, colorClass?: string, onClick?: () => void, animate?: boolean }) => {
+  const IconComponent = icon;
+  const [displayValue, setDisplayValue] = React.useState<string | number>(animate ? 0 : value);
+
+  React.useEffect(() => {
+    if (animate) {
+      let targetValueNum: number;
+      let suffix = "";
+
+      if (typeof value === 'string' && value.endsWith('%')) {
+        targetValueNum = parseFloat(value.replace('%', ''));
+        suffix = "%";
+      } else if (typeof value === 'number') {
+        targetValueNum = value;
+      } else if (typeof value === 'string' && /^\d+m \d+s$/.test(value)) {
+        // Handle "Xm Ys" format for animation - convert to total seconds
+        const parts = value.match(/(\d+)m (\d+)s/);
+        if (parts) {
+            targetValueNum = parseInt(parts[1]) * 60 + parseInt(parts[2]);
+            // Suffix will be handled by formatTime after animation
+        } else {
+            setDisplayValue(value); // Fallback if parsing fails
+            return;
+        }
+      } else {
+        setDisplayValue(value);
+        return;
+      }
+      
+      if (isNaN(targetValueNum)) {
+        setDisplayValue(value);
+        return;
+      }
+      
+      if (targetValueNum === 0) {
+        setDisplayValue(suffix ? `0${suffix}` : (value.toString().includes('s') ? formatTime(0) : 0) );
+        return;
+      }
+
+      setDisplayValue(suffix ? `0${suffix}` : (value.toString().includes('s') ? formatTime(0) : 0) );
+
+
+      const duration = 1000; // Animation duration in ms
+      const frameRate = 30; // Frames per second
+      const totalFrames = (duration / 1000) * frameRate;
+      const increment = targetValueNum / totalFrames;
+      let currentAnimatedValue = 0;
+      
+      const timer = setInterval(() => {
+        currentAnimatedValue += increment;
+        if (currentAnimatedValue >= targetValueNum) {
+          setDisplayValue(value.toString().includes('s') ? formatTime(targetValueNum) : targetValueNum.toLocaleString() + suffix);
+          clearInterval(timer);
+        } else {
+          setDisplayValue(value.toString().includes('s') ? formatTime(Math.round(currentAnimatedValue)) : Math.round(currentAnimatedValue).toLocaleString() + suffix);
+        }
+      }, 1000 / frameRate);
+
+      return () => clearInterval(timer);
+    } else {
+      setDisplayValue(value);
+    }
+  }, [value, animate]);
+
+
+  return (
+    <Card className={`bg-card shadow-md hover:shadow-lg transition-shadow ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-card-foreground">{title}</CardTitle>
+        <IconComponent className={`h-5 w-5 ${colorClass}`} />
+      </CardHeader>
+      <CardContent>
+        <div className={`text-3xl font-bold ${colorClass}`}>{displayValue}</div>
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      </CardContent>
+    </Card>
+  );
+};
+
 
   return (
     <div className="container mx-auto py-2">
@@ -262,12 +326,12 @@ export default function StudentPerformancePage() {
           </div>
         </div>
          <Button variant="outline" onClick={() => toast({ title: "Export Feature", description: "Data export functionality is planned for a future update!"})}>
-            <Download className="mr-2 h-4 w-4" /> Export Data (Coming Soon)
+            <Download className="mr-2 h-4 w-4" /> Export Data
           </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-        <StatCard title="Total Submissions" value={overallClassStats.totalSubmissions} icon={FileText} description="Across all your active tests" />
+        <StatCard title="Total Submissions" value={overallClassStats.totalSubmissions} icon={FileText} description="Across all your active tests" animate={true} />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -280,19 +344,20 @@ export default function StudentPerformancePage() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <StatCard title="Avg. Class Score" value={`${overallClassStats.averageClassScore}%`} icon={Percent} description="Average across all attempts" />
-        <StatCard title="Avg. Time / Attempt" value={formatTime(overallClassStats.averageTimePerAttemptOverallSeconds)} icon={Clock} description="Average duration of test attempts" />
-        <StatCard title="Overall Class Accuracy" value={`${overallClassStats.overallClassAccuracy}%`} icon={Target} description="Total correct answers / Total answered" />
+        <StatCard title="Avg. Class Score" value={`${overallClassStats.averageClassScore}%`} icon={Percent} description="Average across all attempts" animate={true} />
+        <StatCard title="Avg. Time / Attempt" value={formatTime(overallClassStats.averageTimePerAttemptOverallSeconds)} icon={Clock} description="Average duration of test attempts" animate={true} />
+        <StatCard title="Overall Class Accuracy" value={`${overallClassStats.overallClassAccuracy}%`} icon={Target} description="Total correct answers / Total answered" animate={true} />
         
         <Dialog>
           <DialogTrigger asChild>
-            <div> 
+            <div className="cursor-pointer"> 
               <StatCard 
                 title="Flagged Attempts" 
                 value={overallClassStats.redFlaggedAttemptsCount} 
                 icon={ShieldAlert} 
                 description="Attempts marked for review" 
-                colorClass="text-destructive" 
+                colorClass="text-destructive"
+                animate={true} 
               />
             </div>
           </DialogTrigger>
@@ -413,3 +478,4 @@ export default function StudentPerformancePage() {
   );
 }
     
+
