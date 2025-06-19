@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, Edit3, Download } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, TrendingUp, FileText, BookOpen, Award, Percent, Download, Eye } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress"; // Added Progress component
+import { Progress } from "@/components/ui/progress"; 
 
 interface StudentPerformanceData {
   studentIdentifier: string;
@@ -86,7 +86,7 @@ export default function StudentPerformancePage() {
         
         currentData.totalScorePercentageSum += attempt.scorePercentage || 0;
         currentData.attemptsCount += 1;
-        currentData.totalPointsScoredSum += attempt.score || 0; // Use raw score
+        currentData.totalPointsScoredSum += attempt.score || 0;
         currentData.totalMaxPointsPossibleSum += attempt.maxPossiblePoints || 0;
         
         performanceMap.set(studentId, currentData);
@@ -112,7 +112,6 @@ export default function StudentPerformancePage() {
       return { averageClassScore: 0, totalSubmissions: 0, uniqueStudents: 0 };
     }
     const totalSubmissions = studentPerformance.reduce((sum, s) => sum + s.testsAttemptedCount, 0);
-    // To calculate average class score correctly, sum all individual attempt percentages and divide by total attempts
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
     const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
     const totalScoreSum = relevantAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
@@ -127,6 +126,14 @@ export default function StudentPerformancePage() {
     if (rank === 2) return <Award className="h-5 w-5 text-gray-400" />;
     if (rank === 3) return <Award className="h-5 w-5 text-orange-400" />;
     return null;
+  };
+
+  const handleExportData = () => {
+    toast({
+      title: "Export Data (Coming Soon)",
+      description: "This feature will allow exporting student performance data. It's currently under development.",
+      duration: 3000,
+    });
   };
 
   if (isLoadingData || isAuthLoading) {
@@ -167,7 +174,7 @@ export default function StudentPerformancePage() {
 
   return (
     <div className="container mx-auto py-2">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <div className="flex items-center">
           <BarChartBig className="w-10 h-10 text-primary mr-3 hidden sm:block" />
           <div>
@@ -179,6 +186,9 @@ export default function StudentPerformancePage() {
             </p>
           </div>
         </div>
+        <Button variant="outline" onClick={handleExportData}>
+          <Download className="mr-2 h-4 w-4" /> Export Data (Coming Soon)
+        </Button>
       </div>
 
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -202,7 +212,6 @@ export default function StudentPerformancePage() {
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
             <p className="text-muted-foreground">You haven't created any tests yet.</p>
-            {/* Removed "Create a Test" button from here */}
           </CardContent>
         </Card>
       ) : studentPerformance.length === 0 ? (
@@ -227,7 +236,8 @@ export default function StudentPerformancePage() {
                   <TableHead>Student Name</TableHead>
                   <TableHead className="text-center">Tests Attempted</TableHead>
                   <TableHead className="text-center">Total Score (Points)</TableHead>
-                  <TableHead className="text-right w-[150px]">Average Score</TableHead>
+                  <TableHead className="text-center w-[150px]">Average Score</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -240,11 +250,16 @@ export default function StudentPerformancePage() {
                     <TableCell className="font-medium">{student.studentIdentifier}</TableCell>
                     <TableCell className="text-center">{student.testsAttemptedCount}</TableCell>
                     <TableCell className="text-center">{student.totalPointsScored} / {student.totalMaxPointsPossible}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end">
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center">
                         <span className="mr-2">{student.averageScorePercentage}%</span>
                         <Progress value={student.averageScorePercentage} className="w-20 h-2 [&>div]:bg-primary" />
                       </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button variant="ghost" size="sm" onClick={() => toast({ title: "Coming Soon!", description: `Detailed view for ${student.studentIdentifier} is under development.`, duration: 2000 })}>
+                        <Eye className="h-4 w-4 mr-1" /> Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -253,26 +268,6 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       )}
-      <Card className="mt-8 text-center py-6 shadow-md bg-secondary/30">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold flex items-center justify-center">
-            <TrendingUp className="mr-2 h-6 w-6 text-primary" /> More Analytics Coming Soon!
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-muted-foreground">
-            Looking for detailed question-wise breakdowns, individual student reports, and data export?
-          </p>
-          <p className="text-muted-foreground">
-            Our <strong className="text-primary">Teacher Premium</strong> plan will offer these advanced analytics tools.
-          </p>
-          <Button asChild className="mt-4">
-            <Link href="/dashboard/plans">
-                <Edit3 className="mr-2 h-4 w-4" /> Upgrade to Premium
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 }
