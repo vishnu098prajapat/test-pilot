@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info } from "lucide-react";
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info, User } from "lucide-react"; // Added User icon
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -44,26 +44,19 @@ export default function MyProgressPage() {
       setIsLoadingAttempts(true);
       setError(null);
       try {
-        const response = await fetch(`/api/attempts`); 
+        // Fetch attempts specifically for the current logged-in user's identifier
+        const response = await fetch(`/api/attempts?studentIdentifier=${encodeURIComponent(userDisplayNameNormalized)}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
         }
         const allAttemptsData: TestAttempt[] = await response.json();
-        console.log(`[MyProgressPage] All attempts fetched from API: ${allAttemptsData.length}`);
+        console.log(`[MyProgressPage] All attempts fetched from API for ${userDisplayNameNormalized}: ${allAttemptsData.length}`);
         
-        const studentSpecificAttempts = allAttemptsData.filter(attempt => {
-          const attemptIdentifierRaw = attempt.studentIdentifier;
-          const attemptIdentifierNormalized = attemptIdentifierRaw?.trim().toLowerCase();
-          const match = attemptIdentifierNormalized === userDisplayNameNormalized;
-          
-          if (!match && (attemptIdentifierNormalized || userDisplayNameNormalized)) { 
-            console.log(`[MyProgressPage] Mismatch Detail: Attempt ID ${attempt.id}, Stored Identifier (Raw): "${attemptIdentifierRaw}", Stored (Normalized): "${attemptIdentifierNormalized || 'undefined'}") vs User DisplayName (Raw): "${user.displayName}", User (Normalized): "${userDisplayNameNormalized}"`);
-          }
-          return match;
-        });
+        // No client-side filtering by displayName needed here as API does it
+        const studentSpecificAttempts = allAttemptsData;
         
-        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after filtering for display name: "${userDisplayNameNormalized}".`);
+        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after API filtering for display name: "${userDisplayNameNormalized}".`);
 
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
         setAllUserAttempts(studentSpecificAttempts);
@@ -75,7 +68,7 @@ export default function MyProgressPage() {
           return isWithinInterval(attemptDate, { start: currentMonthStart, end: today });
         });
         setCurrentMonthAttempts(filteredCurrentMonthAttempts);
-        console.log(`[MyProgressPage] Found ${filteredCurrentMonthAttempts.length} attempts for the current month.`);
+        console.log(`[MyProgressPage] Found ${filteredCurrentMonthAttempts.length} attempts for the current month for ${userDisplayNameNormalized}.`);
 
       } catch (e: any) {
         console.error("[MyProgressPage] Error fetching student attempts:", e);
@@ -87,7 +80,7 @@ export default function MyProgressPage() {
     }
 
     fetchAttempts();
-  }, [user, isAuthLoading, toast]);
+  }, [user, isAuthLoading, toast]); // Removed isLoading from dependency array as it's handled by isAuthLoading
 
   const summaryStats = useMemo(() => {
     const lifetimeTotalAttempts = allUserAttempts.length;
@@ -144,16 +137,17 @@ export default function MyProgressPage() {
     );
   }
   
+  // Specific message for teachers viewing their own attempts (or lack thereof)
   if (user.role === 'teacher' && currentMonthAttempts.length === 0 && allUserAttempts.length === 0) {
     return (
       <div className="container mx-auto py-8 text-center bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <Info className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Teacher View - My Progress</h2>
+        <h2 className="text-xl font-semibold mb-2">Your Personal Attempts</h2>
         <p className="text-muted-foreground">
-          This page displays test attempts you've made under your teacher name: "{user.displayName}".<br/>
-          For aggregated results of tests you've created for students, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Results page</Link>.
+          This page shows test attempts you've personally made using your account: "{user.displayName}".<br/>
+          To see how your students are performing on tests you've created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results</Link> page.
         </p>
-         <p className="text-sm text-muted-foreground mt-4">Currently, no attempts found for "{user.displayName}". If you take a test using this name, it will appear here.</p>
+         <p className="text-sm text-muted-foreground mt-4">Currently, no personal attempts found for "{user.displayName}". If you take a test, your results will appear here.</p>
       </div>
     );
   }
@@ -176,8 +170,8 @@ export default function MyProgressPage() {
       <div className="flex items-center mb-8">
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
-            <h1 className="text-3xl font-bold font-headline">My Progress</h1>
-            <p className="text-muted-foreground">Track your test performance for: {user.displayName}</p>
+            <h1 className="text-3xl font-bold font-headline">My Personal Progress</h1>
+            <p className="text-muted-foreground">Track your personal test performance for: {user.displayName}</p>
         </div>
       </div>
 
@@ -200,12 +194,12 @@ export default function MyProgressPage() {
         </Card>
       </div>
 
-      <h2 className="text-2xl font-semibold font-headline mb-6">Attempt History (Current Month)</h2>
+      <h2 className="text-2xl font-semibold font-headline mb-6">My Attempt History (Current Month)</h2>
       {currentMonthAttempts.length === 0 ? (
         <Card className="text-center py-10">
           <CardContent className="flex flex-col items-center gap-3">
             <BookOpen className="w-12 h-12 text-muted-foreground/70" />
-            <p className="text-muted-foreground">No test attempts found for "{user.displayName}" in the current month.</p>
+            <p className="text-muted-foreground">No personal test attempts found for "{user.displayName}" in the current month.</p>
             <p className="text-sm text-muted-foreground">Take a test to see your progress here!</p>
             <Button asChild variant="link"><Link href="/dashboard">Explore Available Tests</Link></Button>
           </CardContent>
@@ -248,3 +242,6 @@ export default function MyProgressPage() {
     </div>
   );
 }
+
+
+    
