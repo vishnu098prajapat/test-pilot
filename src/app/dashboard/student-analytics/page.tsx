@@ -12,13 +12,13 @@ import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"; // Added DialogTrigger, DialogFooter
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge"; // Ensured Badge is imported
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge"; // Added Badge import
 
 interface OverallStats {
   totalCreatedTests: number;
@@ -706,5 +706,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
+
+    
 
     
