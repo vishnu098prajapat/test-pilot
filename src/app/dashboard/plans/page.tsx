@@ -18,6 +18,7 @@ const plans = [
     mainDescription: "For individuals trying out Test Pilot.",
     features: [
       { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
+      { text: "Unlimited Test Attempts", icon: CheckCircle }, // Added this line
       { text: "Basic Results Viewing", icon: BarChart3 },
       { text: "Personal Progress Tracking", icon: TrendingUpIcon },
       { text: "Contains Ads", icon: Info, iconColor: "text-muted-foreground" },
@@ -154,3 +155,4 @@ export default function PlansPage() {
     </div>
   );
 }
+
