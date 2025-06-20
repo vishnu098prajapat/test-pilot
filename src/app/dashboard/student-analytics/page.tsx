@@ -11,22 +11,22 @@ import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Removed DialogFooter as it's not used here but kept others
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval, startOfWeek, endOfWeek } from 'date-fns';
 
-interface OverallStats {
-  totalCreatedTests: number;
-  totalSubmissionsAcrossAllTests: number;
-  averageScoreAcrossAllTests: number;
-  uniqueStudentParticipantsOverall: number;
-  totalRedFlaggedAttemptsOverall: number;
-  averageTimePerAttemptOverallSeconds: number;
-  studentsFailedCountOverall: number;
-  lowPerformersCountOverall: number;
+interface OverallMonthlyStats {
+  totalCreatedTests: number; // This is lifetime
+  totalMonthlySubmissions: number;
+  averageMonthlyScore: number;
+  uniqueMonthlyParticipants: number;
+  totalMonthlyRedFlaggedAttempts: number;
+  averageMonthlyTimePerAttemptSeconds: number;
+  monthlyStudentsFailedCount: number;
+  monthlyLowPerformersCount: number;
 }
 
 interface TopperStudent {
@@ -45,7 +45,7 @@ interface RedFlaggedAttemptDetails {
   attemptDate: string;
 }
 
-interface TestSpecificStats {
+interface TestSpecificLifetimeStats {
   submissions: number;
   averageScore: number;
   flaggedAttempts: number;
@@ -99,6 +99,7 @@ export default function StudentPerformanceOverviewPage() {
         setTeacherTests(fetchedTeacherTests.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
         setAllAttempts(fetchedAllAttempts);
 
+        // Prepare red flagged details (lifetime for all teacher's tests)
         const flagged: RedFlaggedAttemptDetails[] = [];
         const teacherTestIdsSet = new Set(fetchedTeacherTests.map(t => t.id));
         fetchedAllAttempts.forEach(attempt => {
@@ -125,58 +126,65 @@ export default function StudentPerformanceOverviewPage() {
   }, [user, isAuthLoading, toast]);
   
 
-  const overallStats = useMemo((): OverallStats => {
+  const overallMonthlyStats = useMemo((): OverallMonthlyStats => {
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
-    const relevantAttemptsOverall = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
+    const now = new Date();
+    const currentMonthStart = startOfMonth(now);
+    const currentMonthEnd = endOfMonth(now);
 
-    const totalCreatedTests = teacherTests.length;
-    const totalSubmissionsAcrossAllTests = relevantAttemptsOverall.length;
-    const uniqueStudentIdentifiers = new Set(relevantAttemptsOverall.map(a => a.studentIdentifier));
-    const uniqueStudentParticipantsOverall = uniqueStudentIdentifiers.size;
+    const currentMonthAttempts = allAttempts.filter(attempt => 
+      teacherTestIds.has(attempt.testId) &&
+      isWithinInterval(new Date(attempt.submittedAt), { start: currentMonthStart, end: currentMonthEnd })
+    );
 
-    const totalScoreSumOverall = relevantAttemptsOverall.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
-    const averageScoreAcrossAllTests = totalSubmissionsAcrossAllTests > 0 ? Math.round(totalScoreSumOverall / totalSubmissionsAcrossAllTests) : 0;
+    const totalCreatedTests = teacherTests.length; // This is lifetime
+    const totalMonthlySubmissions = currentMonthAttempts.length;
+    const uniqueMonthlyStudentIdentifiers = new Set(currentMonthAttempts.map(a => a.studentIdentifier));
+    const uniqueMonthlyParticipants = uniqueMonthlyStudentIdentifiers.size;
 
-    const totalRedFlaggedAttemptsOverall = relevantAttemptsOverall.filter(a => a.isSuspicious).length;
+    const totalMonthlyScoreSum = currentMonthAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const averageMonthlyScore = totalMonthlySubmissions > 0 ? Math.round(totalMonthlyScoreSum / totalMonthlySubmissions) : 0;
 
-    const totalTimeForAllAttemptsSeconds = relevantAttemptsOverall.reduce((sum, attempt) => {
+    const totalMonthlyRedFlaggedAttempts = currentMonthAttempts.filter(a => a.isSuspicious).length;
+
+    const totalMonthlyTimeSeconds = currentMonthAttempts.reduce((sum, attempt) => {
         const duration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
         return sum + (isNaN(duration) ? 0 : duration);
     }, 0);
-    const averageTimePerAttemptOverallSeconds = totalSubmissionsAcrossAllTests > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissionsAcrossAllTests) : 0;
+    const averageMonthlyTimePerAttemptSeconds = totalMonthlySubmissions > 0 ? Math.round(totalMonthlyTimeSeconds / totalMonthlySubmissions) : 0;
     
-    // Calculate overall student pass/fail rates based on their average across all tests they took
-    const studentAverages = new Map<string, { totalScore: number; count: number }>();
-    relevantAttemptsOverall.forEach(att => {
-        const current = studentAverages.get(att.studentIdentifier) || { totalScore: 0, count: 0 };
+    const studentMonthlyAverages = new Map<string, { totalScore: number; count: number }>();
+    currentMonthAttempts.forEach(att => {
+        const current = studentMonthlyAverages.get(att.studentIdentifier) || { totalScore: 0, count: 0 };
         current.totalScore += (att.scorePercentage || 0);
         current.count++;
-        studentAverages.set(att.studentIdentifier, current);
+        studentMonthlyAverages.set(att.studentIdentifier, current);
     });
 
-    let studentsFailedCountOverall = 0;
-    let lowPerformersCountOverall = 0;
-    studentAverages.forEach(data => {
+    let monthlyStudentsFailedCount = 0;
+    let monthlyLowPerformersCount = 0;
+    studentMonthlyAverages.forEach(data => {
         const avg = data.count > 0 ? data.totalScore / data.count : 0;
-        if (avg < 50) studentsFailedCountOverall++;
-        if (avg < 30) lowPerformersCountOverall++;
+        if (avg < 50) monthlyStudentsFailedCount++;
+        if (avg < 30) monthlyLowPerformersCount++;
     });
 
 
     return {
       totalCreatedTests,
-      totalSubmissionsAcrossAllTests,
-      averageScoreAcrossAllTests,
-      uniqueStudentParticipantsOverall,
-      totalRedFlaggedAttemptsOverall,
-      averageTimePerAttemptOverallSeconds,
-      studentsFailedCountOverall,
-      lowPerformersCountOverall,
+      totalMonthlySubmissions,
+      averageMonthlyScore,
+      uniqueMonthlyParticipants,
+      totalMonthlyRedFlaggedAttempts,
+      averageMonthlyTimePerAttemptSeconds,
+      monthlyStudentsFailedCount,
+      monthlyLowPerformersCount,
     };
   }, [teacherTests, allAttempts]);
 
+  // Stats for individual test cards (lifetime)
   const testSpecificStatsMap = useMemo(() => {
-    const statsMap = new Map<string, TestSpecificStats>();
+    const statsMap = new Map<string, TestSpecificLifetimeStats>();
     teacherTests.forEach(test => {
       const attemptsForThisTest = allAttempts.filter(attempt => attempt.testId === test.id);
       const submissions = attemptsForThisTest.length;
@@ -196,7 +204,7 @@ export default function StudentPerformanceOverviewPage() {
     let endDate: Date = now;
 
     if (topperTimeFrame === 'weekly') {
-        startDate = startOfWeek(now, { weekStartsOn: 1 });
+        startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday as start of week
         endDate = endOfWeek(now, { weekStartsOn: 1 });
     } else { 
         startDate = startOfMonth(now);
@@ -217,7 +225,7 @@ export default function StudentPerformanceOverviewPage() {
         const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
         if (attemptsForThisTestInPeriod.length > 0) {
             const maxScore = Math.max(...attemptsForThisTestInPeriod.map(att => att.scorePercentage || 0));
-            if (maxScore > 0) {
+            if (maxScore > 0) { // Consider only if there's a positive max score
                 const toppersForThisTest = new Set<string>();
                 attemptsForThisTestInPeriod.forEach(att => {
                     if ((att.scorePercentage || 0) === maxScore) {
@@ -261,7 +269,7 @@ export default function StudentPerformanceOverviewPage() {
     
     const processedStudents: TopperStudent[] = [];
     potentialToppersAggregatedStats.forEach((stats, studentId) => {
-        if (stats.testsTopped > 0) { 
+        if (stats.testsTopped > 0) { // Only include students who topped at least one test
             processedStudents.push({
                 studentIdentifier: studentId,
                 averageScore: stats.testCount > 0 ? Math.round(stats.totalScore / stats.testCount) : 0,
@@ -273,14 +281,16 @@ export default function StudentPerformanceOverviewPage() {
     });
     
     processedStudents.sort((a, b) => {
-        if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount;
-        if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
-        return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity);
+        if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount; // Primary: Max tests topped
+        if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore; // Secondary: Higher avg score
+        return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity); // Tertiary: Lower avg time
     });
 
+    // Assign ranks
     let rank = 0;
     let lastTestsTopped = -1;
     let lastAvgScore = -1;
+    // let lastAvgTime = Infinity; // Not needed for this ranking logic if it's the last sort criteria
     let tiedCount = 1;
 
     const rankedStudents = processedStudents.map(student => {
@@ -295,7 +305,7 @@ export default function StudentPerformanceOverviewPage() {
         return { ...student, rank };
     });
 
-    return rankedStudents.slice(0, 5); 
+    return rankedStudents.slice(0, 5); // Show top 5
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
 
@@ -348,7 +358,7 @@ export default function StudentPerformanceOverviewPage() {
               <BarChartBig className="mr-3 h-8 w-8 text-primary sm:hidden" /> Student Performance Overview
             </h1>
             <p className="text-muted-foreground">
-              Performance metrics across all tests you&apos;ve created.
+              Performance metrics for the current month, and lifetime stats per test.
             </p>
           </div>
         </div>
@@ -390,7 +400,7 @@ export default function StudentPerformanceOverviewPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {topPerformers.map((topper, index) => (
+              {topPerformers.map((topper) => (
                  <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))}`}>
                   <div className="flex items-center gap-3">
                     <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${topper.rank === 1 ? 'bg-yellow-500 text-white' : (topper.rank ===2 ? 'bg-gray-400 text-white' : (topper.rank === 3 ? 'bg-orange-500 text-white' : '')) }`}>
@@ -412,22 +422,23 @@ export default function StudentPerformanceOverviewPage() {
 
       <Separator className="my-8" />
 
-      {/* Overall Summary Cards */}
+      {/* Overall Monthly Summary Cards */}
+       <h2 className="text-xl font-semibold font-headline mb-4">This Month&apos;s Summary</h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" formatTimeFn={formatTime} />
-        <StatCard title="Total Submissions" value={overallStats.totalSubmissionsAcrossAllTests} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
-        <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipantsOverall} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
-        <StatCard title="Overall Avg. Score" value={`${overallStats.averageScoreAcrossAllTests}%`} icon={Percent} description="Avg. score on your tests" animate={true} formatTimeFn={formatTime} />
-        <StatCard title="Avg. Time / Attempt" value={formatTime(overallStats.averageTimePerAttemptOverallSeconds)} icon={Clock} description="Avg. duration of attempts" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Total Tests Created" value={overallMonthlyStats.totalCreatedTests} icon={FileText} description="All tests designed by you (lifetime)" formatTimeFn={formatTime} />
+        <StatCard title="Monthly Submissions" value={overallMonthlyStats.totalMonthlySubmissions} icon={ListChecks} description="Across all your published tests this month" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Unique Participants (Monthly)" value={overallMonthlyStats.uniqueMonthlyParticipants} icon={Users} description="Students who took your tests this month" formatTimeFn={formatTime} />
+        <StatCard title="Monthly Avg. Score" value={`${overallMonthlyStats.averageMonthlyScore}%`} icon={Percent} description="Avg. score on your tests this month" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Avg. Time / Attempt (Monthly)" value={formatTime(overallMonthlyStats.averageMonthlyTimePerAttemptSeconds)} icon={Clock} description="Avg. duration of attempts this month" animate={true} formatTimeFn={formatTime} />
         
         <Dialog open={isFlaggedAttemptsModalOpen} onOpenChange={setIsFlaggedAttemptsModalOpen}>
           <DialogTrigger asChild>
              <div className="cursor-pointer">
                 <StatCard 
-                    title="Flagged Attempts" 
-                    value={overallStats.totalRedFlaggedAttemptsOverall} 
+                    title="Flagged Attempts (Monthly)" 
+                    value={overallMonthlyStats.totalMonthlyRedFlaggedAttempts} 
                     icon={ShieldAlert} 
-                    description="Attempts marked for review" 
+                    description="Attempts marked for review this month" 
                     colorClass="text-destructive"
                     onClick={() => setIsFlaggedAttemptsModalOpen(true)}
                     animate={true}
@@ -437,9 +448,9 @@ export default function StudentPerformanceOverviewPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle className="flex items-center"><ShieldAlert className="mr-2 h-5 w-5 text-destructive"/>Red-Flagged Attempts (All Tests)</DialogTitle>
+              <DialogTitle className="flex items-center"><ShieldAlert className="mr-2 h-5 w-5 text-destructive"/>Lifetime Red-Flagged Attempts</DialogTitle>
               <DialogDescription>
-                List of all attempts across your tests that were flagged for suspicious activity.
+                List of all attempts across your tests that were ever flagged for suspicious activity.
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[60vh] pr-2">
@@ -464,13 +475,13 @@ export default function StudentPerformanceOverviewPage() {
           </DialogContent>
         </Dialog>
         
-        <StatCard title="Students Below Passing" value={overallStats.studentsFailedCountOverall} icon={Users} colorClass="text-orange-500" description="Avg. score < 50%" animate={true} formatTimeFn={formatTime} />
-        <StatCard title="Needs Attention" value={overallStats.lowPerformersCountOverall} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score < 30%" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Students Below Passing (Monthly)" value={overallMonthlyStats.monthlyStudentsFailedCount} icon={Users} colorClass="text-orange-500" description="Avg. score < 50% this month" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Needs Attention (Monthly)" value={overallMonthlyStats.monthlyLowPerformersCount} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score < 30% this month" animate={true} formatTimeFn={formatTime} />
       </div>
 
       <Separator className="my-8" />
       
-      <h2 className="text-2xl font-semibold font-headline mb-6">Select a Test for Detailed Analytics</h2>
+      <h2 className="text-2xl font-semibold font-headline mb-6">Select a Test for Detailed Analytics (Lifetime Stats)</h2>
       {teacherTests.length === 0 ? (
          <Card className="text-center py-12 shadow-md">
           <CardContent className="flex flex-col items-center gap-3">
@@ -501,15 +512,15 @@ export default function StudentPerformanceOverviewPage() {
                 </CardHeader>
                 <CardContent className="flex-grow space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Submissions:</span>
+                        <span className="text-muted-foreground">Submissions (Lifetime):</span>
                         <span className="font-medium">{stats.submissions}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Avg. Score:</span>
+                        <span className="text-muted-foreground">Avg. Score (Lifetime):</span>
                         <span className="font-medium">{stats.submissions > 0 ? `${stats.averageScore}%` : 'N/A'}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Flagged Attempts:</span>
+                        <span className="text-muted-foreground">Flagged (Lifetime):</span>
                         <span className={`font-medium ${stats.flaggedAttempts > 0 ? 'text-destructive' : ''}`}>{stats.flaggedAttempts}</span>
                     </div>
                      <p className="text-xs text-muted-foreground mt-1">
