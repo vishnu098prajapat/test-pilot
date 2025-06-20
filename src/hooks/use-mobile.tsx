@@ -1,6 +1,6 @@
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768 // Changed from 1024 back to 768
+const MOBILE_BREAKPOINT = 768 // Adjusted back for tablet-as-desktop sidebar
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
