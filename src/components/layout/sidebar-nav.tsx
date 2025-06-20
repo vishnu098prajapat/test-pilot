@@ -12,8 +12,8 @@ import {
   BarChart3,
   TrendingUp, 
   Sparkles,
-  Users, // Existing icon, good for Student Performance
-  DollarSign // New icon for Plans
+  Users, 
+  DollarSign 
 } from "lucide-react";
 import { 
   SidebarMenu, 
@@ -33,7 +33,7 @@ const mainNavItemsTeacher = [
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
   { href: "/dashboard/results", label: "Results & Leaderboards", icon: BarChart3 }, 
-  { href: "/dashboard/student-analytics", label: "Student Performance", icon: Users }, // Renamed from Student Analytics
+  { href: "/dashboard/student-analytics", label: "Student Performance", icon: Users },
   { href: "/dashboard/my-progress", label: "My Personal Progress", icon: TrendingUp },
 ];
 
@@ -45,16 +45,25 @@ const mainNavItemsStudent = [
 
 const secondaryNavItems = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings }, 
-  { href: "/dashboard/plans", label: "View Plans", icon: DollarSign }, // Added Plans link
+  { href: "/dashboard/plans", label: "View Plans", icon: DollarSign },
 ];
 
 
 export function SidebarNav() {
   const pathname = usePathname();
-  const { open } = useSidebar(); 
+  const { open, isMobile, setOpenMobile, setOpen } = useSidebar(); 
   const { user } = useAuth(); 
 
   const currentNavItems = user?.role === 'teacher' ? mainNavItemsTeacher : mainNavItemsStudent;
+
+  const handleLinkClick = () => {
+    if (isMobile) { // isMobile now also true for tablets due to breakpoint change
+      setOpenMobile(false);
+    }
+    // For desktop, if the sidebar is expanded (not in icon mode), 
+    // clicking a link will collapse it to icon mode if 'icon' collapsible is active.
+    setOpen(false); 
+  };
 
   const navLinkClass = (href: string, exact: boolean = false) => {
     const isActive = exact 
@@ -77,6 +86,7 @@ export function SidebarNav() {
                   asChild
                   isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
                   tooltip={!open ? item.label : undefined}
+                  onClick={handleLinkClick} // Add onClick here
                 >
                   <Link href={item.href}>
                     <item.icon />
@@ -99,6 +109,7 @@ export function SidebarNav() {
                     asChild
                     isActive={navLinkClass(item.href, item.href === "/dashboard/plans")}
                     tooltip={!open ? item.label : undefined}
+                    onClick={handleLinkClick} // Add onClick here
                   >
                     <Link href={item.href}>
                       <item.icon />
