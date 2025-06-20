@@ -57,6 +57,8 @@ export default function DashboardPage() {
             getTestsByTeacher(user.id),
             fetch('/api/attempts').then(res => res.ok ? res.json() : [])
           ]);
+          // Sort tests by creation date, oldest first
+          teacherTests.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           setTests(teacherTests);
           setAllAttempts(fetchedAttempts);
         } catch (error) {
