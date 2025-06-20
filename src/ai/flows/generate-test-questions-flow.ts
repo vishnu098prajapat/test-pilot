@@ -1,9 +1,9 @@
 
 'use server';
 /**
- * @fileOverview A Genkit flow to generate test questions using AI, potentially for multiple subjects.
+ * @fileOverview A Genkit flow to generate test questions using AI for a single subject.
  *
- * - generateTestQuestions - A function that takes test parameters (including a subject string that can be comma-separated) and returns generated questions.
+ * - generateTestQuestions - A function that takes test parameters (including a single subject string) and returns generated questions.
  * - GenerateTestQuestionsInput - The input type for the generateTestQuestions function.
  * - GenerateTestQuestionsOutput - The return type for the generateTestQuestions function.
  * - AIQuestion - The type for a single AI-generated question.
@@ -68,10 +68,10 @@ export type AIQuestion = z.infer<typeof AIQuestionSchema>;
 
 // Input schema for the flow
 const GenerateTestQuestionsInputSchema = z.object({
-  subject: z.string().describe("The general subject(s) of the test (e.g., 'Mathematics', 'History, Geography', 'Python, Java'). Can be a single subject or a comma-separated list of subjects."),
+  subject: z.string().describe("The general subject of the test (e.g., 'Mathematics', 'History', 'Python'). This should be a single subject."),
   questionType: z.enum(['mcq', 'short-answer', 'true-false', 'drag-and-drop']).describe("The desired type for all generated questions."),
   difficulty: z.enum(['easy', 'medium', 'hard']).describe("The desired difficulty level for the questions (easy, medium, or hard)."),
-  topics: z.array(z.string()).min(1).describe("An array of specific topics to generate questions about. These topics should be relevant to the provided subject(s)."),
+  topics: z.array(z.string()).min(1).describe("An array of specific topics to generate questions about. These topics should be relevant to the provided subject."),
   numberOfQuestions: z.number().int().min(1).max(50).describe("The number of questions to generate (integer between 1 and 50)."),
 });
 export type GenerateTestQuestionsInput = z.infer<typeof GenerateTestQuestionsInputSchema>;
@@ -92,13 +92,7 @@ const generateTestQuestionsPrompt = ai.definePrompt({
   input: {schema: GenerateTestQuestionsInputSchema},
   output: {schema: GenerateTestQuestionsOutputSchema},
   prompt: `You are an expert test creator specializing in generating high-quality assessment questions with extreme speed.
-Your task is to generate EXACTLY {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject(s) "{{subject}}". The "subject" field may contain one or more subjects, potentially comma-separated (e.g., "Python, Java" or "World History, Civics").
-
-If multiple subjects are listed in the "subject" field (e.g., "Subject A, Subject B"), the questions should reflect this by either:
-1. Covering topics that are at the intersection of these subjects.
-2. Being a balanced mix of questions, where each question clearly pertains to one of the listed subjects.
-3. Focusing on how these subjects relate to each other, if applicable.
-Ensure questions are relevant to ALL specified subjects if they are meant to be integrated, or provide a clear distribution if they are separate topics from different subjects mentioned in the "subject" field.
+Your task is to generate EXACTLY {{numberOfQuestions}} questions of type "{{questionType}}" and difficulty level "{{difficulty}}" for the subject "{{subject}}".
 
 The questions should focus on the following topics:
 {{#each topics}}
@@ -109,9 +103,9 @@ Please generate these questions as quickly as possible, aiming for completion wi
 It is ABSOLUTELY CRITICAL that you generate EXACTLY {{numberOfQuestions}} questions. Do not generate more or fewer than this number. The final output MUST contain precisely {{numberOfQuestions}} question objects in the 'generatedQuestions' array. If this prompt is similar to a previous one you've processed, ensure the generated questions are distinct and novel.
 
 Key Instructions for Question Generation:
-1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics and subject(s). Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty. Focus on relevance and significance.
+1.  **Importance and Relevance:** Prioritize questions that cover the most important concepts and core principles within the given topics and subject. Generate questions that are representative of common examination patterns and frequently tested areas for this subject and difficulty. Focus on relevance and significance.
 2.  **Depth of Understanding:** Craft questions that assess a genuine understanding of the subject matter, not just superficial recall. They should be similar in style and analytical depth to questions found in well-designed educational assessments or typical previous year papers for this level.
-3.  **Clarity and Precision:** Ensure each question is clearly worded, unambiguous, and directly addresses the specified topics, subject(s), and difficulty.
+3.  **Clarity and Precision:** Ensure each question is clearly worded, unambiguous, and directly addresses the specified topics, subject, and difficulty.
 4.  **Points Allocation:** Each question must be worth 10 points by default, unless the schema specifies otherwise.
 5.  **Strict Adherence to Output Format:** The "type" field for EACH generated question MUST BE EXACTLY "{{questionType}}".
 
@@ -182,7 +176,7 @@ const generateTestQuestionsFlow = ai.defineFlow(
     const {output} = await generateTestQuestionsPrompt(input);
 
     if (!output || !output.generatedQuestions || output.generatedQuestions.length === 0) {
-        throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject(s) or difficulty, or try a different question type.");
+        throw new Error("AI failed to generate valid questions. The output did not match the required structure or was empty. Please try adjusting your topics, subject or difficulty, or try a different question type.");
     }
     
     if (output.generatedQuestions.length !== input.numberOfQuestions) {
