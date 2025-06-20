@@ -547,7 +547,7 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {teacherTests.map(test => {
             const stats = getStatsForTest(test.id);
             return (
@@ -752,6 +752,5 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
-
 
     
