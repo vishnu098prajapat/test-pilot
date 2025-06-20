@@ -11,6 +11,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Award, AlertTriangle, Home, LayoutDashboard } from 'lucide-react'; 
 import type { TestAttempt, StudentAnswer } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 interface RankedAttempt extends TestAttempt {
   rank: number | null;
@@ -96,10 +98,10 @@ export default function LeaderboardPage() {
 
           if (hasSuspiciousActivity) {
             toast({
-              title: "Suspicious Activity Detected",
-              description: "Some students have red flags. This may indicate potential cheating.",
+              title: "Activity Alert",
+              description: "Suspicious activity noted on some attempts.",
               variant: "destructive",
-              duration: 5000,
+              duration: 2000,
             });
           }
 
@@ -195,7 +197,17 @@ export default function LeaderboardPage() {
                       <div className="flex items-center">
                         {attempt.studentIdentifier}
                         {attempt.isSuspicious && (
-                          <AlertTriangle className="ml-2 h-4 w-4 text-destructive" title={attempt.suspiciousReason || "Suspicious activity detected"} />
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <AlertTriangle className="ml-2 h-4 w-4 text-destructive cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                <p className="text-xs font-semibold">Suspicious Activity Detected</p>
+                                <p className="text-xs">{attempt.suspiciousReason || "Activity flagged for review."}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
                       </div>
                     </TableCell>
@@ -235,3 +247,4 @@ export default function LeaderboardPage() {
     </div>
   );
 }
+
