@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import Link from "next/link";
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,7 +29,7 @@ interface OverallStats {
   averageTimePerAttemptOverallSeconds: number;
   studentsFailedCount: number; 
   lowPerformersCount: number;  
-  overallClassAccuracy: number;
+  // overallClassAccuracy: number; // Removed as per user request
 }
 
 interface StudentPerformanceData {
@@ -222,9 +222,9 @@ export default function StudentPerformancePage() {
     const studentsFailedCount = studentPerformance.filter(s => s.averageScore < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScore < 30).length;
 
-    const totalCorrectAnswersOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
-    const totalAnsweredQuestionsOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
-    const overallClassAccuracy = totalAnsweredQuestionsOverall > 0 ? Math.round((totalCorrectAnswersOverall / totalAnsweredQuestionsOverall) * 100) : 0;
+    // const totalCorrectAnswersOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
+    // const totalAnsweredQuestionsOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
+    // const overallClassAccuracy = totalAnsweredQuestionsOverall > 0 ? Math.round((totalCorrectAnswersOverall / totalAnsweredQuestionsOverall) * 100) : 0;
 
 
     return {
@@ -236,7 +236,7 @@ export default function StudentPerformancePage() {
       averageTimePerAttemptOverallSeconds,
       studentsFailedCount,
       lowPerformersCount,
-      overallClassAccuracy,
+      // overallClassAccuracy, // Removed
     };
   }, [teacherTests, allAttempts, studentPerformance]);
 
@@ -257,7 +257,6 @@ export default function StudentPerformancePage() {
     
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
     
-    // Filter attempts for the selected time frame and relevant tests
     const periodAttempts = allAttempts.filter(attempt =>
         teacherTestIds.has(attempt.testId) &&
         isWithinInterval(new Date(attempt.submittedAt), { start: startDate, end: endDate })
@@ -265,8 +264,7 @@ export default function StudentPerformancePage() {
 
     if (periodAttempts.length === 0) return [];
 
-    // Determine toppers for each test within the period
-    const testToppersMap = new Map<string, Set<string>>(); // testId -> Set of studentIdentifiers who topped
+    const testToppersMap = new Map<string, Set<string>>(); 
     teacherTests.forEach(test => {
         const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
         if (attemptsForThisTestInPeriod.length > 0) {
@@ -283,7 +281,6 @@ export default function StudentPerformancePage() {
         }
     });
 
-    // Aggregate stats for students who topped at least one test
     const potentialToppersAggregatedStats = new Map<string, {
         totalScore: number;
         testCount: number;
@@ -314,7 +311,7 @@ export default function StudentPerformancePage() {
     
     const processedStudents: TopperStudent[] = [];
     potentialToppersAggregatedStats.forEach((stats, studentId) => {
-        if (stats.testsTopped > 0) { // Only include students who topped at least one test
+        if (stats.testsTopped > 0) { 
             processedStudents.push({
                 studentIdentifier: studentId,
                 averageScore: stats.testCount > 0 ? Math.round(stats.totalScore / stats.testCount) : 0,
@@ -325,14 +322,12 @@ export default function StudentPerformancePage() {
         }
     });
     
-    // Sort by number of tests topped, then average score, then average time (lower is better)
     processedStudents.sort((a, b) => {
         if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount;
         if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
         return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity);
     });
 
-    // Assign ranks
     let rank = 0;
     let lastTestsTopped = -1;
     let lastAvgScore = -1;
@@ -350,7 +345,7 @@ export default function StudentPerformancePage() {
         return { ...student, rank };
     });
 
-    return rankedStudents.slice(0, 5); // Return top 5
+    return rankedStudents.slice(0, 5); 
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
 
@@ -420,8 +415,8 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" animate={true} formatTimeFn={formatTime} />
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
         <StatCard title="Overall Avg. Score" value={`${overallStats.averageClassScore}%`} icon={Percent} description="Avg. score on your tests" animate={true} formatTimeFn={formatTime} />
@@ -471,8 +466,8 @@ export default function StudentPerformancePage() {
           </DialogContent>
         </Dialog>
         
-        <StatCard title="Students Below Passing" value={overallStats.studentsFailedCount} icon={Users} colorClass="text-orange-500" description="Avg. score &lt; 50%" animate={true} formatTimeFn={formatTime}/>
-        <StatCard title="Needs Attention" value={overallStats.lowPerformersCount} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score &lt; 30%" animate={true} formatTimeFn={formatTime}/>
+        <StatCard title="Students Below Passing" value={overallStats.studentsFailedCount} icon={Users} colorClass="text-orange-500" description="Avg. score < 50%" animate={true} formatTimeFn={formatTime}/>
+        <StatCard title="Needs Attention" value={overallStats.lowPerformersCount} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score < 30%" animate={true} formatTimeFn={formatTime}/>
       </div>
 
       <Separator className="my-8" />
@@ -684,7 +679,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, colorClass = "text-primary", onClick, animate = false, formatTimeFn }) => {
   const IconComponent = icon;
-  const [animatedValue, setAnimatedValue] = useState<string | number>(animate ? 0 : value);
+  const [animatedValue, setAnimatedValue] = useState<string | number>(value); // Initialize with actual value if not animating
 
   const isTimeFormat = typeof value === 'string' && (value.includes('m') || value.includes('s'));
 
@@ -710,6 +705,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     if (animate && typeof numericValue === 'number' && !isNaN(numericValue)) {
       let startTimestamp: number | null = null;
       const duration = 1000; 
+      setAnimatedValue(isTimeFormat ? formatTimeFn(0) : 0 + suffix); // Start animation from 0
 
       const step = (timestamp: number) => {
         if (!startTimestamp) startTimestamp = timestamp;
@@ -732,9 +728,10 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
            }
         }
       };
-      requestAnimationFrame(step);
+      const frameId = requestAnimationFrame(step);
+      return () => cancelAnimationFrame(frameId);
     } else {
-        setAnimatedValue(value);
+        setAnimatedValue(value); // Set immediately if not animating
     }
   }, [animate, value, numericValue, suffix, isTimeFormat, formatTimeFn]);
 
