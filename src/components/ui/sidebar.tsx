@@ -4,7 +4,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft, ChevronLeft, ChevronRight } from "lucide-react" // Added Chevron icons
+import { PanelLeft, ChevronLeft, ChevronRight } from "lucide-react" 
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -260,9 +260,9 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar, isMobile } = useSidebar() // Added isMobile
+  const { toggleSidebar, isMobile } = useSidebar() 
 
-  // Only render this trigger on mobile
+  
   if (!isMobile) {
     return null;
   }
@@ -371,7 +371,7 @@ const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
 >(({ className, children, ...props }, ref) => {
-  const { open, toggleSidebar, isMobile } = useSidebar();
+  const { open } = useSidebar();
   return (
     <div
       ref={ref}
@@ -379,17 +379,6 @@ const SidebarFooter = React.forwardRef<
       className={cn("flex flex-col items-center gap-2 p-2 border-t border-sidebar-border", className)}
       {...props}
     >
-      {!isMobile && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="w-full justify-center data-[state=collapsed]:w-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-auto group-data-[state=expanded]:w-full"
-          aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          {open ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-        </Button>
-      )}
       <div className={cn(open ? "text-center w-full" : "hidden")}>
         {children}
       </div>

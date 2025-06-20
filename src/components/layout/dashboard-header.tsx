@@ -13,13 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown, Moon, Sun, DollarSign } from "lucide-react"; 
+import { LogOut, UserCircle, PanelLeft, Settings, ChevronDown, Moon, Sun, DollarSign, ChevronLeft, ChevronRight } from "lucide-react"; 
 import { useAuth } from "@/hooks/use-auth";
 import { useSidebar } from "@/components/ui/sidebar";
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
-  const { toggleSidebar, isMobile } = useSidebar(); // isMobile from useSidebar
+  const { toggleSidebar, isMobile, open: sidebarOpen } = useSidebar(); // Added sidebarOpen
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -71,12 +71,23 @@ export default function DashboardHeader() {
   
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-       {isMobile && ( // Only show PanelLeft trigger on mobile
+       {isMobile && ( 
          <Button size="icon" variant="outline" className="sm:hidden" onClick={toggleSidebar}>
            <PanelLeft className="h-5 w-5" />
            <span className="sr-only">Toggle Menu</span>
          </Button>
        )}
+       {!isMobile && ( // New toggle button for desktop/tablet
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="h-9 w-9 sm:h-10 sm:w-10"
+            aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {sidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+          </Button>
+        )}
       <div className="ml-auto flex items-center gap-2">
         <Button variant="outline" size="icon" onClick={toggleTheme} className="h-9 w-9 sm:h-10 sm:w-10">
           {currentTheme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
