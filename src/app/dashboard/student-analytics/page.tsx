@@ -42,12 +42,19 @@ interface StudentPerformanceData {
   averageTimePerAttemptSeconds: number;
 }
 
-interface PerTestStats {
-  testId: string;
-  numberOfAttempts: number;
-  averageScore: number;
-  redFlaggedAttemptsCount: number;
+interface IndividualTestAnalytics {
+    id: string;
+    title: string;
+    subject: string;
+    questionsCount: number;
+    duration: number;
+    published: boolean;
+    createdAt: Date;
+    numberOfAttempts: number;
+    averageScore: number;
+    redFlaggedAttemptsCount: number;
 }
+
 
 interface TopperStudent {
   studentIdentifier: string;
@@ -139,6 +146,36 @@ export default function StudentPerformancePage() {
     }
     fetchData();
   }, [user, isAuthLoading, toast]);
+  
+  const perTestAnalytics = useMemo((): IndividualTestAnalytics[] => {
+    if (!user || teacherTests.length === 0) return [];
+    const teacherTestIds = new Set(teacherTests.map(t => t.id));
+    
+    return teacherTests.map(test => {
+        const attemptsForThisTest = allAttempts.filter(attempt => 
+            teacherTestIds.has(attempt.testId) && attempt.testId === test.id
+        );
+        const numberOfAttempts = attemptsForThisTest.length;
+        const averageScore = numberOfAttempts > 0 
+            ? Math.round(attemptsForThisTest.reduce((sum, att) => sum + (att.scorePercentage || 0), 0) / numberOfAttempts) 
+            : 0;
+        const redFlaggedAttemptsCount = attemptsForThisTest.filter(a => a.isSuspicious).length;
+        
+        return {
+            id: test.id,
+            title: test.title,
+            subject: test.subject,
+            questionsCount: test.questions.length,
+            duration: test.duration,
+            published: test.published,
+            createdAt: test.createdAt,
+            numberOfAttempts,
+            averageScore,
+            redFlaggedAttemptsCount,
+        };
+    });
+  }, [teacherTests, allAttempts, user]);
+
 
   const studentPerformance = useMemo((): StudentPerformanceData[] => {
     if (!user || teacherTests.length === 0) return [];
@@ -342,23 +379,13 @@ export default function StudentPerformancePage() {
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
 
-  const getStatsForTest = useMemo(() => (testId: string): PerTestStats => {
-    const attemptsForTest = allAttempts.filter(attempt => attempt.testId === testId);
-    const numberOfAttempts = attemptsForTest.length;
-    const averageScore = numberOfAttempts > 0
-      ? Math.round(attemptsForTest.reduce((sum, att) => sum + (att.scorePercentage || 0), 0) / numberOfAttempts)
-      : 0;
-    const redFlaggedAttemptsCount = attemptsForTest.filter(a => a.isSuspicious).length;
-    return { testId, numberOfAttempts, averageScore, redFlaggedAttemptsCount };
-  }, [allAttempts]);
-
 
   if (isLoadingData || isAuthLoading) {
     return (
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
           {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Card key={i} className="p-4 h-36"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></Card>)}
         </div>
         <Separator className="my-8" />
@@ -398,10 +425,10 @@ export default function StudentPerformancePage() {
           <BarChartBig className="w-10 h-10 text-primary mr-3 hidden sm:block" />
           <div>
             <h1 className="text-3xl font-bold font-headline flex items-center">
-              <BarChartBig className="mr-3 h-8 w-8 text-primary sm:hidden" /> Student Performance
+              <BarChartBig className="mr-3 h-8 w-8 text-primary sm:hidden" /> Student Performance Overview
             </h1>
             <p className="text-muted-foreground">
-              Overview of student performance across your tests.
+              Performance metrics across all tests you&apos;ve created.
             </p>
           </div>
         </div>
@@ -478,40 +505,41 @@ export default function StudentPerformancePage() {
                 onClick={() => setTopperTimeFrame('weekly')}
                 size="sm"
               >
-                Weekly
+                This Week
               </Button>
               <Button 
                 variant={topperTimeFrame === 'monthly' ? 'default' : 'outline'}
                 onClick={() => setTopperTimeFrame('monthly')}
                 size="sm"
               >
-                Monthly
+                This Month
               </Button>
             </div>
           </div>
           <CardDescription>
-            Students who achieved Rank #1 in at least one test during the current {topperTimeFrame}.
+            Students who achieved Rank #1 in at least one test during the current {topperTimeFrame}. Ranked by number of tests topped, then average score.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {topPerformers.length === 0 ? (
             <div className="text-center py-6">
               <CalendarRange className="w-12 h-12 text-muted-foreground/70 mx-auto mb-3" />
-              <p className="text-muted-foreground">No students achieved Rank #1 in any test for the selected period.</p>
+              <p className="text-muted-foreground">No students achieved Rank #1 in any test for the selected period ({topperTimeFrame}).</p>
             </div>
           ) : (
             <div className="space-y-3">
               {topPerformers.map((topper, index) => (
                 <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${index < 3 ? 'bg-primary/5 border border-primary/20' : 'bg-muted/50 border'}`}>
                   <div className="flex items-center gap-3">
-                    <Badge variant={index === 0 ? "default" : (index === 1 ? "secondary" : (index === 2 ? "outline" : "secondary"))} className="text-sm w-8 h-8 flex items-center justify-center rounded-full">
-                      {topper.rank || index + 1}
+                    <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className="text-sm w-8 h-8 flex items-center justify-center rounded-full">
+                      {topper.rank}
                     </Badge>
                     <span className="font-medium text-foreground">{topper.studentIdentifier}</span>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-primary">{topper.averageScore}% <span className="text-xs text-muted-foreground">avg. ({topper.testsAttempted} tests)</span></p>
                     <p className="text-xs text-muted-foreground">Topped in: {topper.testsToppedCount} test(s)</p>
+                     {topper.averageTimeSeconds !== undefined && <p className="text-xs text-muted-foreground">Avg. Time: {formatTime(topper.averageTimeSeconds)}</p>}
                   </div>
                 </div>
               ))}
@@ -535,10 +563,8 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {teacherTests.map(test => {
-            const stats = getStatsForTest(test.id);
-            return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {perTestAnalytics.map(test => (
               <Card key={test.id} className="flex flex-col shadow-sm hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -548,24 +574,24 @@ export default function StudentPerformancePage() {
                     </Badge>
                   </div>
                   <CardDescription className="text-xs">
-                    {test.subject} | {test.questions.length} Qs | {test.duration} min
+                    {test.subject} | {test.questionsCount} Qs | {test.duration} min
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-2">
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Attempts:</span>
-                        <span className="font-medium">{stats.numberOfAttempts}</span>
+                        <span className="font-medium">{test.numberOfAttempts}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Avg. Score:</span>
-                        <span className={`font-medium ${stats.averageScore >= 50 ? 'text-green-600' : 'text-red-600'}`}>
-                            {stats.numberOfAttempts > 0 ? `${stats.averageScore}%` : 'N/A'}
+                        <span className={`font-medium ${test.averageScore >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                            {test.numberOfAttempts > 0 ? `${test.averageScore}%` : 'N/A'}
                         </span>
                     </div>
                      <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Flagged Attempts:</span>
-                        <span className={`font-medium ${stats.redFlaggedAttemptsCount > 0 ? 'text-destructive' : ''}`}>
-                            {stats.redFlaggedAttemptsCount}
+                        <span className={`font-medium ${test.redFlaggedAttemptsCount > 0 ? 'text-destructive' : ''}`}>
+                            {test.redFlaggedAttemptsCount}
                         </span>
                     </div>
                 </CardContent>
@@ -577,15 +603,14 @@ export default function StudentPerformancePage() {
                   </Button>
                 </CardFooter>
               </Card>
-            );
-          })}
+            ))}
         </div>
       )}
        <Separator className="my-8" />
         <Card className="shadow-lg mt-8">
             <CardHeader>
                 <CardTitle className="font-headline text-2xl">Overall Student Leaderboard</CardTitle>
-                <CardDescription>Aggregated performance of all students across all your tests.</CardDescription>
+                <CardDescription>Aggregated performance of all students across all your tests. Click on a student to see their detailed attempt history.</CardDescription>
             </CardHeader>
             <CardContent>
                 {studentPerformance.length === 0 ? (
