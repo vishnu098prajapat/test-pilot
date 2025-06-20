@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { User, BarChart3, AlertTriangle, ArrowLeft, Clock, CheckCircle, XCircle, FileText, CalendarDays, ShieldAlert, Percent } from 'lucide-react'; // Added Percent here
 import { useAuth } from '@/hooks/use-auth';
