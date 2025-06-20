@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface RankedAttemptForTest extends TestAttempt {
   rank: number | null;
@@ -38,7 +39,7 @@ export default function SpecificTestAnalyticsPage() {
   const params = useParams();
   const router = useRouter();
   const testId = params.testId as string;
-  const { toast } = useToast();
+  const { toast } = useToast(); // Initialize useToast
 
   const [testDetails, setTestDetails] = useState<Test | null>(null);
   const [attemptsForTest, setAttemptsForTest] = useState<RankedAttemptForTest[]>([]);
@@ -107,9 +108,13 @@ export default function SpecificTestAnalyticsPage() {
           }
           
           let badge;
-          if (currentRank === 1) badge = { name: 'Gold', color: 'text-yellow-500', icon: Award };
-          else if (currentRank === 2) badge = { name: 'Silver', color: 'text-gray-400', icon: Award };
-          else if (currentRank === 3) badge = { name: 'Bronze', color: 'text-orange-400', icon: Award };
+          if (currentRank === 1) {
+            badge = { name: 'Gold', color: 'text-yellow-500', icon: Award };
+          } else if (currentRank === 2) {
+            badge = { name: 'Silver', color: 'text-gray-400', icon: Award };
+          } else if (currentRank === 3) {
+            badge = { name: 'Bronze', color: 'text-orange-400', icon: Award };
+          }
 
           const correctAnswersCount = attempt.answers.filter(a => a.isCorrect).length;
           
@@ -181,7 +186,7 @@ export default function SpecificTestAnalyticsPage() {
         <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2 text-destructive">Error Loading Test Analytics</h2>
         <p className="text-muted-foreground">{error}</p>
-        <Button asChild variant="outline" className="mt-4">
+         <Button asChild variant="outline" className="mt-4">
             <Link href="/dashboard/student-analytics"><ArrowLeft className="mr-2 h-4 w-4"/>Back to Overview</Link>
         </Button>
       </div>
@@ -315,5 +320,3 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.El
     </Card>
   );
 };
-
-    
