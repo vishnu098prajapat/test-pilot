@@ -57,12 +57,14 @@ export function SidebarNav() {
   const currentNavItems = user?.role === 'teacher' ? mainNavItemsTeacher : mainNavItemsStudent;
 
   const handleLinkClick = () => {
-    if (isMobile) { // isMobile now also true for tablets due to breakpoint change
+    if (isMobile) { 
       setOpenMobile(false);
+    } else {
+      // For desktop/tablet, if sidebar is collapsible to icon, setOpen(false) collapses it.
+      // If it's not collapsible or 'offcanvas', this might not have the desired effect or could hide it.
+      // Assuming 'icon' collapsible is primarily used for desktop/tablet.
+      setOpen(false); 
     }
-    // For desktop, if the sidebar is expanded (not in icon mode), 
-    // clicking a link will collapse it to icon mode if 'icon' collapsible is active.
-    setOpen(false); 
   };
 
   const navLinkClass = (href: string, exact: boolean = false) => {
@@ -86,7 +88,7 @@ export function SidebarNav() {
                   asChild
                   isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
                   tooltip={!open ? item.label : undefined}
-                  onClick={handleLinkClick} // Add onClick here
+                  onClick={handleLinkClick} 
                 >
                   <Link href={item.href}>
                     <item.icon />
@@ -109,7 +111,7 @@ export function SidebarNav() {
                     asChild
                     isActive={navLinkClass(item.href, item.href === "/dashboard/plans")}
                     tooltip={!open ? item.label : undefined}
-                    onClick={handleLinkClick} // Add onClick here
+                    onClick={handleLinkClick} 
                   >
                     <Link href={item.href}>
                       <item.icon />
