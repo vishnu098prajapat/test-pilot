@@ -16,7 +16,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge"; // Ensured Badge is imported
+import { Badge } from "@/components/ui/badge";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -27,9 +27,8 @@ interface OverallStats {
   uniqueStudentParticipants: number;
   totalRedFlaggedAttempts: number;
   averageTimePerAttemptOverallSeconds: number;
-  studentsFailedCount: number;
-  lowPerformersCount: number;
-  overallClassAccuracy: number; 
+  studentsFailedCount: number; 
+  lowPerformersCount: number;  
 }
 
 interface StudentPerformanceData {
@@ -56,6 +55,7 @@ interface TopperStudent {
   testsAttempted: number;
   averageTimeSeconds?: number;
   rank?: number;
+  testsToppedCount: number;
 }
 
 interface RedFlaggedAttemptDetails {
@@ -218,10 +218,6 @@ export default function StudentPerformancePage() {
     }, 0);
     const averageTimePerAttemptOverallSeconds = totalSubmissions > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissions) : 0;
     
-    const totalCorrectOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
-    const totalAnsweredOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
-    const overallClassAccuracy = totalAnsweredOverall > 0 ? Math.round((totalCorrectOverall / totalAnsweredOverall) * 100) : 0;
-    
     const studentsFailedCount = studentPerformance.filter(s => s.averageScore < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScore < 30).length;
 
@@ -235,12 +231,11 @@ export default function StudentPerformancePage() {
       averageTimePerAttemptOverallSeconds,
       studentsFailedCount,
       lowPerformersCount,
-      overallClassAccuracy
     };
   }, [teacherTests, allAttempts, studentPerformance]);
 
   const topPerformers = useMemo((): TopperStudent[] => {
-    if (!user || teacherTests.length === 0) return [];
+    if (!user || teacherTests.length === 0 || allAttempts.length === 0) return [];
 
     const now = new Date();
     let startDate: Date;
@@ -249,62 +244,107 @@ export default function StudentPerformancePage() {
     if (topperTimeFrame === 'weekly') {
         startDate = startOfWeek(now, { weekStartsOn: 1 });
         endDate = endOfWeek(now, { weekStartsOn: 1 });
-    } else {
+    } else { // monthly
         startDate = startOfMonth(now);
         endDate = endOfMonth(now);
     }
-
+    
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
+    
+    // Filter attempts for the selected time frame and relevant tests
     const periodAttempts = allAttempts.filter(attempt =>
         teacherTestIds.has(attempt.testId) &&
         isWithinInterval(new Date(attempt.submittedAt), { start: startDate, end: endDate })
     );
 
-    const studentStatsMap = new Map<string, { totalScore: number; testCount: number; totalTime: number }>();
+    if (periodAttempts.length === 0) return [];
+
+    // Determine toppers for each test within the period
+    const testToppersMap = new Map<string, Set<string>>(); // testId -> Set of studentIdentifiers who topped
+    teacherTests.forEach(test => {
+        const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
+        if (attemptsForThisTestInPeriod.length > 0) {
+            const maxScore = Math.max(...attemptsForThisTestInPeriod.map(att => att.scorePercentage || 0));
+            const toppersForThisTest = new Set<string>();
+            attemptsForThisTestInPeriod.forEach(att => {
+                if ((att.scorePercentage || 0) === maxScore) {
+                    toppersForThisTest.add(att.studentIdentifier);
+                }
+            });
+            if (toppersForThisTest.size > 0) {
+                testToppersMap.set(test.id, toppersForThisTest);
+            }
+        }
+    });
+
+    // Aggregate stats for students who topped at least one test
+    const potentialToppersAggregatedStats = new Map<string, {
+        totalScore: number;
+        testCount: number;
+        totalTime: number;
+        testsTopped: number;
+    }>();
 
     periodAttempts.forEach(attempt => {
-        const data = studentStatsMap.get(attempt.studentIdentifier) || { totalScore: 0, testCount: 0, totalTime: 0 };
-        data.totalScore += (attempt.scorePercentage || 0);
-        data.testCount++;
+        let isTopperForThisTest = false;
+        if (testToppersMap.has(attempt.testId) && testToppersMap.get(attempt.testId)!.has(attempt.studentIdentifier)) {
+            isTopperForThisTest = true;
+        }
+
+        const studentId = attempt.studentIdentifier;
+        const studentStats = potentialToppersAggregatedStats.get(studentId) || {
+            totalScore: 0, testCount: 0, totalTime: 0, testsTopped: 0
+        };
+
+        studentStats.totalScore += (attempt.scorePercentage || 0);
+        studentStats.testCount++;
         const duration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
-        data.totalTime += isNaN(duration) ? 0 : duration;
-        studentStatsMap.set(attempt.studentIdentifier, data);
+        studentStats.totalTime += isNaN(duration) ? 0 : duration;
+        if (isTopperForThisTest) {
+            studentStats.testsTopped++;
+        }
+        potentialToppersAggregatedStats.set(studentId, studentStats);
     });
-
+    
     const processedStudents: TopperStudent[] = [];
-    studentStatsMap.forEach((stats, studentId) => {
-        processedStudents.push({
-            studentIdentifier: studentId,
-            averageScore: stats.testCount > 0 ? Math.round(stats.totalScore / stats.testCount) : 0,
-            testsAttempted: stats.testCount,
-            averageTimeSeconds: stats.testCount > 0 ? Math.round(stats.totalTime / stats.testCount) : 0,
-        });
+    potentialToppersAggregatedStats.forEach((stats, studentId) => {
+        if (stats.testsTopped > 0) { // Only include students who topped at least one test
+            processedStudents.push({
+                studentIdentifier: studentId,
+                averageScore: stats.testCount > 0 ? Math.round(stats.totalScore / stats.testCount) : 0,
+                testsAttempted: stats.testCount,
+                averageTimeSeconds: stats.testCount > 0 ? Math.round(stats.totalTime / stats.testCount) : 0,
+                testsToppedCount: stats.testsTopped,
+            });
+        }
     });
-
+    
+    // Sort by number of tests topped, then average score, then average time (lower is better)
     processedStudents.sort((a, b) => {
+        if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount;
         if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore;
-        if (b.testsAttempted !== a.testsAttempted) return b.testsAttempted - a.testsAttempted;
         return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity);
     });
 
+    // Assign ranks
     let rank = 0;
-    let lastScore = -1;
-    let lastTestsAttempted = -1;
+    let lastTestsTopped = -1;
+    let lastAvgScore = -1;
     let tiedCount = 1;
 
     const rankedStudents = processedStudents.map(student => {
-        if (student.averageScore !== lastScore || student.testsAttempted !== lastTestsAttempted) {
+        if (student.testsToppedCount !== lastTestsTopped || student.averageScore !== lastAvgScore) {
             rank += tiedCount;
             tiedCount = 1;
-            lastScore = student.averageScore;
-            lastTestsAttempted = student.testsAttempted;
+            lastTestsTopped = student.testsToppedCount;
+            lastAvgScore = student.averageScore;
         } else {
             tiedCount++;
         }
         return { ...student, rank };
     });
 
-    return rankedStudents.slice(0, 5);
+    return rankedStudents.slice(0, 5); // Return top 5
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
 
@@ -324,8 +364,8 @@ export default function StudentPerformancePage() {
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {[1, 2, 3, 4, 5, 6].map(i => <Card key={i} className="p-4 h-36"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></Card>)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Card key={i} className="p-4 h-36"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></Card>)}
         </div>
         <Separator className="my-8" />
         <Skeleton className="h-8 w-1/3 mb-6" />
@@ -374,7 +414,7 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
@@ -456,14 +496,14 @@ export default function StudentPerformancePage() {
             </div>
           </div>
           <CardDescription>
-            Top students based on average score and tests attempted for the current {topperTimeFrame === 'weekly' ? 'week' : 'month'}.
+            Students who achieved Rank #1 in at least one test during the current {topperTimeFrame}.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {topPerformers.length === 0 ? (
             <div className="text-center py-6">
               <CalendarRange className="w-12 h-12 text-muted-foreground/70 mx-auto mb-3" />
-              <p className="text-muted-foreground">No performance data available for the selected period.</p>
+              <p className="text-muted-foreground">No students achieved Rank #1 in any test for the selected period.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -476,8 +516,8 @@ export default function StudentPerformancePage() {
                     <span className="font-medium text-foreground">{topper.studentIdentifier}</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-primary">{topper.averageScore}% <span className="text-xs text-muted-foreground">avg.</span></p>
-                    <p className="text-xs text-muted-foreground">{topper.testsAttempted} test(s)</p>
+                    <p className="text-sm font-semibold text-primary">{topper.averageScore}% <span className="text-xs text-muted-foreground">avg. ({topper.testsAttempted} tests)</span></p>
+                    <p className="text-xs text-muted-foreground">Topped in: {topper.testsToppedCount} test(s)</p>
                   </div>
                 </div>
               ))}
@@ -501,7 +541,7 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {teacherTests.map(test => {
             const stats = getStatsForTest(test.id);
             return (
@@ -706,7 +746,3 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
-
-    
-
-    

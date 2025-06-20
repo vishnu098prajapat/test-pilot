@@ -27,7 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Skeleton } from "../ui/skeleton";
-import TestPreviewDialog from "./test-preview-dialog"; // Import the new dialog
+import TestPreviewDialog from "./test-preview-dialog"; 
 
 const optionSchema = z.object({
   id: z.string(),
@@ -42,7 +42,7 @@ const baseQuestionSchema = z.object({
 
 const mcqQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("mcq"),
-  options: z.array(optionSchema).min(2, "MCQ must have at least 2 options"),
+  options: z.array(optionSchema).min(2, "MCQ must have at least 2 options").max(4, "MCQ can have at most 4 options"), // Ensure options array has a structure Zod can validate
   correctOptionId: z.string().nullable().refine(val => val !== null, "Correct option must be selected for MCQ"),
   correctAnswer: z.string().optional(), 
   isAiPreselected: z.boolean().optional(),
@@ -51,13 +51,13 @@ const mcqQuestionSchema = baseQuestionSchema.extend({
 const shortAnswerQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("short-answer"),
   correctAnswer: z.string().min(1, "Correct answer is required for short answer"),
-  options: z.array(optionSchema).optional(), 
+  options: z.array(optionSchema).optional().nullable(), // Ensure options can be undefined or null for non-MCQ
 });
 
 const trueFalseQuestionSchema = baseQuestionSchema.extend({
   type: z.literal("true-false"),
   correctAnswer: z.boolean({ required_error: "Correct answer must be selected for True/False" }),
-  options: z.array(optionSchema).optional(), 
+  options: z.array(optionSchema).optional().nullable(), // Ensure options can be undefined or null for non-MCQ
 });
 
 const questionSchema = z.discriminatedUnion("type", [
@@ -83,14 +83,26 @@ export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
 const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 
 const defaultQuestionValues = (type: Question['type']): Question => {
-  const base = { id: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`, text: "", points: 10 };
+  const baseId = `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  const base = { id: baseId, text: "", points: 10 };
   if (type === 'mcq') {
-    return { ...base, type, options: [{id: `opt-${Date.now()}`, text: ""}, {id: `opt-${Date.now()+1}`, text: ""}], correctOptionId: null, correctAnswer: undefined, isAiPreselected: false } as MCQQuestion;
+    return { 
+      ...base, 
+      type, 
+      options: [
+        {id: `opt-${baseId}-0`, text: ""}, 
+        {id: `opt-${baseId}-1`, text: ""}
+      ], 
+      correctOptionId: null, 
+      correctAnswer: undefined, 
+      isAiPreselected: false 
+    } as MCQQuestion;
   }
   if (type === 'short-answer') {
-    return { ...base, type, correctAnswer: "" } as ShortAnswerQuestion;
+    return { ...base, type, correctAnswer: "", options: undefined } as ShortAnswerQuestion;
   }
-  return { ...base, type, correctAnswer: true } as TrueFalseQuestion; 
+  // Default for true-false
+  return { ...base, type, correctAnswer: true, options: undefined } as TrueFalseQuestion; 
 };
 
 export default function TestBuilderForm() {
@@ -132,7 +144,7 @@ export default function TestBuilderForm() {
       try {
         const aiDataString = localStorage.getItem(AI_GENERATED_DATA_STORAGE_KEY);
         if (aiDataString) {
-          const aiData: { title: string, subject: string, questions: Question[], duration: number, attemptsAllowed: number, randomizeQuestions: boolean, enableTabSwitchDetection: boolean, enableCopyPasteDisable: boolean, published: boolean } = JSON.parse(aiDataString);
+          const aiData: Partial<TestBuilderFormValues> & {questions: Question[]} = JSON.parse(aiDataString);
           if (aiData.questions && aiData.questions.length > 0) {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
@@ -155,10 +167,10 @@ export default function TestBuilderForm() {
                 } as MCQQuestion;
               }
               if(baseQ.type === 'short-answer') {
-                return { ...baseQ, correctAnswer: (baseQ as ShortAnswerQuestion).correctAnswer || "" } as ShortAnswerQuestion;
+                return { ...baseQ, correctAnswer: (baseQ as ShortAnswerQuestion).correctAnswer || "", options: undefined } as ShortAnswerQuestion;
               }
               if(baseQ.type === 'true-false') {
-                 return { ...baseQ, correctAnswer: typeof (baseQ as TrueFalseQuestion).correctAnswer === 'boolean' ? (baseQ as TrueFalseQuestion).correctAnswer : true } as TrueFalseQuestion;
+                 return { ...baseQ, correctAnswer: typeof (baseQ as TrueFalseQuestion).correctAnswer === 'boolean' ? (baseQ as TrueFalseQuestion).correctAnswer : true, options: undefined } as TrueFalseQuestion;
               }
               return baseQ as Question; 
             });
@@ -195,10 +207,10 @@ export default function TestBuilderForm() {
                 } as MCQQuestion;
               }
               if(baseQ.type === 'short-answer') {
-                return { ...baseQ, correctAnswer: (baseQ as ShortAnswerQuestion).correctAnswer || "" } as ShortAnswerQuestion;
+                return { ...baseQ, correctAnswer: (baseQ as ShortAnswerQuestion).correctAnswer || "", options: undefined } as ShortAnswerQuestion;
               }
               if(baseQ.type === 'true-false') {
-                 return { ...baseQ, correctAnswer: typeof (baseQ as TrueFalseQuestion).correctAnswer === 'boolean' ? (baseQ as TrueFalseQuestion).correctAnswer : true } as TrueFalseQuestion;
+                 return { ...baseQ, correctAnswer: typeof (baseQ as TrueFalseQuestion).correctAnswer === 'boolean' ? (baseQ as TrueFalseQuestion).correctAnswer : true, options: undefined } as TrueFalseQuestion;
               }
               return baseQ as Question; 
             });
@@ -226,16 +238,14 @@ export default function TestBuilderForm() {
       return;
     }
     setIsSubmitting(true);
+    console.log("Form data submitted:", data); // Log raw form data
+    if (form.formState.errors && Object.keys(form.formState.errors).length > 0) {
+      console.error("Client-side validation errors:", form.formState.errors);
+    }
 
-    const cleanedQuestions = data.questions.map(q => {
-      if (q.type === 'mcq') {
-        const { correctAnswer, isAiPreselected, ...mcqWithoutExtras } = q as MCQQuestion; // Only remove correctAnswer and isAiPreselected if it exists
-        return mcqWithoutExtras;
-      }
-      return q;
-    });
-
-    const finalData = { ...data, questions: cleanedQuestions };
+    // The `correctAnswer` and `isAiPreselected` fields are already optional in the schema and types.
+    // So, no need to explicitly remove them. Zod will handle optional fields correctly.
+    const finalData = data; 
 
     try {
       let savedTest;
@@ -273,7 +283,6 @@ export default function TestBuilderForm() {
 
   const handlePreview = () => {
     const currentTestData = form.getValues();
-    // Ensure questions have the necessary fields for preview (especially MCQ correctAnswer text)
     const questionsForPreview = currentTestData.questions.map(q => {
       if (q.type === 'mcq') {
         const mcq = q as MCQQuestion;
@@ -310,7 +319,10 @@ export default function TestBuilderForm() {
   return (
     <>
       <UIForm {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.error("Form validation errors on submit:", errors);
+          toast({title: "Validation Error", description: "Please check the form for errors.", variant: "destructive", duration: 3000});
+        })} className="space-y-8">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl font-headline">
@@ -375,7 +387,7 @@ export default function TestBuilderForm() {
                 removeQuestion={removeQuestion}
               />
             ))}
-             {form.formState.errors.questions && typeof form.formState.errors.questions === 'object' && !Array.isArray(form.formState.errors.questions) && (
+             {form.formState.errors.questions && typeof form.formState.errors.questions === 'object' && !Array.isArray(form.formState.errors.questions) && 'message' in form.formState.errors.questions && (
                <p className="text-sm text-destructive mt-1">{ (form.formState.errors.questions as unknown as {message : string}).message }</p>
              )}
             <Button
