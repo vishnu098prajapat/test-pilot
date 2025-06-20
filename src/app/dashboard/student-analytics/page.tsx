@@ -6,28 +6,27 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, FileText, BookOpen, Percent, ShieldAlert, Download, Eye, Clock, Target, ListChecks, ArrowRight, Trophy, CalendarRange, ClipboardList } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, FileText, BookOpen, Percent, ShieldAlert, Download, Eye, Clock, Target, ListChecks, ArrowRight, Trophy, CalendarRange, ClipboardList, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge"; // Ensured Badge is imported
+import { Badge } from "@/components/ui/badge";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
 interface OverallStats {
   totalCreatedTests: number;
-  totalSubmissions: number;
-  averageClassScore: number;
-  uniqueStudentParticipants: number;
-  totalRedFlaggedAttempts: number;
+  totalSubmissionsAcrossAllTests: number;
+  averageScoreAcrossAllTests: number;
+  uniqueStudentParticipantsOverall: number;
+  totalRedFlaggedAttemptsOverall: number;
   averageTimePerAttemptOverallSeconds: number;
-  studentsFailedCount: number; 
-  lowPerformersCount: number;  
+  studentsFailedCountOverall: number;
+  lowPerformersCountOverall: number;
 }
 
 interface TopperStudent {
@@ -46,8 +45,13 @@ interface RedFlaggedAttemptDetails {
   attemptDate: string;
 }
 
+interface TestSpecificStats {
+  submissions: number;
+  averageScore: number;
+  flaggedAttempts: number;
+}
 
-export default function StudentPerformancePage() {
+export default function StudentPerformanceOverviewPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
 
@@ -58,7 +62,6 @@ export default function StudentPerformancePage() {
 
   const [isFlaggedAttemptsModalOpen, setIsFlaggedAttemptsModalOpen] = useState(false);
   const [redFlaggedAttemptDetails, setRedFlaggedAttemptDetails] = useState<RedFlaggedAttemptDetails[]>([]);
-
   const [topperTimeFrame, setTopperTimeFrame] = useState<'weekly' | 'monthly'>('weekly');
 
   const formatTime = useCallback((totalSeconds: number): string => {
@@ -97,9 +100,9 @@ export default function StudentPerformancePage() {
         setAllAttempts(fetchedAllAttempts);
 
         const flagged: RedFlaggedAttemptDetails[] = [];
-        const teacherTestIds = new Set(fetchedTeacherTests.map(t => t.id));
+        const teacherTestIdsSet = new Set(fetchedTeacherTests.map(t => t.id));
         fetchedAllAttempts.forEach(attempt => {
-            if (teacherTestIds.has(attempt.testId) && attempt.isSuspicious) {
+            if (teacherTestIdsSet.has(attempt.testId) && attempt.isSuspicious) {
                  flagged.push({
                     studentIdentifier: attempt.studentIdentifier,
                     testTitle: attempt.testTitle || fetchedTeacherTests.find(t => t.id === attempt.testId)?.title || "Unknown Test",
@@ -111,7 +114,7 @@ export default function StudentPerformancePage() {
         setRedFlaggedAttemptDetails(flagged);
 
       } catch (e: any) {
-        console.error("[StudentPerformancePage] Error fetching initial data:", e);
+        console.error("[StudentPerformanceOverviewPage] Error fetching initial data:", e);
         setError(e.message || "Could not load necessary data.");
         toast({ title: "Error", description: "Failed to load performance data.", variant: "destructive" });
       } finally {
@@ -122,88 +125,68 @@ export default function StudentPerformancePage() {
   }, [user, isAuthLoading, toast]);
   
 
-  const studentPerformanceDataMap = useMemo(() => {
-    if (!user || teacherTests.length === 0) return new Map();
-
-    const teacherTestIds = new Set(teacherTests.map(t => t.id));
-    const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
-
-    const studentMap = new Map<string, { 
-        totalScorePercentage: number; 
-        attemptCount: number; 
-        passedCount: number; 
-        flagCount: number; 
-        totalTimeSpent: number;
-        totalCorrect: number;
-        totalAnswered: number;
-    }>();
-
-    relevantAttempts.forEach(attempt => {
-      const studentData = studentMap.get(attempt.studentIdentifier) || { 
-        totalScorePercentage: 0, 
-        attemptCount: 0, 
-        passedCount: 0, 
-        flagCount: 0, 
-        totalTimeSpent: 0,
-        totalCorrect: 0,
-        totalAnswered: 0,
-      };
-      studentData.totalScorePercentage += attempt.scorePercentage || 0;
-      studentData.attemptCount++;
-      if ((attempt.scorePercentage || 0) >= 50) studentData.passedCount++;
-      if (attempt.isSuspicious) studentData.flagCount++;
-      
-      attempt.answers.forEach(ans => {
-        if (ans.answer !== undefined && ans.answer !== null && ans.answer !== '') { 
-            studentData.totalAnswered++;
-            if (ans.isCorrect) {
-                studentData.totalCorrect++;
-            }
-        }
-      });
-
-      const attemptDuration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
-      studentData.totalTimeSpent += isNaN(attemptDuration) ? 0 : attemptDuration;
-
-      studentMap.set(attempt.studentIdentifier, studentData);
-    });
-    return studentMap;
-  }, [teacherTests, allAttempts, user]);
-
-
   const overallStats = useMemo((): OverallStats => {
-    const relevantAttempts = allAttempts.filter(attempt => teacherTests.some(tt => tt.id === attempt.testId));
+    const teacherTestIds = new Set(teacherTests.map(t => t.id));
+    const relevantAttemptsOverall = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
 
     const totalCreatedTests = teacherTests.length;
-    const totalSubmissions = relevantAttempts.length;
-    const uniqueStudentIdentifiers = new Set(relevantAttempts.map(a => a.studentIdentifier));
-    const uniqueStudentParticipants = uniqueStudentIdentifiers.size;
+    const totalSubmissionsAcrossAllTests = relevantAttemptsOverall.length;
+    const uniqueStudentIdentifiers = new Set(relevantAttemptsOverall.map(a => a.studentIdentifier));
+    const uniqueStudentParticipantsOverall = uniqueStudentIdentifiers.size;
 
-    const totalScoreSum = relevantAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
-    const averageClassScore = totalSubmissions > 0 ? Math.round(totalScoreSum / totalSubmissions) : 0;
+    const totalScoreSumOverall = relevantAttemptsOverall.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
+    const averageScoreAcrossAllTests = totalSubmissionsAcrossAllTests > 0 ? Math.round(totalScoreSumOverall / totalSubmissionsAcrossAllTests) : 0;
 
-    const totalRedFlaggedAttempts = relevantAttempts.filter(a => a.isSuspicious).length;
+    const totalRedFlaggedAttemptsOverall = relevantAttemptsOverall.filter(a => a.isSuspicious).length;
 
-    const totalTimeForAllAttemptsSeconds = relevantAttempts.reduce((sum, attempt) => {
+    const totalTimeForAllAttemptsSeconds = relevantAttemptsOverall.reduce((sum, attempt) => {
         const duration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
         return sum + (isNaN(duration) ? 0 : duration);
     }, 0);
-    const averageTimePerAttemptOverallSeconds = totalSubmissions > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissions) : 0;
+    const averageTimePerAttemptOverallSeconds = totalSubmissionsAcrossAllTests > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissionsAcrossAllTests) : 0;
     
-    const studentsFailedCount = Array.from(studentPerformanceDataMap.values()).filter(s => s.attemptCount > 0 && Math.round(s.totalScorePercentage / s.attemptCount) < 50).length;
-    const lowPerformersCount = Array.from(studentPerformanceDataMap.values()).filter(s => s.attemptCount > 0 && Math.round(s.totalScorePercentage / s.attemptCount) < 30).length;
+    // Calculate overall student pass/fail rates based on their average across all tests they took
+    const studentAverages = new Map<string, { totalScore: number; count: number }>();
+    relevantAttemptsOverall.forEach(att => {
+        const current = studentAverages.get(att.studentIdentifier) || { totalScore: 0, count: 0 };
+        current.totalScore += (att.scorePercentage || 0);
+        current.count++;
+        studentAverages.set(att.studentIdentifier, current);
+    });
+
+    let studentsFailedCountOverall = 0;
+    let lowPerformersCountOverall = 0;
+    studentAverages.forEach(data => {
+        const avg = data.count > 0 ? data.totalScore / data.count : 0;
+        if (avg < 50) studentsFailedCountOverall++;
+        if (avg < 30) lowPerformersCountOverall++;
+    });
+
 
     return {
       totalCreatedTests,
-      totalSubmissions,
-      averageClassScore,
-      uniqueStudentParticipants,
-      totalRedFlaggedAttempts,
+      totalSubmissionsAcrossAllTests,
+      averageScoreAcrossAllTests,
+      uniqueStudentParticipantsOverall,
+      totalRedFlaggedAttemptsOverall,
       averageTimePerAttemptOverallSeconds,
-      studentsFailedCount,
-      lowPerformersCount,
+      studentsFailedCountOverall,
+      lowPerformersCountOverall,
     };
-  }, [teacherTests, allAttempts, studentPerformanceDataMap]);
+  }, [teacherTests, allAttempts]);
+
+  const testSpecificStatsMap = useMemo(() => {
+    const statsMap = new Map<string, TestSpecificStats>();
+    teacherTests.forEach(test => {
+      const attemptsForThisTest = allAttempts.filter(attempt => attempt.testId === test.id);
+      const submissions = attemptsForThisTest.length;
+      const totalScoreSum = attemptsForThisTest.reduce((sum, att) => sum + (att.scorePercentage || 0), 0);
+      const averageScore = submissions > 0 ? Math.round(totalScoreSum / submissions) : 0;
+      const flaggedAttempts = attemptsForThisTest.filter(att => att.isSuspicious).length;
+      statsMap.set(test.id, { submissions, averageScore, flaggedAttempts });
+    });
+    return statsMap;
+  }, [teacherTests, allAttempts]);
 
   const topPerformers = useMemo((): TopperStudent[] => {
     if (!user || teacherTests.length === 0 || allAttempts.length === 0) return [];
@@ -234,7 +217,7 @@ export default function StudentPerformancePage() {
         const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
         if (attemptsForThisTestInPeriod.length > 0) {
             const maxScore = Math.max(...attemptsForThisTestInPeriod.map(att => att.scorePercentage || 0));
-            if (maxScore > 0) { // Consider only if there's a non-zero max score
+            if (maxScore > 0) {
                 const toppersForThisTest = new Set<string>();
                 attemptsForThisTestInPeriod.forEach(att => {
                     if ((att.scorePercentage || 0) === maxScore) {
@@ -315,16 +298,6 @@ export default function StudentPerformancePage() {
     return rankedStudents.slice(0, 5); 
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
-  
-  const testAttemptCounts = useMemo(() => {
-    if (!teacherTests.length || !allAttempts.length) return new Map<string, number>();
-    const counts = new Map<string, number>();
-    teacherTests.forEach(test => {
-        const attemptsForTest = allAttempts.filter(attempt => attempt.testId === test.id).length;
-        counts.set(test.id, attemptsForTest);
-    });
-    return counts;
-  }, [teacherTests, allAttempts]);
 
 
   if (isLoadingData || isAuthLoading) {
@@ -380,7 +353,7 @@ export default function StudentPerformancePage() {
           </div>
         </div>
       </div>
-
+      
       {/* Top Performers Section */}
       <Card className="mb-8 shadow-lg">
         <CardHeader>
@@ -418,7 +391,7 @@ export default function StudentPerformancePage() {
           ) : (
             <div className="space-y-3">
               {topPerformers.map((topper, index) => (
-                <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))}`}>
+                 <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))}`}>
                   <div className="flex items-center gap-3">
                     <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${topper.rank === 1 ? 'bg-yellow-500 text-white' : (topper.rank ===2 ? 'bg-gray-400 text-white' : (topper.rank === 3 ? 'bg-orange-500 text-white' : '')) }`}>
                       {topper.rank}
@@ -440,11 +413,11 @@ export default function StudentPerformancePage() {
       <Separator className="my-8" />
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" formatTimeFn={formatTime} />
-        <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
-        <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
-        <StatCard title="Overall Avg. Score" value={`${overallStats.averageClassScore}%`} icon={Percent} description="Avg. score on your tests" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Total Submissions" value={overallStats.totalSubmissionsAcrossAllTests} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipantsOverall} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
+        <StatCard title="Overall Avg. Score" value={`${overallStats.averageScoreAcrossAllTests}%`} icon={Percent} description="Avg. score on your tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Avg. Time / Attempt" value={formatTime(overallStats.averageTimePerAttemptOverallSeconds)} icon={Clock} description="Avg. duration of attempts" animate={true} formatTimeFn={formatTime} />
         
         <Dialog open={isFlaggedAttemptsModalOpen} onOpenChange={setIsFlaggedAttemptsModalOpen}>
@@ -452,7 +425,7 @@ export default function StudentPerformancePage() {
              <div className="cursor-pointer">
                 <StatCard 
                     title="Flagged Attempts" 
-                    value={overallStats.totalRedFlaggedAttempts} 
+                    value={overallStats.totalRedFlaggedAttemptsOverall} 
                     icon={ShieldAlert} 
                     description="Attempts marked for review" 
                     colorClass="text-destructive"
@@ -491,8 +464,8 @@ export default function StudentPerformancePage() {
           </DialogContent>
         </Dialog>
         
-        <StatCard title="Students Below Passing" value={overallStats.studentsFailedCount} icon={Users} colorClass="text-orange-500" description="Avg. score < 50%" animate={true} formatTimeFn={formatTime}/>
-        <StatCard title="Needs Attention" value={overallStats.lowPerformersCount} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score < 30%" animate={true} formatTimeFn={formatTime}/>
+        <StatCard title="Students Below Passing" value={overallStats.studentsFailedCountOverall} icon={Users} colorClass="text-orange-500" description="Avg. score < 50%" animate={true} formatTimeFn={formatTime} />
+        <StatCard title="Needs Attention" value={overallStats.lowPerformersCountOverall} icon={AlertTriangle} colorClass="text-red-600" description="Avg. score < 30%" animate={true} formatTimeFn={formatTime} />
       </div>
 
       <Separator className="my-8" />
@@ -512,7 +485,7 @@ export default function StudentPerformancePage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {teacherTests.map(test => {
-            const attemptsCount = testAttemptCounts.get(test.id) || 0;
+            const stats = testSpecificStatsMap.get(test.id) || { submissions: 0, averageScore: 0, flaggedAttempts: 0 };
             return (
               <Card key={test.id} className="flex flex-col shadow-sm hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -528,15 +501,23 @@ export default function StudentPerformancePage() {
                 </CardHeader>
                 <CardContent className="flex-grow space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Total Attempts:</span>
-                        <span className="font-medium">{attemptsCount}</span>
+                        <span className="text-muted-foreground">Submissions:</span>
+                        <span className="font-medium">{stats.submissions}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Avg. Score:</span>
+                        <span className="font-medium">{stats.submissions > 0 ? `${stats.averageScore}%` : 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Flagged Attempts:</span>
+                        <span className={`font-medium ${stats.flaggedAttempts > 0 ? 'text-destructive' : ''}`}>{stats.flaggedAttempts}</span>
                     </div>
                      <p className="text-xs text-muted-foreground mt-1">
                         Created: {new Date(test.createdAt).toLocaleDateString()}
                       </p>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                  <Button asChild variant="outline" size="sm" className="w-full" disabled={attemptsCount === 0 && !test.published}>
+                  <Button asChild variant="outline" size="sm" className="w-full" disabled={!test.published && stats.submissions === 0}>
                     <Link href={`/dashboard/student-analytics/test/${test.id}`}> 
                       View Detailed Analytics <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
