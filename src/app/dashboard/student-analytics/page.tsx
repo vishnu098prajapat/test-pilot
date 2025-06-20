@@ -1,23 +1,24 @@
 
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, BarChartBig, AlertTriangle, Info, FileText, BookOpen, Percent, ShieldAlert, Download, Eye, Clock, Target, ListChecks, ArrowRight, Trophy, CalendarRange } from "lucide-react";
+import { Users, BarChartBig, AlertTriangle, Info, FileText, BookOpen, Percent, ShieldAlert, Download, Eye, Clock, Target, ListChecks, ArrowRight, Trophy, CalendarRange, ClipboardList } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"; // Added DialogTrigger, DialogFooter
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge"; // Added Badge import
 
 interface OverallStats {
   totalCreatedTests: number;
@@ -79,6 +80,13 @@ export default function StudentPerformancePage() {
 
   const [topperTimeFrame, setTopperTimeFrame] = useState<'weekly' | 'monthly'>('weekly');
 
+  const formatTime = useCallback((totalSeconds: number): string => {
+    if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+    return `${minutes}m ${seconds}s`;
+  }, []);
+
   useEffect(() => {
     async function fetchData() {
       if (isAuthLoading) {
@@ -132,13 +140,6 @@ export default function StudentPerformancePage() {
     fetchData();
   }, [user, isAuthLoading, toast]);
 
-  const formatTime = (totalSeconds: number): string => {
-    if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    return `${minutes}m ${seconds}s`;
-  };
-
   const studentPerformance = useMemo((): StudentPerformanceData[] => {
     if (!user || teacherTests.length === 0) return [];
 
@@ -171,7 +172,7 @@ export default function StudentPerformancePage() {
       if (attempt.isSuspicious) studentData.flagCount++;
       
       attempt.answers.forEach(ans => {
-        if (ans.answer !== undefined && ans.answer !== null) { // Consider an answer "answered" if it's not undefined/null
+        if (ans.answer !== undefined && ans.answer !== null) { 
             studentData.totalAnswered++;
             if (ans.isCorrect) {
                 studentData.totalCorrect++;
@@ -373,7 +374,7 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
@@ -641,7 +642,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
 
   const isTimeFormat = typeof value === 'string' && (value.includes('m') || value.includes('s'));
 
-  const timeToSeconds = (timeStr: string): number => {
+  const timeToSeconds = useCallback((timeStr: string): number => {
     if (!timeStr || (!timeStr.includes('m') && !timeStr.includes('s'))) {
         const parsed = parseFloat(timeStr);
         return isNaN(parsed) ? 0 : parsed;
@@ -651,9 +652,12 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
     const seconds = secondsMatch ? parseInt(secondsMatch[1], 10) : 0;
     return minutes * 60 + seconds;
-  };
+  }, []);
 
-  const numericValue = typeof value === 'string' && !isTimeFormat ? parseFloat(value.replace('%','').replace(/[^\d.-]/g, '')) : (isTimeFormat ? timeToSeconds(String(value)) : Number(value));
+  const numericValue = useMemo(() => {
+    return typeof value === 'string' && !isTimeFormat ? parseFloat(value.replace('%','').replace(/[^\d.-]/g, '')) : (isTimeFormat ? timeToSeconds(String(value)) : Number(value));
+  }, [value, isTimeFormat, timeToSeconds]);
+  
   const suffix = typeof value === 'string' && value.includes('%') ? '%' : '';
 
   useEffect(() => {
@@ -702,7 +706,5 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
-
-    
 
     
