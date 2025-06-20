@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode, MoreVertical, ListFilter, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
@@ -192,7 +192,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <SummaryCard title="Total Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : tests.length} icon={<ClipboardList className="h-4 w-4 text-sky-500" />} description="Number of tests you've created" />
           <SummaryCard title="Published Tests" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.publishedTests} icon={<Eye className="h-4 w-4 text-sky-500" />} description="Tests available to students" />
           <SummaryCard title="Total Submissions" value={isLoading ? <Skeleton className="h-8 w-12" /> : dashboardStats.totalSubmissions} icon={<Users className="h-4 w-4 text-sky-500" />} description="Across all your published tests" />
@@ -207,7 +207,7 @@ export default function DashboardPage() {
             <div className="flex gap-2">
               {!isSelectionModeActive ? (
                 <Button variant="outline" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0}>
-                  <Trash2 className="mr-2 h-4 w-4" /> Select to Delete
+                  <ListFilter className="mr-2 h-4 w-4" /> Select Tests
                 </Button>
               ) : (
                 <>

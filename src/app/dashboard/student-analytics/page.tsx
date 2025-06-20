@@ -29,7 +29,6 @@ interface OverallStats {
   averageTimePerAttemptOverallSeconds: number;
   studentsFailedCount: number; 
   lowPerformersCount: number;  
-  // overallClassAccuracy: number; // Removed as per user request
 }
 
 interface StudentPerformanceData {
@@ -222,11 +221,6 @@ export default function StudentPerformancePage() {
     const studentsFailedCount = studentPerformance.filter(s => s.averageScore < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScore < 30).length;
 
-    // const totalCorrectAnswersOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
-    // const totalAnsweredQuestionsOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
-    // const overallClassAccuracy = totalAnsweredQuestionsOverall > 0 ? Math.round((totalCorrectAnswersOverall / totalAnsweredQuestionsOverall) * 100) : 0;
-
-
     return {
       totalCreatedTests,
       totalSubmissions,
@@ -236,7 +230,6 @@ export default function StudentPerformancePage() {
       averageTimePerAttemptOverallSeconds,
       studentsFailedCount,
       lowPerformersCount,
-      // overallClassAccuracy, // Removed
     };
   }, [teacherTests, allAttempts, studentPerformance]);
 
@@ -415,7 +408,7 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
@@ -542,7 +535,7 @@ export default function StudentPerformancePage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {teacherTests.map(test => {
             const stats = getStatsForTest(test.id);
             return (
@@ -679,7 +672,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, colorClass = "text-primary", onClick, animate = false, formatTimeFn }) => {
   const IconComponent = icon;
-  const [animatedValue, setAnimatedValue] = useState<string | number>(value); // Initialize with actual value if not animating
+  const [animatedValue, setAnimatedValue] = useState<string | number>(value); 
 
   const isTimeFormat = typeof value === 'string' && (value.includes('m') || value.includes('s'));
 
@@ -705,7 +698,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     if (animate && typeof numericValue === 'number' && !isNaN(numericValue)) {
       let startTimestamp: number | null = null;
       const duration = 1000; 
-      setAnimatedValue(isTimeFormat ? formatTimeFn(0) : 0 + suffix); // Start animation from 0
+      setAnimatedValue(isTimeFormat ? formatTimeFn(0) : 0 + suffix); 
 
       const step = (timestamp: number) => {
         if (!startTimestamp) startTimestamp = timestamp;
@@ -731,7 +724,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
       const frameId = requestAnimationFrame(step);
       return () => cancelAnimationFrame(frameId);
     } else {
-        setAnimatedValue(value); // Set immediately if not animating
+        setAnimatedValue(value); 
     }
   }, [animate, value, numericValue, suffix, isTimeFormat, formatTimeFn]);
 
