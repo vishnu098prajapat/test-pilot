@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Removed DialogFooter as it's not used here but kept others
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"; // Added DialogFooter
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
@@ -99,7 +99,6 @@ export default function StudentPerformanceOverviewPage() {
         setTeacherTests(fetchedTeacherTests.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
         setAllAttempts(fetchedAllAttempts);
 
-        // Prepare red flagged details (lifetime for all teacher's tests)
         const flagged: RedFlaggedAttemptDetails[] = [];
         const teacherTestIdsSet = new Set(fetchedTeacherTests.map(t => t.id));
         fetchedAllAttempts.forEach(attempt => {
@@ -112,7 +111,7 @@ export default function StudentPerformanceOverviewPage() {
                 });
             }
         });
-        setRedFlaggedAttemptDetails(flagged);
+        setRedFlaggedAttemptDetails(flagged.sort((a,b) => new Date(b.attemptDate).getTime() - new Date(a.attemptDate).getTime()));
 
       } catch (e: any) {
         console.error("[StudentPerformanceOverviewPage] Error fetching initial data:", e);
@@ -137,7 +136,7 @@ export default function StudentPerformanceOverviewPage() {
       isWithinInterval(new Date(attempt.submittedAt), { start: currentMonthStart, end: currentMonthEnd })
     );
 
-    const totalCreatedTests = teacherTests.length; // This is lifetime
+    const totalCreatedTests = teacherTests.length; 
     const totalMonthlySubmissions = currentMonthAttempts.length;
     const uniqueMonthlyStudentIdentifiers = new Set(currentMonthAttempts.map(a => a.studentIdentifier));
     const uniqueMonthlyParticipants = uniqueMonthlyStudentIdentifiers.size;
@@ -182,7 +181,6 @@ export default function StudentPerformanceOverviewPage() {
     };
   }, [teacherTests, allAttempts]);
 
-  // Stats for individual test cards (lifetime)
   const testSpecificStatsMap = useMemo(() => {
     const statsMap = new Map<string, TestSpecificLifetimeStats>();
     teacherTests.forEach(test => {
@@ -204,7 +202,7 @@ export default function StudentPerformanceOverviewPage() {
     let endDate: Date = now;
 
     if (topperTimeFrame === 'weekly') {
-        startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday as start of week
+        startDate = startOfWeek(now, { weekStartsOn: 1 }); 
         endDate = endOfWeek(now, { weekStartsOn: 1 });
     } else { 
         startDate = startOfMonth(now);
@@ -225,7 +223,7 @@ export default function StudentPerformanceOverviewPage() {
         const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
         if (attemptsForThisTestInPeriod.length > 0) {
             const maxScore = Math.max(...attemptsForThisTestInPeriod.map(att => att.scorePercentage || 0));
-            if (maxScore > 0) { // Consider only if there's a positive max score
+            if (maxScore > 0) { 
                 const toppersForThisTest = new Set<string>();
                 attemptsForThisTestInPeriod.forEach(att => {
                     if ((att.scorePercentage || 0) === maxScore) {
@@ -269,7 +267,7 @@ export default function StudentPerformanceOverviewPage() {
     
     const processedStudents: TopperStudent[] = [];
     potentialToppersAggregatedStats.forEach((stats, studentId) => {
-        if (stats.testsTopped > 0) { // Only include students who topped at least one test
+        if (stats.testsTopped > 0) { 
             processedStudents.push({
                 studentIdentifier: studentId,
                 averageScore: stats.testCount > 0 ? Math.round(stats.totalScore / stats.testCount) : 0,
@@ -281,16 +279,14 @@ export default function StudentPerformanceOverviewPage() {
     });
     
     processedStudents.sort((a, b) => {
-        if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount; // Primary: Max tests topped
-        if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore; // Secondary: Higher avg score
-        return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity); // Tertiary: Lower avg time
+        if (b.testsToppedCount !== a.testsToppedCount) return b.testsToppedCount - a.testsToppedCount; 
+        if (b.averageScore !== a.averageScore) return b.averageScore - a.averageScore; 
+        return (a.averageTimeSeconds || Infinity) - (b.averageTimeSeconds || Infinity); 
     });
 
-    // Assign ranks
     let rank = 0;
     let lastTestsTopped = -1;
     let lastAvgScore = -1;
-    // let lastAvgTime = Infinity; // Not needed for this ranking logic if it's the last sort criteria
     let tiedCount = 1;
 
     const rankedStudents = processedStudents.map(student => {
@@ -305,7 +301,7 @@ export default function StudentPerformanceOverviewPage() {
         return { ...student, rank };
     });
 
-    return rankedStudents.slice(0, 5); // Show top 5
+    return rankedStudents.slice(0, 5); 
 
   }, [teacherTests, allAttempts, user, topperTimeFrame]);
 
@@ -364,7 +360,6 @@ export default function StudentPerformanceOverviewPage() {
         </div>
       </div>
       
-      {/* Top Performers Section */}
       <Card className="mb-8 shadow-lg">
         <CardHeader>
           <div className="flex flex-wrap justify-between items-center gap-2">
@@ -400,13 +395,13 @@ export default function StudentPerformanceOverviewPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {topPerformers.map((topper) => (
-                 <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))}`}>
+              {topPerformers.map((topper, index) => ( // Added index for unique key if needed, though studentIdentifier should be unique
+                 <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))} border`}>
                   <div className="flex items-center gap-3">
-                    <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${topper.rank === 1 ? 'bg-yellow-500 text-white' : (topper.rank ===2 ? 'bg-gray-400 text-white' : (topper.rank === 3 ? 'bg-orange-500 text-white' : '')) }`}>
+                    <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${topper.rank === 1 ? 'bg-yellow-500 text-white' : (topper.rank ===2 ? 'bg-gray-400 text-white' : (topper.rank === 3 ? 'bg-orange-500 text-white' : 'bg-slate-500 text-white')) }`}>
                       {topper.rank}
                     </Badge>
-                    <span className="font-medium text-foreground">{topper.studentIdentifier}</span>
+                    <Link href={`/dashboard/student-analytics/${encodeURIComponent(topper.studentIdentifier)}`} className="font-medium text-foreground hover:underline">{topper.studentIdentifier}</Link>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-primary">{topper.averageScore}% <span className="text-xs text-muted-foreground">avg. ({topper.testsAttempted} tests)</span></p>
@@ -422,7 +417,6 @@ export default function StudentPerformanceOverviewPage() {
 
       <Separator className="my-8" />
 
-      {/* Overall Monthly Summary Cards */}
        <h2 className="text-xl font-semibold font-headline mb-4">This Month&apos;s Summary</h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total Tests Created" value={overallMonthlyStats.totalCreatedTests} icon={FileText} description="All tests designed by you (lifetime)" formatTimeFn={formatTime} />
@@ -469,7 +463,7 @@ export default function StudentPerformanceOverviewPage() {
               <p className="text-muted-foreground text-center py-4">No attempts have been flagged as suspicious across your tests.</p>
             )}
             </ScrollArea>
-             <DialogFooter>
+            <DialogFooter> {/* Ensure DialogFooter is imported and used */}
                 <Button variant="outline" onClick={() => setIsFlaggedAttemptsModalOpen(false)}>Close</Button>
             </DialogFooter>
           </DialogContent>
