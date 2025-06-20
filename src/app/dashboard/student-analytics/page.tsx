@@ -29,6 +29,7 @@ interface OverallStats {
   averageTimePerAttemptOverallSeconds: number;
   studentsFailedCount: number; 
   lowPerformersCount: number;  
+  overallClassAccuracy: number;
 }
 
 interface StudentPerformanceData {
@@ -172,7 +173,7 @@ export default function StudentPerformancePage() {
       if (attempt.isSuspicious) studentData.flagCount++;
       
       attempt.answers.forEach(ans => {
-        if (ans.answer !== undefined && ans.answer !== null) { 
+        if (ans.answer !== undefined && ans.answer !== null && ans.answer !== '') { 
             studentData.totalAnswered++;
             if (ans.isCorrect) {
                 studentData.totalCorrect++;
@@ -221,6 +222,10 @@ export default function StudentPerformancePage() {
     const studentsFailedCount = studentPerformance.filter(s => s.averageScore < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScore < 30).length;
 
+    const totalCorrectAnswersOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
+    const totalAnsweredQuestionsOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
+    const overallClassAccuracy = totalAnsweredQuestionsOverall > 0 ? Math.round((totalCorrectAnswersOverall / totalAnsweredQuestionsOverall) * 100) : 0;
+
 
     return {
       totalCreatedTests,
@@ -231,6 +236,7 @@ export default function StudentPerformancePage() {
       averageTimePerAttemptOverallSeconds,
       studentsFailedCount,
       lowPerformersCount,
+      overallClassAccuracy,
     };
   }, [teacherTests, allAttempts, studentPerformance]);
 
@@ -364,7 +370,7 @@ export default function StudentPerformancePage() {
       <div className="container mx-auto py-2">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Card key={i} className="p-4 h-36"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></Card>)}
         </div>
         <Separator className="my-8" />
@@ -414,7 +420,7 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
@@ -695,7 +701,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
   }, []);
 
   const numericValue = useMemo(() => {
-    return typeof value === 'string' && !isTimeFormat ? parseFloat(value.replace('%','').replace(/[^\d.-]/g, '')) : (isTimeFormat ? timeToSeconds(String(value)) : Number(value));
+    return typeof value === 'string' && !isTimeFormat ? parseFloat(value.toString().replace('%','').replace(/[^\d.-]/g, '')) : (isTimeFormat ? timeToSeconds(String(value)) : Number(value));
   }, [value, isTimeFormat, timeToSeconds]);
   
   const suffix = typeof value === 'string' && value.includes('%') ? '%' : '';
@@ -746,3 +752,6 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
+
+
+    
