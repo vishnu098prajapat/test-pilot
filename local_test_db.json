@@ -2681,5 +2681,156 @@
     "id": "test-1750334333526-aj62h",
     "createdAt": "2025-06-19T11:58:53.526Z",
     "updatedAt": "2025-06-19T11:58:53.526Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on java",
+    "subject": "java",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750402402196-0-gxygjyx",
+        "text": "Which of the following statements is true regarding operator precedence in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750402402196_qfyt8u88r",
+            "text": "Addition has higher precedence"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750402402196_nh9p8btg3",
+            "text": "Subtraction has higher precedence"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750402402196_4ewyp1wa2",
+            "text": "Multiplication has higher precedence"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750402402196_aynggpu45",
+            "text": "Division has higher precedence"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750402402196_4ewyp1wa2",
+        "correctAnswer": "Multiplication has higher precedence",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750402402196-1-pkaazm4",
+        "text": "Which operator is used to find the remainder of a division in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750402402196_0h5uvt65y",
+            "text": "The addition operator"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750402402196_zewm0ykhx",
+            "text": "The subtraction operator"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750402402196_9tytjva9w",
+            "text": "The multiplication operator"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750402402196_v6hpgey5c",
+            "text": "The modulus operator"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750402402196_v6hpgey5c",
+        "correctAnswer": "The modulus operator",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750402402196-2-r8fal2b",
+        "text": "Which of the following lines of code correctly performs division of a double by an integer, truncates the result, and stores it as an integer?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750402402196_dhb4n5ha5",
+            "text": "int result = 5.0 / 2;"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750402402196_xzrf3egjt",
+            "text": "int result = (int) (5.0 / 2);"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750402402196_j1t63m56s",
+            "text": "double result = 5.0 / 2;"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750402402196_guo7e2utk",
+            "text": "float result = 5.0 / 2;"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750402402196_xzrf3egjt",
+        "correctAnswer": "int result = (int) (5.0 / 2);",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750402402196-3-dcp6zlg",
+        "text": "Which operator checks if two operands are not equal in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750402402196_atkuxsrf6",
+            "text": "num1 == num2"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750402402196_xkcggyk3p",
+            "text": "num1 > num2"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750402402196_ay5344k7x",
+            "text": "num1 < num2"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750402402196_jqf6haiym",
+            "text": "num1 != num2"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750402402196_jqf6haiym",
+        "correctAnswer": "num1 != num2",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750402402196-4-ad53c5x",
+        "text": "Which of the following operators returns true only when both operands are true?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750402402196_z9o0yhwb4",
+            "text": "Bitwise OR"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750402402196_6i01khid3",
+            "text": "Logical OR"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750402402196_uo35356eq",
+            "text": "Bitwise AND"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750402402196_t5ur1q94n",
+            "text": "Logical AND"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1750402402196_t5ur1q94n",
+        "correctAnswer": "Logical AND",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750402424509-dvgax",
+    "createdAt": "2025-06-20T06:53:44.510Z",
+    "updatedAt": "2025-06-20T06:53:44.510Z"
   }
 ]
