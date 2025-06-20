@@ -12,11 +12,11 @@ import type { Test, TestAttempt } from "@/lib/types";
 import { getTestsByTeacher } from "@/lib/store";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns'; // Removed formatDistanceToNowStrict as it's not used
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface OverallStats {
@@ -28,6 +28,7 @@ interface OverallStats {
   averageTimePerAttemptOverallSeconds: number;
   studentsFailedCount: number;
   lowPerformersCount: number;
+  overallClassAccuracy: number; 
 }
 
 interface StudentPerformanceData {
@@ -36,6 +37,8 @@ interface StudentPerformanceData {
   averageScore: number;
   testsPassed: number;
   redFlags: number;
+  totalCorrectAnswers: number;
+  totalAnsweredQuestions: number;
   averageTimePerAttemptSeconds: number;
 }
 
@@ -142,28 +145,55 @@ export default function StudentPerformancePage() {
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
     const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
 
-    const studentMap = new Map<string, { totalScore: number; count: number; passed: number; flags: number; totalTime: number }>();
+    const studentMap = new Map<string, { 
+        totalScorePercentage: number; 
+        attemptCount: number; 
+        passedCount: number; 
+        flagCount: number; 
+        totalTimeSpent: number;
+        totalCorrect: number;
+        totalAnswered: number;
+    }>();
 
     relevantAttempts.forEach(attempt => {
-      const studentData = studentMap.get(attempt.studentIdentifier) || { totalScore: 0, count: 0, passed: 0, flags: 0, totalTime: 0 };
-      studentData.totalScore += attempt.scorePercentage || 0;
-      studentData.count++;
-      if ((attempt.scorePercentage || 0) >= 50) studentData.passed++;
-      if (attempt.isSuspicious) studentData.flags++;
+      const studentData = studentMap.get(attempt.studentIdentifier) || { 
+        totalScorePercentage: 0, 
+        attemptCount: 0, 
+        passedCount: 0, 
+        flagCount: 0, 
+        totalTimeSpent: 0,
+        totalCorrect: 0,
+        totalAnswered: 0,
+      };
+      studentData.totalScorePercentage += attempt.scorePercentage || 0;
+      studentData.attemptCount++;
+      if ((attempt.scorePercentage || 0) >= 50) studentData.passedCount++;
+      if (attempt.isSuspicious) studentData.flagCount++;
+      
+      attempt.answers.forEach(ans => {
+        if (ans.answer !== undefined && ans.answer !== null) { // Consider an answer "answered" if it's not undefined/null
+            studentData.totalAnswered++;
+            if (ans.isCorrect) {
+                studentData.totalCorrect++;
+            }
+        }
+      });
 
       const attemptDuration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
-      studentData.totalTime += isNaN(attemptDuration) ? 0 : attemptDuration;
+      studentData.totalTimeSpent += isNaN(attemptDuration) ? 0 : attemptDuration;
 
       studentMap.set(attempt.studentIdentifier, studentData);
     });
 
     return Array.from(studentMap.entries()).map(([identifier, data]) => ({
       studentIdentifier: identifier,
-      totalAttempts: data.count,
-      averageScore: data.count > 0 ? Math.round(data.totalScore / data.count) : 0,
-      testsPassed: data.passed,
-      redFlags: data.flags,
-      averageTimePerAttemptSeconds: data.count > 0 ? Math.round(data.totalTime / data.count) : 0,
+      totalAttempts: data.attemptCount,
+      averageScore: data.attemptCount > 0 ? Math.round(data.totalScorePercentage / data.attemptCount) : 0,
+      testsPassed: data.passedCount,
+      redFlags: data.flagCount,
+      averageTimePerAttemptSeconds: data.attemptCount > 0 ? Math.round(data.totalTimeSpent / data.attemptCount) : 0,
+      totalCorrectAnswers: data.totalCorrect,
+      totalAnsweredQuestions: data.totalAnswered,
     })).sort((a, b) => b.averageScore - a.averageScore);
   }, [teacherTests, allAttempts, user]);
 
@@ -186,7 +216,11 @@ export default function StudentPerformancePage() {
         return sum + (isNaN(duration) ? 0 : duration);
     }, 0);
     const averageTimePerAttemptOverallSeconds = totalSubmissions > 0 ? Math.round(totalTimeForAllAttemptsSeconds / totalSubmissions) : 0;
-
+    
+    const totalCorrectOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalCorrectAnswers, 0);
+    const totalAnsweredOverall = studentPerformance.reduce((sum, sp) => sum + sp.totalAnsweredQuestions, 0);
+    const overallClassAccuracy = totalAnsweredOverall > 0 ? Math.round((totalCorrectOverall / totalAnsweredOverall) * 100) : 0;
+    
     const studentsFailedCount = studentPerformance.filter(s => s.averageScore < 50).length;
     const lowPerformersCount = studentPerformance.filter(s => s.averageScore < 30).length;
 
@@ -199,7 +233,8 @@ export default function StudentPerformancePage() {
       totalRedFlaggedAttempts,
       averageTimePerAttemptOverallSeconds,
       studentsFailedCount,
-      lowPerformersCount
+      lowPerformersCount,
+      overallClassAccuracy
     };
   }, [teacherTests, allAttempts, studentPerformance]);
 
@@ -338,7 +373,7 @@ export default function StudentPerformancePage() {
       </div>
 
       {/* Overall Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Tests Created" value={overallStats.totalCreatedTests} icon={FileText} description="All tests designed by you" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Total Submissions" value={overallStats.totalSubmissions} icon={ListChecks} description="Across all your published tests" animate={true} formatTimeFn={formatTime} />
         <StatCard title="Unique Participants" value={overallStats.uniqueStudentParticipants} icon={Users} description="Students who took your tests" formatTimeFn={formatTime} />
@@ -597,7 +632,7 @@ interface StatCardProps {
   colorClass?: string;
   onClick?: () => void;
   animate?: boolean;
-  formatTimeFn: (totalSeconds: number) => string; // Added formatTimeFn prop
+  formatTimeFn: (totalSeconds: number) => string;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, colorClass = "text-primary", onClick, animate = false, formatTimeFn }) => {
@@ -667,5 +702,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
+
+    
 
     
