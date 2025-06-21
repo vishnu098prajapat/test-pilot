@@ -5,9 +5,8 @@ export interface User {
   email?: string; 
   displayName: string; 
   dob: string; 
-  role: 'teacher' | 'student' | 'instituteAdmin';
+  role: 'teacher' | 'student';
   profileImageUrl?: string; 
-  instituteId?: string; 
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false' | 'drag-and-drop';
@@ -35,11 +34,13 @@ export interface MCQQuestion extends BaseQuestion {
 export interface ShortAnswerQuestion extends BaseQuestion {
   type: 'short-answer';
   correctAnswer: string; 
+  options?: never; 
 }
 
 export interface TrueFalseQuestion extends BaseQuestion {
   type: 'true-false';
   correctAnswer: boolean;
+  options?: never;
 }
 
 export interface DraggableItem {
@@ -55,6 +56,8 @@ export interface DropTarget {
 export interface CorrectMapping {
   draggableItemId: string; 
   dropTargetId: string;   
+  draggableItemText?: string;
+  dropTargetLabel?: string;
 }
 
 export interface DragDropQuestion extends BaseQuestion {
@@ -63,6 +66,9 @@ export interface DragDropQuestion extends BaseQuestion {
   draggableItems: DraggableItem[];
   dropTargets: DropTarget[];
   correctMappings: CorrectMapping[]; 
+  options?: never;
+  correctAnswer?: never;
+  correctOptionId?: never;
 }
 
 export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
@@ -82,7 +88,6 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  instituteId?: string; 
   batchId?: string;     
 }
 
@@ -112,16 +117,10 @@ export interface TestAttempt {
 }
 
 // New types for Institute and Batch
-export interface Institute {
-  id: string;
-  name: string;
-  adminIds: string[]; // Array of User IDs who are admins of this institute
-}
-
 export interface Batch {
   id: string;
   name: string; // e.g., "JEE 2025 Physics", "Class 10 - Section A"
-  instituteId: string; // Links to an Institute
-  teacherIds: string[]; // Array of User IDs who teach this batch
+  teacherId: string;
   studentIdentifiers: string[]; // Using array of student display names for simplicity with current auth
+  createdAt: string;
 }

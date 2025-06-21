@@ -29,12 +29,11 @@ import { useAuth } from "@/hooks/use-auth";
 
 const mainNavItemsTeacher = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/tests", label: "My Tests", icon: ClipboardList },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
+  { href: "/dashboard/groups", label: "Groups", icon: Users },
   { href: "/dashboard/results", label: "Results & Leaderboards", icon: BarChart3 }, 
-  { href: "/dashboard/student-analytics", label: "Student Performance", icon: Users },
-  { href: "/dashboard/my-progress", label: "My Personal Progress", icon: TrendingUp },
+  { href: "/dashboard/student-analytics", label: "Student Performance", icon: TrendingUp },
 ];
 
 const mainNavItemsStudent = [
@@ -59,18 +58,13 @@ export function SidebarNav() {
   const handleLinkClick = () => {
     if (isMobile) { 
       setOpenMobile(false);
-    } else {
-      // For desktop/tablet, if sidebar is collapsible to icon, setOpen(false) collapses it.
-      // If it's not collapsible or 'offcanvas', this might not have the desired effect or could hide it.
-      // Assuming 'icon' collapsible is primarily used for desktop/tablet.
-      setOpen(false); 
     }
   };
 
   const navLinkClass = (href: string, exact: boolean = false) => {
     const isActive = exact 
       ? pathname === href 
-      : (href === "/dashboard/tests" && pathname.startsWith("/dashboard/test/")) 
+      : (href === "/dashboard" && (pathname.startsWith("/dashboard/test/") || pathname.startsWith("/dashboard/groups/")))
       ? true 
       : pathname.startsWith(href);
     return isActive;
