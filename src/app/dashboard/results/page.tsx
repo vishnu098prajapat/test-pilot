@@ -25,6 +25,8 @@ export default function ResultsDashboardPage() {
         setIsLoadingTests(true);
         try {
           const teacherTests = await getTestsByTeacher(user.id);
+          // Sort tests by creation date, newest first
+          teacherTests.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           setTests(teacherTests);
         } catch (error) {
           toast({ title: "Error", description: "Failed to load tests for results.", variant: "destructive", duration: 2000 });
