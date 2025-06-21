@@ -23,9 +23,9 @@ export interface Plan {
 }
 
 const plans: Record<PlanId, Plan> = {
-  free: { id: 'free', name: 'Free Trial', testCreationLimit: 3, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  free: { id: 'free', name: 'Free Trial', testCreationLimit: 5, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
   student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
-  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 10, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
   teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, aiTestCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
 
