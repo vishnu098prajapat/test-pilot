@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
-import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Download, Users as UsersIcon, Briefcase, Edit2, ArrowLeft, Info } from 'lucide-react';
+import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Users as UsersIcon, Briefcase, Edit2, ArrowLeft, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const plans = [
@@ -18,7 +18,7 @@ const plans = [
     mainDescription: "For individuals trying out Test Pilot.",
     features: [
       { text: "3 Total Test Creations (Manual or AI)", icon: Edit3 },
-      { text: "Unlimited Test Attempts", icon: CheckCircle }, // Added this line
+      { text: "Unlimited Test Attempts", icon: CheckCircle }, 
       { text: "Basic Results Viewing", icon: BarChart3 },
       { text: "Personal Progress Tracking", icon: TrendingUpIcon },
       { text: "Contains Ads", icon: Info, iconColor: "text-muted-foreground" },
@@ -69,7 +69,7 @@ const plans = [
     features: [
       { text: "Unlimited Manual & AI Test Creation", icon: Edit2 },
       { text: "Advanced Student Performance Dashboard", icon: Briefcase },
-      { text: "Detailed Reports & Data Export", icon: Download },
+      { text: "Create & Manage Student Groups", icon: UsersIcon },
       { text: "Priority Support", icon: Star },
       { text: "Ad-Free", icon: Shield },
     ],
@@ -155,4 +155,3 @@ export default function PlansPage() {
     </div>
   );
 }
-
