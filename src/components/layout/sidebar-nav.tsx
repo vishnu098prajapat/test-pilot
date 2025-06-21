@@ -35,7 +35,7 @@ const mainNavItemsTeacher = [
   { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles, feature: "ai" }, 
   { href: "/dashboard/groups", label: "Groups", icon: Users, feature: "groups" },
   { href: "/dashboard/results", label: "Results & Leaderboards", icon: BarChart3 }, 
-  { href: "/dashboard/student-analytics", label: "Student Performance", icon: TrendingUp },
+  { href: "/dashboard/student-analytics", label: "Student Performance", icon: TrendingUp, feature: "studentAnalytics" },
 ];
 
 const mainNavItemsStudent = [
@@ -74,6 +74,7 @@ export function SidebarNav() {
     if (!feature || !plan) return false;
     if (feature === 'ai' && !plan.canUseAI) return true;
     if (feature === 'groups' && !plan.canUseGroups) return true;
+    if (feature === 'studentAnalytics' && !plan.canViewStudentAnalytics) return true;
     return false;
   };
 

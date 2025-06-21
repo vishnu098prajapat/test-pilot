@@ -18,13 +18,14 @@ export interface Plan {
   testCreationLimit: number; // Use Infinity for unlimited
   canUseAI: boolean;
   canUseGroups: boolean;
+  canViewStudentAnalytics: boolean;
 }
 
 const plans: Record<PlanId, Plan> = {
-  free: { id: 'free', name: 'Free Trial', testCreationLimit: 3, canUseAI: false, canUseGroups: false },
-  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, canUseAI: false, canUseGroups: false },
-  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, canUseAI: true, canUseGroups: false },
-  teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, canUseAI: true, canUseGroups: true },
+  free: { id: 'free', name: 'Free Trial', testCreationLimit: 3, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
 
 function getMockUserPlan(userId: string): PlanId {
