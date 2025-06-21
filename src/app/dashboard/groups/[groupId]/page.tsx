@@ -5,7 +5,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, PlusCircle, Settings, Users, BarChart3, ClipboardList, Trash2, BookOpen, AlertTriangle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,6 +16,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { Test, Batch as Group } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import QrCodeModal from '@/components/common/qr-code-modal';
 
 export default function GroupDetailPage() {
   const params = useParams();
@@ -28,6 +29,10 @@ export default function GroupDetailPage() {
   const [group, setGroup] = useState<Group | null>(null);
   const [assignedTests, setAssignedTests] = useState<Test[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [qrCodeTitle, setQrCodeTitle] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -67,9 +72,18 @@ export default function GroupDetailPage() {
     return {
       totalStudents: group.studentIdentifiers.length,
       testsAssigned: assignedTests.length,
-      avgPerformance: "N/A", // This would require fetching and averaging all attempts, future scope.
+      avgPerformance: "N/A",
     };
   }, [group, assignedTests]);
+
+  const handleShowJoinQr = () => {
+    if (group && typeof window !== "undefined") {
+      const joinLink = `${window.location.origin}/join?code=${group.groupCode}`;
+      setQrCodeUrl(joinLink);
+      setQrCodeTitle(`QR Code to Join: ${group.name}`);
+      setIsQrModalOpen(true);
+    }
+  };
   
   if (isLoading || isAuthLoading) {
     return (
@@ -102,94 +116,107 @@ export default function GroupDetailPage() {
   }
 
   return (
-    <div className="container mx-auto py-2">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <Button variant="ghost" asChild className="mb-2 -ml-4">
-            <Link href="/dashboard/groups">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Groups
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold font-headline">{group.name}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <p className="text-sm text-muted-foreground">Group Code:</p>
-            <Badge variant="outline">{group.groupCode}</Badge>
+    <>
+      <div className="container mx-auto py-2">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <Button variant="ghost" asChild className="mb-2 -ml-4">
+              <Link href="/dashboard/groups">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Groups
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold font-headline">{group.name}</h1>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Group Settings</Button>
+            <Button asChild>
+              <Link href="/dashboard">
+                <PlusCircle className="mr-2 h-4 w-4" /> Assign Test
+              </Link>
+            </Button>
           </div>
         </div>
-        <div className="flex gap-2">
-           <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Group Settings</Button>
-          <Button><PlusCircle className="mr-2 h-4 w-4" /> Assign Test</Button>
-        </div>
-      </div>
-      
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Total Students</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.totalStudents}</div></CardContent></Card>
-        <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Tests Assigned</CardTitle><ClipboardList className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.testsAssigned}</div></CardContent></Card>
-        <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Group Avg. Performance</CardTitle><BarChart3 className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.avgPerformance}</div></CardContent></Card>
-      </div>
-
-      <Separator />
-      
-      {/* Main Content with Tabs */}
-      <Tabs defaultValue="tests" className="mt-8">
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="tests">Assigned Tests</TabsTrigger>
-            <TabsTrigger value="students">Students</TabsTrigger>
-          </TabsList>
-          <Button variant="outline" size="sm"><PlusCircle className="mr-2 h-4 w-4" /> Add Student</Button>
+        
+        {/* Stat Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Total Students</CardTitle><Users className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.totalStudents}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Tests Assigned</CardTitle><ClipboardList className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.testsAssigned}</div></CardContent></Card>
+          <Card><CardHeader className="flex flex-row items-center justify-between pb-2"><CardTitle className="text-sm font-medium">Group Avg. Performance</CardTitle><BarChart3 className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{groupStats.avgPerformance}</div></CardContent></Card>
         </div>
 
-        <TabsContent value="students" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle>Student Roster</CardTitle><CardDescription>List of all students in this group.</CardDescription></CardHeader>
-            <CardContent>
-                {group.studentIdentifiers.length === 0 ? (
-                    <div className="text-center py-10 text-muted-foreground">No students have been added to this group yet.</div>
+        <Separator />
+        
+        {/* Main Content with Tabs */}
+        <Tabs defaultValue="tests" className="mt-8">
+          <div className="flex justify-between items-center">
+            <TabsList>
+              <TabsTrigger value="tests">Assigned Tests</TabsTrigger>
+              <TabsTrigger value="students">Students</TabsTrigger>
+            </TabsList>
+            <Button variant="outline" size="sm" onClick={handleShowJoinQr}><PlusCircle className="mr-2 h-4 w-4" /> Add Student (QR)</Button>
+          </div>
+
+          <TabsContent value="students" className="mt-4">
+            <Card>
+              <CardHeader><CardTitle>Student Roster</CardTitle><CardDescription>List of all students in this group.</CardDescription></CardHeader>
+              <CardContent>
+                  {group.studentIdentifiers.length === 0 ? (
+                      <div className="text-center py-10 text-muted-foreground">No students have joined this group yet. Use the 'Add Student' button to get a shareable QR code.</div>
+                  ) : (
+                      <Table>
+                          <TableHeader><TableRow><TableHead>Student Identifier</TableHead><TableHead>Avg. Score</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
+                          <TableBody>
+                          {group.studentIdentifiers.map(studentId => (
+                              <TableRow key={studentId}>
+                              <TableCell className="font-medium">{studentId}</TableCell>
+                              <TableCell>N/A</TableCell>
+                              <TableCell className="text-right"><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                              </TableRow>
+                          ))}
+                          </TableBody>
+                      </Table>
+                  )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="tests" className="mt-4">
+            <Card>
+              <CardHeader><CardTitle>Assigned Tests</CardTitle><CardDescription>List of tests assigned to this group. The student test portal is not yet implemented.</CardDescription></CardHeader>
+              <CardContent>
+                {assignedTests.length === 0 ? (
+                  <div className="text-center py-10 text-muted-foreground">No tests have been assigned to this group yet.</div>
                 ) : (
-                    <Table>
-                        <TableHeader><TableRow><TableHead>Student Identifier</TableHead><TableHead>Avg. Score</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
-                        <TableBody>
-                        {group.studentIdentifiers.map(studentId => (
-                            <TableRow key={studentId}>
-                            <TableCell className="font-medium">{studentId}</TableCell>
-                            <TableCell>N/A</TableCell>
-                            <TableCell className="text-right"><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
+                  <Table>
+                    <TableHeader><TableRow><TableHead>Test Title</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
+                    <TableBody>
+                      {assignedTests.map(test => (
+                        <TableRow key={test.id}>
+                          <TableCell className="font-medium">{test.title}</TableCell>
+                          <TableCell><Badge variant={test.published ? 'default' : 'secondary'}>{test.published ? "Published" : "Draft"}</Badge></TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" asChild>
+                              <Link href={`/test/${test.id}/leaderboard`}>View Results</Link>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="tests" className="mt-4">
-          <Card>
-            <CardHeader><CardTitle>Assigned Tests</CardTitle><CardDescription>List of tests assigned to this group.</CardDescription></CardHeader>
-            <CardContent>
-               {assignedTests.length === 0 ? (
-                 <div className="text-center py-10 text-muted-foreground">No tests have been assigned to this group yet.</div>
-               ) : (
-                <Table>
-                  <TableHeader><TableRow><TableHead>Test Title</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
-                  <TableBody>
-                    {assignedTests.map(test => (
-                      <TableRow key={test.id}>
-                        <TableCell className="font-medium">{test.title}</TableCell>
-                        <TableCell><Badge variant={test.published ? 'default' : 'secondary'}>{test.published ? "Published" : "Draft"}</Badge></TableCell>
-                        <TableCell className="text-right"><Button variant="ghost" size="sm" asChild><Link href={`/dashboard/test/${test.id}`}>Manage Test</Link></Button></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+      <QrCodeModal 
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        url={qrCodeUrl}
+        title={qrCodeTitle}
+      />
+    </>
   );
 }
+
