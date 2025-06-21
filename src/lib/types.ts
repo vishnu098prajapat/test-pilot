@@ -88,7 +88,8 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
-  batchId?: string;     
+  batchId?: string;
+  isAiGenerated?: boolean;     
 }
 
 export interface StudentAnswer {

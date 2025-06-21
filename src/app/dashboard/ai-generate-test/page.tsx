@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -40,7 +40,7 @@ const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 export default function AIGenerateTestPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateAiTest, remainingAiTests } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<AIQuestion[] | null>(null);
@@ -90,6 +90,10 @@ export default function AIGenerateTestPage() {
   };
 
   const onSubmit = async (data: AIGenerateTestFormValues) => {
+    if (!canCreateAiTest) {
+       toast({ title: "AI Generation Limit Reached", description: "You have used all your AI test generations for this month.", variant: "destructive" });
+       return;
+    }
     setIsLoading(true);
     setGeneratedQuestions(null);
     setGenerationParams(data);
@@ -157,6 +161,7 @@ export default function AIGenerateTestPage() {
       title: aiGeneratedTitle, subject: generationParams.subject, questions: testBuilderQuestions,
       duration: 30, attemptsAllowed: 1, randomizeQuestions: false,
       enableTabSwitchDetection: true, enableCopyPasteDisable: true, published: false, 
+      isAiGenerated: true, // Mark this test as AI-generated
     };
     try {
       localStorage.setItem(AI_GENERATED_DATA_STORAGE_KEY, JSON.stringify(dataToStore));
@@ -178,8 +183,30 @@ export default function AIGenerateTestPage() {
     );
   }
 
+  if (!canCreateAiTest) {
+    return (
+        <UpgradeNudge 
+            featureName="more AI-generated tests"
+            description={`You have reached your limit of ${plan.aiTestCreationLimit} AI-generated tests for this month on the ${plan.name} plan.`}
+            requiredPlan="a higher tier"
+        />
+    );
+  }
+
   return (
     <div className="container mx-auto py-2">
+      <Alert className="mb-6 border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
+        <Info className="h-4 w-4" />
+        <AlertTitle className="font-semibold">Plan Information</AlertTitle>
+        <AlertDescription>
+          You are on the <b>{plan.name}</b> plan. 
+          {plan.aiTestCreationLimit !== Infinity 
+            ? ` You have ${remainingAiTests} AI test generation(s) remaining this month.`
+            : ` You have unlimited AI test generations.`
+          }
+        </AlertDescription>
+      </Alert>
+
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center">

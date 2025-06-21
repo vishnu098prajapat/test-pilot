@@ -76,6 +76,7 @@ const testBuilderSchema = z.object({
   enableTabSwitchDetection: z.boolean(),
   enableCopyPasteDisable: z.boolean(),
   published: z.boolean(),
+  isAiGenerated: z.boolean().optional(),
 });
 
 export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
@@ -128,6 +129,7 @@ export default function TestBuilderForm() {
       enableTabSwitchDetection: true,
       enableCopyPasteDisable: true,
       published: false,
+      isAiGenerated: false,
     },
   });
 
@@ -154,6 +156,7 @@ export default function TestBuilderForm() {
             form.setValue("enableTabSwitchDetection", aiData.enableTabSwitchDetection === undefined ? true : aiData.enableTabSwitchDetection);
             form.setValue("enableCopyPasteDisable", aiData.enableCopyPasteDisable === undefined ? true : aiData.enableCopyPasteDisable);
             form.setValue("published", aiData.published === undefined ? false : aiData.published);
+            form.setValue("isAiGenerated", true); // Set the AI generated flag
             
             const processedAiQuestions = aiData.questions.map(q => {
               const baseQ = { ...q, id: String(q.id || `ai-q-${Date.now()}-${Math.random().toString(36).substring(2,7)}`), text: q.text || "", points: q.points || 10 };

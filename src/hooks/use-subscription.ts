@@ -16,16 +16,17 @@ export interface Plan {
   id: PlanId;
   name: string;
   testCreationLimit: number; // Use Infinity for unlimited
+  aiTestCreationLimit: number; // Use Infinity for unlimited
   canUseAI: boolean;
   canUseGroups: boolean;
   canViewStudentAnalytics: boolean;
 }
 
 const plans: Record<PlanId, Plan> = {
-  free: { id: 'free', name: 'Free Trial', testCreationLimit: 3, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
-  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
-  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
-  teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
+  free: { id: 'free', name: 'Free Trial', testCreationLimit: 3, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 10, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, aiTestCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
 
 function getMockUserPlan(userId: string): PlanId {
@@ -86,11 +87,17 @@ export function useSubscription() {
   const canCreateTest = plan.testCreationLimit === Infinity || userTests.length < plan.testCreationLimit;
   const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - userTests.length);
 
+  const userAiTestsCount = userTests.filter(t => t.isAiGenerated).length;
+  const canCreateAiTest = plan.aiTestCreationLimit === Infinity || userAiTestsCount < plan.aiTestCreationLimit;
+  const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - userAiTestsCount);
+
   return { 
     plan, 
     isLoading: isLoading || isTestCountLoading, 
     userTests,
     canCreateTest,
-    remainingTests
+    remainingTests,
+    canCreateAiTest,
+    remainingAiTests,
   };
 }
