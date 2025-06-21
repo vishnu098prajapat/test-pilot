@@ -2028,5 +2028,53 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750402579724-25r3n6d",
     "submittedAt": "2025-06-20T06:56:19.724Z"
+  },
+  {
+    "testId": "test-1750402424509-dvgax",
+    "testTitle": "AI Gen (medium) MCQ Test on java",
+    "studentIdentifier": "vishnu praajapat",
+    "startTime": "2025-06-21T06:01:48.572Z",
+    "endTime": "2025-06-21T06:02:08.068Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750402402196-0-gxygjyx",
+        "answer": "ai-opt_q0_idx0_1750402402196_qfyt8u88r",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750402402196-1-pkaazm4",
+        "answer": "ai-opt_q1_idx3_1750402402196_v6hpgey5c",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750402402196-2-r8fal2b",
+        "answer": "ai-opt_q2_idx1_1750402402196_xzrf3egjt",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750402402196-3-dcp6zlg",
+        "answer": "ai-opt_q3_idx3_1750402402196_jqf6haiym",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750402402196-4-ad53c5x",
+        "answer": "ai-opt_q4_idx3_1750402402196_t5ur1q94n",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-21T06:01:48.587Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-21T06:01:48.588Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-21T06:01:50.215Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750402402196-0-gxygjyx.\n[2025-06-21T06:01:53.503Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750402402196-1-pkaazm4.\n[2025-06-21T06:01:57.156Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750402402196-2-r8fal2b.\n[2025-06-21T06:02:01.678Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750402402196-3-dcp6zlg.\n[2025-06-21T06:02:05.685Z] User: vishnu praajapat (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750402402196-4-ad53c5x.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student is answering questions at a reasonable pace and there are no indications of suspicious behavior, such as tab switching or copy-pasting.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750485450995-vs98ify",
+    "submittedAt": "2025-06-21T05:57:30.995Z"
   }
 ]

@@ -154,7 +154,7 @@ export default function GroupDetailPage() {
               <TabsTrigger value="tests">Assigned Tests</TabsTrigger>
               <TabsTrigger value="students">Students</TabsTrigger>
             </TabsList>
-            <Button variant="outline" size="sm" onClick={handleShowJoinQr}><PlusCircle className="mr-2 h-4 w-4" /> Add Student (QR)</Button>
+            <Button variant="outline" size="sm" onClick={handleShowJoinQr}><PlusCircle className="mr-2 h-4 w-4" /> Add Student</Button>
           </div>
 
           <TabsContent value="students" className="mt-4">
@@ -183,7 +183,7 @@ export default function GroupDetailPage() {
 
           <TabsContent value="tests" className="mt-4">
             <Card>
-              <CardHeader><CardTitle>Assigned Tests</CardTitle><CardDescription>List of tests assigned to this group. The student test portal is not yet implemented.</CardDescription></CardHeader>
+              <CardHeader><CardTitle>Assigned Tests</CardTitle><CardDescription>Click a test title to attempt it or view results for detailed analytics.</CardDescription></CardHeader>
               <CardContent>
                 {assignedTests.length === 0 ? (
                   <div className="text-center py-10 text-muted-foreground">No tests have been assigned to this group yet.</div>
@@ -223,5 +223,3 @@ export default function GroupDetailPage() {
     </>
   );
 }
-
-
