@@ -13,7 +13,8 @@ import {
   TrendingUp, 
   Sparkles,
   Users, 
-  DollarSign 
+  DollarSign,
+  Lock,
 } from "lucide-react";
 import { 
   SidebarMenu, 
@@ -26,12 +27,13 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 import { useAuth } from "@/hooks/use-auth"; 
+import { useSubscription } from "@/hooks/use-subscription";
 
 const mainNavItemsTeacher = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
-  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles }, 
-  { href: "/dashboard/groups", label: "Groups", icon: Users },
+  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles, feature: "ai" }, 
+  { href: "/dashboard/groups", label: "Groups", icon: Users, feature: "groups" },
   { href: "/dashboard/results", label: "Results & Leaderboards", icon: BarChart3 }, 
   { href: "/dashboard/student-analytics", label: "Student Performance", icon: TrendingUp },
 ];
@@ -41,17 +43,16 @@ const mainNavItemsStudent = [
   { href: "/dashboard/my-progress", label: "My Progress", icon: TrendingUp },
 ];
 
-
 const secondaryNavItems = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings }, 
   { href: "/dashboard/plans", label: "View Plans", icon: DollarSign },
 ];
 
-
 export function SidebarNav() {
   const pathname = usePathname();
-  const { open, isMobile, setOpenMobile, setOpen } = useSidebar(); 
+  const { open, isMobile, setOpenMobile } = useSidebar(); 
   const { user } = useAuth(); 
+  const { plan } = useSubscription();
 
   const currentNavItems = user?.role === 'teacher' ? mainNavItemsTeacher : mainNavItemsStudent;
 
@@ -70,27 +71,39 @@ export function SidebarNav() {
     return isActive;
   };
 
+  const isFeatureLocked = (feature?: string): boolean => {
+    if (!feature || !plan) return false;
+    if (feature === 'ai' && !plan.canUseAI) return true;
+    if (feature === 'groups' && !plan.canUseGroups) return true;
+    return false;
+  };
+
   return (
     <nav className="flex flex-col h-full">
       <SidebarMenu className="flex-1">
         <SidebarGroup>
           <SidebarGroupLabel className={open ? "" : "hidden"}>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            {currentNavItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
-                  tooltip={!open ? item.label : undefined}
-                  onClick={handleLinkClick} 
-                >
-                  <Link href={item.href}>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {currentNavItems.map((item) => {
+              const locked = isFeatureLocked(item.feature);
+              return (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
+                    tooltip={!open ? item.label : undefined}
+                    onClick={handleLinkClick} 
+                    disabled={locked}
+                  >
+                    <Link href={locked ? "/dashboard/plans" : item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                      {locked && <Lock className="ml-auto h-3.5 w-3.5" />}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarMenu>

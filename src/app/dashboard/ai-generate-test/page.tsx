@@ -1,8 +1,8 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -14,14 +14,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sparkles, Loader2, ListChecks, Send, Lightbulb, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
-import type { Question as TestBuilderQuestion, Option as TestBuilderOption, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion, DraggableItem, DropTarget, CorrectMapping } from '@/lib/types';
+import type { Question as TestBuilderQuestion, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert components
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useSubscription } from '@/hooks/use-subscription';
+import UpgradeNudge from '@/components/common/upgrade-nudge';
+import Loading from '@/app/loading';
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -38,12 +40,13 @@ const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 export default function AIGenerateTestPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { plan, isLoading: isSubscriptionLoading } = useSubscription();
+
   const [isLoading, setIsLoading] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState<AIQuestion[] | null>(null);
   const [generationParams, setGenerationParams] = useState<AIGenerateTestFormValues | null>(null);
   const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
   const [isSuggestingTopics, setIsSuggestingTopics] = useState(false);
-
 
   const form = useForm<AIGenerateTestFormValues>({
     resolver: zodResolver(AIGenerateTestSchema),
@@ -55,7 +58,7 @@ export default function AIGenerateTestPage() {
       numberOfQuestions: 5, 
     },
   });
-
+  
   const handleSubjectBlur = async () => {
     const subjectValue = form.getValues("subject");
     if (subjectValue && subjectValue.trim().length >= 3) {
@@ -66,13 +69,11 @@ export default function AIGenerateTestPage() {
         const result = await suggestTopics(input);
         if (result.topicSuggestions && result.topicSuggestions.length > 0) {
           setTopicSuggestions(result.topicSuggestions);
-          toast({ title: "Topic Suggestions", description: `${result.topicSuggestions.length} topics suggested for "${subjectValue}".`, duration: 2000 });
         } else {
           toast({ title: "No Suggestions", description: `No topic suggestions found for "${subjectValue}". Please enter topics manually.`, variant: "default", duration: 2000 });
         }
       } catch (error: any) {
         console.error("Topic Suggestion Error:", error);
-        toast({ title: "Suggestion Error", description: error.message || "Failed to get topic suggestions.", variant: "destructive", duration: 2000 });
       } finally {
         setIsSuggestingTopics(false);
       }
@@ -81,15 +82,11 @@ export default function AIGenerateTestPage() {
 
   const handleAddTopicSuggestion = (suggestion: string) => {
     const currentTopics = form.getValues("topics");
-    const currentTopicsString = Array.isArray(currentTopics) ? (currentTopics as string[]).join(", ") : (currentTopics || "");
-    
-    let newTopicsString;
-    if (currentTopicsString.trim() === "") {
-      newTopicsString = suggestion;
-    } else {
-      newTopicsString = `${currentTopicsString}, ${suggestion}`;
+    const topicsArray = Array.isArray(currentTopics) ? currentTopics : currentTopics.split(',').map(t => t.trim()).filter(Boolean);
+    if (!topicsArray.includes(suggestion)) {
+      const newTopics = [...topicsArray, suggestion];
+      form.setValue("topics", newTopics.join(", "), { shouldValidate: true });
     }
-    form.setValue("topics", newTopicsString, { shouldValidate: true });
   };
 
   const onSubmit = async (data: AIGenerateTestFormValues) => {
@@ -107,146 +104,82 @@ export default function AIGenerateTestPage() {
       const result = await generateTestQuestions(input);
       if (result.generatedQuestions && result.generatedQuestions.length > 0) {
         setGeneratedQuestions(result.generatedQuestions);
-        toast({ title: "Success!", description: `${result.generatedQuestions.length} questions generated by AI.`, duration: 2000 });
+        toast({ title: "Success!", description: `${result.generatedQuestions.length} questions generated.`, duration: 2000 });
       } else {
-        toast({ title: "No Questions", description: "AI did not return any questions. Try adjusting your topics or subject.", variant: "destructive", duration: 2000 });
+        toast({ title: "No Questions", description: "AI did not return any questions. Try adjusting your topics.", variant: "destructive", duration: 2000 });
       }
     } catch (error: any) {
       console.error("AI Generation Error:", error);
-      toast({ title: "AI Error", description: error.message || "Failed to generate questions. Please try again.", variant: "destructive", duration: 2000 });
+      toast({ title: "AI Error", description: error.message || "Failed to generate questions.", variant: "destructive", duration: 2000 });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const normalizeText = (text: string | undefined | null): string => {
-    if (typeof text !== 'string') return '';
-    return text.trim().toLowerCase();
-  };
-  
   const transformAIQuestionsToTestBuilderFormat = (aiQuestions: AIQuestion[]): TestBuilderQuestion[] => {
     return aiQuestions.map((aiQ, index): TestBuilderQuestion => {
       const questionId = `ai-q-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 9)}`;
       
-      const baseQuestion = {
-        id: questionId,
-        text: aiQ.text,
-        points: aiQ.points || 10,
-      };
+      const baseQuestion = { id: questionId, text: aiQ.text, points: aiQ.points || 10 };
 
       if (aiQ.type === 'mcq') {
-        const options: TestBuilderOption[] = (aiQ.options || []).map((optText, optIndex) => ({
+        const options = (aiQ.options || []).map((optText, optIndex) => ({
           id: `ai-opt_q${index}_idx${optIndex}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
           text: optText,
         }));
-        
-        let matchedCorrectOptionId: string | null = null;
-        let isAiPreselectedForThisQ = false;
-        const aiCorrectAnswerText = (aiQ as MCQQuestion).correctAnswer; 
-
-        if (aiCorrectAnswerText && options.length > 0) {
-            const normalizedAICorrectAnswer = normalizeText(aiCorrectAnswerText);
-            const matchedOption = options.find(opt => normalizeText(opt.text) === normalizedAICorrectAnswer);
-            if (matchedOption) {
-              matchedCorrectOptionId = matchedOption.id;
-              isAiPreselectedForThisQ = true; 
-            }
-        }
-
+        const aiCorrectAnswerText = (aiQ as MCQQuestion).correctAnswer;
+        const matchedOption = options.find(opt => opt.text.trim().toLowerCase() === aiCorrectAnswerText?.trim().toLowerCase());
         return {
-          ...baseQuestion,
-          type: 'mcq',
-          options,
-          correctOptionId: matchedCorrectOptionId,
-          correctAnswer: aiCorrectAnswerText, 
-          isAiPreselected: isAiPreselectedForThisQ,
+          ...baseQuestion, type: 'mcq', options, correctOptionId: matchedOption?.id || null, 
+          correctAnswer: aiCorrectAnswerText, isAiPreselected: !!matchedOption
         } as MCQQuestion;
-      } else if (aiQ.type === 'short-answer') {
-        return {
-          ...baseQuestion,
-          type: 'short-answer',
-          correctAnswer: (aiQ as ShortAnswerQuestion).correctAnswer as string,
-        } as ShortAnswerQuestion;
-      } else if (aiQ.type === 'true-false') {
-        return {
-          ...baseQuestion,
-          type: 'true-false',
-          correctAnswer: (aiQ as TrueFalseQuestion).correctAnswer as boolean,
-        } as TrueFalseQuestion;
-      } else if (aiQ.type === 'drag-and-drop') {
-         const draggableItems: DraggableItem[] = ((aiQ as DragDropQuestion).draggableItems || []).map((itemText, i) => ({
-          id: `ditem-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          text: typeof itemText === 'string' ? itemText : (itemText as any).text || "Draggable", 
-        }));
-        const dropTargets: DropTarget[] = ((aiQ as DragDropQuestion).dropTargets || []).map((targetLabel, i) => ({
-          id: `dtarget-${questionId}-${i}-${Math.random().toString(36).substring(2, 7)}`,
-          label: typeof targetLabel === 'string' ? targetLabel : (targetLabel as any).label || "Target", 
-        }));
-
-        const correctMappings: CorrectMapping[] = ((aiQ as DragDropQuestion).correctMappings || []).map(mapping => {
-          const mappedDraggableItem = draggableItems.find(di => di.text === mapping.draggableItemText);
-          const mappedDropTarget = dropTargets.find(dt => dt.label === mapping.dropTargetLabel);
-          return {
-            draggableItemId: mappedDraggableItem ? mappedDraggableItem.id : `unknown-draggable-${mapping.draggableItemText}`,
-            dropTargetId: mappedDropTarget ? mappedDropTarget.id : `unknown-target-${mapping.dropTargetLabel}`,
-          };
-        });
-        
-        return {
-          ...baseQuestion,
-          type: 'drag-and-drop',
-          instruction: (aiQ as DragDropQuestion).instruction || "",
-          draggableItems,
-          dropTargets,
-          correctMappings
-        } as DragDropQuestion;
       }
-      // Fallback for unknown types, though schema should prevent this
+      if (aiQ.type === 'short-answer') return { ...baseQuestion, type: 'short-answer', correctAnswer: (aiQ as ShortAnswerQuestion).correctAnswer } as ShortAnswerQuestion;
+      if (aiQ.type === 'true-false') return { ...baseQuestion, type: 'true-false', correctAnswer: (aiQ as TrueFalseQuestion).correctAnswer } as TrueFalseQuestion;
+      if (aiQ.type === 'drag-and-drop') {
+         const draggableItems = ((aiQ as DragDropQuestion).draggableItems || []).map((item, i) => ({ id: `ditem-${questionId}-${i}`, text: typeof item === 'string' ? item : (item as any).text }));
+         const dropTargets = ((aiQ as DragDropQuestion).dropTargets || []).map((target, i) => ({ id: `dtarget-${questionId}-${i}`, label: typeof target === 'string' ? target : (target as any).label }));
+         const correctMappings = ((aiQ as DragDropQuestion).correctMappings || []).map(m => ({
+            draggableItemId: draggableItems.find(di => di.text === m.draggableItemText)?.id || '',
+            dropTargetId: dropTargets.find(dt => dt.label === m.dropTargetLabel)?.id || '',
+         }));
+         return { ...baseQuestion, type: 'drag-and-drop', instruction: (aiQ as DragDropQuestion).instruction, draggableItems, dropTargets, correctMappings } as DragDropQuestion;
+      }
       return { ...baseQuestion, type: aiQ.type } as TestBuilderQuestion;
     });
   };
 
   const handleUseQuestions = () => {
     if (!generatedQuestions || !generationParams) return;
-    
     const testBuilderQuestions = transformAIQuestionsToTestBuilderFormat(generatedQuestions);
-    
     const aiGeneratedTitle = `AI Gen (${generationParams.difficulty}) ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
-    
     const dataToStore = {
-      title: aiGeneratedTitle,
-      subject: generationParams.subject,
-      questions: testBuilderQuestions,
-      duration: 30, 
-      attemptsAllowed: 1,
-      randomizeQuestions: false,
-      enableTabSwitchDetection: true,
-      enableCopyPasteDisable: true,
-      published: false, 
+      title: aiGeneratedTitle, subject: generationParams.subject, questions: testBuilderQuestions,
+      duration: 30, attemptsAllowed: 1, randomizeQuestions: false,
+      enableTabSwitchDetection: true, enableCopyPasteDisable: true, published: false, 
     };
-
     try {
       localStorage.setItem(AI_GENERATED_DATA_STORAGE_KEY, JSON.stringify(dataToStore));
-      toast({title: "Data Saved", description: "Redirecting to Test Builder with generated content.", duration: 2000});
       router.push('/dashboard/create-test?source=ai');
     } catch (e) {
       toast({title: "Error", description: "Could not save data for Test Builder.", variant: "destructive", duration: 2000});
     }
   };
-
+  
+  if (isSubscriptionLoading) return <Loading />;
+  
+  if (!plan.canUseAI) {
+    return (
+      <UpgradeNudge 
+        featureName="AI Test Generator"
+        description="This powerful feature creates tests for you in seconds. It is available on our premium plans."
+        requiredPlan="Teacher"
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto py-2">
-       <Alert className="mb-6 border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
-        <Info className="h-4 w-4" />
-        <AlertTitle className="font-semibold">Free Trial Information</AlertTitle>
-        <AlertDescription>
-          AI question generation may be limited on the free trial. 
-          Users can create up to 3 tests in total (manual or AI). 
-          Upgrade to a paid plan for more creations and features!
-          <span className="italic text-xs block mt-1">(This is a UI note; actual limits are not yet enforced.)</span>
-        </AlertDescription>
-      </Alert>
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center">
@@ -266,12 +199,7 @@ export default function AIGenerateTestPage() {
                   <FormItem>
                     <Label htmlFor="subject">Subject</Label>
                     <div className="flex items-center gap-2">
-                       <Input 
-                         id="subject" 
-                         placeholder="e.g., World History, Algebra I" 
-                         {...field} 
-                         onBlur={handleSubjectBlur} 
-                       />
+                       <Input id="subject" placeholder="e.g., Python, World History" {...field} onBlur={handleSubjectBlur} />
                        {isSuggestingTopics && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
                     </div>
                     <FormMessage />
@@ -284,106 +212,30 @@ export default function AIGenerateTestPage() {
                   <Label className="flex items-center"><Lightbulb className="h-4 w-4 mr-1 text-yellow-400" />Suggested Topics (click to add):</Label>
                   <div className="flex flex-wrap gap-2">
                     {topicSuggestions.map((suggestion, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        onClick={() => handleAddTopicSuggestion(suggestion)}
-                        className="cursor-pointer hover:bg-primary/20"
-                      >
-                        {suggestion}
-                      </Badge>
+                      <Badge key={index} variant="secondary" onClick={() => handleAddTopicSuggestion(suggestion)} className="cursor-pointer hover:bg-primary/20">{suggestion}</Badge>
                     ))}
                   </div>
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="questionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="questionType">Question Type</Label>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger id="questionType">
-                            <SelectValue placeholder="Select question type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="mcq">Multiple Choice (MCQ)</SelectItem>
-                          <SelectItem value="short-answer">Short Answer</SelectItem>
-                          <SelectItem value="true-false">True/False</SelectItem>
-                          <SelectItem value="drag-and-drop">Drag & Drop</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="difficulty"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="difficulty">Difficulty Level</Label>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger id="difficulty">
-                            <SelectValue placeholder="Select difficulty" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="easy">Easy</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="hard">Hard</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <FormField control={form.control} name="questionType" render={({ field }) => (<FormItem><Label>Question Type</Label><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl><SelectContent><SelectItem value="mcq">Multiple Choice</SelectItem><SelectItem value="short-answer">Short Answer</SelectItem><SelectItem value="true-false">True/False</SelectItem><SelectItem value="drag-and-drop">Drag & Drop</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="difficulty" render={({ field }) => (<FormItem><Label>Difficulty Level</Label><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select difficulty" /></SelectTrigger></FormControl><SelectContent><SelectItem value="easy">Easy</SelectItem><SelectItem value="medium">Medium</SelectItem><SelectItem value="hard">Hard</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
               <FormField
-                control={form.control}
-                name="topics"
-                render={({ field }) => (
+                control={form.control} name="topics" render={({ field }) => (
                   <FormItem>
                     <Label htmlFor="topics">Topics (comma-separated)</Label>
-                    <Textarea
-                      id="topics"
-                      placeholder="e.g., French Revolution, Photosynthesis, Quadratic Equations"
-                      {...field}
-                      className="min-h-[80px]"
-                    />
-                    <FormMessage />
-                     <p className="text-xs text-muted-foreground">Enter specific topics the AI should focus on, or use suggestions.</p>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="numberOfQuestions"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label htmlFor="numberOfQuestions">Number of Questions (1-50)</Label>
-                    <Input id="numberOfQuestions" type="number" min="1" max="50" {...field} />
+                    <Textarea id="topics" placeholder="e.g., French Revolution, Photosynthesis" {...field} className="min-h-[80px]" />
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <FormField control={form.control} name="numberOfQuestions" render={({ field }) => (<FormItem><Label>Number of Questions (1-50)</Label><Input type="number" min="1" max="50" {...field} /><FormMessage /></FormItem>)} />
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button type="submit" disabled={isLoading || isSuggestingTopics}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Questions...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" /> Generate Questions
-                  </>
-                )}
+                {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>) : (<><Sparkles className="mr-2 h-4 w-4" /> Generate Questions</>)}
               </Button>
             </CardFooter>
           </form>
@@ -392,50 +244,19 @@ export default function AIGenerateTestPage() {
 
       {generatedQuestions && generatedQuestions.length > 0 && (
         <Card className="max-w-2xl mx-auto mt-8">
-          <CardHeader>
-            <CardTitle className="text-xl font-headline flex items-center">
-              <ListChecks className="mr-2 h-5 w-5" /> Generated Questions
-            </CardTitle>
-            <CardDescription>Review the questions generated by AI. You can then use them in the Test Builder.</CardDescription>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-xl font-headline flex items-center"><ListChecks className="mr-2 h-5 w-5" /> Generated Questions</CardTitle><CardDescription>Review the questions. You can use them in the Test Builder.</CardDescription></CardHeader>
           <CardContent className="space-y-4 max-h-96 overflow-y-auto">
             {generatedQuestions.map((q, index) => (
               <div key={index} className="p-3 border rounded-md bg-muted/50">
                 <p className="font-semibold">{index + 1}. ({q.type.toUpperCase()}) {q.text}</p>
-                {q.type === 'mcq' && (q as MCQQuestion).options && (
-                  <ul className="list-disc pl-5 mt-1 text-sm">
-                    {(q as MCQQuestion).options.map((optText, optIndex) => ( 
-                      <li key={optIndex} className={normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? 'text-green-600 font-medium' : ''}>
-                        {optText} {normalizeText(optText) === normalizeText((q as MCQQuestion).correctAnswer) ? '(Correct)' : ''}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {(q.type === 'short-answer' || q.type === 'true-false') && (
-                  <p className="text-sm mt-1">Correct Answer: <span className="text-green-600 font-medium">{String((q as ShortAnswerQuestion | TrueFalseQuestion).correctAnswer)}</span></p>
-                )}
-                {q.type === 'drag-and-drop' && (
-                  <div className="text-sm mt-1">
-                    <p>Instruction: {(q as DragDropQuestion).instruction || 'N/A'}</p>
-                    <p>Draggable Items: {(q as DragDropQuestion).draggableItems?.map(di => typeof di === 'string' ? di : (di as any).text).join(", ")}</p>
-                    <p>Drop Targets: {(q as DragDropQuestion).dropTargets?.map(dt => typeof dt === 'string' ? dt : (dt as any).label).join(", ")}</p>
-                    <p>Correct Mappings:</p>
-                    <ul className="list-disc pl-5">
-                      {(q as DragDropQuestion).correctMappings?.map((m, mi) => (
-                        <li key={mi}>{m.draggableItemText} &rarr; {m.dropTargetLabel}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                 {q.type === 'mcq' && (<ul className="list-disc pl-5 mt-1 text-sm">{(q as MCQQuestion).options.map((opt, i) => (<li key={i} className={(q as MCQQuestion).correctAnswer === opt ? 'text-green-600 font-medium' : ''}>{opt} {(q as MCQQuestion).correctAnswer === opt ? '(Correct)' : ''}</li>))}</ul>)}
+                {(q.type === 'short-answer' || q.type === 'true-false') && (<p className="text-sm mt-1">Answer: <span className="text-green-600 font-medium">{String((q as ShortAnswerQuestion | TrueFalseQuestion).correctAnswer)}</span></p>)}
+                {q.type === 'drag-and-drop' && (<div className="text-sm mt-1"><p>Draggables: {(q as DragDropQuestion).draggableItems?.join(', ')}</p><p>Targets: {(q as DragDropQuestion).dropTargets?.join(', ')}</p></div>)}
                  <p className="text-xs text-muted-foreground mt-1">Points: {q.points}</p>
               </div>
             ))}
           </CardContent>
-          <CardFooter className="flex justify-end">
-            <Button onClick={handleUseQuestions}>
-              <Send className="mr-2 h-4 w-4" /> Use these Questions in Test Builder
-            </Button>
-          </CardFooter>
+          <CardFooter className="flex justify-end"><Button onClick={handleUseQuestions}><Send className="mr-2 h-4 w-4" /> Use these Questions</Button></CardFooter>
         </Card>
       )}
     </div>
