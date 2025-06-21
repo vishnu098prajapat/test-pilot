@@ -121,6 +121,7 @@ export interface Batch {
   id: string;
   name: string; // e.g., "JEE 2025 Physics", "Class 10 - Section A"
   teacherId: string;
+  groupCode: string; // Added group code
   studentIdentifiers: string[]; // Using array of student display names for simplicity with current auth
   createdAt: string;
 }

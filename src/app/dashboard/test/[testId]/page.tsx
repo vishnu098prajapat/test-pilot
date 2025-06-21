@@ -9,9 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle, QrCode, Eye } from "lucide-react";
-import { getTestById, deleteTest as deleteTestAction } from "@/lib/store";
-import type { Test, TestAttempt } from "@/lib/types";
+import { Edit, Share2, BarChart3, Trash2, Clock, ListChecks, Users, ShieldCheck, AlertTriangle, Settings2, MessageCircle, QrCode, Eye, Link2 } from "lucide-react";
+import { getTestById, deleteTest as deleteTestAction, updateTest } from "@/lib/store";
+import type { Test, Batch as Group } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import QrCodeModal from "@/components/common/qr-code-modal"; 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export default function TestManagementPage() {
   const params = useParams();
@@ -40,6 +42,10 @@ export default function TestManagementPage() {
 
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(undefined);
+  const [isAssigning, setIsAssigning] = useState(false);
 
   const testId = params.testId as string;
 
@@ -57,7 +63,7 @@ export default function TestManagementPage() {
       return;
     }
 
-    async function fetchTestDetails() {
+    async function fetchInitialData() {
       if (!isActive) return;
       setIsFetchingTest(true);
       setTest(null); 
@@ -72,11 +78,17 @@ export default function TestManagementPage() {
       }
 
       try {
-        const fetchedTest = await getTestById(testId);
+        const [fetchedTest, fetchedGroups] = await Promise.all([
+          getTestById(testId),
+          fetch(`/api/groups?teacherId=${user.id}`).then(res => res.ok ? res.json() : [])
+        ]);
+
         if (!isActive) return;
 
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
+          setGroups(fetchedGroups);
+          setSelectedGroupId(fetchedTest.batchId); 
           if (typeof window !== "undefined") {
             setQrCodeUrl(`${window.location.origin}/test/${fetchedTest.id}`);
           }
@@ -90,8 +102,8 @@ export default function TestManagementPage() {
         }
       } catch (error) {
         if (!isActive) return;
-        console.error("Failed to load test details:", error);
-        setFetchError("Failed to load test details. Please try again.");
+        console.error("Failed to load test details and groups:", error);
+        setFetchError("Failed to load test data. Please try again.");
         toast({ title: "Error", description: "Failed to load test details.", variant: "destructive", duration: 2000 });
       } finally {
         if (isActive) {
@@ -100,7 +112,7 @@ export default function TestManagementPage() {
       }
     }
 
-    fetchTestDetails();
+    fetchInitialData();
 
     return () => {
       isActive = false;
@@ -119,6 +131,28 @@ export default function TestManagementPage() {
       }
     } catch (error) {
       toast({ title: "Error", description: "An error occurred while deleting the test.", variant: "destructive", duration: 2000 });
+    }
+  };
+
+  const handleAssignTest = async () => {
+    if (!test || selectedGroupId === undefined) {
+        toast({ title: "Error", description: "Please select a group to assign.", variant: "destructive" });
+        return;
+    }
+    setIsAssigning(true);
+    try {
+        const updatedTest = await updateTest(test.id, { batchId: selectedGroupId || undefined });
+        if (updatedTest) {
+            setTest(updatedTest);
+            toast({ title: "Success", description: "Test has been assigned to the group." });
+        } else {
+            throw new Error("Failed to update test with group assignment.");
+        }
+    } catch (error) {
+        console.error("Failed to assign test:", error);
+        toast({ title: "Assignment Failed", description: "Could not assign the test to the group.", variant: "destructive" });
+    } finally {
+        setIsAssigning(false);
     }
   };
 
@@ -195,6 +229,8 @@ export default function TestManagementPage() {
     );
   }
 
+  const assignedGroupName = test.batchId ? groups.find(g => g.id === test.batchId)?.name : null;
+
   return (
     <>
       <div className="container mx-auto py-2">
@@ -214,18 +250,9 @@ export default function TestManagementPage() {
                 <Edit className="mr-2 h-4 w-4" /> Edit Test
               </Link>
             </Button>
-            <Button variant="default" disabled={!test.published || !qrCodeUrl} onClick={handleCopyLink}>
-              <Share2 className="mr-2 h-4 w-4" /> Copy Link
-            </Button>
-             <Button variant="outline" disabled={!test.published || !qrCodeUrl} onClick={handleShowQrCode}>
-                <QrCode className="mr-2 h-4 w-4" /> Show QR
-            </Button>
-             <Button variant="outline" disabled={!test.published || !qrCodeUrl} onClick={handleWhatsAppShare}>
-                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-              </Button>
-             <Button variant="outline" asChild>
-                  <Link href={`/test/${test.id}/leaderboard`}>
-                    <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
+            <Button variant="outline" asChild>
+                  <Link href={`/dashboard/student-analytics/test/${test.id}`}>
+                    <BarChart3 className="mr-2 h-4 w-4" /> View Results
                   </Link>
               </Button>
           </div>
@@ -234,14 +261,16 @@ export default function TestManagementPage() {
         {test.published && qrCodeUrl && (
           <Card className="mb-6 bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-700">
             <CardHeader>
-              <CardTitle className="text-green-700 dark:text-green-400">Test is Live!</CardTitle>
+              <CardTitle className="text-green-700 dark:text-green-400">Test is Live & Shareable!</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-green-600 dark:text-green-300">Students can access this test using the link:</p>
-              <Input type="text" readOnly value={qrCodeUrl} className="mt-2 bg-green-100 dark:bg-green-800/50" />
-              <Button size="sm" variant="ghost" className="mt-2 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-700" onClick={handleCopyLink}>
-                Copy Link
-              </Button>
+              <p className="text-sm text-green-600 dark:text-green-300">Students can access this test using the link below.</p>
+              <div className="flex w-full items-center space-x-2 mt-2">
+                <Input type="text" readOnly value={qrCodeUrl} className="bg-white dark:bg-green-800/20" />
+                <Button size="icon" variant="ghost" onClick={handleCopyLink}><Link2 className="h-4 w-4" /></Button>
+                <Button size="icon" variant="ghost" onClick={handleShowQrCode}><QrCode className="h-4 w-4" /></Button>
+                <Button size="icon" variant="ghost" onClick={handleWhatsAppShare}><MessageCircle className="h-4 w-4" /></Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -257,9 +286,40 @@ export default function TestManagementPage() {
         <Separator className="my-8" />
 
         <div className="space-y-6">
-          <Card className="border-orange-400 dark:border-orange-600">
+          <Card className="border-primary/50">
             <CardHeader>
-              <CardTitle className="text-xl font-headline flex items-center text-orange-600 dark:text-orange-400"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
+              <CardTitle className="text-xl font-headline flex items-center"><Users className="mr-2 h-5 w-5" /> Assign to Group</CardTitle>
+              <CardDescription>Assign this test to a specific group of students. Only students in the assigned group will see this test in their portal (future feature).</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                {assignedGroupName ? (
+                    <p className="text-sm">Currently assigned to: <Badge>{assignedGroupName}</Badge></p>
+                ) : (
+                    <p className="text-sm text-muted-foreground">This test is not assigned to any group.</p>
+                )}
+                <div className="flex flex-col sm:flex-row gap-4 items-end">
+                    <div className="w-full sm:w-1/2">
+                        <Label htmlFor="group-select">Select a Group</Label>
+                        <Select onValueChange={setSelectedGroupId} defaultValue={selectedGroupId}>
+                            <SelectTrigger id="group-select">
+                                <SelectValue placeholder="Choose a group..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {groups.length > 0 ? groups.map(g => (
+                                    <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                                )) : <SelectItem value="none" disabled>No groups found</SelectItem>}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Button onClick={handleAssignTest} disabled={isAssigning || selectedGroupId === undefined}>
+                      {isAssigning ? "Assigning..." : "Assign Test"}
+                    </Button>
+                </div>
+            </CardContent>
+          </Card>
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="text-xl font-headline flex items-center text-destructive"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Deleting this test is permanent and cannot be undone. All associated data, including student attempts, will be lost.</p>
@@ -306,7 +366,7 @@ interface InfoCardProps {
   value: string;
 }
 const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
-  <Card className="shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out cursor-pointer">
+  <Card className="shadow-sm">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">{label}</CardTitle>
       <div className="text-muted-foreground">{icon}</div>
