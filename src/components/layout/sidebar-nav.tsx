@@ -85,7 +85,7 @@ export function SidebarNav() {
           <SidebarGroupLabel className={open ? "" : "hidden"}>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             {currentNavItems.map((item) => {
-              const locked = isFeatureLocked(item.feature);
+              const locked = isFeatureLocked((item as any).feature);
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
