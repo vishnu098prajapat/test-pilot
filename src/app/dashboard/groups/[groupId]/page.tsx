@@ -17,6 +17,7 @@ import type { Test, Batch as Group } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import QrCodeModal from '@/components/common/qr-code-modal';
+import AssignTestDialog from '@/components/groups/assign-test-dialog';
 
 export default function GroupDetailPage() {
   const params = useParams();
@@ -27,12 +28,16 @@ export default function GroupDetailPage() {
   const groupId = params.groupId as string;
 
   const [group, setGroup] = useState<Group | null>(null);
+  const [allTeacherTests, setAllTeacherTests] = useState<Test[]>([]);
   const [assignedTests, setAssignedTests] = useState<Test[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [qrCodeTitle, setQrCodeTitle] = useState("");
+
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -50,6 +55,7 @@ export default function GroupDetailPage() {
         
         if (currentGroup) {
           setGroup(currentGroup);
+          setAllTeacherTests(testsResponse);
           const testsForGroup = testsResponse.filter(test => test.batchId === groupId);
           setAssignedTests(testsForGroup);
         } else {
@@ -85,6 +91,11 @@ export default function GroupDetailPage() {
     }
   };
   
+  const handleTestAssigned = (updatedTest: Test) => {
+    setAssignedTests(prev => [updatedTest, ...prev]);
+    setAllTeacherTests(prev => prev.map(t => t.id === updatedTest.id ? updatedTest : t));
+  };
+
   if (isLoading || isAuthLoading) {
     return (
         <div className="container mx-auto py-2">
@@ -130,10 +141,8 @@ export default function GroupDetailPage() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Group Settings</Button>
-            <Button asChild>
-              <Link href="/dashboard">
-                <PlusCircle className="mr-2 h-4 w-4" /> Assign Test
-              </Link>
+            <Button onClick={() => setIsAssignDialogOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Assign Test
             </Button>
           </div>
         </div>
@@ -219,6 +228,13 @@ export default function GroupDetailPage() {
         onClose={() => setIsQrModalOpen(false)}
         url={qrCodeUrl}
         title={qrCodeTitle}
+      />
+      <AssignTestDialog
+        isOpen={isAssignDialogOpen}
+        onClose={() => setIsAssignDialogOpen(false)}
+        groupId={group.id}
+        allTeacherTests={allTeacherTests}
+        onTestAssigned={handleTestAssigned}
       />
     </>
   );
