@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, ClipboardList, BarChart3, Users, Clock, Edit, Trash2, Share2, Eye, Activity, MessageCircle, QrCode, MoreVertical, ListFilter, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import type { Test, TestAttempt } from "@/lib/types";
+import type { Test, TestAttempt, Batch as Group } from "@/lib/types";
 import { getTestsByTeacher, deleteTest as deleteTestAction } from "@/lib/store"; 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -32,12 +32,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import QrCodeModal from "@/components/common/qr-code-modal";
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
+import { Checkbox } from "@/components/ui/checkbox";
+import { useSubscription } from "@/hooks/use-subscription";
+import AssignTestToGroupDialog from "@/components/dashboard/assign-test-dialog";
+
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { plan } = useSubscription();
   const [tests, setTests] = useState<Test[]>([]);
   const [allAttempts, setAllAttempts] = useState<TestAttempt[]>([]);
+  const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -47,20 +52,24 @@ export default function DashboardPage() {
 
   const [isSelectionModeActive, setIsSelectionModeActive] = useState(false);
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
+  
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [selectedTestForAssignment, setSelectedTestForAssignment] = useState<Test | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       if (user?.id) {
         setIsLoading(true);
         try {
-          const [teacherTests, fetchedAttempts] = await Promise.all([
+          const [teacherTests, fetchedAttempts, fetchedGroups] = await Promise.all([
             getTestsByTeacher(user.id),
-            fetch('/api/attempts').then(res => res.ok ? res.json() : [])
+            fetch('/api/attempts').then(res => res.ok ? res.json() : []),
+            plan.canUseGroups ? fetch(`/api/groups?teacherId=${user.id}`).then(res => res.ok ? res.json() : []) : Promise.resolve([])
           ]);
-          // Sort tests by creation date, newest first
           teacherTests.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           setTests(teacherTests);
           setAllAttempts(fetchedAttempts);
+          setGroups(fetchedGroups);
         } catch (error) {
           toast({ title: "Error", description: "Failed to load dashboard data.", variant: "destructive", duration: 2000 });
           console.error("Dashboard fetch error:", error);
@@ -70,11 +79,11 @@ export default function DashboardPage() {
       }
     }
     fetchData();
-  }, [user?.id, toast]);
+  }, [user?.id, toast, plan.canUseGroups]);
 
   const toggleSelectionMode = () => {
     setIsSelectionModeActive(!isSelectionModeActive);
-    setSelectedTests([]); // Clear selections when toggling mode
+    setSelectedTests([]); 
   };
 
   const handleTestSelection = (testId: string) => {
@@ -90,26 +99,20 @@ export default function DashboardPage() {
       toast({ title: "No Tests Selected", description: "Please select at least one test to delete.", variant: "destructive", duration: 2000 });
       return;
     }
-
     try {
       let successCount = 0;
       for (const testId of selectedTests) {
         const success = await deleteTestAction(testId);
-        if (success) {
-          successCount++;
-        }
+        if (success) successCount++;
       }
-      
       if (successCount > 0) {
         setTests(prevTests => prevTests.filter(test => !selectedTests.includes(test.id)));
         setAllAttempts(prevAttempts => prevAttempts.filter(attempt => !selectedTests.includes(attempt.testId)));
         toast({ title: "Success", description: `${successCount} test(s) deleted successfully.`, duration: 2000 });
       }
-      
       if (successCount < selectedTests.length) {
         toast({ title: "Partial Deletion", description: `${selectedTests.length - successCount} test(s) could not be deleted.`, variant: "destructive", duration: 2000 });
       }
-
     } catch (error) {
       toast({ title: "Error", description: "An error occurred while deleting tests.", variant: "destructive", duration: 2000 });
     } finally {
@@ -119,20 +122,15 @@ export default function DashboardPage() {
   };
   
   const dashboardStats = useMemo(() => {
-    if (!user || tests.length === 0) {
-      return { totalSubmissions: 0, averageScore: 0, publishedTests: 0 };
-    }
+    if (!user || tests.length === 0) return { totalSubmissions: 0, averageScore: 0, publishedTests: 0 };
     const teacherTestIds = new Set(tests.map(t => t.id));
     const relevantAttempts = allAttempts.filter(attempt => teacherTestIds.has(attempt.testId));
-    
     const totalSubmissions = relevantAttempts.length;
     const totalScoreSum = relevantAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
     const averageScore = totalSubmissions > 0 ? Math.round(totalScoreSum / totalSubmissions) : 0;
     const publishedTests = tests.filter(t => t.published).length;
-
     return { totalSubmissions, averageScore, publishedTests };
   }, [tests, allAttempts, user]);
-
 
   const getTestStats = (testId: string) => {
     const attemptsForTest = allAttempts.filter(attempt => attempt.testId === testId);
@@ -164,6 +162,16 @@ export default function DashboardPage() {
       setIsQrModalOpen(true);
     }
   };
+  
+  const openAssignDialog = (test: Test) => {
+    setSelectedTestForAssignment(test);
+    setIsAssignDialogOpen(true);
+  };
+
+  const handleTestAssigned = (updatedTest: Test) => {
+    setTests(prev => prev.map(t => t.id === updatedTest.id ? updatedTest : t));
+  };
+
 
   const SummaryCard = ({ title, value, icon, description }: { title: string, value: string | number, icon: React.ReactNode, description: string }) => (
     <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-200 ease-in-out cursor-pointer">
@@ -301,6 +309,11 @@ export default function DashboardPage() {
                           <span>
                             <BarChart3 className="inline h-3 w-3 mr-1"/> Avg. Score: {numberOfAttempts > 0 ? `${averageScore}%` : 'N/A'}
                           </span>
+                          {test.batchId && groups.find(g => g.id === test.batchId) && (
+                            <span>
+                                <Badge variant="outline">Assigned to: {groups.find(g => g.id === test.batchId)?.name}</Badge>
+                            </span>
+                          )}
                         </div>
                     </CardHeader>
                     <CardContent className="p-0 mt-2">
@@ -324,18 +337,22 @@ export default function DashboardPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                           <DropdownMenuItem onSelect={() => openAssignDialog(test)} disabled={!plan.canUseGroups}>
+                            <Users className="mr-2 h-4 w-4" /> Assign to Group
+                          </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href={`/dashboard/create-test?edit=${test.id}`}>
                               <Edit className="mr-2 h-4 w-4" /> Edit
                             </Link>
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => testLink && handleShareLink(testLink)} disabled={!test.published || !testLink}>
                             <Share2 className="mr-2 h-4 w-4" /> Copy Link
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleShowQrCode(test)} disabled={!test.published}>
                             <QrCode className="mr-2 h-4 w-4" /> Show QR
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleWhatsAppShare(test)} disabled={!test.published}>
+                           <DropdownMenuItem onClick={() => handleWhatsAppShare(test)} disabled={!test.published}>
                             <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -370,6 +387,13 @@ export default function DashboardPage() {
           title={qrCodeTitle}
         />
       )}
+      <AssignTestToGroupDialog
+        isOpen={isAssignDialogOpen}
+        onClose={() => setIsAssignDialogOpen(false)}
+        test={selectedTestForAssignment}
+        groups={groups}
+        onTestAssigned={handleTestAssigned}
+      />
     </>
   );
 }
