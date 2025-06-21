@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info, User } from "lucide-react";
+import { TrendingUp, BarChart3, FileText, AlertTriangle, CalendarDays, Percent, CheckCircle, BookOpen, Info, User, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { TestAttempt } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { startOfMonth, isWithinInterval } from "date-fns";
+import { useSubscription } from "@/hooks/use-subscription"; // Import useSubscription
 
 export default function MyProgressPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
+  const { plan, isLoading: isSubscriptionLoading } = useSubscription(); // Use the subscription hook
   const { toast } = useToast();
   const [allUserAttempts, setAllUserAttempts] = useState<TestAttempt[]>([]);
   const [currentMonthAttempts, setCurrentMonthAttempts] = useState<TestAttempt[]>([]);
@@ -25,13 +27,11 @@ export default function MyProgressPage() {
   useEffect(() => {
     async function fetchAttempts() {
       if (isAuthLoading) {
-        console.log("[MyProgressPage] Auth loading, waiting...");
         setIsLoadingAttempts(true);
         return;
       }
 
       if (!user || !user.displayName || user.displayName.trim() === "") {
-        console.warn("[MyProgressPage] User or user.displayName not available or empty. Cannot fetch attempts. User:", JSON.stringify(user));
         setIsLoadingAttempts(false);
         setAllUserAttempts([]);
         setCurrentMonthAttempts([]);
@@ -39,8 +39,6 @@ export default function MyProgressPage() {
       }
       
       const userDisplayNameNormalized = user.displayName.trim().toLowerCase();
-      console.log(`[MyProgressPage] Fetching attempts. Current user for filter: "${user.displayName}" (Raw), Normalized: "${userDisplayNameNormalized}"`);
-
       setIsLoadingAttempts(true);
       setError(null);
       try {
@@ -50,11 +48,8 @@ export default function MyProgressPage() {
           throw new Error(errorData.error || `Failed to fetch attempts: ${response.statusText}`);
         }
         const allAttemptsData: TestAttempt[] = await response.json();
-        console.log(`[MyProgressPage] All attempts fetched from API for ${userDisplayNameNormalized}: ${allAttemptsData.length}`);
         
         const studentSpecificAttempts = allAttemptsData;
-        
-        console.log(`[MyProgressPage] Found ${studentSpecificAttempts.length} student-specific attempts after API filtering for display name: "${userDisplayNameNormalized}".`);
 
         studentSpecificAttempts.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
         setAllUserAttempts(studentSpecificAttempts);
@@ -66,7 +61,6 @@ export default function MyProgressPage() {
           return isWithinInterval(attemptDate, { start: currentMonthStart, end: today });
         });
         setCurrentMonthAttempts(filteredCurrentMonthAttempts);
-        console.log(`[MyProgressPage] Found ${filteredCurrentMonthAttempts.length} attempts for the current month for ${userDisplayNameNormalized}.`);
 
       } catch (e: any) {
         console.error("[MyProgressPage] Error fetching student attempts:", e);
@@ -97,7 +91,7 @@ export default function MyProgressPage() {
     };
   }, [allUserAttempts, currentMonthAttempts]);
 
-  if (isAuthLoading || isLoadingAttempts) {
+  if (isAuthLoading || isLoadingAttempts || isSubscriptionLoading) {
     return (
       <div className="container mx-auto py-2 bg-slate-50 dark:bg-slate-900/30 rounded-lg shadow-sm p-6">
         <div className="flex items-center mb-8"> <Skeleton className="w-10 h-10 rounded-full mr-3" /><Skeleton className="h-8 w-48" /> </div>
@@ -138,7 +132,7 @@ export default function MyProgressPage() {
           This page displays a summary of tests you (<b>{user.displayName}</b>) have personally taken.
         </p>
         <p className="text-muted-foreground mt-2">
-          To view the performance of students on tests you&apos;ve created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results & Analytics</Link> page.
+          To view the performance of students on tests you've created, please visit the <Link href="/dashboard/results" className="underline text-primary hover:text-primary/80">Test Results & Analytics</Link> page.
         </p>
          <p className="text-sm text-muted-foreground mt-4">Currently, no personal attempts found for "{user.displayName}". If you take a test, your summary will appear here.</p>
       </div>
@@ -178,14 +172,32 @@ export default function MyProgressPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Average Score (Current Month)</CardTitle><Percent className="h-4 w-4 text-sky-500" /></CardHeader>
           <CardContent><div className="text-2xl font-bold">{summaryStats.currentMonthAverageScore}%</div></CardContent>
         </Card>
-         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (Lifetime)</CardTitle><CheckCircle className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.lifetimeTestsPassed}</div></CardContent>
-        </Card>
-         <Card className="shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate (Current Month)</CardTitle><BarChart3 className="h-4 w-4 text-sky-500" /></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{summaryStats.currentMonthPassRate}%</div></CardContent>
-        </Card>
+        {plan.id !== 'free' ? (
+          <>
+            <Card className="shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Tests Passed (Lifetime)</CardTitle><CheckCircle className="h-4 w-4 text-sky-500" /></CardHeader>
+              <CardContent><div className="text-2xl font-bold">{summaryStats.lifetimeTestsPassed}</div></CardContent>
+            </Card>
+            <Card className="shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pass Rate (Current Month)</CardTitle><BarChart3 className="h-4 w-4 text-sky-500" /></CardHeader>
+              <CardContent><div className="text-2xl font-bold">{summaryStats.currentMonthPassRate}%</div></CardContent>
+            </Card>
+          </>
+        ) : (
+          <Card className="col-span-1 md:col-span-2 lg:col-span-2 shadow-sm flex flex-col items-center justify-center text-center bg-primary/5 border-primary/20">
+             <CardHeader>
+              <CardTitle className="font-semibold text-primary">Unlock Full Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Upgrade to view lifetime pass rates, detailed reports, and more insights.</p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild size="sm">
+                <Link href="/dashboard/plans"><Zap className="mr-2 h-4 w-4" /> View Plans</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
       </div>
 
       {allUserAttempts.length === 0 ? (
