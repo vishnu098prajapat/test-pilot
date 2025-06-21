@@ -193,7 +193,11 @@ export default function GroupDetailPage() {
                     <TableBody>
                       {assignedTests.map(test => (
                         <TableRow key={test.id}>
-                          <TableCell className="font-medium">{test.title}</TableCell>
+                          <TableCell className="font-medium">
+                            <Link href={`/test/${test.id}`} className="hover:underline" target="_blank" rel="noopener noreferrer">
+                              {test.title}
+                            </Link>
+                          </TableCell>
                           <TableCell><Badge variant={test.published ? 'default' : 'secondary'}>{test.published ? "Published" : "Draft"}</Badge></TableCell>
                           <TableCell className="text-right">
                             <Button variant="ghost" size="sm" asChild>
@@ -219,4 +223,5 @@ export default function GroupDetailPage() {
     </>
   );
 }
+
 
