@@ -5,20 +5,25 @@ import React from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { QrCode, ShieldCheck, ArrowLeft } from 'lucide-react'; // Using QrCode icon
+import { QrCode, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
+import type { PlanId } from '@/hooks/use-subscription';
+
+const USER_PLANS_STORAGE_KEY = "test_pilot_user_plans";
 
 export default function MockPaymentPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const planId = params.planId as string;
+  const planId = params.planId as PlanId;
   const planName = searchParams.get('name') || 'Selected Plan';
-  const planPrice = searchParams.get('price') || 'N/A'; // Assuming price is passed as a query param
+  const planPrice = searchParams.get('price') || 'N/A';
 
   const handleConfirmPayment = () => {
     toast({
@@ -26,6 +31,36 @@ export default function MockPaymentPage() {
       description: "Please wait while we verify your (simulated) payment.",
       duration: 1500,
     });
+    
+    // Simulate updating the user's plan in localStorage
+    if (user) {
+        try {
+            const storedPlans = JSON.parse(localStorage.getItem(USER_PLANS_STORAGE_KEY) || '{}');
+            storedPlans[user.id] = planId;
+            localStorage.setItem(USER_PLANS_STORAGE_KEY, JSON.stringify(storedPlans));
+            console.log(`[MockPayment] Plan for user ${user.id} updated to ${planId}`);
+        } catch(e) {
+            console.error("Failed to update user plan in localStorage", e);
+             toast({
+                title: "Error",
+                description: `Could not save your new plan subscription.`,
+                variant: "destructive",
+                duration: 3000,
+            });
+            router.push('/dashboard/plans');
+            return;
+        }
+    } else {
+        toast({
+            title: "Authentication Error",
+            description: `Could not find logged-in user to assign the plan.`,
+            variant: "destructive",
+            duration: 3000,
+        });
+        router.push('/auth/login');
+        return;
+    }
+
 
     setTimeout(() => {
       toast({
@@ -34,7 +69,8 @@ export default function MockPaymentPage() {
         variant: "default",
         duration: 3000,
       });
-      router.push('/dashboard/plans?status=success');
+      // Force a reload of the dashboard to ensure the new subscription state is picked up by all components
+      window.location.href = '/dashboard';
     }, 2000);
   };
 

@@ -1,17 +1,23 @@
+
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Users, PlusCircle, ArrowRight, User, Loader2 } from 'lucide-react';
+import { Users, PlusCircle, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import type { Batch as Group } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import CreateGroupDialog from '@/components/groups/create-group-dialog';
+import { useSubscription } from '@/hooks/use-subscription';
+import UpgradeNudge from '@/components/common/upgrade-nudge';
+import Loading from '@/app/loading';
 
 export default function GroupsPage() {
   const { user } = useAuth();
+  const { plan, isLoading: isSubscriptionLoading } = useSubscription();
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
@@ -33,12 +39,28 @@ export default function GroupsPage() {
         setIsLoading(false);
       }
     }
-    fetchGroups();
-  }, [user?.id]);
+    if (plan.canUseGroups) {
+      fetchGroups();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user?.id, plan.canUseGroups]);
 
   const handleGroupCreated = (newGroup: Group) => {
     setGroups(prev => [newGroup, ...prev]);
   };
+  
+  if (isSubscriptionLoading) return <Loading />;
+
+  if (!plan.canUseGroups) {
+    return (
+        <UpgradeNudge 
+            featureName="Student Groups"
+            description="Organize students, assign tests, and track progress by class or batch."
+            requiredPlan="Teacher"
+        />
+    );
+  }
 
   return (
     <>

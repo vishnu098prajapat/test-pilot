@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from './use-auth';
-import type { Test } from '@/lib/types'; // Import Test type to check test count
+import type { Test } from '@/lib/types'; 
 import { getTestsByTeacher } from '@/lib/store';
 
 
@@ -59,15 +59,23 @@ export function useSubscription() {
       const userPlanId = getMockUserPlan(user.id);
       setPlanId(userPlanId);
       
-      // Fetch user's tests to check limits
-      setIsTestCountLoading(true);
-      getTestsByTeacher(user.id).then(tests => {
-        setUserTests(tests);
-        setIsTestCountLoading(false);
-      });
+      // Fetch user's tests to check limits if they are a teacher
+      if (user.role === 'teacher') {
+        setIsTestCountLoading(true);
+        getTestsByTeacher(user.id).then(tests => {
+          setUserTests(tests);
+          setIsTestCountLoading(false);
+        });
+      } else {
+          // Students don't create tests, so we don't need to load their test count
+          setUserTests([]);
+          setIsTestCountLoading(false);
+      }
 
     } else {
       setPlanId('free');
+      setUserTests([]);
+      setIsTestCountLoading(false);
     }
     setIsLoading(false);
   }, [user, isAuthLoading]);

@@ -251,7 +251,7 @@ export default function AIGenerateTestPage() {
                 <p className="font-semibold">{index + 1}. ({q.type.toUpperCase()}) {q.text}</p>
                  {q.type === 'mcq' && (<ul className="list-disc pl-5 mt-1 text-sm">{(q as MCQQuestion).options.map((opt, i) => (<li key={i} className={(q as MCQQuestion).correctAnswer === opt ? 'text-green-600 font-medium' : ''}>{opt} {(q as MCQQuestion).correctAnswer === opt ? '(Correct)' : ''}</li>))}</ul>)}
                 {(q.type === 'short-answer' || q.type === 'true-false') && (<p className="text-sm mt-1">Answer: <span className="text-green-600 font-medium">{String((q as ShortAnswerQuestion | TrueFalseQuestion).correctAnswer)}</span></p>)}
-                {q.type === 'drag-and-drop' && (<div className="text-sm mt-1"><p>Draggables: {(q as DragDropQuestion).draggableItems?.join(', ')}</p><p>Targets: {(q as DragDropQuestion).dropTargets?.join(', ')}</p></div>)}
+                {q.type === 'drag-and-drop' && (<div className="text-sm mt-1"><p>Draggables: {(q as DragDropQuestion).draggableItems?.map(i=>i.text).join(', ')}</p><p>Targets: {(q as DragDropQuestion).dropTargets?.map(t=>t.label).join(', ')}</p></div>)}
                  <p className="text-xs text-muted-foreground mt-1">Points: {q.points}</p>
               </div>
             ))}

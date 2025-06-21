@@ -62,13 +62,12 @@ export function SidebarNav() {
     }
   };
 
-  const navLinkClass = (href: string, exact: boolean = false) => {
-    const isActive = exact 
-      ? pathname === href 
-      : (href === "/dashboard" && (pathname.startsWith("/dashboard/test/") || pathname.startsWith("/dashboard/groups/")))
-      ? true 
-      : pathname.startsWith(href);
-    return isActive;
+  const navLinkClass = (href: string) => {
+    if (href === "/dashboard") {
+      // Make dashboard active only for its own page, not for sub-pages like /test/[id]
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
   };
 
   const isFeatureLocked = (feature?: string): boolean => {
@@ -90,7 +89,7 @@ export function SidebarNav() {
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={navLinkClass(item.href, ["/dashboard", "/dashboard/ai-generate-test", "/dashboard/my-progress", "/dashboard/student-analytics", "/dashboard/plans"].includes(item.href))} 
+                    isActive={navLinkClass(item.href)}
                     tooltip={!open ? item.label : undefined}
                     onClick={handleLinkClick} 
                     disabled={locked}
@@ -116,7 +115,7 @@ export function SidebarNav() {
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={navLinkClass(item.href, item.href === "/dashboard/plans")}
+                    isActive={navLinkClass(item.href)}
                     tooltip={!open ? item.label : undefined}
                     onClick={handleLinkClick} 
                   >

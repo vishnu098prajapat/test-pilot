@@ -30,7 +30,7 @@ export default function CreateTestPage() {
       <UpgradeNudge 
         featureName="creating more tests"
         description={`You have reached your limit of ${plan.testCreationLimit} tests for the ${plan.name} plan.`}
-        requiredPlan="next tier"
+        requiredPlan="a higher tier"
       />
     );
   }
