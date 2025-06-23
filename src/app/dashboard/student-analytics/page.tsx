@@ -3,9 +3,9 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Users, BarChartBig, AlertTriangle, Info, FileText, BookOpen, Percent, ShieldAlert, Download, Eye, Clock, Target, ListChecks, ArrowRight, Trophy, CalendarRange, ClipboardList, Activity } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import type { Test, TestAttempt } from "@/lib/types";
@@ -358,6 +358,10 @@ export default function StudentPerformanceOverviewPage() {
             </p>
           </div>
         </div>
+         <Button onClick={() => toast({ title: "Feature Coming Soon", description: "Report generation and downloading will be available in a future update."})}>
+            <Download className="mr-2 h-4 w-4" />
+            Download Report
+        </Button>
       </div>
       
       <Card className="mb-8 shadow-lg">
@@ -620,5 +624,3 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     </Card>
   );
 };
-
-    

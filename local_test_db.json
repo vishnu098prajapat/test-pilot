@@ -3266,11 +3266,11 @@
     "randomizeQuestions": false,
     "enableTabSwitchDetection": true,
     "enableCopyPasteDisable": true,
-    "published": false,
+    "published": true,
     "isAiGenerated": true,
     "teacherId": "user-1749975115744-fa007kc",
     "id": "test-1750655349586-vhybz",
     "createdAt": "2025-06-23T05:09:09.586Z",
-    "updatedAt": "2025-06-23T05:09:09.586Z"
+    "updatedAt": "2025-06-23T06:38:47.720Z"
   }
 ]
