@@ -20,7 +20,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from 'next/navigation';
 import { useOnlineStatus } from '@/hooks/use-online-status';
@@ -89,6 +88,11 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   useEffect(() => {
     try {
         localStorage.removeItem(`${STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX}${testData.id}`);
+        toast({
+          title: "Test Loaded Successfully",
+          description: "You can now complete this test even if your connection drops.",
+          duration: 3000,
+        });
     } catch (e) {
         console.warn("Could not clear previous test results from localStorage:", e);
     }
@@ -313,11 +317,11 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   const totalQuestions = testData.questions.length;
 
   return (
-    <div className="relative flex flex-col items-center w-full max-w-4xl p-2 md:p-0">
+    <div className="flex flex-col items-center w-full max-w-4xl p-2 md:p-0">
       {!isOnline && (
-        <div className="absolute top-0 right-0 flex items-center gap-2 rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground z-30">
-          <WifiOff className="h-4 w-4" />
-          Offline Mode
+        <div className="w-full p-2 mb-4 rounded-md bg-yellow-500/20 text-yellow-700 border border-yellow-500/30 text-center font-semibold flex items-center justify-center text-sm">
+          <WifiOff className="mr-2 h-4 w-4" />
+          You are currently offline. Your progress is being saved locally.
         </div>
       )}
       <div className="w-full flex flex-col md:flex-row gap-6 md:gap-8">
@@ -407,3 +411,4 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
     </div>
   );
 }
+
