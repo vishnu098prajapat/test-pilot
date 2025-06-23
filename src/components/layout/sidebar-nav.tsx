@@ -13,6 +13,7 @@ import {
   TrendingUp, 
   Sparkles,
   Users, 
+  UserPlus,
   DollarSign,
   Lock,
 } from "lucide-react";
@@ -41,6 +42,7 @@ const mainNavItemsTeacher = [
 const mainNavItemsStudent = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, 
   { href: "/dashboard/my-progress", label: "My Progress", icon: TrendingUp },
+  { href: "/join", label: "Join Group", icon: UserPlus },
 ];
 
 const secondaryNavItems = [
