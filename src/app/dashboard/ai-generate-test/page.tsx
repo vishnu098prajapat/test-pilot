@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
-import type { Question as TestBuilderQuestion, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, DragDropQuestion } from '@/lib/types';
+import type { Question as TestBuilderQuestion, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -27,7 +27,7 @@ import Loading from '@/app/loading';
 
 const AIGenerateTestSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
-  questionType: z.enum(['mcq', 'short-answer', 'true-false', 'drag-and-drop'], { required_error: "Question type is required." }),
+  questionType: z.enum(['mcq', 'short-answer', 'true-false'], { required_error: "Question type is required." }),
   difficulty: z.enum(['easy', 'medium', 'hard'], { required_error: "Difficulty level is required."}),
   topics: z.string().min(3, "Please provide at least one topic.").transform(val => val.split(',').map(t => t.trim()).filter(t => t.length > 0)),
   numberOfQuestions: z.coerce.number().int().min(1, "Minimum 1 question.").max(50, "Maximum 50 questions."),
@@ -140,15 +140,6 @@ export default function AIGenerateTestPage() {
       }
       if (aiQ.type === 'short-answer') return { ...baseQuestion, type: 'short-answer', correctAnswer: (aiQ as ShortAnswerQuestion).correctAnswer } as ShortAnswerQuestion;
       if (aiQ.type === 'true-false') return { ...baseQuestion, type: 'true-false', correctAnswer: (aiQ as TrueFalseQuestion).correctAnswer } as TrueFalseQuestion;
-      if (aiQ.type === 'drag-and-drop') {
-         const draggableItems = ((aiQ as DragDropQuestion).draggableItems || []).map((item, i) => ({ id: `ditem-${questionId}-${i}`, text: typeof item === 'string' ? item : (item as any).text }));
-         const dropTargets = ((aiQ as DragDropQuestion).dropTargets || []).map((target, i) => ({ id: `dtarget-${questionId}-${i}`, label: typeof target === 'string' ? target : (target as any).label }));
-         const correctMappings = ((aiQ as DragDropQuestion).correctMappings || []).map(m => ({
-            draggableItemId: draggableItems.find(di => di.text === m.draggableItemText)?.id || '',
-            dropTargetId: dropTargets.find(dt => dt.label === m.dropTargetLabel)?.id || '',
-         }));
-         return { ...baseQuestion, type: 'drag-and-drop', instruction: (aiQ as DragDropQuestion).instruction, draggableItems, dropTargets, correctMappings } as DragDropQuestion;
-      }
       return { ...baseQuestion, type: aiQ.type } as TestBuilderQuestion;
     });
   };
@@ -246,7 +237,7 @@ export default function AIGenerateTestPage() {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="questionType" render={({ field }) => (<FormItem><Label>Question Type</Label><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl><SelectContent><SelectItem value="mcq">Multiple Choice</SelectItem><SelectItem value="short-answer">Short Answer</SelectItem><SelectItem value="true-false">True/False</SelectItem><SelectItem value="drag-and-drop">Drag & Drop</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="questionType" render={({ field }) => (<FormItem><Label>Question Type</Label><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl><SelectContent><SelectItem value="mcq">Multiple Choice</SelectItem><SelectItem value="short-answer">Short Answer</SelectItem><SelectItem value="true-false">True/False</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="difficulty" render={({ field }) => (<FormItem><Label>Difficulty Level</Label><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select difficulty" /></SelectTrigger></FormControl><SelectContent><SelectItem value="easy">Easy</SelectItem><SelectItem value="medium">Medium</SelectItem><SelectItem value="hard">Hard</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
               <FormField
@@ -278,7 +269,6 @@ export default function AIGenerateTestPage() {
                 <p className="font-semibold">{index + 1}. ({q.type.toUpperCase()}) {q.text}</p>
                  {q.type === 'mcq' && (<ul className="list-disc pl-5 mt-1 text-sm">{(q as MCQQuestion).options.map((opt, i) => (<li key={i} className={(q as MCQQuestion).correctAnswer === opt ? 'text-green-600 font-medium' : ''}>{opt} {(q as MCQQuestion).correctAnswer === opt ? '(Correct)' : ''}</li>))}</ul>)}
                 {(q.type === 'short-answer' || q.type === 'true-false') && (<p className="text-sm mt-1">Answer: <span className="text-green-600 font-medium">{String((q as ShortAnswerQuestion | TrueFalseQuestion).correctAnswer)}</span></p>)}
-                {q.type === 'drag-and-drop' && (<div className="text-sm mt-1"><p>Draggables: {(q as DragDropQuestion).draggableItems?.map(i=>i.text).join(', ')}</p><p>Targets: {(q as DragDropQuestion).dropTargets?.map(t=>t.label).join(', ')}</p></div>)}
                  <p className="text-xs text-muted-foreground mt-1">Points: {q.points}</p>
               </div>
             ))}

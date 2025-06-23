@@ -9,7 +9,7 @@ export interface User {
   profileImageUrl?: string; 
 }
 
-export type QuestionType = 'mcq' | 'short-answer' | 'true-false' | 'drag-and-drop';
+export type QuestionType = 'mcq' | 'short-answer' | 'true-false';
 
 export interface Option {
   id: string;
@@ -43,35 +43,7 @@ export interface TrueFalseQuestion extends BaseQuestion {
   options?: never;
 }
 
-export interface DraggableItem {
-  id: string;
-  text: string; 
-}
-
-export interface DropTarget {
-  id: string;
-  label: string; 
-}
-
-export interface CorrectMapping {
-  draggableItemId: string; 
-  dropTargetId: string;   
-  draggableItemText?: string;
-  dropTargetLabel?: string;
-}
-
-export interface DragDropQuestion extends BaseQuestion {
-  type: 'drag-and-drop';
-  instruction?: string; 
-  draggableItems: DraggableItem[];
-  dropTargets: DropTarget[];
-  correctMappings: CorrectMapping[]; 
-  options?: never;
-  correctAnswer?: never;
-  correctOptionId?: never;
-}
-
-export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion | DragDropQuestion;
+export type Question = MCQQuestion | ShortAnswerQuestion | TrueFalseQuestion;
 
 
 export interface Test {
