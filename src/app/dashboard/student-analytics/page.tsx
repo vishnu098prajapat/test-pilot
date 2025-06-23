@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { startOfMonth, endOfMonth, isWithinInterval, startOfWeek, endOfWeek } from 'date-fns';
+import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 
 interface OverallMonthlyStats {
   totalCreatedTests: number; // This is lifetime
@@ -62,7 +62,6 @@ export default function StudentPerformanceOverviewPage() {
 
   const [isFlaggedAttemptsModalOpen, setIsFlaggedAttemptsModalOpen] = useState(false);
   const [redFlaggedAttemptDetails, setRedFlaggedAttemptDetails] = useState<RedFlaggedAttemptDetails[]>([]);
-  const [topperTimeFrame, setTopperTimeFrame] = useState<'weekly' | 'monthly'>('weekly');
 
   const formatTime = useCallback((totalSeconds: number): string => {
     if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
@@ -197,35 +196,22 @@ export default function StudentPerformanceOverviewPage() {
   const topPerformers = useMemo((): TopperStudent[] => {
     if (!user || teacherTests.length === 0 || allAttempts.length === 0) return [];
 
-    const now = new Date();
-    let startDate: Date;
-    let endDate: Date = now;
-
-    if (topperTimeFrame === 'weekly') {
-        startDate = startOfWeek(now, { weekStartsOn: 1 }); 
-        endDate = endOfWeek(now, { weekStartsOn: 1 });
-    } else { 
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-    }
-    
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
     
-    const periodAttempts = allAttempts.filter(attempt =>
-        teacherTestIds.has(attempt.testId) &&
-        isWithinInterval(new Date(attempt.submittedAt), { start: startDate, end: endDate })
+    const relevantAttempts = allAttempts.filter(attempt =>
+        teacherTestIds.has(attempt.testId)
     );
 
-    if (periodAttempts.length === 0) return [];
+    if (relevantAttempts.length === 0) return [];
 
     const testToppersMap = new Map<string, Set<string>>(); 
     teacherTests.forEach(test => {
-        const attemptsForThisTestInPeriod = periodAttempts.filter(att => att.testId === test.id);
-        if (attemptsForThisTestInPeriod.length > 0) {
-            const maxScore = Math.max(...attemptsForThisTestInPeriod.map(att => att.scorePercentage || 0));
+        const attemptsForThisTest = relevantAttempts.filter(att => att.testId === test.id);
+        if (attemptsForThisTest.length > 0) {
+            const maxScore = Math.max(...attemptsForThisTest.map(att => att.scorePercentage || 0));
             if (maxScore > 0) { 
                 const toppersForThisTest = new Set<string>();
-                attemptsForThisTestInPeriod.forEach(att => {
+                attemptsForThisTest.forEach(att => {
                     if ((att.scorePercentage || 0) === maxScore) {
                         toppersForThisTest.add(att.studentIdentifier);
                     }
@@ -244,7 +230,7 @@ export default function StudentPerformanceOverviewPage() {
         testsTopped: number;
     }>();
 
-    periodAttempts.forEach(attempt => {
+    relevantAttempts.forEach(attempt => {
         let isTopperForThisTest = false;
         if (testToppersMap.has(attempt.testId) && testToppersMap.get(attempt.testId)!.has(attempt.studentIdentifier)) {
             isTopperForThisTest = true;
@@ -303,7 +289,7 @@ export default function StudentPerformanceOverviewPage() {
 
     return rankedStudents.slice(0, 5); 
 
-  }, [teacherTests, allAttempts, user, topperTimeFrame]);
+  }, [teacherTests, allAttempts, user]);
 
 
   if (isLoadingData || isAuthLoading) {
@@ -370,36 +356,20 @@ export default function StudentPerformanceOverviewPage() {
             <CardTitle className="text-2xl font-headline flex items-center">
               <Trophy className="mr-2 h-6 w-6 text-yellow-500" /> Top Performers
             </CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant={topperTimeFrame === 'weekly' ? 'default' : 'outline'}
-                onClick={() => setTopperTimeFrame('weekly')}
-                size="sm"
-              >
-                This Week
-              </Button>
-              <Button 
-                variant={topperTimeFrame === 'monthly' ? 'default' : 'outline'}
-                onClick={() => setTopperTimeFrame('monthly')}
-                size="sm"
-              >
-                This Month
-              </Button>
-            </div>
           </div>
           <CardDescription>
-            Students who achieved Rank #1 in at least one test during the current {topperTimeFrame}. Ranked by number of tests topped, then average score, then average time.
+            All-time top performing students who achieved Rank #1 in at least one test. Ranked by number of tests topped, then average score, then average time.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {topPerformers.length === 0 ? (
             <div className="text-center py-6">
               <CalendarRange className="w-12 h-12 text-muted-foreground/70 mx-auto mb-3" />
-              <p className="text-muted-foreground">No students achieved Rank #1 in any test for the selected period ({topperTimeFrame}).</p>
+              <p className="text-muted-foreground">No students have achieved Rank #1 in any test yet.</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {topPerformers.map((topper, index) => ( // Added index for unique key if needed, though studentIdentifier should be unique
+              {topPerformers.map((topper) => ( 
                  <div key={topper.studentIdentifier} className={`flex items-center justify-between p-3 rounded-md ${topper.rank === 1 ? 'bg-yellow-400/10 border-yellow-500' : (topper.rank === 2 ? 'bg-gray-300/20 border-gray-400' : (topper.rank === 3 ? 'bg-orange-400/10 border-orange-500' : 'bg-muted/50 border'))} border`}>
                   <div className="flex items-center gap-3">
                     <Badge variant={topper.rank === 1 ? "default" : (topper.rank === 2 ? "secondary" : (topper.rank === 3 ? "outline" : "secondary"))} className={`text-sm w-8 h-8 flex items-center justify-center rounded-full ${topper.rank === 1 ? 'bg-yellow-500 text-white' : (topper.rank ===2 ? 'bg-gray-400 text-white' : (topper.rank === 3 ? 'bg-orange-500 text-white' : 'bg-slate-500 text-white')) }`}>
