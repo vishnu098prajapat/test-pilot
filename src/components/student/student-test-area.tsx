@@ -6,7 +6,7 @@ import type { Test, Question, StudentAnswer, TestAttempt, MCQQuestion, TrueFalse
 import QuestionDisplay from './question-display';
 import Timer from './timer';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, CheckCircle, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Send, WifiOff } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { analyzeStudentBehavior, AnalyzeStudentBehaviorInput } from '@/ai/flows/analyze-student-behavior';
@@ -23,14 +23,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from 'next/navigation';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 interface StudentTestAreaProps {
   testData: Test;
   studentIdentifier: string; 
-  studentIp: string; // Added studentIp prop
+  studentIp: string;
 }
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
+const PENDING_SUBMISSIONS_STORAGE_KEY = "test_pilot_pending_submissions";
 
 export default function StudentTestArea({ testData, studentIdentifier, studentIp }: StudentTestAreaProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -41,6 +43,43 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   const { toast } = useToast();
   const router = useRouter();
   const startTimeRef = useRef<Date>(new Date());
+  const isOnline = useOnlineStatus();
+
+  // Effect for syncing pending submissions when online
+  useEffect(() => {
+    async function syncPendingSubmissions() {
+      if (isOnline) {
+        try {
+          const pending = JSON.parse(localStorage.getItem(PENDING_SUBMISSIONS_STORAGE_KEY) || '[]');
+          if (pending.length > 0) {
+            console.log(`[Sync] Found ${pending.length} pending submission(s). Attempting to sync.`);
+            const successfulSyncs: string[] = [];
+            for (const attempt of pending) {
+              const response = await fetch('/api/attempts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(attempt),
+              });
+              if (response.ok) {
+                successfulSyncs.push(attempt.id);
+                console.log(`[Sync] Successfully submitted pending attempt for test ${attempt.testId}`);
+              } else {
+                 console.error(`[Sync] Failed to submit pending attempt for test ${attempt.testId}. Status: ${response.status}`);
+              }
+            }
+            if (successfulSyncs.length > 0) {
+              const remaining = pending.filter((att: any) => !successfulSyncs.includes(att.id));
+              localStorage.setItem(PENDING_SUBMISSIONS_STORAGE_KEY, JSON.stringify(remaining));
+              toast({ title: "Data Synced", description: `${successfulSyncs.length} offline test attempt(s) have been successfully submitted.` });
+            }
+          }
+        } catch (e) {
+          console.error("[Sync] Error during sync process:", e);
+        }
+      }
+    }
+    syncPendingSubmissions();
+  }, [isOnline, toast]);
 
   const logActivity = useCallback((action: string) => {
     const timestamp = new Date().toISOString();
@@ -93,6 +132,27 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   const handleAnswerChange = (questionId: string, answer: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
     logActivity(`Answer changed for question ID ${questionId}.`);
+  };
+  
+  const savePendingSubmission = (attemptData: Omit<TestAttempt, 'id' | 'submittedAt'>) => {
+    try {
+      const pending = JSON.parse(localStorage.getItem(PENDING_SUBMISSIONS_STORAGE_KEY) || '[]');
+      const newPendingAttempt = {
+        ...attemptData,
+        id: `offline-attempt-${Date.now()}`,
+        submittedAt: new Date().toISOString()
+      };
+      pending.push(newPendingAttempt);
+      localStorage.setItem(PENDING_SUBMISSIONS_STORAGE_KEY, JSON.stringify(pending));
+      toast({
+        title: "You are offline",
+        description: "Your test has been saved locally and will be submitted automatically when you reconnect.",
+        duration: 5000,
+      });
+    } catch(e) {
+        console.error("Failed to save pending submission to localStorage", e);
+        toast({ title: "Save Error", description: "Could not save your attempt for later submission. Please check your connection.", variant: "destructive"});
+    }
   };
 
   const handleSubmitTest = useCallback(async (autoSubmit: boolean = false) => {
@@ -178,7 +238,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
       activityLog: activityLog.join('\n'),
       isSuspicious: false, 
       suspiciousReason: "", 
-      ipAddress: studentIp, // Include studentIp
+      ipAddress: studentIp, 
     };
 
     const proctorInput: AnalyzeStudentBehaviorInput = {
@@ -187,23 +247,21 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
       activityLog: activityLog.join('\n'),
     };
     
-    let proctoringSucceeded = false;
     try {
       const proctoringResult = await analyzeStudentBehavior(proctorInput);
       attemptDataForApi.isSuspicious = proctoringResult.isSuspicious;
       attemptDataForApi.suspiciousReason = proctoringResult.suspiciousReason;
       logActivity(`AI Proctoring result: Suspicious - ${proctoringResult.isSuspicious}, Reason - ${proctoringResult.suspiciousReason}, Severity - ${proctoringResult.severityScore}`);
-      proctoringSucceeded = true;
     } catch (proctorError) {
       console.error("AI Proctoring Error:", proctorError);
       logActivity(`AI Proctoring failed: ${(proctorError as Error).message}`);
       toast({ title: "AI Proctoring Issue", description: "Could not analyze behavior, but test will still be submitted.", variant: "destructive", duration: 2000 });
-      attemptDataForApi.isSuspicious = false; // Default to false on proctoring error
+      attemptDataForApi.isSuspicious = false;
       attemptDataForApi.suspiciousReason = `Proctoring analysis failed: ${(proctorError as Error).message}`;
     }
 
-    try {
-      const response = await fetch('/api/attempts', {
+    const submitToServer = async () => {
+       const response = await fetch('/api/attempts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(attemptDataForApi),
@@ -212,29 +270,30 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
         const errorData = await response.json();
         throw new Error(errorData.error || `API Error: ${response.status}`);
       }
-      const responseData = await response.json();
-      console.log("[StudentTestArea] Attempt submitted to API:", responseData);
-      toast({
-        title: "Test Submitted!",
-        description: `Your test has been successfully ${autoSubmit ? 'auto-' : ''}submitted. ${attemptDataForApi.isSuspicious ? 'Suspicious activity was flagged.' : ''}`,
-        duration: proctoringSucceeded ? 2000 : 3000,
-      });
-      setIsSubmitted(true);
-      setTimeout(() => router.push(`/test/${testData.id}/results`), proctoringSucceeded ? 2000 : 3000);
-
-    } catch (error) {
-      console.error("[StudentTestArea] Error submitting test attempt to API:", error);
-      toast({
-        title: "Submission Error",
-        description: "There was an error recording your test attempt centrally. Please contact support if this persists.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      // Still allow user to see their results locally if API submission fails
-      setIsSubmitted(true); 
-      setTimeout(() => router.push(`/test/${testData.id}/results`), 3500); 
+      return response.json();
+    };
+    
+    if (isOnline) {
+      try {
+        const responseData = await submitToServer();
+        console.log("[StudentTestArea] Attempt submitted to API:", responseData);
+        toast({
+          title: "Test Submitted!",
+          description: `Your test has been successfully ${autoSubmit ? 'auto-' : ''}submitted.`,
+          duration: 2000,
+        });
+      } catch(e) {
+        console.error("[StudentTestArea] Network error during online submission, saving for later:", e);
+        savePendingSubmission(attemptDataForApi);
+      }
+    } else {
+      savePendingSubmission(attemptDataForApi);
     }
-  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity, studentIdentifier, studentIp, startTimeRef]);
+    
+    setIsSubmitted(true);
+    setTimeout(() => router.push(`/test/${testData.id}/results`), 1500); 
+
+  }, [answers, testData, activityLog, toast, isSubmitting, isSubmitted, router, logActivity, studentIdentifier, studentIp, startTimeRef, isOnline]);
 
   if (isSubmitted) {
     return (
@@ -254,7 +313,13 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   const totalQuestions = testData.questions.length;
 
   return (
-    <div className="flex flex-col items-center w-full max-w-4xl p-2 md:p-0">
+    <div className="relative flex flex-col items-center w-full max-w-4xl p-2 md:p-0">
+      {!isOnline && (
+        <div className="absolute top-0 right-0 flex items-center gap-2 rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground z-30">
+          <WifiOff className="h-4 w-4" />
+          Offline Mode
+        </div>
+      )}
       <div className="w-full flex flex-col md:flex-row gap-6 md:gap-8">
         <div className="w-full md:w-1/3 order-2 md:order-1">
            <Timer 
