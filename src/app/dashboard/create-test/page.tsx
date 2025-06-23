@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, Save, Eye, Settings as SettingsIcon } from "lucide-react";
 import { QuestionForm } from "@/components/test/question-form";
-import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from "@/lib/types";
+import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from '@/lib/types';
 import { testBuilderSchema } from "@/lib/types";
 import { addTest, getTestById, updateTest } from "@/lib/store"; 
 import { useAuth } from "@/hooks/use-auth";
@@ -59,7 +59,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth(); // Correctly get auth loading state
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testIdToEdit, setTestIdToEdit] = useState<string | null>(null);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
@@ -90,15 +90,14 @@ export default function TestBuilderForm() {
     const editId = searchParams.get("edit");
     const source = searchParams.get("source");
 
-    // Don't proceed until authentication is resolved
     if (isAuthLoading) {
-        setIsLoading(true);
-        return;
+        return; // Wait for authentication to resolve. The main return handles the loading UI.
     }
 
     if (!user && editId) {
       toast({ title: "Unauthorized", description: "You must be logged in to edit a test.", variant: "destructive" });
       router.push("/auth/login");
+      setIsLoading(false); // Stop loading as we are redirecting.
       return;
     }
 
@@ -151,10 +150,10 @@ export default function TestBuilderForm() {
         const newSearchParams = new URLSearchParams(searchParams.toString());
         newSearchParams.delete('source');
         router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
+        setIsLoading(false); // Done loading from AI source
       }
     } else if (editId) {
       setTestIdToEdit(editId);
-      setIsLoading(true);
       getTestById(editId)
         .then(testData => {
           if (testData && testData.teacherId === user?.id) {
@@ -191,6 +190,9 @@ export default function TestBuilderForm() {
         })
         .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive", duration: 2000 }))
         .finally(() => setIsLoading(false));
+    } else {
+        // This is a new test, not loading any data.
+        setIsLoading(false);
     }
   }, [searchParams, form, user, isAuthLoading, router, toast, replaceQuestions]);
 
@@ -256,7 +258,7 @@ export default function TestBuilderForm() {
     setShowPreviewDialog(true);
   };
 
-  if (isAuthLoading || (isLoading && !searchParams.get("source"))) { 
+  if (isAuthLoading || isLoading) { 
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-1/2" />

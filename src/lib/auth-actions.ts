@@ -114,14 +114,11 @@ export async function signUpWithNameAndDob(name: string, dob: string, role: 'stu
   const currentUsers = readUsersDb();
 
   // IP-based rate limiting
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const recentSignupsFromIp = currentUsers.filter(u => 
-    u.signupIp === ipAddress && u.signupTimestamp && u.signupTimestamp > twentyFourHoursAgo
-  );
+  const signupsFromIp = currentUsers.filter(u => u.signupIp === ipAddress);
 
-  if (recentSignupsFromIp.length > 0) {
-    console.log(`[AuthAction] Signup blocked for IP ${ipAddress} due to recent signup.`);
-    return { success: false, message: "Only one account can be created from this network within 24 hours to prevent abuse of the free tier." };
+  if (signupsFromIp.length >= 2) {
+    console.log(`[AuthAction] Signup blocked for IP ${ipAddress} because it has already created ${signupsFromIp.length} accounts.`);
+    return { success: false, message: "A maximum of 2 accounts can be created from this network to prevent abuse. Please contact support if you need more." };
   }
 
 
