@@ -2076,5 +2076,52 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750485450995-vs98ify",
     "submittedAt": "2025-06-21T05:57:30.995Z"
+  },
+  {
+    "testId": "test-1750334333526-aj62h",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "nana",
+    "startTime": "2025-06-23T08:53:33.604Z",
+    "endTime": "2025-06-23T08:53:54.156Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750334319770-0-05bv1nb",
+        "answer": "ai-opt_q0_idx2_1750334319770_nfs36mjrp",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750334319770-1-tlnsyrd",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750334319770-2-ellg9kt",
+        "answer": "ai-opt_q2_idx2_1750334319770_9yegpwik9",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750334319770-3-jrhdey2",
+        "answer": "ai-opt_q3_idx2_1750334319770_21lfjbsnc",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750334319770-4-se8mx5y",
+        "answer": "ai-opt_q4_idx2_1750334319770_2zjrx48pw",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-23T08:53:33.620Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-23T08:53:33.621Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-23T08:53:34.849Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750334319770-0-05bv1nb.\n[2025-06-23T08:53:46.432Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750334319770-2-ellg9kt.\n[2025-06-23T08:53:49.197Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750334319770-3-jrhdey2.\n[2025-06-23T08:53:51.390Z] User: nana (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750334319770-4-se8mx5y.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student activity log shows normal test-taking behavior. The student answered multiple questions within a reasonable time frame. There are no indications of suspicious activity such as frequent tab switches, copy-pasting, or attempts to access unauthorized resources.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750668553797-u7wuvn1",
+    "submittedAt": "2025-06-23T08:49:13.797Z"
   }
 ]
