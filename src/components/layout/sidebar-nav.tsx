@@ -40,7 +40,9 @@ const mainNavItemsTeacher = [
 ];
 
 const mainNavItemsStudent = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, 
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/create-test", label: "Create Test", icon: PlusCircle },
+  { href: "/dashboard/ai-generate-test", label: "AI Generate Test", icon: Sparkles, feature: "ai" },
   { href: "/dashboard/my-progress", label: "My Progress", icon: TrendingUp },
   { href: "/join", label: "Join Group", icon: UserPlus },
 ];
