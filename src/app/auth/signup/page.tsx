@@ -7,9 +7,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Home, UserPlus } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -39,27 +39,23 @@ export default function SignupPage() {
 
   const handleSignUp = async (data: SignupFormValues) => {
     setIsSubmitting(true);
-    console.log("SignupPage: handleSignUp called with data:", data);
     try {
       const result = await signUpWithNameAndDob(data.name, data.dob);
-      console.log("SignupPage: signUpWithNameAndDob result:", result);
-
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
-        authContext.login(result.user); // Use login from context to set user state
+        authContext.login(result.user);
         toast({
           title: "Sign Up Successful",
-          description: `Welcome, ${result.user.displayName}! Your account is ready. Redirecting...`,
+          description: `Welcome, ${result.user.displayName}! Redirecting...`,
           duration: 2000,
         });
         router.push("/dashboard");
       } else {
         toast({
           title: "Sign Up Failed",
-          description: result.message || "An unexpected error occurred. Please check your details.",
+          description: result.message || "An unexpected error occurred.",
           variant: "destructive",
-          duration: 3000, // Increased duration for error messages
+          duration: 3000,
         });
-        console.warn("SignupPage: Signup failed. Result:", JSON.stringify(result, null, 2));
       }
     } catch (error) {
       console.error("SignupPage: Signup error", error);
@@ -73,80 +69,80 @@ export default function SignupPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   const getMaxDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="absolute top-4 left-4">
-        <Button variant="ghost" asChild className="text-primary hover:bg-primary/10">
-          <Link href="/">
-            <Home className="mr-2 h-4 w-4" /> Home
-          </Link>
-        </Button>
-      </div>
-      <Card className="w-full max-w-md bg-card rounded-xl shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-3xl font-headline text-center text-foreground">Create Account</CardTitle>
-          <CardDescription className="text-center text-muted-foreground pt-2">
-            Please choose a unique name as it will be used to identify you across the platform.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSignUp)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your full name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <FormControl>
-                       <Input 
-                        type="date" 
-                        {...field} 
-                        className="w-full"
-                        min="1900-01-01" 
-                        max={getMaxDate()}
-                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isSubmitting}>
-                {isSubmitting ? "Creating Account..." : (
-                  <>
-                    <UserPlus className="mr-2 h-4 w-4" /> Create Account
-                  </>
-                )}
+    <div className="relative min-h-screen w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+      {/* Decorative background shapes */}
+      <div className="absolute -top-1/4 -left-1/4 w-96 h-96 bg-gradient-to-br from-primary/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse"></div>
+      <div className="absolute -bottom-1/4 -right-1/4 w-96 h-96 bg-gradient-to-tl from-accent/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse delay-75"></div>
+      
+      <main className="z-10 w-full max-w-md p-4">
+        <Card className="w-full bg-card/80 backdrop-blur-lg rounded-2xl shadow-2xl border-white/20">
+          <CardHeader className="text-left space-y-4">
+             <Link href="/" className="flex items-center gap-2 text-primary">
+                <GraduationCap className="h-8 w-8" />
+                <span className="text-2xl font-bold font-headline">Test Pilot</span>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Create an account</h1>
+              <p className="text-muted-foreground">to start creating and taking tests</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSignUp)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your full name" {...field} className="py-6"/>
+                      </FormControl>
+                       <p className="text-xs text-muted-foreground pt-1">This will be your unique identifier. Make sure it's correct.</p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          {...field}
+                          className="w-full py-6"
+                          min="1900-01-01"
+                          max={getMaxDate()}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full py-6 text-lg" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating Account..." : "Create Account"}
+                </Button>
+              </form>
+            </Form>
+             <p className="mt-6 text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Button variant="link" asChild className="p-0 h-auto font-semibold text-primary hover:underline">
+                <Link href="/auth/login">Sign in</Link>
               </Button>
-            </form>
-          </Form>
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Button variant="link" asChild className="p-0 h-auto text-primary hover:underline">
-              <Link href="/auth/login">Login</Link>
-            </Button>
-          </p>
-        </CardContent>
-      </Card>
+            </p>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }

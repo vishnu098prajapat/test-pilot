@@ -7,9 +7,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Home, LogIn } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -39,27 +39,23 @@ export default function LoginPage() {
 
   const handleLogin = async (data: LoginFormValues) => {
     setIsSubmitting(true);
-    console.log("LoginPage: handleLogin called with data:", data);
     try {
       const result = await signInWithNameAndDob(data.name, data.dob);
-      console.log("LoginPage: signInWithNameAndDob result:", result);
-
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
         authContext.login(result.user);
         toast({
           title: "Login Successful",
-          description: `Welcome, ${result.user.displayName}! Redirecting to dashboard...`,
+          description: `Welcome, ${result.user.displayName}! Redirecting...`,
           duration: 2000,
         });
         router.push("/dashboard");
       } else {
         toast({
           title: "Login Failed",
-          description: result.message || "An unexpected error occurred. Please check your details.",
+          description: result.message || "An unexpected error occurred.",
           variant: "destructive",
-          duration: 3000, 
+          duration: 3000,
         });
-         console.warn("LoginPage: Login attempt failed. Details:", JSON.stringify(result, null, 2));
       }
     } catch (error) {
       console.error("LoginPage: Login error", error);
@@ -73,83 +69,79 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   const getMaxDate = () => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return today.toISOString().split("T")[0];
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
-      <div className="absolute top-4 left-4">
-        <Button variant="ghost" asChild className="text-primary hover:bg-primary/10">
-          <Link href="/">
-            <Home className="mr-2 h-4 w-4" /> Home
-          </Link>
-        </Button>
-      </div>
-      <Card className="w-full max-w-md bg-card rounded-xl shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-3xl font-headline text-center text-foreground">Account Login</CardTitle>
-          <CardDescription className="text-center text-muted-foreground pt-2">
-            Enter the Name and Date of Birth you used during sign up.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your full name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="date" 
-                        {...field} 
-                        className="w-full"
-                        min="1900-01-01" 
-                        max={getMaxDate()}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : (
-                  <>
-                    <LogIn className="mr-2 h-4 w-4" /> Login
-                  </>
-                )}
+    <div className="relative min-h-screen w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+      {/* Decorative background shapes */}
+      <div className="absolute -top-1/4 -left-1/4 w-96 h-96 bg-gradient-to-br from-primary/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse"></div>
+      <div className="absolute -bottom-1/4 -right-1/4 w-96 h-96 bg-gradient-to-tl from-accent/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse delay-75"></div>
+      
+      <main className="z-10 w-full max-w-md p-4">
+        <Card className="w-full bg-card/80 backdrop-blur-lg rounded-2xl shadow-2xl border-white/20">
+          <CardHeader className="text-left space-y-4">
+             <Link href="/" className="flex items-center gap-2 text-primary">
+                <GraduationCap className="h-8 w-8" />
+                <span className="text-2xl font-bold font-headline">Test Pilot</span>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Sign in</h1>
+              <p className="text-muted-foreground">to continue to your dashboard</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your full name" {...field} className="py-6"/>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          {...field}
+                          className="w-full py-6"
+                          min="1900-01-01"
+                          max={getMaxDate()}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full py-6 text-lg" disabled={isSubmitting}>
+                  {isSubmitting ? "Logging in..." : "Sign In"}
+                </Button>
+              </form>
+            </Form>
+             <p className="mt-6 text-center text-sm text-muted-foreground">
+              New to Test Pilot?{" "}
+              <Button variant="link" asChild className="p-0 h-auto font-semibold text-primary hover:underline">
+                <Link href="/auth/signup">Create an account</Link>
               </Button>
-            </form>
-          </Form>
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            Need an account?{" "}
-            <Button variant="link" asChild className="p-0 h-auto text-primary hover:underline">
-              <Link href="/auth/signup">Create Account</Link>
-            </Button>
-          </p>
-        </CardContent>
-      </Card>
+            </p>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }
