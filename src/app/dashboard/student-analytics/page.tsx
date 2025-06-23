@@ -197,30 +197,34 @@ export default function StudentPerformanceOverviewPage() {
     if (!user || teacherTests.length === 0 || allAttempts.length === 0) return [];
 
     const teacherTestIds = new Set(teacherTests.map(t => t.id));
-    
+    const now = new Date();
+    const currentMonthStart = startOfMonth(now);
+    const currentMonthEnd = endOfMonth(now);
+
     const relevantAttempts = allAttempts.filter(attempt =>
-        teacherTestIds.has(attempt.testId)
+      teacherTestIds.has(attempt.testId) &&
+      isWithinInterval(new Date(attempt.submittedAt), { start: currentMonthStart, end: currentMonthEnd })
     );
 
     if (relevantAttempts.length === 0) return [];
 
     const testToppersMap = new Map<string, Set<string>>(); 
     teacherTests.forEach(test => {
-        const attemptsForThisTest = relevantAttempts.filter(att => att.testId === test.id);
-        if (attemptsForThisTest.length > 0) {
-            const maxScore = Math.max(...attemptsForThisTest.map(att => att.scorePercentage || 0));
-            if (maxScore > 0) { 
-                const toppersForThisTest = new Set<string>();
-                attemptsForThisTest.forEach(att => {
-                    if ((att.scorePercentage || 0) === maxScore) {
-                        toppersForThisTest.add(att.studentIdentifier);
-                    }
-                });
-                if (toppersForThisTest.size > 0) {
-                    testToppersMap.set(test.id, toppersForThisTest);
-                }
+      const attemptsForThisTest = relevantAttempts.filter(att => att.testId === test.id);
+      if (attemptsForThisTest.length > 0) {
+        const maxScore = Math.max(...attemptsForThisTest.map(att => att.scorePercentage || 0));
+        if (maxScore > 0) { 
+          const toppersForThisTest = new Set<string>();
+          attemptsForThisTest.forEach(att => {
+            if ((att.scorePercentage || 0) === maxScore) {
+              toppersForThisTest.add(att.studentIdentifier);
             }
+          });
+          if (toppersForThisTest.size > 0) {
+            testToppersMap.set(test.id, toppersForThisTest);
+          }
         }
+      }
     });
 
     const potentialToppersAggregatedStats = new Map<string, {
@@ -354,18 +358,18 @@ export default function StudentPerformanceOverviewPage() {
         <CardHeader>
           <div className="flex flex-wrap justify-between items-center gap-2">
             <CardTitle className="text-2xl font-headline flex items-center">
-              <Trophy className="mr-2 h-6 w-6 text-yellow-500" /> Top Performers
+              <Trophy className="mr-2 h-6 w-6 text-yellow-500" /> Top Performers (This Month)
             </CardTitle>
           </div>
           <CardDescription>
-            All-time top performing students who achieved Rank #1 in at least one test. Ranked by number of tests topped, then average score, then average time.
+            Top performers for the current month. Students are ranked by the number of tests they've topped, then by their average score.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {topPerformers.length === 0 ? (
             <div className="text-center py-6">
               <CalendarRange className="w-12 h-12 text-muted-foreground/70 mx-auto mb-3" />
-              <p className="text-muted-foreground">No students have achieved Rank #1 in any test yet.</p>
+              <p className="text-muted-foreground">No students have achieved Rank #1 in any test this month.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -391,7 +395,7 @@ export default function StudentPerformanceOverviewPage() {
 
       <Separator className="my-8" />
 
-       <h2 className="text-xl font-semibold font-headline mb-4">This Month&apos;s Summary</h2>
+       <h2 className="text-xl font-semibold font-headline mb-4">This Month's Summary</h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total Tests Created" value={overallMonthlyStats.totalCreatedTests} icon={FileText} description="All tests designed by you (lifetime)" formatTimeFn={formatTime} />
         <StatCard title="Monthly Submissions" value={overallMonthlyStats.totalMonthlySubmissions} icon={ListChecks} description="Across all your published tests this month" animate={true} formatTimeFn={formatTime} />
@@ -437,7 +441,7 @@ export default function StudentPerformanceOverviewPage() {
               <p className="text-muted-foreground text-center py-4">No attempts have been flagged as suspicious across your tests.</p>
             )}
             </ScrollArea>
-            <DialogFooter> {/* Ensure DialogFooter is imported and used */}
+            <DialogFooter>
                 <Button variant="outline" onClick={() => setIsFlaggedAttemptsModalOpen(false)}>Close</Button>
             </DialogFooter>
           </DialogContent>
@@ -454,7 +458,7 @@ export default function StudentPerformanceOverviewPage() {
          <Card className="text-center py-12 shadow-md">
           <CardContent className="flex flex-col items-center gap-3">
             <ClipboardList className="w-12 h-12 text-muted-foreground/70" />
-            <p className="text-muted-foreground">You haven&apos;t created any tests yet.</p>
+            <p className="text-muted-foreground">You haven't created any tests yet.</p>
             <p className="text-sm text-muted-foreground">Create a test to see its performance here.</p>
             <Button asChild className="mt-2">
                 <Link href="/dashboard/create-test">Create New Test</Link>
