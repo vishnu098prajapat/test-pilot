@@ -2833,5 +2833,444 @@
     "createdAt": "2025-06-20T06:53:44.510Z",
     "updatedAt": "2025-06-21T13:38:05.560Z",
     "batchId": "group-1750480811384-bjl7aq2"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on pyhton ",
+    "subject": "pyhton ",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750655141663-0-h4qb9kp",
+        "text": "What is the primary purpose of using 'try' and 'except' blocks in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750655141663_grs9rxx5z",
+            "text": "To make the code run faster."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750655141663_vk5p53fju",
+            "text": "To handle potential errors and prevent the program from crashing."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750655141663_a2wr8l9ct",
+            "text": "To make the code more readable."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750655141663_wjh00w295",
+            "text": "To add comments to the code."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1750655141663_vk5p53fju",
+        "correctAnswer": "To handle potential errors and prevent the program from crashing.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655141664-1-mckjpnd",
+        "text": "Which of the following statements is true regarding the 'finally' block in a 'try-except-finally' construct?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750655141664_upuzso7xv",
+            "text": "The code within the 'finally' block only executes if an exception occurs."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750655141664_qotogj1vh",
+            "text": "The code within the 'finally' block never executes."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750655141664_7ifh5r2fn",
+            "text": "The code within the 'finally' block only executes if no exception occurs."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750655141664_uxydrkluy",
+            "text": "The code within the 'finally' block always executes."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750655141664_uxydrkluy",
+        "correctAnswer": "The code within the 'finally' block always executes.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655141664-2-1mgj88m",
+        "text": "Which exception is typically raised when a function receives an argument of the correct data type, but an inappropriate value?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750655141664_s3fp99ycx",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750655141664_ea3m09y6d",
+            "text": "IndexError"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750655141664_4xmr5fib2",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750655141664_4deccdfet",
+            "text": "SyntaxError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750655141664_4xmr5fib2",
+        "correctAnswer": "ValueError",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655141664-3-nhz9ba1",
+        "text": "What is the purpose of creating custom exception classes in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750655141664_ucthhpmpb",
+            "text": "Allows you to define custom exception classes."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750655141664_pyg8o4nsv",
+            "text": "Prevents exceptions from being raised."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750655141664_pdpvzan9w",
+            "text": "Automatically fixes errors in your code."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750655141664_rarv3yufs",
+            "text": "Limits the number of exceptions that can be caught."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1750655141664_ucthhpmpb",
+        "correctAnswer": "Allows you to define custom exception classes.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655141664-4-2c7qzah",
+        "text": "Which of the following is the correct syntax to catch a generic exception and assign it to the variable 'e'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750655141664_2t2vwi5js",
+            "text": "except Error as e:"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750655141664_ztvc8l68u",
+            "text": "catch Exception as e:"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750655141664_e9v4u5lqm",
+            "text": "except Exception as e:"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750655141664_ljx26lt8w",
+            "text": "try Exception as e:"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750655141664_e9v4u5lqm",
+        "correctAnswer": "except Exception as e:",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750655163853-vyt32",
+    "createdAt": "2025-06-23T05:06:03.853Z",
+    "updatedAt": "2025-06-23T05:06:03.853Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on english",
+    "subject": "english",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750655337719-0-ic0uv2l",
+        "text": "Which word correctly completes the sentence: 'I will ________ your apology.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750655337719_lye71xobi",
+            "text": "except"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750655337719_0enhu9e0r",
+            "text": "accept"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750655337719_w44vuodyq",
+            "text": "expect"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750655337719_phe21h3a1",
+            "text": "excerpt"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1750655337719_0enhu9e0r",
+        "correctAnswer": "accept",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-1-p16z2t9",
+        "text": "The students left ________ books on the bus.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750655337719_126ht5q1d",
+            "text": "there"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750655337719_sb1u2mwgk",
+            "text": "they're"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750655337719_k2vvb8ax8",
+            "text": "their"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750655337719_2wphipe0w",
+            "text": "to"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750655337719_k2vvb8ax8",
+        "correctAnswer": "their",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-2-z5pztf3",
+        "text": "Identify the sentence type: 'Because it was raining, I took my umbrella.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750655337719_7huieyn17",
+            "text": "A simple sentence"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750655337719_7d18lrev6",
+            "text": "A compound sentence"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750655337719_xxdp444vg",
+            "text": "A complex sentence"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750655337719_3w3od5dbx",
+            "text": "A compound-complex sentence"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1750655337719_xxdp444vg",
+        "correctAnswer": "A complex sentence",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-3-cvnuvyc",
+        "text": "Identify the figure of speech: 'The snow is a white blanket.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750655337719_7orhugjc5",
+            "text": "Simile"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750655337719_j8qrzdvi7",
+            "text": "Metaphor"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750655337719_1bbj41tff",
+            "text": "Personification"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750655337719_czw9ido77",
+            "text": "Hyperbole"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750655337719_j8qrzdvi7",
+        "correctAnswer": "Metaphor",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-4-boeyxsi",
+        "text": "Choose the word that means 'to make clear':",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750655337719_4hqemfy0a",
+            "text": "Obfuscate"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750655337719_xuped35vr",
+            "text": "Elucidate"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750655337719_8upf0x2yi",
+            "text": "Complicate"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750655337719_ua5a48wuz",
+            "text": "Confuse"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750655337719_xuped35vr",
+        "correctAnswer": "Elucidate",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-5-c9g7tv5",
+        "text": "Choose the word that means 'present, appearing, or found everywhere':",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1750655337719_axmqqre4j",
+            "text": "Rare"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1750655337719_88e79un3y",
+            "text": "Ubiquitous"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1750655337719_ehb812wqh",
+            "text": "Unique"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1750655337719_xcxbkcyj7",
+            "text": "Scarce"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx1_1750655337719_88e79un3y",
+        "correctAnswer": "Ubiquitous",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-6-n50h2qf",
+        "text": "Which word correctly completes the sentence: 'The weather will ________ our plans.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1750655337719_dqdw37lrq",
+            "text": "effect"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1750655337719_66e6gryb6",
+            "text": "affect"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1750655337719_2eogkmut5",
+            "text": "impact"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1750655337719_ht85yaw3s",
+            "text": "influence"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx1_1750655337719_66e6gryb6",
+        "correctAnswer": "affect",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-7-fh63fja",
+        "text": "The dog wagged ________ tail.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1750655337719_koem80442",
+            "text": "it's"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1750655337719_ng1zg8jc0",
+            "text": "its"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1750655337719_caf5kr5ih",
+            "text": "its'"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1750655337719_7213vkow7",
+            "text": "it is"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx1_1750655337719_ng1zg8jc0",
+        "correctAnswer": "its",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-8-b10fr9x",
+        "text": "Identify the sentence type: 'I went to the store, and I bought milk.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q8_idx0_1750655337719_nu0ykgu2r",
+            "text": "A simple sentence"
+          },
+          {
+            "id": "ai-opt_q8_idx1_1750655337719_aidotp0u7",
+            "text": "A compound sentence"
+          },
+          {
+            "id": "ai-opt_q8_idx2_1750655337719_xr94zijgm",
+            "text": "A complex sentence"
+          },
+          {
+            "id": "ai-opt_q8_idx3_1750655337719_shzbe5j2l",
+            "text": "A run-on sentence"
+          }
+        ],
+        "correctOptionId": "ai-opt_q8_idx1_1750655337719_aidotp0u7",
+        "correctAnswer": "A compound sentence",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750655337719-9-quesxmi",
+        "text": "Identify the figure of speech: 'A fire station burning down.'",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q9_idx0_1750655337719_or1yfkwvr",
+            "text": "Hyperbole"
+          },
+          {
+            "id": "ai-opt_q9_idx1_1750655337719_io4i67bip",
+            "text": "Alliteration"
+          },
+          {
+            "id": "ai-opt_q9_idx2_1750655337719_y8s45a17t",
+            "text": "Irony"
+          },
+          {
+            "id": "ai-opt_q9_idx3_1750655337719_o4a8yvnmr",
+            "text": "Assonance"
+          }
+        ],
+        "correctOptionId": "ai-opt_q9_idx2_1750655337719_y8s45a17t",
+        "correctAnswer": "Irony",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": false,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750655349586-vhybz",
+    "createdAt": "2025-06-23T05:09:09.586Z",
+    "updatedAt": "2025-06-23T05:09:09.586Z"
   }
 ]

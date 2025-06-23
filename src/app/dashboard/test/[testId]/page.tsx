@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import QrCodeModal from "@/components/common/qr-code-modal"; 
+import QrCodeModal from "@/components/common/qr-code-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
@@ -35,7 +35,7 @@ export default function TestManagementPage() {
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  
+
   const [test, setTest] = useState<Test | null>(null);
   const [isFetchingTest, setIsFetchingTest] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -51,27 +51,27 @@ export default function TestManagementPage() {
 
   useEffect(() => {
     let isActive = true;
-    setFetchError(null); 
+    setFetchError(null);
 
     if (isAuthLoading) {
-      setIsFetchingTest(true); 
+      setIsFetchingTest(true);
       return;
     }
 
     if (!user) {
-      setIsFetchingTest(false); 
+      setIsFetchingTest(false);
       return;
     }
 
     async function fetchInitialData() {
       if (!isActive) return;
       setIsFetchingTest(true);
-      setTest(null); 
+      setTest(null);
 
       if (!testId) {
         if (isActive) {
           toast({ title: "Error", description: "Test ID is missing.", variant: "destructive", duration: 2000 });
-          router.push("/dashboard"); 
+          router.push("/dashboard");
           setIsFetchingTest(false);
         }
         return;
@@ -88,7 +88,7 @@ export default function TestManagementPage() {
         if (fetchedTest && fetchedTest.teacherId === user.id) {
           setTest(fetchedTest);
           setGroups(fetchedGroups);
-          setSelectedGroupId(fetchedTest.batchId); 
+          setSelectedGroupId(fetchedTest.batchId);
           if (typeof window !== "undefined") {
             setQrCodeUrl(`${window.location.origin}/test/${fetchedTest.id}`);
           }
@@ -206,14 +206,14 @@ export default function TestManagementPage() {
       </div>
     );
   }
-  
+
   if (fetchError) {
      return (
-      <div className="container mx-auto py-8 text-center flex flex-col items-center justify-center min-h-[300px]">
+      <div className="container mx-auto py-8 px-4 text-center flex flex-col items-center justify-center min-h-[300px]">
         <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
         <h2 className="text-2xl font-bold text-destructive mb-2">Error Loading Test</h2>
         <p className="text-muted-foreground mb-6">{fetchError}</p>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="mt-4">
           <Link href="/dashboard">Go to Dashboard</Link>
         </Button>
       </div>
@@ -282,7 +282,7 @@ export default function TestManagementPage() {
           <InfoCard icon={<ShieldCheck />} label="Tab Switch Detection" value={test.enableTabSwitchDetection ? "Enabled" : "Disabled"} />
           <InfoCard icon={<ShieldCheck />} label="Copy/Paste Disabled" value={test.enableCopyPasteDisable ? "Enabled" : "Disabled"} />
         </div>
-        
+
         <Separator className="my-8" />
 
         <div className="space-y-6">
