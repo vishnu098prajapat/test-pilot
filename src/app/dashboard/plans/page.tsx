@@ -35,7 +35,7 @@ const plans = [
     mainDescription: "For students who primarily take tests.",
     features: [
       { text: "30 Manual Test Creations/Month", icon: Edit3 },
-      { text: "Unlimited Test Attempts", icon: CheckCircle },
+      { text: "5 AI-Generated Tests/Month", icon: Sparkles },
       { text: "Full 'My Personal Progress' Tracking", icon: TrendingUpIcon },
       { text: "Live Leaderboard Access", icon: BarChart3 },
       { text: <span className="font-semibold">Minimal Ads</span>, icon: Zap, iconColor: "text-yellow-500" },
@@ -49,7 +49,7 @@ const plans = [
     name: "Teacher Basic",
     price: "₹499",
     priceDetails: "/month",
-    mainDescription: "For educators needing more test creation and student tracking.",
+    mainDescription: "For individual teachers needing core features.",
     features: [
       { text: "50 Manual Tests/Month", icon: Edit3 },
       { text: "20 AI-Generated Tests/Month", icon: Sparkles },

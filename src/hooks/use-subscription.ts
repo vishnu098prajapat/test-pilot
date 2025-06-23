@@ -24,7 +24,7 @@ export interface Plan {
 
 const plans: Record<PlanId, Plan> = {
   free: { id: 'free', name: 'Free Trial', testCreationLimit: 5, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
-  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 0, canUseAI: false, canUseGroups: false, canViewStudentAnalytics: false },
+  student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 5, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
   teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
   teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, aiTestCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
@@ -88,7 +88,7 @@ export function useSubscription() {
   const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - userTests.length);
 
   const userAiTestsCount = userTests.filter(t => t.isAiGenerated).length;
-  const canCreateAiTest = plan.aiTestCreationLimit === Infinity || userAiTestsCount < plan.aiTestCreationLimit;
+  const canCreateAiTest = plan.canUseAI && (plan.aiTestCreationLimit === Infinity || userAiTestsCount < plan.aiTestCreationLimit);
   const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - userAiTestsCount);
 
   return { 
