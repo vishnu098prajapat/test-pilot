@@ -8,6 +8,8 @@ export interface User {
   dob: string; 
   role: 'teacher' | 'student';
   profileImageUrl?: string; 
+  signupIp?: string;
+  signupTimestamp?: string;
 }
 
 export type QuestionType = 'mcq' | 'short-answer' | 'true-false';

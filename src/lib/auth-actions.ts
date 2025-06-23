@@ -9,7 +9,7 @@ const MOCK_USERS_DB_FILE_PATH = path.join(process.cwd(), 'mock_users.json');
 
 // Helper to ensure user object integrity from DB or other sources
 function ensureUserIntegrity(user: Partial<User>): User {
-  let { id, displayName, email, dob, role, profileImageUrl } = user;
+  let { id, displayName, email, dob, role, profileImageUrl, signupIp, signupTimestamp } = user;
 
   id = id || `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`; // Ensure ID for new users
 
@@ -45,7 +45,9 @@ function ensureUserIntegrity(user: Partial<User>): User {
     email: email || undefined, // Email remains optional
     dob,
     role,
-    profileImageUrl: profileImageUrl || undefined, // Keep if present, else undefined
+    profileImageUrl: profileImageUrl || undefined,
+    signupIp: signupIp || undefined,
+    signupTimestamp: signupTimestamp || undefined,
   };
 }
 
@@ -107,9 +109,22 @@ export async function signInWithNameAndDob(name: string, dob: string): Promise<A
   }
 }
 
-export async function signUpWithNameAndDob(name: string, dob: string, role: 'student' | 'teacher'): Promise<AuthResult> {
-  console.log(`[AuthAction] signUpWithNameAndDob attempt for Name: "${name}", DOB: "${dob}", Role: "${role}"`);
+export async function signUpWithNameAndDob(name: string, dob: string, role: 'student' | 'teacher', ipAddress: string): Promise<AuthResult> {
+  console.log(`[AuthAction] signUpWithNameAndDob attempt for Name: "${name}", DOB: "${dob}", Role: "${role}", IP: ${ipAddress}`);
   const currentUsers = readUsersDb();
+
+  // IP-based rate limiting
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const recentSignupsFromIp = currentUsers.filter(u => 
+    u.signupIp === ipAddress && u.signupTimestamp && u.signupTimestamp > twentyFourHoursAgo
+  );
+
+  if (recentSignupsFromIp.length > 0) {
+    console.log(`[AuthAction] Signup blocked for IP ${ipAddress} due to recent signup.`);
+    return { success: false, message: "Only one account can be created from this network within 24 hours to prevent abuse of the free tier." };
+  }
+
+
   const trimmedName = name.trim();
   const nameLower = trimmedName.toLowerCase();
 
@@ -136,6 +151,8 @@ export async function signUpWithNameAndDob(name: string, dob: string, role: 'stu
     displayName: trimmedName,
     dob: dob,
     role: role, 
+    signupIp: ipAddress,
+    signupTimestamp: new Date().toISOString()
   };
   const newUser = ensureUserIntegrity(newUserPartial); 
 

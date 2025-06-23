@@ -8,22 +8,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { CheckCircle, Zap, Star, Edit3, BarChart3, TrendingUp as TrendingUpIcon, Shield, Sparkles, Users as UsersIcon, Briefcase, Edit2, ArrowLeft, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useSubscription } from '@/hooks/use-subscription';
 
 const plans = [
   {
     id: "free",
     name: "Free Trial",
     price: "₹0",
-    priceDetails: "First 5 Tests",
+    priceDetails: "/month",
     mainDescription: "For individuals trying out Test Pilot.",
     features: [
-      { text: "5 Total Test Creations (Manual or AI)", icon: Edit3 },
+      { text: "5 Manual Test Creations/Month", icon: Edit3 },
+      { text: "1 AI-Generated Test/Month", icon: Sparkles },
       { text: "Unlimited Test Attempts", icon: CheckCircle }, 
       { text: "Basic Results Viewing", icon: BarChart3 },
-      { text: "Personal Progress Tracking", icon: TrendingUpIcon },
       { text: "Contains Ads", icon: Info, iconColor: "text-muted-foreground" },
     ],
-    cta: "Activate Free Trial",
+    cta: "Current Plan",
     variant: "default" as "default",
     buttonSize: "default" as "default",
   },
@@ -82,6 +83,7 @@ const plans = [
 
 export default function PlansPage() {
   const router = useRouter();
+  const { plan: currentPlan } = useSubscription();
 
   const handleChoosePlan = (plan: typeof plans[0]) => {
     if (plan.id === "free") {
@@ -101,7 +103,7 @@ export default function PlansPage() {
         {plans.map((plan) => (
           <Card 
             key={plan.id} 
-            className={`relative flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl overflow-hidden border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50`}
+            className={`relative flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300 rounded-xl overflow-hidden ${currentPlan.id === plan.id ? 'border-primary ring-2 ring-primary/50' : 'border-border hover:border-primary focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50'}`}
           >
             <CardHeader className="text-center pt-6 pb-4 bg-muted/30 relative">
               {plan.isPopular && (
@@ -134,11 +136,12 @@ export default function PlansPage() {
             <CardFooter className="mt-auto p-6 bg-muted/30 border-t">
               <Button 
                 className="w-full" 
-                variant={plan.variant} 
+                variant={currentPlan.id === plan.id ? 'outline' : plan.variant}
                 size={plan.buttonSize || 'lg'}
                 onClick={() => handleChoosePlan(plan)}
+                disabled={currentPlan.id === plan.id}
               >
-                {plan.cta}
+                {currentPlan.id === plan.id ? 'Your Current Plan' : plan.cta}
               </Button>
             </CardFooter>
           </Card>

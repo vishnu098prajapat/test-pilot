@@ -45,7 +45,15 @@ export default function SignupPage() {
   const handleSignUp = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
-      const result = await signUpWithNameAndDob(data.name, data.dob, data.role);
+      const ipResponse = await fetch('/api/get-ip');
+      if (!ipResponse.ok) {
+        throw new Error('Could not verify your network details. Please try again.');
+      }
+      const ipData = await ipResponse.json();
+      const ipAddress = ipData.ip;
+
+      const result = await signUpWithNameAndDob(data.name, data.dob, data.role, ipAddress);
+      
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
         authContext.login(result.user);
         toast({
@@ -62,11 +70,11 @@ export default function SignupPage() {
           duration: 3000,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("SignupPage: Signup error", error);
       toast({
         title: "Sign Up Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: error.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
         duration: 3000,
       });
