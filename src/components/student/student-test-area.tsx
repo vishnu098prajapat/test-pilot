@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import type { Test, Question, StudentAnswer, TestAttempt, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion } from '@/lib/types';
+import type { Test, Question, StudentAnswer, TestAttempt } from '@/lib/types';
 import QuestionDisplay from './question-display';
 import Timer from './timer';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from 'next/navigation';
 import { useOnlineStatus } from '@/hooks/use-online-status';
@@ -172,11 +173,11 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
 
       if (studentAnswerValue !== undefined && studentAnswerValue !== null) {
         if (q.type === 'mcq') {
-          if (studentAnswerValue === (q as MCQQuestion).correctOptionId) isQCorrect = true;
+          if (studentAnswerValue === q.correctOptionId) isQCorrect = true;
         } else if (q.type === 'true-false') {
-          if (studentAnswerValue === (q as TrueFalseQuestion).correctAnswer) isQCorrect = true;
+          if (studentAnswerValue === q.correctAnswer) isQCorrect = true;
         } else if (q.type === 'short-answer') {
-          if (String(studentAnswerValue).trim().toLowerCase() === String((q as ShortAnswerQuestion).correctAnswer).trim().toLowerCase()) isQCorrect = true;
+          if (String(studentAnswerValue).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) isQCorrect = true;
         }
       }
       if (isQCorrect) {
@@ -411,4 +412,3 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
     </div>
   );
 }
-
