@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { signUpWithNameAndDob } from "@/lib/auth-actions";
@@ -19,6 +20,9 @@ import { signUpWithNameAndDob } from "@/lib/auth-actions";
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required."),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date of Birth must be in YYYY-MM-DD format."),
+  role: z.enum(['student', 'teacher'], {
+    required_error: "You need to select a role."
+  }),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -34,13 +38,14 @@ export default function SignupPage() {
     defaultValues: {
       name: "",
       dob: "",
+      role: "student",
     },
   });
 
   const handleSignUp = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     try {
-      const result = await signUpWithNameAndDob(data.name, data.dob);
+      const result = await signUpWithNameAndDob(data.name, data.dob, data.role);
       if (result.success && result.user && typeof result.user.id === 'string' && result.user.id.trim() !== '') {
         authContext.login(result.user);
         toast({
@@ -124,6 +129,40 @@ export default function SignupPage() {
                           min="1900-01-01"
                           max={getMaxDate()}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>I am a...</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="student" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Student
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="teacher" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Teacher
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

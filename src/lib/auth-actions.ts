@@ -34,7 +34,7 @@ function ensureUserIntegrity(user: Partial<User>): User {
     dob = "1900-01-01"; // Default DOB if invalid or missing
   }
   
-  role = role || "teacher"; // Default role for new signups, can be changed by user/admin if needed
+  role = role || "student"; // Default role for new signups
   if (role !== "teacher" && role !== "student") {
       role = "student"; // Enforce valid role
   }
@@ -107,8 +107,8 @@ export async function signInWithNameAndDob(name: string, dob: string): Promise<A
   }
 }
 
-export async function signUpWithNameAndDob(name: string, dob: string): Promise<AuthResult> {
-  console.log(`[AuthAction] signUpWithNameAndDob attempt for Name: "${name}", DOB: "${dob}"`);
+export async function signUpWithNameAndDob(name: string, dob: string, role: 'student' | 'teacher'): Promise<AuthResult> {
+  console.log(`[AuthAction] signUpWithNameAndDob attempt for Name: "${name}", DOB: "${dob}", Role: "${role}"`);
   const currentUsers = readUsersDb();
   const trimmedName = name.trim();
   const nameLower = trimmedName.toLowerCase();
@@ -135,7 +135,7 @@ export async function signUpWithNameAndDob(name: string, dob: string): Promise<A
   const newUserPartial: Partial<User> = {
     displayName: trimmedName,
     dob: dob,
-    role: "teacher", 
+    role: role, 
   };
   const newUser = ensureUserIntegrity(newUserPartial); 
 
