@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,9 +11,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Save, Eye, Settings as SettingsIcon, AlertTriangle } from "lucide-react";
+import { PlusCircle, Save, Eye, Settings as SettingsIcon } from "lucide-react";
 import { QuestionForm } from "./question-form";
-import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, Option } from "@/lib/types";
+import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from "@/lib/types";
+import { testBuilderSchema } from "@/lib/types";
 import { addTest, getTestById, updateTest } from "@/lib/store"; 
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -28,58 +28,6 @@ import {
 } from "@/components/ui/form";
 import { Skeleton } from "../ui/skeleton";
 import TestPreviewDialog from "./test-preview-dialog"; 
-
-const optionSchema = z.object({
-  id: z.string(),
-  text: z.string().min(1, "Option text cannot be empty"),
-});
-
-const baseQuestionSchema = z.object({
-  id: z.string(), 
-  text: z.string().min(1, "Question text is required"),
-  points: z.number().min(0, "Points must be non-negative"),
-});
-
-const mcqQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal("mcq"),
-  options: z.array(optionSchema).min(2, "MCQ must have at least 2 options").max(4, "MCQ can have at most 4 options"), // Ensure options array has a structure Zod can validate
-  correctOptionId: z.string().nullable().refine(val => val !== null, "Correct option must be selected for MCQ"),
-  correctAnswer: z.string().optional(), 
-  isAiPreselected: z.boolean().optional(),
-});
-
-const shortAnswerQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal("short-answer"),
-  correctAnswer: z.string().min(1, "Correct answer is required for short answer"),
-  options: z.array(optionSchema).optional().nullable(), // Ensure options can be undefined or null for non-MCQ
-});
-
-const trueFalseQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal("true-false"),
-  correctAnswer: z.boolean({ required_error: "Correct answer must be selected for True/False" }),
-  options: z.array(optionSchema).optional().nullable(), // Ensure options can be undefined or null for non-MCQ
-});
-
-const questionSchema = z.discriminatedUnion("type", [
-  mcqQuestionSchema,
-  shortAnswerQuestionSchema,
-  trueFalseQuestionSchema,
-]);
-
-const testBuilderSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  subject: z.string().min(1, "Subject is required"),
-  duration: z.number().min(5, "Duration must be at least 5 minutes").max(180, "Duration cannot exceed 3 hours"),
-  questions: z.array(questionSchema).min(1, "Test must have at least one question"),
-  attemptsAllowed: z.number().min(0, "Attempts must be non-negative (0 for unlimited)"), 
-  randomizeQuestions: z.boolean(),
-  enableTabSwitchDetection: z.boolean(),
-  enableCopyPasteDisable: z.boolean(),
-  published: z.boolean(),
-  isAiGenerated: z.boolean().optional(),
-});
-
-export type TestBuilderFormValues = z.infer<typeof testBuilderSchema>;
 
 const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 

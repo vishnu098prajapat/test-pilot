@@ -5,7 +5,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { TestBuilderFormValues, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, Option as OptionType } from './test-builder-form'; 
+import type { TestBuilderFormValues, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, Option as OptionType } from '@/lib/types'; 
 import { Badge } from '../ui/badge';
 import { CheckCircle } from 'lucide-react';
 

@@ -11,8 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, Trash2 } from "lucide-react";
-import type { Question, Option as OptionType, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from "@/lib/types";
-import type { TestBuilderFormValues } from "./test-builder-form";
+import type { Question, Option as OptionType, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface QuestionFormProps {
