@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './use-auth';
 import type { Test } from '@/lib/types'; 
 import { getTestsByTeacher } from '@/lib/store';
+import { startOfMonth, isWithinInterval } from 'date-fns';
 
 
 // This is a mock implementation. In a real app, this would come from a database.
@@ -49,7 +50,7 @@ export function useSubscription() {
   const { user, isLoading: isAuthLoading } = useAuth();
   const [planId, setPlanId] = useState<PlanId>('free');
   const [isLoading, setIsLoading] = useState(true);
-  const [userTests, setUserTests] = useState<Test[]>([]);
+  const [lifetimeUserTests, setLifetimeUserTests] = useState<Test[]>([]);
   const [isTestCountLoading, setIsTestCountLoading] = useState(true);
 
   useEffect(() => {
@@ -61,22 +62,20 @@ export function useSubscription() {
       const userPlanId = getMockUserPlan(user.id);
       setPlanId(userPlanId);
       
-      // Fetch user's tests to check limits if they are a teacher
       if (user.role === 'teacher') {
         setIsTestCountLoading(true);
         getTestsByTeacher(user.id).then(tests => {
-          setUserTests(tests);
+          setLifetimeUserTests(tests);
           setIsTestCountLoading(false);
         });
       } else {
-          // Students don't create tests, so we don't need to load their test count
-          setUserTests([]);
+          setLifetimeUserTests([]);
           setIsTestCountLoading(false);
       }
 
     } else {
       setPlanId('free');
-      setUserTests([]);
+      setLifetimeUserTests([]);
       setIsTestCountLoading(false);
     }
     setIsLoading(false);
@@ -84,17 +83,26 @@ export function useSubscription() {
 
   const plan = plans[planId];
   
-  const canCreateTest = plan.testCreationLimit === Infinity || userTests.length < plan.testCreationLimit;
-  const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - userTests.length);
+  const now = new Date();
+  const currentMonthStart = startOfMonth(now);
 
-  const userAiTestsCount = userTests.filter(t => t.isAiGenerated).length;
-  const canCreateAiTest = plan.canUseAI && (plan.aiTestCreationLimit === Infinity || userAiTestsCount < plan.aiTestCreationLimit);
-  const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - userAiTestsCount);
+  const monthlyUserTests = lifetimeUserTests.filter(t => 
+    isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
+  );
+
+  const monthlyManualTestsCount = monthlyUserTests.filter(t => !t.isAiGenerated).length;
+  const monthlyAiTestsCount = monthlyUserTests.filter(t => t.isAiGenerated).length;
+
+  const canCreateTest = plan.testCreationLimit === Infinity || monthlyManualTestsCount < plan.testCreationLimit;
+  const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - monthlyManualTestsCount);
+
+  const canCreateAiTest = plan.canUseAI && (plan.aiTestCreationLimit === Infinity || monthlyAiTestsCount < plan.aiTestCreationLimit);
+  const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - monthlyAiTestsCount);
+
 
   return { 
     plan, 
     isLoading: isLoading || isTestCountLoading, 
-    userTests,
     canCreateTest,
     remainingTests,
     canCreateAiTest,

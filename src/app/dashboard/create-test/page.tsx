@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Save, Eye, Settings as SettingsIcon } from "lucide-react";
+import { PlusCircle, Save, Eye, Settings as SettingsIcon, Info } from "lucide-react";
 import { QuestionForm } from "@/components/test/question-form";
 import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from '@/lib/types';
 import { testBuilderSchema } from "@/lib/types";
@@ -28,6 +28,10 @@ import {
 } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import TestPreviewDialog from "@/components/test/test-preview-dialog"; 
+import { useSubscription } from "@/hooks/use-subscription";
+import UpgradeNudge from "@/components/common/upgrade-nudge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Loading from "@/app/loading";
 
 const AI_GENERATED_DATA_STORAGE_KEY = "aiGeneratedTestData";
 
@@ -57,8 +61,10 @@ const defaultQuestionValues = (type: Question['type']): Question => {
 export default function TestBuilderForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isLoading: isAuthLoading } = useAuth(); // Correctly get auth loading state
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, remainingTests } = useSubscription();
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testIdToEdit, setTestIdToEdit] = useState<string | null>(null);
@@ -91,13 +97,13 @@ export default function TestBuilderForm() {
     const source = searchParams.get("source");
 
     if (isAuthLoading) {
-        return; // Wait for authentication to resolve. The main return handles the loading UI.
+        return;
     }
 
     if (!user && editId) {
       toast({ title: "Unauthorized", description: "You must be logged in to edit a test.", variant: "destructive" });
       router.push("/auth/login");
-      setIsLoading(false); // Stop loading as we are redirecting.
+      setIsLoading(false);
       return;
     }
 
@@ -150,7 +156,7 @@ export default function TestBuilderForm() {
         const newSearchParams = new URLSearchParams(searchParams.toString());
         newSearchParams.delete('source');
         router.replace(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false });
-        setIsLoading(false); // Done loading from AI source
+        setIsLoading(false);
       }
     } else if (editId) {
       setTestIdToEdit(editId);
@@ -191,7 +197,6 @@ export default function TestBuilderForm() {
         .catch(() => toast({ title: "Error", description: "Failed to load test data.", variant: "destructive", duration: 2000 }))
         .finally(() => setIsLoading(false));
     } else {
-        // This is a new test, not loading any data.
         setIsLoading(false);
     }
   }, [searchParams, form, user, isAuthLoading, router, toast, replaceQuestions]);
@@ -258,29 +263,36 @@ export default function TestBuilderForm() {
     setShowPreviewDialog(true);
   };
 
-  if (isAuthLoading || isLoading) { 
+  if (isAuthLoading || isLoading || isSubscriptionLoading) { 
+    return <Loading />;
+  }
+  
+  // New block to check if user can create a test
+  if (!canCreateTest && !testIdToEdit) { // Only block for new tests
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-1/2" />
-        <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-10 w-1/4 mb-4" />
-        {[1,2].map(i => (
-          <Card key={i} className="mb-6">
-            <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-10 w-1/2" />
-            </CardContent>
-          </Card>
-        ))}
-        <Skeleton className="h-12 w-full" />
-      </div>
+        <UpgradeNudge 
+            featureName="more manual tests"
+            description={`You have reached your limit of ${plan.testCreationLimit} manual test creations for this month on the ${plan.name} plan.`}
+            requiredPlan="a higher tier"
+        />
     );
   }
 
   return (
     <>
+      <div className="mb-6">
+          <Alert className="border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
+              <Info className="h-4 w-4" />
+              <AlertTitle className="font-semibold">Plan Information</AlertTitle>
+              <AlertDescription>
+              You are on the <b>{plan.name}</b> plan. 
+              {plan.testCreationLimit !== Infinity 
+                  ? ` You have ${remainingTests} manual test creation(s) remaining this month.`
+                  : ` You have unlimited manual test creations.`
+              }
+              </AlertDescription>
+          </Alert>
+      </div>
       <UIForm {...form}>
         <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
           console.error("Form validation errors on submit:", errors);
