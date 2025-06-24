@@ -143,7 +143,7 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
                     {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
                     className={cn(
                       "w-full bg-background", // Standard background
-                      optionField.id === currentCorrectOptionId
+                      (question.options?.[optionIdx]?.id) === currentCorrectOptionId
                         ? "border-primary ring-2 ring-primary" // Primary border for AI correct option
                         : "border-input"
                     )}
@@ -165,32 +165,36 @@ export function QuestionForm({ questionIndex, form, removeQuestion }: QuestionFo
                 }}
                 className="space-y-2"
               >
-                {mcqOptionFields.map((optionField, optionIdx) => (
-                  <div key={optionField.id} className="flex items-center gap-2">
-                    <RadioGroupItem
-                      value={optionField.id}
-                      id={`${questionId}-opt-${optionField.id}`}
-                      className="shrink-0"
-                    />
-                    <Label htmlFor={`${questionId}-opt-${optionField.id}`} className="flex-grow cursor-pointer">
-                      <Input
-                        placeholder={`Option ${optionIdx + 1}`}
-                        {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
-                        className={cn(
-                          "w-full bg-background",
-                          optionField.id === currentCorrectOptionId
-                            ? "border-primary ring-2 ring-primary" // Primary border for selected correct option
-                            : "border-input"
-                        )}
+                {mcqOptionFields.map((optionField, optionIdx) => {
+                  const optionIdFromData = question.options?.[optionIdx]?.id;
+                  if (!optionIdFromData) return null; // Safeguard if options are out of sync
+                  return (
+                    <div key={optionField.id} className="flex items-center gap-2">
+                      <RadioGroupItem
+                        value={optionIdFromData}
+                        id={`${questionId}-opt-${optionIdFromData}`}
+                        className="shrink-0"
                       />
-                    </Label>
-                    {mcqOptionFields.length > 2 && (
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
-                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
+                      <Label htmlFor={`${questionId}-opt-${optionIdFromData}`} className="flex-grow cursor-pointer">
+                        <Input
+                          placeholder={`Option ${optionIdx + 1}`}
+                          {...register(`questions.${questionIndex}.options.${optionIdx}.text`)}
+                          className={cn(
+                            "w-full bg-background",
+                            optionIdFromData === currentCorrectOptionId
+                              ? "border-primary ring-2 ring-primary" // Primary border for selected correct option
+                              : "border-input"
+                          )}
+                        />
+                      </Label>
+                      {mcqOptionFields.length > 2 && (
+                        <Button type="button" variant="ghost" size="icon" onClick={() => removeOption(optionIdx)}>
+                          <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
               </RadioGroup>
             )}
             

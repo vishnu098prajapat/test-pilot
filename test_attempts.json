@@ -2123,5 +2123,35 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750668553797-u7wuvn1",
     "submittedAt": "2025-06-23T08:49:13.797Z"
+  },
+  {
+    "testId": "test-1750751669137-j5rmi",
+    "testTitle": "Personal test ",
+    "studentIdentifier": "Golu",
+    "startTime": "2025-06-24T07:55:12.038Z",
+    "endTime": "2025-06-24T07:55:48.170Z",
+    "answers": [
+      {
+        "questionId": "new-1750751567541-8ryvs40",
+        "answer": "opt-new-1750751567541-8ryvs40-1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "new-1750751617364-xmuscev",
+        "answer": "opt-new-1750751617364-xmuscev-0",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 20,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-24T07:55:12.084Z] User: Golu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-24T07:55:12.090Z] User: Golu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-24T07:55:43.398Z] User: Golu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751567541-8ryvs40.\n[2025-06-24T07:55:44.329Z] User: Golu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751567541-8ryvs40.\n[2025-06-24T07:55:45.936Z] User: Golu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751617364-xmuscev.",
+    "isSuspicious": false,
+    "suspiciousReason": "The activity log shows normal test-taking behavior. The student answered questions and changed answers a few times. There are no indications of suspicious activities like tab switching or copy-pasting.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750751751403-i6ndw3s",
+    "submittedAt": "2025-06-24T07:55:51.403Z"
   }
 ]

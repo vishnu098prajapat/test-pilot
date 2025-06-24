@@ -2834,5 +2834,111 @@
     "createdAt": "2025-06-20T06:53:44.510Z",
     "updatedAt": "2025-06-23T05:34:15.124Z",
     "batchId": "group-1750481939934-8082fhi"
+  },
+  {
+    "title": "Personal test ",
+    "subject": "Python ",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "new-1750751567541-8ryvs40",
+        "text": "Which type of python ",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750751567541-8ryvs40-0",
+            "text": "Static "
+          },
+          {
+            "id": "opt-new-1750751567541-8ryvs40-1",
+            "text": "High-level "
+          }
+        ],
+        "correctOptionId": "52716ecf-f4b6-4381-89ca-e411189c9466",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1750751617364-xmuscev",
+        "text": "Which data type is used to store number of characters ",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750751617364-xmuscev-0",
+            "text": "String "
+          },
+          {
+            "id": "opt-new-1750751617364-xmuscev-1",
+            "text": "Int "
+          }
+        ],
+        "correctOptionId": "09d16939-55b0-4369-a3c8-151c06ba500a",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750751659907-xkriu",
+    "createdAt": "2025-06-24T07:54:19.907Z",
+    "updatedAt": "2025-06-24T07:54:19.907Z"
+  },
+  {
+    "title": "Personal test ",
+    "subject": "Python ",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "new-1750751567541-8ryvs40",
+        "text": "Which type of python ",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750751567541-8ryvs40-0",
+            "text": "Static "
+          },
+          {
+            "id": "opt-new-1750751567541-8ryvs40-1",
+            "text": "High-level "
+          }
+        ],
+        "correctOptionId": "52716ecf-f4b6-4381-89ca-e411189c9466",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1750751617364-xmuscev",
+        "text": "Which data type is used to store number of characters ",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750751617364-xmuscev-0",
+            "text": "String "
+          },
+          {
+            "id": "opt-new-1750751617364-xmuscev-1",
+            "text": "Int "
+          }
+        ],
+        "correctOptionId": "09d16939-55b0-4369-a3c8-151c06ba500a",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750751669137-j5rmi",
+    "createdAt": "2025-06-24T07:54:29.138Z",
+    "updatedAt": "2025-06-24T07:54:29.138Z"
   }
 ]
