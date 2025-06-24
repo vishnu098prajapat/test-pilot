@@ -156,7 +156,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
       });
     } catch(e) {
         console.error("Failed to save pending submission to localStorage", e);
-        toast({ title: "Save Error", description: "Could not save your attempt for later submission. Please check your connection.", variant: "destructive"});
+        toast({ title: "Save Error", description: "Could not save your attempt for later submission.", variant: "destructive"});
     }
   };
 
