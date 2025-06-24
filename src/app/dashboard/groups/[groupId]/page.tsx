@@ -13,11 +13,25 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getTestsByTeacher } from '@/lib/store';
 import { useAuth } from '@/hooks/use-auth';
-import type { Test, Batch as Group } from '@/lib/types';
+import type { Test, TestAttempt, Batch as Group, User } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import QrCodeModal from '@/components/common/qr-code-modal';
 import AssignTestDialog from '@/components/groups/assign-test-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+type EnrichedStudent = User & { avgScore: number | string; attemptsCount: number };
 
 export default function GroupDetailPage() {
   const params = useParams();
@@ -30,6 +44,7 @@ export default function GroupDetailPage() {
   const [group, setGroup] = useState<Group | null>(null);
   const [allTeacherTests, setAllTeacherTests] = useState<Test[]>([]);
   const [assignedTests, setAssignedTests] = useState<Test[]>([]);
+  const [students, setStudents] = useState<EnrichedStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -44,20 +59,43 @@ export default function GroupDetailPage() {
       if (!user?.id || !groupId) return;
       setIsLoading(true);
       try {
-        const [groupsResponse, testsResponse] = await Promise.all([
+        const [groupsResponse, testsResponse, usersResponse, attemptsResponse] = await Promise.all([
           fetch(`/api/groups?teacherId=${user.id}`),
-          getTestsByTeacher(user.id)
+          getTestsByTeacher(user.id),
+          fetch('/api/mock-users'),
+          fetch('/api/attempts')
         ]);
         
         if (!groupsResponse.ok) throw new Error("Failed to fetch groups");
         const allGroups: Group[] = await groupsResponse.json();
         const currentGroup = allGroups.find(g => g.id === groupId);
+
+        const allUsers: User[] = await usersResponse.json();
+        const allAttempts: TestAttempt[] = await attemptsResponse.json();
         
         if (currentGroup) {
           setGroup(currentGroup);
           setAllTeacherTests(testsResponse);
           const testsForGroup = testsResponse.filter(test => test.batchId === groupId);
+          const assignedTestIds = new Set(testsForGroup.map(t => t.id));
           setAssignedTests(testsForGroup);
+          
+          const enrichedStudents = currentGroup.studentIdentifiers.map(identifier => {
+              const studentUser = allUsers.find(u => u.displayName.toLowerCase() === identifier.toLowerCase()) || { displayName: identifier, id: identifier };
+              const studentAttemptsInGroup = allAttempts.filter(
+                  attempt => attempt.studentIdentifier.toLowerCase() === identifier.toLowerCase() && assignedTestIds.has(attempt.testId)
+              );
+              const avgScore = studentAttemptsInGroup.length > 0 
+                  ? Math.round(studentAttemptsInGroup.reduce((sum, att) => sum + (att.scorePercentage || 0), 0) / studentAttemptsInGroup.length)
+                  : 'N/A';
+              return {
+                  ...studentUser,
+                  avgScore: avgScore,
+                  attemptsCount: studentAttemptsInGroup.length,
+              };
+          });
+          setStudents(enrichedStudents as EnrichedStudent[]);
+
         } else {
            toast({ title: "Error", description: "Group not found or you don't have access.", variant: "destructive" });
            router.push('/dashboard/groups');
@@ -76,11 +114,11 @@ export default function GroupDetailPage() {
   const groupStats = useMemo(() => {
     if (!group) return { totalStudents: 0, testsAssigned: 0, avgPerformance: "N/A" };
     return {
-      totalStudents: group.studentIdentifiers.length,
+      totalStudents: students.length,
       testsAssigned: assignedTests.length,
       avgPerformance: "N/A",
     };
-  }, [group, assignedTests]);
+  }, [group, assignedTests, students]);
 
   const handleShowJoinQr = () => {
     if (group && typeof window !== "undefined") {
@@ -95,6 +133,28 @@ export default function GroupDetailPage() {
     setAssignedTests(prev => [updatedTest, ...prev]);
     setAllTeacherTests(prev => prev.map(t => t.id === updatedTest.id ? updatedTest : t));
   };
+  
+  const handleRemoveStudent = async (studentIdentifier: string) => {
+    if (!group) return;
+    try {
+        const response = await fetch('/api/groups/remove-student', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ groupId: group.id, studentIdentifier }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message);
+
+        toast({ title: "Success", description: `Student "${studentIdentifier}" removed from the group.` });
+        
+        setGroup(prev => prev ? ({ ...prev, studentIdentifiers: prev.studentIdentifiers.filter(id => id !== studentIdentifier) }) : null);
+        setStudents(prev => prev.filter(s => s.displayName !== studentIdentifier));
+
+    } catch (error: any) {
+        toast({ title: "Error", description: error.message, variant: 'destructive' });
+    }
+  };
+
 
   if (isLoading || isAuthLoading) {
     return (
@@ -125,6 +185,18 @@ export default function GroupDetailPage() {
       </div>
     );
   }
+  
+  const getInitials = (displayName?: string) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1 && names[0] && names[names.length - 1]) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
+    }
+    return "??"; 
+  };
+
 
   return (
     <>
@@ -168,19 +240,57 @@ export default function GroupDetailPage() {
 
           <TabsContent value="students" className="mt-4">
             <Card>
-              <CardHeader><CardTitle>Student Roster</CardTitle><CardDescription>List of all students in this group.</CardDescription></CardHeader>
+              <CardHeader><CardTitle>Student Roster</CardTitle><CardDescription>List of all students in this group and their performance on assigned tests.</CardDescription></CardHeader>
               <CardContent>
-                  {group.studentIdentifiers.length === 0 ? (
+                  {students.length === 0 ? (
                       <div className="text-center py-10 text-muted-foreground">No students have joined this group yet. Use the 'Add Student' button to get a shareable QR code.</div>
                   ) : (
                       <Table>
-                          <TableHeader><TableRow><TableHead>Student Identifier</TableHead><TableHead>Avg. Score</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
+                          <TableHeader>
+                            <TableRow>
+                                <TableHead>Student</TableHead>
+                                <TableHead>Attempts in Group</TableHead>
+                                <TableHead>Average Score</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
                           <TableBody>
-                          {group.studentIdentifiers.map(studentId => (
-                              <TableRow key={studentId}>
-                              <TableCell className="font-medium">{studentId}</TableCell>
-                              <TableCell>N/A</TableCell>
-                              <TableCell className="text-right"><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                          {students.map(student => (
+                              <TableRow key={student.id || student.displayName}>
+                                <TableCell className="font-medium">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar>
+                                            <AvatarImage src={student.profileImageUrl} alt={student.displayName} />
+                                            <AvatarFallback>{getInitials(student.displayName)}</AvatarFallback>
+                                        </Avatar>
+                                        <Link href={`/dashboard/student-analytics/${encodeURIComponent(student.displayName)}`} className="hover:underline">
+                                            {student.displayName}
+                                        </Link>
+                                    </div>
+                                </TableCell>
+                                <TableCell>{student.attemptsCount}</TableCell>
+                                <TableCell>{typeof student.avgScore === 'number' ? `${student.avgScore}%` : student.avgScore}</TableCell>
+                                <TableCell className="text-right">
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Remove Student?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Are you sure you want to remove "{student.displayName}" from this group? They can rejoin later using the group code. This will not delete their test attempts.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => handleRemoveStudent(student.displayName)} className="bg-destructive hover:bg-destructive/90">
+                                          Remove Student
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </TableCell>
                               </TableRow>
                           ))}
                           </TableBody>
