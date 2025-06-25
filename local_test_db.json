@@ -3011,5 +3011,60 @@
     "id": "test-1750832424793-ydbw9",
     "createdAt": "2025-06-25T06:20:24.793Z",
     "updatedAt": "2025-06-25T06:20:24.793Z"
+  },
+  {
+    "title": "avre",
+    "subject": "bwre",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "new-1750832771602-vh3llr7",
+        "text": "bsssssssss",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750832771602-vh3llr7-0",
+            "text": "vffvf"
+          },
+          {
+            "id": "opt-new-1750832771602-vh3llr7-1",
+            "text": "ffvfvf"
+          }
+        ],
+        "correctOptionId": "opt-new-1750832771602-vh3llr7-1",
+        "correctAnswer": "ffvfvf",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1750832792951-s33x1f3",
+        "text": "vffffffff",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750832792951-s33x1f3-0",
+            "text": "reer"
+          },
+          {
+            "id": "opt-new-1750832792951-s33x1f3-1",
+            "text": "eee"
+          }
+        ],
+        "correctOptionId": "opt-new-1750832792951-s33x1f3-1",
+        "correctAnswer": "eee",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750832805413-0vzwv",
+    "createdAt": "2025-06-25T06:26:45.413Z",
+    "updatedAt": "2025-06-25T06:26:45.413Z"
   }
 ]
