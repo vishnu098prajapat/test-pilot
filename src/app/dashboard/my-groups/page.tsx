@@ -111,9 +111,9 @@ export default function MyGroupsPage() {
                    <p className="text-xs text-muted-foreground">Managed by Teacher ID: ...{group.teacherId.slice(-6)}</p>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                  <Button asChild variant="outline" size="sm" className="w-full">
-                    <Link href="/dashboard">
-                      View Assigned Tests <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button asChild variant="default" size="sm" className="w-full">
+                    <Link href={`/dashboard/my-groups/${group.id}`}>
+                      View Group <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardFooter>
