@@ -220,6 +220,21 @@ export default function StudentResultsPage() {
                             isCorrect: isActuallyCorrect,
                             pointsScored: isActuallyCorrect ? q.points : 0
                         };
+                        
+                        let correctAnswerText = "N/A";
+                        if (q.type === 'mcq') {
+                            const correctOption = q.options.find(opt => opt.id === q.correctOptionId);
+                            if (correctOption) {
+                                correctAnswerText = correctOption.text;
+                            } else if (q.correctAnswer) { // Fallback for AI tests or new manual tests
+                                correctAnswerText = q.correctAnswer;
+                            }
+                        } else if (q.type === 'short-answer') {
+                            correctAnswerText = q.correctAnswer;
+                        } else if (q.type === 'true-false') {
+                            correctAnswerText = q.correctAnswer ? "True" : "False";
+                        }
+
 
                         return (
                             <React.Fragment key={q.id}>
@@ -232,6 +247,7 @@ export default function StudentResultsPage() {
                                     isReviewMode={true}
                                     studentAttempt={studentAttemptForDisplay}
                                     isCorrect={isActuallyCorrect}
+                                    correctAnswerForReview={correctAnswerText}
                                 />
                                 {index < results.questions.length - 1 && <Separator className="my-6" />}
                             </React.Fragment>
@@ -244,4 +260,3 @@ export default function StudentResultsPage() {
     </div>
   );
 }
-

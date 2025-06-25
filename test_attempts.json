@@ -2153,5 +2153,35 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750751751403-i6ndw3s",
     "submittedAt": "2025-06-24T07:55:51.403Z"
+  },
+  {
+    "testId": "test-1750751669137-j5rmi",
+    "testTitle": "Personal test ",
+    "studentIdentifier": "vishnu ij",
+    "startTime": "2025-06-25T06:05:13.260Z",
+    "endTime": "2025-06-25T06:05:23.460Z",
+    "answers": [
+      {
+        "questionId": "new-1750751567541-8ryvs40",
+        "answer": "opt-new-1750751567541-8ryvs40-1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "new-1750751617364-xmuscev",
+        "answer": "opt-new-1750751617364-xmuscev-0",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 20,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-25T06:05:13.273Z] User: vishnu ij (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-25T06:05:13.274Z] User: vishnu ij (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-25T06:05:15.174Z] User: vishnu ij (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751567541-8ryvs40.\n[2025-06-25T06:05:16.361Z] User: vishnu ij (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751567541-8ryvs40.\n[2025-06-25T06:05:20.254Z] User: vishnu ij (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751617364-xmuscev.",
+    "isSuspicious": false,
+    "suspiciousReason": "The activity log shows normal test-taking behavior. The student changed answers a few times, which is not inherently suspicious. There are no indications of accessing unauthorized resources or using prohibited tools.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750831239529-t7iuhxd",
+    "submittedAt": "2025-06-25T06:00:39.529Z"
   }
 ]

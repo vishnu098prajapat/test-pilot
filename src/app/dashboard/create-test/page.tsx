@@ -208,12 +208,27 @@ export default function TestBuilderForm() {
       return;
     }
     setIsSubmitting(true);
-    console.log("Form data submitted:", data); 
-    if (form.formState.errors && Object.keys(form.formState.errors).length > 0) {
-      console.error("Client-side validation errors:", form.formState.errors);
-    }
+    
+    // Pre-process data to ensure correctAnswer text is set for MCQs
+    const processedData = {
+      ...data,
+      questions: data.questions.map(q => {
+        if (q.type === 'mcq') {
+          const mcq = q as MCQQuestion;
+          // Only find and set if it's not already there from an AI generation
+          if (mcq.correctOptionId && !mcq.correctAnswer) {
+            const correctOption = mcq.options.find(opt => opt.id === mcq.correctOptionId);
+            return {
+              ...mcq,
+              correctAnswer: correctOption?.text || undefined,
+            };
+          }
+        }
+        return q;
+      })
+    };
 
-    const finalData = data; 
+    const finalData = processedData;
 
     try {
       let savedTest;
@@ -267,8 +282,7 @@ export default function TestBuilderForm() {
     return <Loading />;
   }
   
-  // New block to check if user can create a test
-  if (!canCreateTest && !testIdToEdit) { // Only block for new tests
+  if (!canCreateTest && !testIdToEdit) {
     return (
         <UpgradeNudge 
             featureName="more manual tests"

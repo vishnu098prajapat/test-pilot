@@ -2,7 +2,7 @@
 "use client";
 
 import React from 'react';
-import type { Question, Option as OptionType, StudentAnswer, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
+import type { Question, Option as OptionType, StudentAnswer, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -21,6 +21,7 @@ interface QuestionDisplayProps {
   isReviewMode?: boolean; 
   studentAttempt?: StudentAnswer; 
   isCorrect?: boolean; 
+  correctAnswerForReview?: string;
 }
 
 export default function QuestionDisplay({
@@ -31,7 +32,8 @@ export default function QuestionDisplay({
   onAnswerChange,
   isReviewMode = false,
   studentAttempt,
-  isCorrect 
+  isCorrect,
+  correctAnswerForReview
 }: QuestionDisplayProps) {
   
   const handleMcqChange = (value: string) => {
@@ -49,23 +51,16 @@ export default function QuestionDisplay({
   let reviewFeedbackDisplay = null;
   if (isReviewMode && studentAttempt) {
     let studentAnswerText = "Not Answered";
-    let correctAnswerText = "";
     const qIsCorrect = studentAttempt.isCorrect; 
 
     if (question.type === 'mcq') {
       const mcqQuestion = question as MCQQuestion;
       const studentSelectedOption = mcqQuestion.options.find(opt => opt.id === studentAttempt.answer);
       studentAnswerText = studentSelectedOption ? studentSelectedOption.text : "Not Answered";
-      const correctOption = mcqQuestion.options.find(opt => opt.id === mcqQuestion.correctOptionId);
-      correctAnswerText = correctOption ? correctOption.text : "N/A";
     } else if (question.type === 'short-answer') {
-      const saQuestion = question as ShortAnswerQuestion;
       studentAnswerText = studentAttempt.answer ? String(studentAttempt.answer) : "Not Answered";
-      correctAnswerText = String(saQuestion.correctAnswer);
     } else if (question.type === 'true-false') {
-      const tfQuestion = question as TrueFalseQuestion;
       studentAnswerText = studentAttempt.answer === undefined ? "Not Answered" : (studentAttempt.answer ? "True" : "False");
-      correctAnswerText = tfQuestion.correctAnswer ? "True" : "False";
     }
 
     reviewFeedbackDisplay = (
@@ -93,11 +88,11 @@ export default function QuestionDisplay({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="font-medium text-green-700 truncate block flex-1 min-w-0"> 
-                    {correctAnswerText}
+                    {correctAnswerForReview}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs break-words shadow-lg">
-                  <p>{correctAnswerText}</p>
+                  <p>{correctAnswerForReview}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
