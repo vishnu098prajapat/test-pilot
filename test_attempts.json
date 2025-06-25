@@ -2183,5 +2183,35 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750831239529-t7iuhxd",
     "submittedAt": "2025-06-25T06:00:39.529Z"
+  },
+  {
+    "testId": "test-1750751669137-j5rmi",
+    "testTitle": "Personal test ",
+    "studentIdentifier": "yogi",
+    "startTime": "2025-06-25T06:11:34.816Z",
+    "endTime": "2025-06-25T06:11:43.598Z",
+    "answers": [
+      {
+        "questionId": "new-1750751567541-8ryvs40",
+        "answer": "opt-new-1750751567541-8ryvs40-1",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "new-1750751617364-xmuscev",
+        "answer": "opt-new-1750751617364-xmuscev-0",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 0,
+    "maxPossiblePoints": 20,
+    "scorePercentage": 0,
+    "activityLog": "[2025-06-25T06:11:34.828Z] User: yogi (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-25T06:11:34.829Z] User: yogi (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-25T06:11:37.673Z] User: yogi (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751567541-8ryvs40.\n[2025-06-25T06:11:40.954Z] User: yogi (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID new-1750751617364-xmuscev.",
+    "isSuspicious": false,
+    "suspiciousReason": "The activity log shows normal test-taking behavior. The student started the test and changed answers for two questions. There is no indication of suspicious behavior like frequent tab switches, copy-pasting, or unusual keyboard activity.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750831620104-ipp609m",
+    "submittedAt": "2025-06-25T06:07:00.104Z"
   }
 ]

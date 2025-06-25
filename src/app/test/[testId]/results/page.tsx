@@ -223,16 +223,17 @@ export default function StudentResultsPage() {
                         
                         let correctAnswerText = "N/A";
                         if (q.type === 'mcq') {
-                            const correctOption = q.options.find(opt => opt.id === q.correctOptionId);
-                            if (correctOption) {
-                                correctAnswerText = correctOption.text;
-                            } else if (q.correctAnswer) { // Fallback for AI tests or new manual tests
-                                correctAnswerText = q.correctAnswer;
+                            const mcq = q as MCQQuestion;
+                            // Robust check for correct answer text
+                            let correctOption = mcq.options.find(opt => opt.id === mcq.correctOptionId);
+                            if (!correctOption && mcq.correctAnswer) {
+                                correctOption = mcq.options.find(opt => opt.text === mcq.correctAnswer);
                             }
+                            correctAnswerText = correctOption ? correctOption.text : mcq.correctAnswer || "Not specified";
                         } else if (q.type === 'short-answer') {
-                            correctAnswerText = q.correctAnswer;
+                            correctAnswerText = (q as ShortAnswerQuestion).correctAnswer;
                         } else if (q.type === 'true-false') {
-                            correctAnswerText = q.correctAnswer ? "True" : "False";
+                            correctAnswerText = (q as TrueFalseQuestion).correctAnswer ? "True" : "False";
                         }
 
 
