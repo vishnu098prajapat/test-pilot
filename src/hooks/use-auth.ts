@@ -20,7 +20,7 @@ interface AuthContextType {
 
 // Helper to ensure user object integrity, especially for data from localStorage or passed to login/signup
 function ensureUserIntegrityForContext(user: Partial<User>): User {
-  let { id, displayName, email, dob, role, profileImageUrl } = user;
+  let { id, displayName, email, dob, role, profileImageUrl, signupIp, signupTimestamp } = user;
 
   // Ensure ID exists, generate if temporary or missing
   id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2,7)}`;
@@ -39,7 +39,10 @@ function ensureUserIntegrityForContext(user: Partial<User>): User {
     }
   }
   
-  // Ensure DOB is valid format or default
+  // Ensure displayName is a string before calling trim()
+  displayName = String(displayName).trim();
+
+
   if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
     dob = "1900-01-01"; 
   }
@@ -56,7 +59,9 @@ function ensureUserIntegrityForContext(user: Partial<User>): User {
     email: email || undefined,
     dob,
     role,
-    profileImageUrl: profileImageUrl || undefined, // Keep profileImageUrl if present
+    profileImageUrl: profileImageUrl || undefined,
+    signupIp: signupIp || undefined,
+    signupTimestamp: signupTimestamp || undefined,
   };
 }
 
@@ -65,6 +70,24 @@ export function useAuth(): AuthContextType {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+
+  const handleStorageChange = useCallback((event: StorageEvent) => {
+    if (event.key === USER_STORAGE_KEY) {
+      console.log("[Auth] Storage event detected. Syncing auth state across tabs.");
+      const newUserString = event.newValue;
+      if (newUserString) {
+        try {
+          const newUser = JSON.parse(newUserString);
+          setUser(ensureUserIntegrityForContext(newUser));
+        } catch {
+          setUser(null);
+        }
+      } else {
+        // Key was removed or set to null, meaning logout happened in another tab
+        setUser(null);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true); 
@@ -96,7 +119,14 @@ export function useAuth(): AuthContextType {
     } finally {
       setIsLoading(false); 
     }
-  }, []);
+    
+    // Add event listener for cross-tab sync
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [handleStorageChange]);
 
   const login = useCallback((userData: User) => { 
     try {
@@ -113,7 +143,6 @@ export function useAuth(): AuthContextType {
         setUser(userToStore);
       } else {
         console.error("Attempted to login with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob (YYYY-MM-DD), role to be valid strings.");
-        // Optionally, could throw an error or show a toast to the user here
       }
     } catch (error) {
         console.error("Failed to save user to localStorage on login:", error);
@@ -159,7 +188,8 @@ export function useAuth(): AuthContextType {
       const updatedUser = ensureUserIntegrityForContext(result.user); // Ensure integrity of user from server
       setUser(updatedUser); // Update local state
       try {
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser)); // Update localStorage
+        // This will trigger the 'storage' event for other tabs
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser)); 
       } catch (error) {
         console.error("Failed to update user in localStorage:", error);
         // Non-critical error for this mock, proceed
