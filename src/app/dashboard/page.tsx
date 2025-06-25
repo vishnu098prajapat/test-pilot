@@ -123,6 +123,32 @@ export default function DashboardPage() {
     }
   };
   
+  const handleDeleteAllTests = async () => {
+    if (tests.length === 0) {
+      toast({ title: "No Tests", description: "There are no tests to delete.", variant: "destructive" });
+      return;
+    }
+    try {
+      let successCount = 0;
+      const allTestIds = tests.map(t => t.id);
+      for (const testId of allTestIds) {
+        const success = await deleteTestAction(testId);
+        if (success) successCount++;
+      }
+      
+      if (successCount > 0) {
+        setTests([]);
+        setAllAttempts([]);
+        toast({ title: "Success", description: `All ${successCount} tests have been deleted.` });
+      }
+       if (successCount < allTestIds.length) {
+        toast({ title: "Partial Deletion", description: `${allTestIds.length - successCount} test(s) could not be deleted.`, variant: "destructive" });
+      }
+    } catch (error) {
+       toast({ title: "Error", description: "An error occurred while deleting all tests.", variant: "destructive" });
+    }
+  };
+
   const dashboardStats = useMemo(() => {
     if (!user || tests.length === 0) return { totalSubmissions: 0, averageScore: 0, publishedTests: 0 };
     const teacherTestIds = new Set(tests.map(t => t.id));
@@ -218,9 +244,32 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-semibold font-headline">My Tests</h2>
             <div className="flex gap-2">
               {!isSelectionModeActive ? (
-                <Button variant="outline" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0}>
-                  <ListFilter className="mr-2 h-4 w-4" /> Select Tests
-                </Button>
+                <>
+                   <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm" disabled={isLoading || tests.length === 0}>
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete All
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete All Tests?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete all {tests.length} of your tests? This action is permanent and cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAllTests} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                          Yes, Delete All
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <Button variant="outline" size="sm" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0}>
+                    <ListFilter className="mr-2 h-4 w-4" /> Select to Delete
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button variant="ghost" onClick={toggleSelectionMode}>
