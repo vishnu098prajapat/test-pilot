@@ -64,7 +64,8 @@ export function useSubscription() {
       
       if (user.role === 'teacher') {
         setIsTestCountLoading(true);
-        getTestsByTeacher(user.id).then(tests => {
+        // Call with includeDeleted = true to get all created tests for accurate counting, including soft-deleted ones.
+        getTestsByTeacher(user.id, true).then(tests => {
           setLifetimeUserTests(tests);
           setIsTestCountLoading(false);
         });

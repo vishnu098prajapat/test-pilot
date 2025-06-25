@@ -19,6 +19,7 @@ async function _fetchAllTests(): Promise<Test[]> {
       ...test,
       createdAt: new Date(test.createdAt),
       updatedAt: new Date(test.updatedAt),
+      deletedAt: test.deletedAt ? new Date(test.deletedAt) : undefined,
     }));
   } catch (error) {
     console.error('[STORE-CLIENT] Network or parsing error fetching tests:', error);
@@ -50,27 +51,34 @@ async function _saveAllTests(tests: Test[]): Promise<boolean> {
   }
 }
 
-export async function getTestsByTeacher(teacherId: string): Promise<Test[]> {
-  console.log(`[STORE-CLIENT] getTestsByTeacher called for teacherId: "${teacherId}"`);
+export async function getTestsByTeacher(teacherId: string, includeDeleted = false): Promise<Test[]> {
+  console.log(`[STORE-CLIENT] getTestsByTeacher called for teacherId: "${teacherId}", includeDeleted: ${includeDeleted}`);
   const allTests = await _fetchAllTests();
-  const teacherTests = allTests.filter(test => test.teacherId === teacherId);
+  const teacherTests = allTests.filter(test => {
+    const isOwner = test.teacherId === teacherId;
+    if (includeDeleted) {
+      return isOwner;
+    }
+    return isOwner && !test.deletedAt;
+  });
   console.log(`[STORE-CLIENT] Found ${teacherTests.length} tests for teacherId "${teacherId}".`);
   return teacherTests;
 }
 
+
 export async function getTestById(testId: string): Promise<Test | undefined> {
   console.log(`[STORE-CLIENT] getTestById called for ID: "${testId}"`);
   const allTests = await _fetchAllTests();
-  const foundTest = allTests.find(test => test.id === testId);
+  const foundTest = allTests.find(test => test.id === testId && !test.deletedAt);
   if (foundTest) {
     console.log(`[STORE-CLIENT] Test with ID "${testId}" FOUND.`);
   } else {
-    console.warn(`[STORE-CLIENT] Test with ID "${testId}" NOT FOUND.`);
+    console.warn(`[STORE-CLIENT] Test with ID "${testId}" NOT FOUND or is deleted.`);
   }
   return foundTest;
 }
 
-export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt'>): Promise<Test | null> {
+export async function addTest(newTestData: Omit<Test, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<Test | null> {
   console.log(`[STORE-CLIENT] addTest: Attempting to add test titled: "${newTestData.title}"`);
   const allTests = await _fetchAllTests();
   
@@ -122,19 +130,23 @@ export async function updateTest(testId: string, updatedTestPartialData: Partial
 }
 
 export async function deleteTest(testId: string): Promise<boolean> {
-  console.log(`[STORE-CLIENT] deleteTest: Attempting to delete test ID: "${testId}"`);
+  console.log(`[STORE-CLIENT] deleteTest: Attempting to soft-delete test ID: "${testId}"`);
   let allTests = await _fetchAllTests();
-  const initialLength = allTests.length;
-  
-  allTests = allTests.filter(test => test.id !== testId);
+  const testIndex = allTests.findIndex(test => test.id === testId);
 
-  if (allTests.length < initialLength) {
+  if (testIndex !== -1) {
+    // Soft delete by adding a 'deletedAt' timestamp
+    allTests[testIndex] = {
+      ...allTests[testIndex],
+      deletedAt: new Date(),
+    };
+    
     const success = await _saveAllTests(allTests);
     if (success) {
-      console.log(`[STORE-CLIENT] Test with ID "${testId}" deleted and saved successfully via API.`);
+      console.log(`[STORE-CLIENT] Test with ID "${testId}" soft-deleted and saved successfully via API.`);
       return true;
     } else {
-      console.error(`[STORE-CLIENT] FAILURE: Could not save DB after deleting test ID "${testId}".`);
+      console.error(`[STORE-CLIENT] FAILURE: Could not save DB after soft-deleting test ID "${testId}".`);
       return false;
     }
   } else {

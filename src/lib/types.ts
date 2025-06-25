@@ -64,7 +64,8 @@ export interface Test {
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
   batchId?: string;
-  isAiGenerated?: boolean;     
+  isAiGenerated?: boolean;
+  deletedAt?: Date;     
 }
 
 export interface StudentAnswer {

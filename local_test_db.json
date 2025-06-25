@@ -2940,5 +2940,76 @@
     "id": "test-1750751669137-j5rmi",
     "createdAt": "2025-06-24T07:54:29.138Z",
     "updatedAt": "2025-06-24T07:54:29.138Z"
+  },
+  {
+    "title": "av4",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "new-1750832366397-b9ye96w",
+        "text": "vreeeeeeeeeeeeeeeeee",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750832366397-b9ye96w-0",
+            "text": "bbfvf"
+          },
+          {
+            "id": "opt-new-1750832366397-b9ye96w-1",
+            "text": "errrrr"
+          },
+          {
+            "id": "opt-new-1750832366397-b9ye96w-1750832398335-por7muf",
+            "text": "bwr"
+          },
+          {
+            "id": "opt-new-1750832366397-b9ye96w-1750832403000-1sfhy9r",
+            "text": "brt"
+          }
+        ],
+        "correctOptionId": "opt-new-1750832366397-b9ye96w-1",
+        "correctAnswer": "errrrr",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1750832407118-n792aa4",
+        "text": "bwwwwwwwwwww",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750832407118-n792aa4-0",
+            "text": "bfs"
+          },
+          {
+            "id": "opt-new-1750832407118-n792aa4-1",
+            "text": "4344"
+          },
+          {
+            "id": "opt-new-1750832407118-n792aa4-1750832415985-1wc3dz1",
+            "text": "r43"
+          },
+          {
+            "id": "opt-new-1750832407118-n792aa4-1750832419151-ne8epyh",
+            "text": "rgrwwgr"
+          }
+        ],
+        "correctOptionId": "opt-new-1750832407118-n792aa4-1",
+        "correctAnswer": "4344",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750832424793-ydbw9",
+    "createdAt": "2025-06-25T06:20:24.793Z",
+    "updatedAt": "2025-06-25T06:20:24.793Z"
   }
 ]
