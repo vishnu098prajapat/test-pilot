@@ -3273,5 +3273,157 @@
     "id": "test-1750833240622-d6siz",
     "createdAt": "2025-06-25T06:34:00.622Z",
     "updatedAt": "2025-06-25T06:34:00.622Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750833846480-0-3unq2na",
+        "text": "Which data type is used to represent whole numbers in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750833846480_rna71ji5f",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750833846480_ngz5tk2jc",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750833846480_q3j94702f",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750833846480_fuml6tui7",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750833846480_q3j94702f",
+        "correctAnswer": "int",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833846480-1-30ukyx8",
+        "text": "Which data type is used to represent text in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750833846480_ipohklqru",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750833846480_iwhcwbvy3",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750833846480_shexmvyiw",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750833846480_3tl46kvby",
+            "text": "str"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1750833846480_3tl46kvby",
+        "correctAnswer": "str",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833846480-2-jvxgyto",
+        "text": "Which data type is used to represent decimal numbers in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750833846480_vcm96ualm",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750833846480_vhr45d34n",
+            "text": "str"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750833846480_e2kpjyiba",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750833846480_bg4qlvnnn",
+            "text": "float"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1750833846480_bg4qlvnnn",
+        "correctAnswer": "float",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833846480-3-4d1wlo3",
+        "text": "What is the value of the boolean expression '5 > 3'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750833846480_eb213uf7k",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750833846480_p9ttvnmuz",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750833846480_8053yzn12",
+            "text": "Null"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750833846480_4pdvj0utz",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1750833846480_eb213uf7k",
+        "correctAnswer": "True",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833846480-4-ajxg0mr",
+        "text": "What is the value of the boolean expression '10 == 5'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750833846480_new71idml",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750833846480_2cjg68dvd",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750833846480_u7k0dwqe2",
+            "text": "Maybe"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750833846480_hx82abpko",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750833846480_2cjg68dvd",
+        "correctAnswer": "False",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750833854172-b32mq",
+    "createdAt": "2025-06-25T06:44:14.172Z",
+    "updatedAt": "2025-06-25T06:44:14.172Z"
   }
 ]

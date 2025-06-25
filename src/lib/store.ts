@@ -6,7 +6,7 @@ const API_BASE_URL = '/api'; // Assuming your app runs at the root
 // Helper function to fetch all tests from the API
 async function _fetchAllTests(): Promise<Test[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/tests`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/tests?cb=${new Date().getTime()}`, { cache: 'no-store' });
     if (!response.ok) {
       console.error(`[STORE-CLIENT] Error fetching tests: ${response.status} ${response.statusText}`);
       const errorBody = await response.text();
