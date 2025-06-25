@@ -1,8 +1,7 @@
-
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +28,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const authContext = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,7 +61,8 @@ export default function SignupPage() {
           description: `Welcome, ${result.user.displayName}! Redirecting...`,
           duration: 2000,
         });
-        router.push("/dashboard");
+        const redirectUrl = searchParams.get('redirect') || "/dashboard";
+        router.push(redirectUrl);
       } else {
         toast({
           title: "Sign Up Failed",

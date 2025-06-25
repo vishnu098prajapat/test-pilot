@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, LogIn, GraduationCap, Loader2 } from 'lucide-react';
+import { ArrowRight, LogIn, GraduationCap, Loader2, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -107,13 +106,20 @@ export default function JoinGroupPage() {
                 </Button>
               </form>
             ) : (
-              <div className="text-center space-y-4 p-4 border rounded-lg bg-secondary/50">
-                <p className="text-muted-foreground">You need to be logged in to join a group.</p>
-                <Button asChild>
-                  <Link href={`/auth/login?redirect=/join?code=${groupCode}`}>
-                    <LogIn className="mr-2 h-4 w-4" /> Login to Continue
-                  </Link>
-                </Button>
+               <div className="text-center space-y-4 p-4 border-2 border-dashed rounded-lg">
+                <p className="text-muted-foreground">You need a free account to join a group. No special plan is required.</p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button asChild>
+                      <Link href={`/auth/login?redirect=/join?code=${groupCode}`}>
+                        <LogIn className="mr-2 h-4 w-4" /> Login
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                      <Link href={`/auth/signup?redirect=/join?code=${groupCode}`}>
+                        <UserPlus className="mr-2 h-4 w-4" /> Create Account
+                      </Link>
+                    </Button>
+                </div>
               </div>
             )}
           </CardContent>
@@ -122,4 +128,3 @@ export default function JoinGroupPage() {
     </div>
   );
 }
-
