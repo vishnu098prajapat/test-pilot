@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, PlusCircle, Settings, Users, BarChart3, ClipboardList, Trash2, BookOpen, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Copy, Settings, Users, BarChart3, ClipboardList, Trash2, BookOpen, AlertTriangle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,6 @@ import { useAuth } from '@/hooks/use-auth';
 import type { Test, TestAttempt, Batch as Group, User } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import QrCodeModal from '@/components/common/qr-code-modal';
 import AssignTestDialog from '@/components/groups/assign-test-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -46,10 +45,6 @@ export default function GroupDetailPage() {
   const [assignedTests, setAssignedTests] = useState<Test[]>([]);
   const [students, setStudents] = useState<EnrichedStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [qrCodeTitle, setQrCodeTitle] = useState("");
 
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
@@ -120,13 +115,9 @@ export default function GroupDetailPage() {
     };
   }, [group, assignedTests, students]);
 
-  const handleShowJoinQr = () => {
-    if (group && typeof window !== "undefined") {
-      const joinLink = `${window.location.origin}/join?code=${group.groupCode}`;
-      setQrCodeUrl(joinLink);
-      setQrCodeTitle(`QR Code to Join: ${group.name}`);
-      setIsQrModalOpen(true);
-    }
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: "Copied!", description: `${type} copied to clipboard.`, duration: 2000 });
   };
   
   const handleTestAssigned = (updatedTest: Test) => {
@@ -214,7 +205,7 @@ export default function GroupDetailPage() {
           <div className="flex gap-2">
             <Button variant="outline"><Settings className="mr-2 h-4 w-4" /> Group Settings</Button>
             <Button onClick={() => setIsAssignDialogOpen(true)}>
-              <PlusCircle className="mr-2 h-4 w-4" /> Assign Test
+              <ClipboardList className="mr-2 h-4 w-4" /> Assign Test
             </Button>
           </div>
         </div>
@@ -235,7 +226,15 @@ export default function GroupDetailPage() {
               <TabsTrigger value="tests">Assigned Tests</TabsTrigger>
               <TabsTrigger value="students">Students</TabsTrigger>
             </TabsList>
-            <Button variant="outline" size="sm" onClick={handleShowJoinQr}><PlusCircle className="mr-2 h-4 w-4" /> Add Student</Button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Group Code:</span>
+              <div className="flex items-center gap-1 rounded-md border bg-muted px-3 py-1.5">
+                  <span className="font-mono text-lg tracking-widest text-primary">{group.groupCode}</span>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(group.groupCode, 'Group Code')}>
+                      <Copy className="h-4 w-4" />
+                  </Button>
+              </div>
+            </div>
           </div>
 
           <TabsContent value="students" className="mt-4">
@@ -243,7 +242,7 @@ export default function GroupDetailPage() {
               <CardHeader><CardTitle>Student Roster</CardTitle><CardDescription>List of all students in this group and their performance on assigned tests.</CardDescription></CardHeader>
               <CardContent>
                   {students.length === 0 ? (
-                      <div className="text-center py-10 text-muted-foreground">No students have joined this group yet. Use the 'Add Student' button to get a shareable QR code.</div>
+                      <div className="text-center py-10 text-muted-foreground">No students have joined this group yet. Use the group code to invite them.</div>
                   ) : (
                       <Table>
                           <TableHeader>
@@ -333,12 +332,6 @@ export default function GroupDetailPage() {
           </TabsContent>
         </Tabs>
       </div>
-      <QrCodeModal 
-        isOpen={isQrModalOpen}
-        onClose={() => setIsQrModalOpen(false)}
-        url={qrCodeUrl}
-        title={qrCodeTitle}
-      />
       <AssignTestDialog
         isOpen={isAssignDialogOpen}
         onClose={() => setIsAssignDialogOpen(false)}
@@ -349,3 +342,5 @@ export default function GroupDetailPage() {
     </>
   );
 }
+
+    
