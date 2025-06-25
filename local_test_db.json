@@ -3425,5 +3425,157 @@
     "id": "test-1750833854172-b32mq",
     "createdAt": "2025-06-25T06:44:14.172Z",
     "updatedAt": "2025-06-25T06:44:14.172Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750834130011-0-tx3i6gh",
+        "text": "What is the key difference between arrays and vectors in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750834130011_k17u3goe1",
+            "text": "Arrays can dynamically resize, while vectors have a fixed size."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750834130011_4ccmsnkw3",
+            "text": "Arrays and vectors are the same in terms of size."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750834130011_ccj957u6m",
+            "text": "Arrays have a fixed size at compile time, while vectors can dynamically resize."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750834130011_mif16xm17",
+            "text": "Vectors are only used for storing characters, while arrays store numbers."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750834130011_ccj957u6m",
+        "correctAnswer": "Arrays have a fixed size at compile time, while vectors can dynamically resize.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750834130011-1-a7g6rk0",
+        "text": "Which of the following is the correct way to declare a vector of integers named 'myVector' with an initial size of 10, where each element is initialized to 0?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750834130011_4jhzofd6a",
+            "text": "vector<int> myVector[10];"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750834130011_26jevtfnu",
+            "text": "vector myVector<int>(10, 0);"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750834130011_qbm1gulhc",
+            "text": "vector<int> myVector(10, 0);"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750834130011_qucqr6m4l",
+            "text": "int vector<myVector>(10);"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750834130011_qbm1gulhc",
+        "correctAnswer": "vector<int> myVector(10, 0);",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750834130011-2-50pxsli",
+        "text": "What does the `[]` operator do when used to access elements in a C++ array or vector?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750834130011_e3qzdwx94",
+            "text": "It returns a copy of the element at the specified index."
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750834130011_dvnbz8s5h",
+            "text": "It returns a reference to the element at the specified index, without bounds checking."
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750834130011_zyg94q3nd",
+            "text": "It throws an exception if the index is out of bounds."
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750834130011_dc5vmd8iv",
+            "text": "It only works for vectors, not arrays."
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750834130011_dvnbz8s5h",
+        "correctAnswer": "It returns a reference to the element at the specified index, without bounds checking.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750834130011-3-9m9b44y",
+        "text": "How do you add an element with the value of 5 to the end of a vector named 'myVector'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750834130011_1lbpeojku",
+            "text": "myVector[10] = 5;"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750834130011_hxpbhba81",
+            "text": "myVector.add(5);"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750834130011_1dyyji8mw",
+            "text": "myVector.insert(5);"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750834130011_d5hscqsl0",
+            "text": "myVector.push_back(5);"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750834130011_d5hscqsl0",
+        "correctAnswer": "myVector.push_back(5);",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750834130011-4-vp8kis2",
+        "text": "What typically happens when you push an element onto a vector and it exceeds its current capacity?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750834130011_2bzqibz72",
+            "text": "The program crashes."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750834130011_foi3o90s9",
+            "text": "An exception is thrown."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750834130011_eu8sjcqpa",
+            "text": "The vector automatically doubles its capacity."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750834130011_rflx64ahp",
+            "text": "The vector's size remains the same, and no new elements can be added."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750834130011_eu8sjcqpa",
+        "correctAnswer": "The vector automatically doubles its capacity.",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": false,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750834135779-vb3vx",
+    "createdAt": "2025-06-25T06:48:55.779Z",
+    "updatedAt": "2025-06-25T06:48:55.779Z"
   }
 ]

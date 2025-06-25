@@ -114,6 +114,11 @@ function writeDb(data: Test[]): void {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
+      // Forcefully prevent any caching of this API response
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+
       const data = readDb();
       res.status(200).json(data);
     } catch (error) {
