@@ -42,14 +42,27 @@ function generateGroupCode(length = 6): string {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { teacherId } = req.query;
-    if (!teacherId || typeof teacherId !== 'string') {
-      return res.status(400).json({ message: 'Teacher ID is required' });
+    const { teacherId, studentIdentifier } = req.query;
+
+    if (teacherId && typeof teacherId === 'string') {
+        const allGroups = readGroupsDb();
+        const teacherGroups = allGroups.filter(g => g.teacherId === teacherId);
+        teacherGroups.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return res.status(200).json(teacherGroups);
     }
-    const allGroups = readGroupsDb();
-    const teacherGroups = allGroups.filter(g => g.teacherId === teacherId);
-    teacherGroups.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    res.status(200).json(teacherGroups);
+    
+    if (studentIdentifier && typeof studentIdentifier === 'string') {
+        const allGroups = readGroupsDb();
+        const normalizedStudentId = studentIdentifier.toLowerCase();
+        const studentGroups = allGroups.filter(g => 
+            g.studentIdentifiers.some(id => id.toLowerCase() === normalizedStudentId)
+        );
+        studentGroups.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return res.status(200).json(studentGroups);
+    }
+    
+    return res.status(400).json({ message: 'A teacherId or studentIdentifier is required.' });
+
   } else if (req.method === 'POST') {
     const { name, teacherId } = req.body;
     if (!name || typeof name !== 'string' || name.trim().length < 3) {
