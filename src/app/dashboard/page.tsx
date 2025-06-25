@@ -35,6 +35,7 @@ import QrCodeModal from "@/components/common/qr-code-modal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSubscription } from "@/hooks/use-subscription";
 import AssignTestToGroupDialog from "@/components/dashboard/assign-test-dialog";
+import { usePathname } from 'next/navigation';
 
 
 export default function DashboardPage() {
@@ -45,6 +46,7 @@ export default function DashboardPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const pathname = usePathname();
 
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
@@ -79,7 +81,7 @@ export default function DashboardPage() {
       }
     }
     fetchData();
-  }, [user?.id, toast, plan.canUseGroups]);
+  }, [user?.id, toast, plan.canUseGroups, pathname]);
 
   const toggleSelectionMode = () => {
     setIsSelectionModeActive(!isSelectionModeActive);

@@ -3066,5 +3066,212 @@
     "id": "test-1750832805413-0vzwv",
     "createdAt": "2025-06-25T06:26:45.413Z",
     "updatedAt": "2025-06-25T06:26:45.413Z"
+  },
+  {
+    "title": "h4333",
+    "subject": "ffffffffffff",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "new-1750833140235-wej52ot",
+        "text": "mk000000000",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750833140235-wej52ot-0",
+            "text": "4444"
+          },
+          {
+            "id": "opt-new-1750833140235-wej52ot-1",
+            "text": "ndi"
+          }
+        ],
+        "correctOptionId": "opt-new-1750833140235-wej52ot-1",
+        "correctAnswer": "ndi",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1750833174218-a11rc0v",
+        "text": "4444",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1750833174218-a11rc0v-0",
+            "text": "dag"
+          },
+          {
+            "id": "opt-new-1750833174218-a11rc0v-1",
+            "text": "sm30r"
+          }
+        ],
+        "correctOptionId": "opt-new-1750833174218-a11rc0v-1",
+        "correctAnswer": "sm30r",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750833192494-wyioy",
+    "createdAt": "2025-06-25T06:33:12.494Z",
+    "updatedAt": "2025-06-25T06:33:12.494Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750833225764-0-6hzg0wg",
+        "text": "Which data type is used to store whole numbers in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750833225764_sntgfz7kx",
+            "text": "string"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750833225764_mvfn3cw4x",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750833225764_6x6tbdll8",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750833225764_12g2ppeit",
+            "text": "bool"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750833225764_6x6tbdll8",
+        "correctAnswer": "int",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833225764-1-p9bn57t",
+        "text": "Which data type is used to store a single character in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750833225764_j3nc18en4",
+            "text": "string"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750833225764_e4crjeg4d",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750833225764_8pibfs83z",
+            "text": "char"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750833225764_zcbeibbk4",
+            "text": "double"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750833225764_8pibfs83z",
+        "correctAnswer": "char",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833225764-2-ftgtjrs",
+        "text": "Which data type is best suited for storing precise floating-point numbers in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750833225764_7dlosdfp2",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750833225764_fiv5cbns9",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750833225764_bqggiwelr",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750833225764_8pdy362is",
+            "text": "double"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1750833225764_8pdy362is",
+        "correctAnswer": "double",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833225765-3-xc44qt2",
+        "text": "Which data type represents boolean values (true or false) in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750833225765_l0wj1i167",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750833225765_z2gkh44tt",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750833225765_b7wzn5xpp",
+            "text": "bool"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750833225765_vx7oi61cx",
+            "text": "char"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1750833225765_b7wzn5xpp",
+        "correctAnswer": "bool",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750833225765-4-osxz9hw",
+        "text": "What is the correct way to use a variable in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750833225765_yo7q2w2rd",
+            "text": "Use the variable without declaring it."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750833225765_g4ee0zr2f",
+            "text": "Declare the variable after using it."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750833225765_rt3veckf5",
+            "text": "Declare the variable in another scope."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750833225765_kc9azsb9l",
+            "text": "Declare the variable before using it."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1750833225765_kc9azsb9l",
+        "correctAnswer": "Declare the variable before using it.",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750833240622-d6siz",
+    "createdAt": "2025-06-25T06:34:00.622Z",
+    "updatedAt": "2025-06-25T06:34:00.622Z"
   }
 ]

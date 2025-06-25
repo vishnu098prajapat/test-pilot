@@ -6,6 +6,7 @@ import { useAuth } from './use-auth';
 import type { Test } from '@/lib/types'; 
 import { getTestsByTeacher } from '@/lib/store';
 import { startOfMonth, isWithinInterval } from 'date-fns';
+import { usePathname } from 'next/navigation';
 
 
 // This is a mock implementation. In a real app, this would come from a database.
@@ -52,6 +53,7 @@ export function useSubscription() {
   const [isLoading, setIsLoading] = useState(true);
   const [lifetimeUserTests, setLifetimeUserTests] = useState<Test[]>([]);
   const [isTestCountLoading, setIsTestCountLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isAuthLoading) {
@@ -80,7 +82,7 @@ export function useSubscription() {
       setIsTestCountLoading(false);
     }
     setIsLoading(false);
-  }, [user, isAuthLoading]);
+  }, [user, isAuthLoading, pathname]);
 
   const plan = plans[planId];
   
