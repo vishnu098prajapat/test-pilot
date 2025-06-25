@@ -11,9 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { getTestsByTeacher } from '@/lib/store';
+import { getTestsByTeacher, deleteTest as deleteTestAction } from '@/lib/store';
 import { useAuth } from '@/hooks/use-auth';
-import type { Test, TestAttempt, Batch as Group, User } from '@/lib/types';
+import type { Test, Batch as Group, User } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import AssignTestDialog from '@/components/groups/assign-test-dialog';
@@ -71,7 +71,11 @@ export default function GroupDetailPage() {
         if (currentGroup) {
           setGroup(currentGroup);
           setAllTeacherTests(testsResponse);
-          const testsForGroup = testsResponse.filter(test => test.batchId === groupId);
+          
+          const testsForGroup = testsResponse
+            .filter(test => test.batchId === groupId)
+            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+          
           const assignedTestIds = new Set(testsForGroup.map(t => t.id));
           setAssignedTests(testsForGroup);
           
@@ -121,7 +125,7 @@ export default function GroupDetailPage() {
   };
   
   const handleTestAssigned = (updatedTest: Test) => {
-    setAssignedTests(prev => [updatedTest, ...prev]);
+    setAssignedTests(prev => [updatedTest, ...prev].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
     setAllTeacherTests(prev => prev.map(t => t.id === updatedTest.id ? updatedTest : t));
   };
   
@@ -143,6 +147,21 @@ export default function GroupDetailPage() {
 
     } catch (error: any) {
         toast({ title: "Error", description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteTest = async (testId: string) => {
+    try {
+      const success = await deleteTestAction(testId);
+      if (success) {
+        toast({ title: "Success", description: "Test deleted successfully." });
+        setAssignedTests(prev => prev.filter(t => t.id !== testId));
+        setAllTeacherTests(prev => prev.filter(t => t.id !== testId));
+      } else {
+        throw new Error("Failed to delete the test from the store.");
+      }
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: 'destructive' });
     }
   };
 
@@ -321,6 +340,25 @@ export default function GroupDetailPage() {
                             <Button variant="ghost" size="sm" asChild>
                               <Link href={`/test/${test.id}/leaderboard`}>View Results</Link>
                             </Button>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Test?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete the test "{test.title}"? This action is permanent and will delete the test for all groups and students.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteTest(test.id)} className="bg-destructive hover:bg-destructive/90">
+                                      Delete Test
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                           </TableCell>
                         </TableRow>
                       ))}

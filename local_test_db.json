@@ -2540,7 +2540,8 @@
     "id": "test-1750329801375-zlzfs",
     "createdAt": "2025-06-19T10:43:21.375Z",
     "updatedAt": "2025-06-25T07:13:12.124Z",
-    "batchId": "group-1750480811384-bjl7aq2"
+    "batchId": "group-1750480811384-bjl7aq2",
+    "deletedAt": "2025-06-25T08:30:22.895Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on c++",
@@ -2682,7 +2683,8 @@
     "id": "test-1750334333526-aj62h",
     "createdAt": "2025-06-19T11:58:53.526Z",
     "updatedAt": "2025-06-23T08:54:35.578Z",
-    "batchId": "group-1750480811384-bjl7aq2"
+    "batchId": "group-1750480811384-bjl7aq2",
+    "deletedAt": "2025-06-25T08:30:22.400Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on java",
@@ -2834,7 +2836,8 @@
     "id": "test-1750402424509-dvgax",
     "createdAt": "2025-06-20T06:53:44.510Z",
     "updatedAt": "2025-06-23T05:34:15.124Z",
-    "batchId": "group-1750481939934-8082fhi"
+    "batchId": "group-1750481939934-8082fhi",
+    "deletedAt": "2025-06-25T08:30:21.769Z"
   },
   {
     "title": "Personal test ",
@@ -2887,7 +2890,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750751659907-xkriu",
     "createdAt": "2025-06-24T07:54:19.907Z",
-    "updatedAt": "2025-06-24T07:54:19.907Z"
+    "updatedAt": "2025-06-24T07:54:19.907Z",
+    "deletedAt": "2025-06-25T08:32:22.230Z"
   },
   {
     "title": "Personal test ",
@@ -2940,7 +2944,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750751669137-j5rmi",
     "createdAt": "2025-06-24T07:54:29.138Z",
-    "updatedAt": "2025-06-24T07:54:29.138Z"
+    "updatedAt": "2025-06-24T07:54:29.138Z",
+    "deletedAt": "2025-06-25T08:32:21.784Z"
   },
   {
     "title": "av4",
@@ -3011,7 +3016,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750832424793-ydbw9",
     "createdAt": "2025-06-25T06:20:24.793Z",
-    "updatedAt": "2025-06-25T06:20:24.793Z"
+    "updatedAt": "2025-06-25T06:20:24.793Z",
+    "deletedAt": "2025-06-25T08:32:21.317Z"
   },
   {
     "title": "avre",
@@ -3066,7 +3072,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750832805413-0vzwv",
     "createdAt": "2025-06-25T06:26:45.413Z",
-    "updatedAt": "2025-06-25T06:26:45.413Z"
+    "updatedAt": "2025-06-25T06:26:45.413Z",
+    "deletedAt": "2025-06-25T08:32:20.860Z"
   },
   {
     "title": "h4333",
@@ -3121,7 +3128,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750833192494-wyioy",
     "createdAt": "2025-06-25T06:33:12.494Z",
-    "updatedAt": "2025-06-25T06:33:12.494Z"
+    "updatedAt": "2025-06-25T06:33:12.494Z",
+    "deletedAt": "2025-06-25T08:32:20.372Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on c++",
@@ -3273,7 +3281,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750833240622-d6siz",
     "createdAt": "2025-06-25T06:34:00.622Z",
-    "updatedAt": "2025-06-25T06:34:00.622Z"
+    "updatedAt": "2025-06-25T06:34:00.622Z",
+    "deletedAt": "2025-06-25T08:32:19.827Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on Python",
@@ -3425,7 +3434,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750833854172-b32mq",
     "createdAt": "2025-06-25T06:44:14.172Z",
-    "updatedAt": "2025-06-25T06:44:14.172Z"
+    "updatedAt": "2025-06-25T06:44:14.172Z",
+    "deletedAt": "2025-06-25T08:32:19.160Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on c++",
@@ -3577,6 +3587,160 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750834135779-vb3vx",
     "createdAt": "2025-06-25T06:48:55.779Z",
-    "updatedAt": "2025-06-25T06:48:55.779Z"
+    "updatedAt": "2025-06-25T06:48:55.779Z",
+    "deletedAt": "2025-06-25T08:32:18.324Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on java",
+    "subject": "java",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750840273730-0-vt231ko",
+        "text": "Which of the following data types in Java occupies the least amount of memory?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750840273730_wvxt9biw9",
+            "text": "short"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750840273730_4l1o34kxf",
+            "text": "byte"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750840273730_0ex0d3bio",
+            "text": "long"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750840273730_zk24o7yag",
+            "text": "double"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1750840273730_4l1o34kxf",
+        "correctAnswer": "byte",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750840273730-1-98izewv",
+        "text": "Which data type is most suitable for storing whole numbers in Java, if memory is not a primary concern?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750840273730_fbyvladr7",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750840273730_v2e5kox5v",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750840273730_6moqmbev3",
+            "text": "double"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750840273730_otrgw377w",
+            "text": "boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1750840273730_fbyvladr7",
+        "correctAnswer": "int",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750840273730-2-7f03thz",
+        "text": "Which keyword is used in Java to declare a constant variable?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750840273730_kef3ql04n",
+            "text": "static"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750840273730_06i3fmdty",
+            "text": "final"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750840273730_9qgng49w2",
+            "text": "volatile"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750840273730_6myb622s5",
+            "text": "transient"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750840273730_06i3fmdty",
+        "correctAnswer": "final",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750840273730-3-wja507u",
+        "text": "Which data type is used to store single-precision floating-point numbers in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750840273730_urkmdv9g3",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750840273730_8h6qi2psm",
+            "text": "double"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750840273730_aj80nlaju",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750840273730_9jth7lylx",
+            "text": "long"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1750840273730_aj80nlaju",
+        "correctAnswer": "float",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750840273730-4-o6vg3xx",
+        "text": "Which data type is used to store a single character in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750840273730_m2mz19g2b",
+            "text": "string"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750840273730_6kecz3485",
+            "text": "char"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750840273730_ykciyd7c7",
+            "text": "byte"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750840273730_6056bysu6",
+            "text": "int"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750840273730_6kecz3485",
+        "correctAnswer": "char",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750840292842-6h0df",
+    "createdAt": "2025-06-25T08:31:32.842Z",
+    "updatedAt": "2025-06-25T08:31:58.822Z",
+    "batchId": "group-1750480811384-bjl7aq2"
   }
 ]
