@@ -130,20 +130,23 @@ export default function MyProgressPage() {
     const lifetimeTotalAttempts = allUserAttempts.length;
     const lifetimeTestsPassed = allUserAttempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
 
+    const totalMonthlySubmissions = currentMonthAttempts.length;
     const currentMonthTotalScoreSum = currentMonthAttempts.reduce((sum, attempt) => sum + (attempt.scorePercentage || 0), 0);
-    const currentMonthAverageScore = currentMonthAttempts.length > 0 ? Math.round(currentMonthTotalScoreSum / currentMonthAttempts.length) : 0;
-    const currentMonthTestsPassed = currentMonthAttempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
-    const currentMonthPassRate = currentMonthAttempts.length > 0 ? Math.round((currentMonthTestsPassed / currentMonthAttempts.length) * 100) : 0;
+    const currentMonthAverageScore = totalMonthlySubmissions > 0 ? Math.round(currentMonthTotalScoreSum / totalMonthlySubmissions) : 0;
     
-    const totalTimeSpent = allUserAttempts.reduce((sum, attempt) => {
+    const currentMonthTestsPassed = currentMonthAttempts.filter(attempt => (attempt.scorePercentage || 0) >= 50).length;
+    const currentMonthPassRate = totalMonthlySubmissions > 0 ? Math.round((currentMonthTestsPassed / totalMonthlySubmissions) * 100) : 0;
+    
+    const totalTimeSpentThisMonth = currentMonthAttempts.reduce((sum, attempt) => {
       const duration = (new Date(attempt.endTime).getTime() - new Date(attempt.startTime).getTime()) / 1000;
       return sum + (isNaN(duration) ? 0 : duration);
     }, 0);
-    const averageTimePerAttemptSeconds = lifetimeTotalAttempts > 0 ? Math.round(totalTimeSpent / lifetimeTotalAttempts) : 0;
+    const averageTimePerAttemptSeconds = totalMonthlySubmissions > 0 ? Math.round(totalTimeSpentThisMonth / totalMonthlySubmissions) : 0;
 
 
     return { 
       lifetimeTotalAttempts, 
+      totalMonthlySubmissions,
       currentMonthAverageScore, 
       lifetimeTestsPassed, 
       currentMonthPassRate,
@@ -200,7 +203,7 @@ export default function MyProgressPage() {
         <TrendingUp className="w-10 h-10 text-primary mr-3" />
         <div>
             <h1 className="text-3xl font-bold font-headline">My Personal Progress</h1>
-            <p className="text-muted-foreground">A detailed summary of your test performance.</p>
+            <p className="text-muted-foreground">A summary of your test performance for the current month.</p>
         </div>
       </div>
 
@@ -215,9 +218,9 @@ export default function MyProgressPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StatCard title="Total Attempts" value={summaryStats.lifetimeTotalAttempts} icon={FileText} description="Your lifetime test submissions." animate={true}/>
-          <StatCard title="Average Score" value={`${summaryStats.currentMonthAverageScore}%`} icon={Percent} description="Your average score this month." animate={true}/>
-          <StatCard title="Avg. Time / Attempt" value={formatTime(summaryStats.averageTimePerAttemptSeconds)} icon={Clock} description="Your average completion time." animate={true}/>
+          <StatCard title="Attempts This Month" value={summaryStats.totalMonthlySubmissions} icon={FileText} description={`Lifetime attempts: ${summaryStats.lifetimeTotalAttempts}`} animate={true}/>
+          <StatCard title="Average Score (This Month)" value={`${summaryStats.currentMonthAverageScore}%`} icon={Percent} description="Your average score for this calendar month." animate={true}/>
+          <StatCard title="Avg. Time / Attempt (This Month)" value={formatTime(summaryStats.averageTimePerAttemptSeconds)} icon={Clock} description="Your average completion time this month." animate={true}/>
          
           {plan.id === 'free' ? (
             <Card className="col-span-1 md:col-span-2 lg:col-span-3 shadow-sm flex flex-col items-center justify-center text-center bg-primary/5 border-primary/20 p-6">
@@ -235,8 +238,8 @@ export default function MyProgressPage() {
             </Card>
           ) : (
             <>
-              <StatCard title="Tests Passed" value={summaryStats.lifetimeTestsPassed} icon={CheckCircle} description="Lifetime tests with score ≥ 50%." colorClass="text-green-500" animate={true}/>
-              <StatCard title="Pass Rate" value={`${summaryStats.currentMonthPassRate}%`} icon={BarChart3} description="Your pass rate for this month." colorClass="text-green-500" animate={true}/>
+              <StatCard title="Tests Passed (Lifetime)" value={summaryStats.lifetimeTestsPassed} icon={CheckCircle} description="Lifetime tests with score ≥ 50%." colorClass="text-green-500" animate={true}/>
+              <StatCard title="Pass Rate (This Month)" value={`${summaryStats.currentMonthPassRate}%`} icon={BarChart3} description="Your pass rate for this month." colorClass="text-green-500" animate={true}/>
             </>
           )}
         </div>
