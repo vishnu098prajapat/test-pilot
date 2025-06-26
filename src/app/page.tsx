@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit, WifiOff, QrCode, Share2, Lightbulb, Eye, UserRoundCheck, MessageSquareText, Briefcase, FileText, BarChart3, Users, ShieldCheck } from "lucide-react";
+import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit, ShieldCheck, Share2, BarChart3, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -9,21 +9,23 @@ import { Badge } from "@/components/ui/badge";
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="py-4 px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
+      <header className="py-4 px-4 sm:px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center text-2xl font-bold font-headline text-primary">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          <Link href="/" className="flex items-center text-xl sm:text-2xl font-bold font-headline text-primary">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 sm:h-7 sm:w-7"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
             <span className="ml-2">Test Pilot</span>
           </Link>
           <nav className="flex items-center space-x-2">
             <Button variant="ghost" asChild>
               <Link href="/auth/login">
-                <LogIn className="mr-2 h-4 w-4"/> Login
+                <LogIn className="sm:mr-2 h-4 w-4"/> 
+                <span className="hidden sm:inline">Login</span>
               </Link>
             </Button>
             <Button asChild className="bg-primary hover:bg-primary/90">
               <Link href="/auth/signup">
-                <UserPlus className="mr-2 h-4 w-4"/> Create Account
+                <UserPlus className="sm:mr-2 h-4 w-4"/>
+                <span className="hidden sm:inline">Create Account</span>
               </Link>
             </Button>
           </nav>
