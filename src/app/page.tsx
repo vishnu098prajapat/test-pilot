@@ -51,7 +51,7 @@ export default function HomePage() {
             </h1>
              <p className="text-xl md:text-2xl font-semibold text-primary-foreground/95 mb-10 italic px-4">
               <Zap className="inline-block mr-2 h-6 w-6 text-yellow-300" />
-              World's Fastest Quiz Generator: Topic to Quiz in 5 Seconds – <span className="text-yellow-300 underline">FREE Forever!</span>
+              World's Fastest Quiz Generator: Craft professional assessments from any topic in seconds.
               <Zap className="inline-block ml-2 h-6 w-6 text-yellow-300" />
             </p>
             <Button
@@ -65,6 +65,14 @@ export default function HomePage() {
                 </span>
               </Link>
             </Button>
+             <div className="mt-4 flex gap-x-6">
+                <Button variant="link" asChild className="text-primary-foreground/80 hover:text-primary-foreground">
+                    <Link href="#features">Explore Features</Link>
+                </Button>
+                <Button variant="link" asChild className="text-primary-foreground/80 hover:text-primary-foreground">
+                    <Link href="/dashboard/plans">View Plans</Link>
+                </Button>
+            </div>
           </div>
         </section>
 

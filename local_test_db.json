@@ -3742,5 +3742,293 @@
     "createdAt": "2025-06-25T08:31:32.842Z",
     "updatedAt": "2025-06-25T08:31:58.822Z",
     "batchId": "group-1750480811384-bjl7aq2"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750841589835-0-ghxsuin",
+        "text": "An individual with two different alleles for a particular trait is called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750841589835_gvxu0u7dz",
+            "text": "Homozygous dominant"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750841589835_n6y1zvuup",
+            "text": "Homozygous recessive"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750841589835_z5wju6r5x",
+            "text": "Heterozygous"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750841589835_nt7l7axki",
+            "text": "Hemizygous"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750841589835_z5wju6r5x",
+        "correctAnswer": "Heterozygous",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589835-1-k5544sa",
+        "text": "A situation in which both alleles of a gene contribute to the phenotype of the organism is called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750841589835_hdvp527uq",
+            "text": "Incomplete dominance"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750841589835_fd9fn07ou",
+            "text": "Codominance"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750841589835_l2fepuwnp",
+            "text": "Multiple alleles"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750841589835_97efd2mj4",
+            "text": "Sex-linked"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1750841589835_fd9fn07ou",
+        "correctAnswer": "Codominance",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589835-2-n92f95d",
+        "text": "A trait that only appears when an organism has two copies of the corresponding allele is called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750841589835_r9y0ysvw3",
+            "text": "Dominant"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750841589835_zyq6nsisg",
+            "text": "Recessive"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750841589835_jhuh1t66n",
+            "text": "Co-dominant"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750841589835_hmt3q2gvt",
+            "text": "Incompletely dominant"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750841589835_zyq6nsisg",
+        "correctAnswer": "Recessive",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589835-3-1j4xzro",
+        "text": "What is the typical sex chromosome pairing in human females?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750841589835_hh4nfb1q2",
+            "text": "XY"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750841589835_5l9ggdnbq",
+            "text": "XX"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750841589835_seaz1o3kw",
+            "text": "XO"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750841589835_020kxlgya",
+            "text": "YY"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750841589835_5l9ggdnbq",
+        "correctAnswer": "XX",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-4-u692tvm",
+        "text": "A change in the nucleotide sequence of DNA is called a:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750841589836_g6x071i5v",
+            "text": "Recombination"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750841589836_xcpjkg28c",
+            "text": "Segregation"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750841589836_w13i7onrm",
+            "text": "Mutation"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750841589836_nuiiugbyh",
+            "text": "Transformation"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750841589836_w13i7onrm",
+        "correctAnswer": "Mutation",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-5-p9g1cvf",
+        "text": "The observable characteristics of an organism are referred to as its:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1750841589836_lbtb8vgkb",
+            "text": "Genotype"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1750841589836_ze0ln2vm9",
+            "text": "Phenotype"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1750841589836_6xds03fs8",
+            "text": "Allele"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1750841589836_wt5ajl3lw",
+            "text": "Locus"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx1_1750841589836_ze0ln2vm9",
+        "correctAnswer": "Phenotype",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-6-f0ei9fi",
+        "text": "Which type of cell division results in the formation of gametes?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1750841589836_hjdk3memg",
+            "text": "Mitosis"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1750841589836_q7lyu45yc",
+            "text": "Meiosis"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1750841589836_vdz14tnuj",
+            "text": "Binary fission"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1750841589836_dvxjyy6n1",
+            "text": "Budding"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx1_1750841589836_q7lyu45yc",
+        "correctAnswer": "Meiosis",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-7-9pqsmit",
+        "text": "Genes located on the same chromosome that tend to be inherited together are called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1750841589836_ou8o97e12",
+            "text": "Sex-linked genes"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1750841589836_u0l5cmv9o",
+            "text": "Autosomal genes"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1750841589836_y6oon98dl",
+            "text": "Linked genes"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1750841589836_rkcq4m4fs",
+            "text": "Dominant genes"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx2_1750841589836_y6oon98dl",
+        "correctAnswer": "Linked genes",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-8-gtgqvjd",
+        "text": "A diagram used to predict the genotypes and phenotypes of offspring from a genetic cross is called a:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q8_idx0_1750841589836_nyk71t2cw",
+            "text": "Pedigree chart"
+          },
+          {
+            "id": "ai-opt_q8_idx1_1750841589836_oyq3kr96b",
+            "text": "Karyotype"
+          },
+          {
+            "id": "ai-opt_q8_idx2_1750841589836_7zms9o9n9",
+            "text": "Punnett square"
+          },
+          {
+            "id": "ai-opt_q8_idx3_1750841589836_vvrpm148s",
+            "text": "Gel electrophoresis"
+          }
+        ],
+        "correctOptionId": "ai-opt_q8_idx2_1750841589836_7zms9o9n9",
+        "correctAnswer": "Punnett square",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750841589836-9-lgpdqj9",
+        "text": "The three-base sequences on mRNA that specify particular amino acids are called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q9_idx0_1750841589836_8sgbtmadv",
+            "text": "Introns"
+          },
+          {
+            "id": "ai-opt_q9_idx1_1750841589836_fyto7e6wt",
+            "text": "Exons"
+          },
+          {
+            "id": "ai-opt_q9_idx2_1750841589836_2l1cva0fr",
+            "text": "Codons"
+          },
+          {
+            "id": "ai-opt_q9_idx3_1750841589836_calseqz5q",
+            "text": "Anticodons"
+          }
+        ],
+        "correctOptionId": "ai-opt_q9_idx2_1750841589836_2l1cva0fr",
+        "correctAnswer": "Codons",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750841614807-elife",
+    "createdAt": "2025-06-25T08:53:34.807Z",
+    "updatedAt": "2025-06-25T08:53:45.547Z",
+    "batchId": "group-1750480811384-bjl7aq2"
   }
 ]
