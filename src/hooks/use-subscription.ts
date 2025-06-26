@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { useAuth } from './use-auth';
 import type { Test } from '@/lib/types'; 
 import { getTestsByTeacher } from '@/lib/store';
@@ -47,68 +47,86 @@ function getMockUserPlan(userId: string): PlanId {
   return 'free';
 }
 
-export function useSubscription() {
-  const { user, isLoading: isAuthLoading } = useAuth();
-  const [planId, setPlanId] = useState<PlanId>('free');
-  const [isLoading, setIsLoading] = useState(true);
-  const [lifetimeUserTests, setLifetimeUserTests] = useState<Test[]>([]);
-  const [isTestCountLoading, setIsTestCountLoading] = useState(true);
-  const pathname = usePathname();
+interface SubscriptionContextType {
+  plan: Plan;
+  isLoading: boolean;
+  canCreateTest: boolean;
+  remainingTests: number;
+  canCreateAiTest: boolean;
+  remainingAiTests: number;
+}
 
-  useEffect(() => {
-    if (isAuthLoading) {
-      setIsLoading(true);
-      return;
-    }
-    if (user) {
-      const userPlanId = getMockUserPlan(user.id);
-      setPlanId(userPlanId);
-      
-      if (user.role === 'teacher') {
-        setIsTestCountLoading(true);
-        // Call with includeDeleted = true to get all created tests for accurate counting, including soft-deleted ones.
-        getTestsByTeacher(user.id, true).then(tests => {
-          setLifetimeUserTests(tests);
-          setIsTestCountLoading(false);
-        });
-      } else {
-          setLifetimeUserTests([]);
-          setIsTestCountLoading(false);
-      }
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-    } else {
-      setPlanId('free');
-      setLifetimeUserTests([]);
-      setIsTestCountLoading(false);
-    }
-    setIsLoading(false);
-  }, [user, isAuthLoading, pathname]);
+export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+    const { user, isLoading: isAuthLoading } = useAuth();
+    const [planId, setPlanId] = useState<PlanId>('free');
+    const [isLoading, setIsLoading] = useState(true);
+    const [lifetimeUserTests, setLifetimeUserTests] = useState<Test[]>([]);
+    const [isTestCountLoading, setIsTestCountLoading] = useState(true);
+    const pathname = usePathname();
 
-  const plan = plans[planId];
-  
-  const now = new Date();
-  const currentMonthStart = startOfMonth(now);
+    useEffect(() => {
+        if (isAuthLoading) {
+            setIsLoading(true);
+            return;
+        }
+        if (user) {
+            const userPlanId = getMockUserPlan(user.id);
+            setPlanId(userPlanId);
+            
+            if (user.role === 'teacher') {
+                setIsTestCountLoading(true);
+                getTestsByTeacher(user.id, true).then(tests => {
+                    setLifetimeUserTests(tests);
+                    setIsTestCountLoading(false);
+                });
+            } else {
+                setLifetimeUserTests([]);
+                setIsTestCountLoading(false);
+            }
+        } else {
+            setPlanId('free');
+            setLifetimeUserTests([]);
+            setIsTestCountLoading(false);
+        }
+        setIsLoading(false);
+    }, [user, isAuthLoading, pathname]);
 
-  const monthlyUserTests = lifetimeUserTests.filter(t => 
-    isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
-  );
+    const plan = plans[planId];
+    
+    const now = new Date();
+    const currentMonthStart = startOfMonth(now);
 
-  const monthlyManualTestsCount = monthlyUserTests.filter(t => !t.isAiGenerated).length;
-  const monthlyAiTestsCount = monthlyUserTests.filter(t => t.isAiGenerated).length;
+    const monthlyUserTests = lifetimeUserTests.filter(t => 
+        isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
+    );
 
-  const canCreateTest = plan.testCreationLimit === Infinity || monthlyManualTestsCount < plan.testCreationLimit;
-  const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - monthlyManualTestsCount);
+    const monthlyManualTestsCount = monthlyUserTests.filter(t => !t.isAiGenerated).length;
+    const monthlyAiTestsCount = monthlyUserTests.filter(t => t.isAiGenerated).length;
 
-  const canCreateAiTest = plan.canUseAI && (plan.aiTestCreationLimit === Infinity || monthlyAiTestsCount < plan.aiTestCreationLimit);
-  const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - monthlyAiTestsCount);
+    const canCreateTest = plan.testCreationLimit === Infinity || monthlyManualTestsCount < plan.testCreationLimit;
+    const remainingTests = plan.testCreationLimit === Infinity ? Infinity : Math.max(0, plan.testCreationLimit - monthlyManualTestsCount);
 
+    const canCreateAiTest = plan.canUseAI && (plan.aiTestCreationLimit === Infinity || monthlyAiTestsCount < plan.aiTestCreationLimit);
+    const remainingAiTests = plan.aiTestCreationLimit === Infinity ? Infinity : Math.max(0, plan.aiTestCreationLimit - monthlyAiTestsCount);
 
-  return { 
-    plan, 
-    isLoading: isLoading || isTestCountLoading, 
-    canCreateTest,
-    remainingTests,
-    canCreateAiTest,
-    remainingAiTests,
-  };
+    const value = {
+        plan, 
+        isLoading: isLoading || isTestCountLoading, 
+        canCreateTest,
+        remainingTests,
+        canCreateAiTest,
+        remainingAiTests,
+    };
+
+    return React.createElement(SubscriptionContext.Provider, { value }, children);
+}
+
+export function useSubscription(): SubscriptionContextType {
+  const context = useContext(SubscriptionContext);
+  if (context === undefined) {
+    throw new Error("useSubscription must be used within a SubscriptionProvider");
+  }
+  return context;
 }
