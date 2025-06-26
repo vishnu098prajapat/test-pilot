@@ -78,7 +78,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
             
             if (user.role === 'teacher') {
                 setIsTestCountLoading(true);
-                getTestsByTeacher(user.id, true).then(tests => {
+                getTestsByTeacher(user.id).then(tests => { // Removed `true` to only count active tests
                     setLifetimeUserTests(tests);
                     setIsTestCountLoading(false);
                 });

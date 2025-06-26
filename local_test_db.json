@@ -4334,5 +4334,157 @@
     "id": "test-1750915982840-njo96",
     "createdAt": "2025-06-26T05:33:02.840Z",
     "updatedAt": "2025-06-26T05:33:02.840Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on java",
+    "subject": "java",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1750916276609-0-hfeyy2w",
+        "text": "Which of the following is a primitive data type in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750916276609_ao433fnlt",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750916276609_fnqwpxf1k",
+            "text": "double"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750916276609_p3uy44gon",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750916276609_mievi2wge",
+            "text": "boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750916276609_p3uy44gon",
+        "correctAnswer": "int",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916276609-1-26c5bxj",
+        "text": "Which of the following will result in a compile-time error related to variables in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750916276609_wr5r9ml56",
+            "text": "Declaring a variable without assigning it a value."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750916276609_9i0gghf32",
+            "text": "Assigning a value of the wrong data type to a variable."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750916276609_4fjor765v",
+            "text": "Using a variable before it has been declared."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750916276609_ww091e7qn",
+            "text": "Dividing a number by zero."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1750916276609_wr5r9ml56",
+        "correctAnswer": "Declaring a variable without assigning it a value.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916276609-2-lkmaoyj",
+        "text": "Which keyword is used to declare a constant variable in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750916276609_0c84k6d60",
+            "text": "static"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750916276609_ty4jsgdfl",
+            "text": "final"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750916276609_3p5p78xcn",
+            "text": "void"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750916276609_1n9kl1m2i",
+            "text": "class"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750916276609_ty4jsgdfl",
+        "correctAnswer": "final",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916276609-3-9qm3yvo",
+        "text": "Which data type is used to store a single character in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750916276609_ma1gxfrqy",
+            "text": "String"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750916276609_797p06x8p",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750916276609_1efi1kyxu",
+            "text": "char"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750916276609_lrpew2cys",
+            "text": "boolean"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1750916276609_1efi1kyxu",
+        "correctAnswer": "char",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916276609-4-g29n8ve",
+        "text": "Which data type is most suitable for storing precise decimal values in Java?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750916276609_xmjmhspof",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750916276609_g77uoxgxj",
+            "text": "float"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750916276609_sq97nwlxr",
+            "text": "double"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750916276609_7cweiquea",
+            "text": "long"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750916276609_sq97nwlxr",
+        "correctAnswer": "double",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750916288890-2ws47",
+    "createdAt": "2025-06-26T05:38:08.890Z",
+    "updatedAt": "2025-06-26T05:38:08.890Z"
   }
 ]

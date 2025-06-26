@@ -63,7 +63,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, remainingTests, addCreatedTest } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, remainingAiTests, addCreatedTest } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -207,6 +207,21 @@ export default function TestBuilderForm() {
       toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive", duration: 2000 });
       return;
     }
+
+    if (!testIdToEdit) { // Only check limits for NEW tests, not for edits.
+      if (data.isAiGenerated) {
+        if (!canCreateAiTest) {
+          toast({ title: "AI Test Limit Reached", description: `You have reached your monthly limit of ${plan.aiTestCreationLimit} AI-generated tests.`, variant: "destructive", duration: 3000 });
+          return;
+        }
+      } else {
+        if (!canCreateTest) {
+          toast({ title: "Manual Test Limit Reached", description: `You have reached your monthly limit of ${plan.testCreationLimit} manual tests.`, variant: "destructive", duration: 3000 });
+          return;
+        }
+      }
+    }
+
     setIsSubmitting(true);
     
     const processedData = {
@@ -280,7 +295,7 @@ export default function TestBuilderForm() {
     return <Loading />;
   }
   
-  if (!canCreateTest && !testIdToEdit) {
+  if (!testIdToEdit && !canCreateTest) { // Block new manual test creation if limit reached
     return (
         <UpgradeNudge 
             featureName="more manual tests"
