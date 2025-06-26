@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit, WifiOff, QrCode, Share2, Lightbulb, Eye, UserRoundCheck, MessageSquareText, Briefcase, FileText } from "lucide-react";
+import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit, WifiOff, QrCode, Share2, Lightbulb, Eye, UserRoundCheck, MessageSquareText, Briefcase, FileText, BarChart3, Users, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
