@@ -17,6 +17,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { useSubscription } from "@/hooks/use-subscription";
+import UpgradeNudge from "@/components/common/upgrade-nudge";
+import Loading from "@/app/loading";
 
 interface OverallMonthlyStats {
   totalCreatedTests: number; // This is lifetime
@@ -53,6 +56,7 @@ interface TestSpecificLifetimeStats {
 
 export default function StudentPerformanceOverviewPage() {
   const { user, isLoading: isAuthLoading } = useAuth();
+  const { plan, isLoading: isSubscriptionLoading } = useSubscription();
   const { toast } = useToast();
 
   const [teacherTests, setTeacherTests] = useState<Test[]>([]);
@@ -76,7 +80,7 @@ export default function StudentPerformanceOverviewPage() {
         setIsLoadingData(true);
         return;
       }
-      if (!user || user.role !== 'teacher') {
+      if (!user || user.role !== 'teacher' || !plan.canViewStudentAnalytics) {
         setIsLoadingData(false);
         if (user && user.role !== 'teacher') {
             setError("This page is for teachers only.");
@@ -121,7 +125,7 @@ export default function StudentPerformanceOverviewPage() {
       }
     }
     fetchData();
-  }, [user, isAuthLoading, toast]);
+  }, [user, isAuthLoading, toast, plan.canViewStudentAnalytics]);
   
 
   const overallMonthlyStats = useMemo((): OverallMonthlyStats => {
@@ -296,19 +300,8 @@ export default function StudentPerformanceOverviewPage() {
   }, [teacherTests, allAttempts, user]);
 
 
-  if (isLoadingData || isAuthLoading) {
-    return (
-      <div className="container mx-auto py-2">
-        <Skeleton className="h-10 w-3/4 mb-2" />
-        <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Card key={i} className="p-4 h-36"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></Card>)}
-        </div>
-        <Separator className="my-8" />
-        <Skeleton className="h-8 w-1/3 mb-6" />
-         <Card><CardHeader><Skeleton className="h-7 w-1/2" /></CardHeader><CardContent><Skeleton className="h-60 w-full" /></CardContent></Card>
-      </div>
-    );
+  if (isLoadingData || isAuthLoading || isSubscriptionLoading) {
+    return <Loading />;
   }
 
   if (user && user.role !== 'teacher') {
@@ -316,11 +309,21 @@ export default function StudentPerformanceOverviewPage() {
       <div className="container mx-auto py-8 text-center">
         <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2 text-destructive">Access Denied</h2>
-        <p className="text-muted-foreground">This page is for teachers only. Students can view their progress on the &quot;My Personal Progress&quot; page.</p>
+        <p className="text-muted-foreground">This page is for teachers only.</p>
         <Button asChild className="mt-4">
-          <Link href="/dashboard/my-progress">View My Progress</Link>
+          <Link href="/dashboard">Back to Dashboard</Link>
         </Button>
       </div>
+    );
+  }
+
+  if (!plan.canViewStudentAnalytics) {
+     return (
+        <UpgradeNudge 
+            featureName="Student Performance Analytics"
+            description="Get a comprehensive overview of student engagement, top performers, and detailed test statistics."
+            requiredPlan="a higher tier"
+        />
     );
   }
 
