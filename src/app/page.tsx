@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { CheckCircle, Edit3, LogIn, UserPlus, Zap, BrainCircuit, WifiOff, QrCode, Share2, Lightbulb, Eye, UserRoundCheck, MessageSquareText, Briefcase, FileText } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export default function HomePage() {
   return (
