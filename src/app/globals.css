@@ -8,102 +8,74 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 94.1%; /* #F0F0F0 Light Gray */
-    --foreground: 0 0% 10%;   /* Dark Gray for text on Light Gray */
-
-    --card: 0 0% 100%;         /* White */
-    --card-foreground: 0 0% 10%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-
-    --primary: 278 100% 25.5%; /* Indigo (#4B0082) */
-    --primary-foreground: 0 0% 98%; /* White/very light for text on Indigo */
-
-    --secondary: 0 0% 90%; /* Slightly darker than background for secondary elements */
-    --secondary-foreground: 0 0% 15%;
-
-    --muted: 0 0% 88%; /* Muted background */
-    --muted-foreground: 0 0% 45.1%; /* Muted text */
-
-    --accent: 180 100% 25.1%;   /* #008080 Teal */
-    --accent-foreground: 0 0% 98%; /* White/very light for text on Teal */
-
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 85%; /* Border color */
-    --input: 0 0% 85%;  /* Input border */
-    --ring: 278 100% 25.5%; /* Ring color (Primary - Indigo) */
-
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-
-    /* Sidebar specific theme variables (Indigo Theme) */
-    --sidebar-background: 278 70% 20%; /* Darker Indigo */
-    --sidebar-foreground: 0 0% 95%;      /* Light text for sidebar */
     
-    --sidebar-primary: 0 0% 98%;                     /* Active item text color (whiteish) */
-    --sidebar-primary-foreground: 278 100% 35%;     /* Active item background (Lighter Indigo) */
+    /* Sidebar specific theme variables */
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
     
-    --sidebar-accent: 278 80% 30%;        /* Hover item background (Slightly Lighter/Saturated Indigo Variant) */
-    --sidebar-accent-foreground: 0 0% 98%; /* Hover item text color (Whiteish) */
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 221.2 83.2% 53.3%;
     
-    --sidebar-border: 278 60% 28%;        /* Sidebar border color (Indigo Variant) */
-    --sidebar-ring: 180 100% 25.1%;       /* Accent for ring (Teal) */
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 215 20.2% 65.1%;
   }
 
   .dark {
-    --background: 0 0% 10%; /* Dark background for dark mode */
-    --foreground: 0 0% 95%;   /* Light foreground for dark mode */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 216.3 93.3% 62.9%;
 
-    --card: 0 0% 12%;         /* Dark card */
-    --card-foreground: 0 0% 95%;
-
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 278 80% 65%;  /* Lighter Indigo for dark mode primary */
-    --primary-foreground: 0 0% 98%;
-
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 90%;
-
-    --muted: 0 0% 22%;
-    --muted-foreground: 0 0% 63.9%;
-
-    --accent: 180 80% 45%;   /* Lighter Teal for dark mode accent */
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 70% 50.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
-    --ring: 278 80% 65%; /* Ring color (Lighter Indigo for dark) */
-
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-
-    /* Dark Sidebar specific theme variables (Indigo Theme) */
-    --sidebar-background: 278 50% 15%; 
-    --sidebar-foreground: 0 0% 90%;      
+     /* Dark Sidebar specific theme variables */
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
     
-    --sidebar-primary: 0 0% 95%;                     
-    --sidebar-primary-foreground: 278 80% 45%; /* Lighter Indigo for active items */
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 217.2 91.2% 59.8%;
     
-    --sidebar-accent: 278 60% 25%;        
-    --sidebar-accent-foreground: 0 0% 95%; 
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
     
-    --sidebar-border: 278 45% 22%;        
-    --sidebar-ring: 180 80% 45%; /* Lighter Teal for dark accent */
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 216.3 93.3% 62.9%;
   }
 }
 

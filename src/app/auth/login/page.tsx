@@ -76,7 +76,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+    <div className="relative min-h-screen w-full bg-background flex items-center justify-center overflow-hidden">
       {/* Decorative background shapes */}
       <div className="absolute -top-1/4 -left-1/4 w-96 h-96 bg-gradient-to-br from-primary/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse"></div>
       <div className="absolute -bottom-1/4 -right-1/4 w-96 h-96 bg-gradient-to-tl from-accent/20 to-transparent rounded-full filter blur-3xl opacity-50 animate-pulse delay-75"></div>
@@ -85,7 +85,7 @@ export default function LoginPage() {
         <Card className="w-full bg-card/80 backdrop-blur-lg rounded-2xl shadow-2xl border-white/20">
           <CardHeader className="text-left space-y-4">
              <Link href="/" className="flex items-center gap-2 text-primary">
-                <GraduationCap className="h-8 w-8" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
                 <span className="text-2xl font-bold font-headline">Test Pilot</span>
             </Link>
             <div>

@@ -2,7 +2,7 @@
 "use client";
 
 import type { User } from "@/lib/types";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { updateUserProfile as updateUserProfileServerAction } from "@/lib/auth-actions";
 
@@ -14,62 +14,41 @@ interface AuthContextType {
   isLoading: boolean;
   login: (userData: User) => void;
   logout: () => void;
-  signup: (userData: User) => void; 
-  updateUserProfileData: (updates: { displayName?: string; dob?: string; profileImageUrl?: string }) => Promise<{success: boolean; message: string; user?: User}>;
+  updateUserProfileData: (updates: { displayName?: string; dob?: string; profileImageUrl?: string }) => Promise<{success: boolean; message: string; user?: User;}>;
 }
 
-// Helper to ensure user object integrity, especially for data from localStorage or passed to login/signup
-function ensureUserIntegrityForContext(user: Partial<User>): User {
-  let { id, displayName, email, dob, role, profileImageUrl, signupIp, signupTimestamp } = user;
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-  // Ensure ID exists, generate if temporary or missing
-  id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2,7)}`;
-
-  // Ensure displayName, fallback to email or generic
-  if (!displayName || displayName.trim() === "") {
-    if (email && email.includes('@')) {
-      const namePart = email.split('@')[0];
-      displayName = namePart
-        .replace(/[._-]/g, ' ')
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-    } else {
-      displayName = `User-${id.substring(0, 5)}`;
-    }
-  }
-  
-  // Ensure displayName is a string before calling trim()
-  displayName = String(displayName).trim();
-
-
-  if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
-    dob = "1900-01-01"; 
-  }
-
-  // Ensure role is valid or default
-  role = role || "student";
-  if (role !== "teacher" && role !== "student") {
-      role = "student";
-  }
-
-  return {
-    id,
-    displayName,
-    email: email || undefined,
-    dob,
-    role,
-    profileImageUrl: profileImageUrl || undefined,
-    signupIp: signupIp || undefined,
-    signupTimestamp: signupTimestamp || undefined,
-  };
-}
-
-
-export function useAuth(): AuthContextType {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+
+  // Helper to ensure user object integrity from DB or other sources
+  const ensureUserIntegrityForContext = (user: Partial<User>): User => {
+    let { id, displayName, email, dob, role, profileImageUrl, signupIp, signupTimestamp } = user;
+    id = id || `temp-${Date.now()}-${Math.random().toString(36).substring(2,7)}`;
+    if (!displayName || String(displayName).trim() === "") {
+        if (email) {
+          const namePart = email.split('@')[0];
+          displayName = namePart
+            .replace(/[._-]/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        } else {
+          displayName = `User-${id.substring(0, 5)}`;
+        }
+    }
+  
+    // Ensure displayName is a string before calling trim()
+    displayName = String(displayName).trim();
+
+
+    if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) dob = "1900-01-01";
+    role = (role === 'teacher' || role === 'student') ? role : "student";
+    return { id, displayName, email: email || undefined, dob, role, profileImageUrl: profileImageUrl || undefined, signupIp: signupIp || undefined, signupTimestamp: signupTimestamp || undefined };
+  }
 
   const handleStorageChange = useCallback((event: StorageEvent) => {
     if (event.key === USER_STORAGE_KEY) {
@@ -83,7 +62,6 @@ export function useAuth(): AuthContextType {
           setUser(null);
         }
       } else {
-        // Key was removed or set to null, meaning logout happened in another tab
         setUser(null);
       }
     }
@@ -95,32 +73,23 @@ export function useAuth(): AuthContextType {
       const storedUserString = localStorage.getItem(USER_STORAGE_KEY);
       if (storedUserString) {
         let parsedUser = JSON.parse(storedUserString) as Partial<User>;
-        // Validate crucial fields before setting user
-        if (
-          parsedUser && 
-          typeof parsedUser.id === 'string' && parsedUser.id.trim() !== '' &&
-          typeof parsedUser.displayName === 'string' && parsedUser.displayName.trim() !== '' &&
-          typeof parsedUser.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(parsedUser.dob) && 
-          typeof parsedUser.role === 'string' && (parsedUser.role === 'teacher' || parsedUser.role === 'student')
-        ) {
-          setUser(ensureUserIntegrityForContext(parsedUser)); // Use ensured user
+        if (parsedUser && typeof parsedUser.id === 'string' && parsedUser.id.trim() !== '') {
+          setUser(ensureUserIntegrityForContext(parsedUser));
         } else {
-          console.warn("Stored user data in localStorage is invalid or incomplete. Clearing session. Data:", JSON.stringify(parsedUser));
           localStorage.removeItem(USER_STORAGE_KEY);
           setUser(null);
         }
       } else {
-        setUser(null); // No user in storage
+        setUser(null);
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage during auth init:", error);
-      localStorage.removeItem(USER_STORAGE_KEY); // Clear potentially corrupted data
-      setUser(null); // Ensure user is null on error
+      localStorage.removeItem(USER_STORAGE_KEY);
+      setUser(null);
     } finally {
       setIsLoading(false); 
     }
     
-    // Add event listener for cross-tab sync
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
@@ -130,42 +99,15 @@ export function useAuth(): AuthContextType {
 
   const login = useCallback((userData: User) => { 
     try {
-      // Validate incoming userData before processing
-      if (
-        userData && 
-        typeof userData.id === 'string' && userData.id.trim() !== '' &&
-        typeof userData.displayName === 'string' && userData.displayName.trim() !== '' &&
-        typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
-        typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
-      ) {
-        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity before storing
+      if (userData && typeof userData.id === 'string' && userData.id.trim() !== '') {
+        const userToStore = ensureUserIntegrityForContext(userData);
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
         setUser(userToStore);
       } else {
-        console.error("Attempted to login with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob (YYYY-MM-DD), role to be valid strings.");
+        console.error("Attempted to login with invalid userData. Data received:", JSON.stringify(userData));
       }
     } catch (error) {
         console.error("Failed to save user to localStorage on login:", error);
-    }
-  }, []);
-  
-  const signup = useCallback((userData: User) => { // Similar to login, ensure data for signup
-    try {
-       if (
-        userData && 
-        typeof userData.id === 'string' && userData.id.trim() !== '' &&
-        typeof userData.displayName === 'string' && userData.displayName.trim() !== '' &&
-        typeof userData.dob === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(userData.dob) &&
-        typeof userData.role === 'string' && (userData.role === 'teacher' || userData.role === 'student')
-      ) {
-        const userToStore = ensureUserIntegrityForContext(userData); // Ensure integrity
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
-        setUser(userToStore);
-      } else {
-        console.error("Attempted to signup with invalid userData. Data received:", JSON.stringify(userData), "Expected id, displayName, dob (YYYY-MM-DD), role to be valid strings.");
-      }
-    } catch (error) {
-        console.error("Failed to save user to localStorage on signup:", error);
     }
   }, []);
 
@@ -180,24 +122,31 @@ export function useAuth(): AuthContextType {
   }, [router]);
 
   const updateUserProfileData = useCallback(async (updates: { displayName?: string; dob?: string; profileImageUrl?: string }) => {
-    if (!user) {
-      return { success: false, message: "No user logged in." };
-    }
+    if (!user) return { success: false, message: "No user logged in." };
     const result = await updateUserProfileServerAction(user.id, updates);
     if (result.success && result.user) {
-      const updatedUser = ensureUserIntegrityForContext(result.user); // Ensure integrity of user from server
-      setUser(updatedUser); // Update local state
+      const updatedUser = ensureUserIntegrityForContext(result.user);
+      setUser(updatedUser);
       try {
-        // This will trigger the 'storage' event for other tabs
         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser)); 
       } catch (error) {
         console.error("Failed to update user in localStorage:", error);
-        // Non-critical error for this mock, proceed
       }
     }
     return result;
   }, [user]);
 
+  return React.createElement(
+    AuthContext.Provider,
+    { value: { user, isLoading, login, logout, updateUserProfileData } },
+    children
+  );
+}
 
-  return { user, isLoading, login, logout, signup, updateUserProfileData };
+export function useAuth(): AuthContextType {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
