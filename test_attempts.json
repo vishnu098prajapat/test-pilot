@@ -124,5 +124,53 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750841548837-wr7b7o1",
     "submittedAt": "2025-06-25T08:52:28.837Z"
+  },
+  {
+    "testId": "test-1750915607228-yndgv",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "babu",
+    "startTime": "2025-06-26T05:30:12.980Z",
+    "endTime": "2025-06-26T05:30:53.246Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750915593478-0-0pupuyb",
+        "answer": "ai-opt_q0_idx0_1750915593478_aum0dk493",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750915593479-1-8gqkr7r",
+        "answer": "ai-opt_q1_idx2_1750915593479_fiuilprao",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750915593479-2-nko3mxz",
+        "answer": "ai-opt_q2_idx1_1750915593479_qajyw1sme",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750915593479-3-36d3mhe",
+        "answer": "ai-opt_q3_idx2_1750915593479_b26pwefc7",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750915593479-4-xjf6a1e",
+        "answer": "ai-opt_q4_idx1_1750915593479_akilc9pub",
+        "isCorrect": true,
+        "pointsScored": 10
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 40,
+    "activityLog": "[2025-06-26T05:30:12.992Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-26T05:30:12.993Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-26T05:30:15.107Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593478-0-0pupuyb.\n[2025-06-26T05:30:21.267Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-1-8gqkr7r.\n[2025-06-26T05:30:23.917Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-2-nko3mxz.\n[2025-06-26T05:30:27.452Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-2-nko3mxz.\n[2025-06-26T05:30:40.544Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-3-36d3mhe.\n[2025-06-26T05:30:43.077Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-3-36d3mhe.\n[2025-06-26T05:30:49.975Z] User: babu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750915593479-4-xjf6a1e.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student only changed answers. There is no indication of accessing unauthorized resources, copying/pasting, or unusual keyboard activity. The behavior is within the expected range for online tests, albeit with some answer changes which is normal.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750915567592-2rqg4iw",
+    "submittedAt": "2025-06-26T05:26:07.592Z"
   }
 ]

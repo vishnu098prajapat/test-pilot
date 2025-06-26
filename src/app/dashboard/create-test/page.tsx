@@ -63,7 +63,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, remainingTests } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, remainingTests, addCreatedTest } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -209,13 +209,11 @@ export default function TestBuilderForm() {
     }
     setIsSubmitting(true);
     
-    // Pre-process data to ensure correctAnswer text is set for MCQs
     const processedData = {
       ...data,
       questions: data.questions.map(q => {
         if (q.type === 'mcq') {
           const mcq = q as MCQQuestion;
-          // Only find and set if it's not already there from an AI generation
           if (mcq.correctOptionId && !mcq.correctAnswer) {
             const correctOption = mcq.options.find(opt => opt.id === mcq.correctOptionId);
             return {
@@ -229,33 +227,33 @@ export default function TestBuilderForm() {
     };
 
     const finalData = processedData;
+    let savedTest: Test | undefined | null;
 
     try {
-      let savedTest;
       const teacherUserId = user.id;
 
       if (testIdToEdit) {
         savedTest = await updateTest(testIdToEdit, { ...finalData, teacherId: teacherUserId });
-        if (savedTest) {
-          toast({ title: "Success", description: "Test updated successfully!", duration: 2000 });
-        } else {
-          toast({ title: "Update Error", description: `Failed to find test with ID ${testIdToEdit} to update.`, variant: "destructive", duration: 2000 });
-          router.push('/dashboard');
-          return;
-        }
       } else {
         savedTest = await addTest({ ...finalData, teacherId: teacherUserId });
-        if (savedTest) {
-            toast({ title: "Success", description: "Test created successfully!", duration: 2000 });
-        } else {
-            toast({ title: "Creation Error", description: "Failed to create test. The save operation returned no data.", variant: "destructive", duration: 2000 });
-            router.push('/dashboard');
-            return;
-        }
       }
-      
-      router.push(`/dashboard/test/${savedTest.id}`);
 
+      if (savedTest) {
+        addCreatedTest(savedTest);
+        toast({
+          title: "Success",
+          description: `Test ${testIdToEdit ? 'updated' : 'created'} successfully!`,
+          duration: 2000,
+        });
+        router.push(`/dashboard/test/${savedTest.id}`);
+      } else {
+        toast({
+          title: "Save Error",
+          description: `Failed to ${testIdToEdit ? 'update' : 'create'} the test.`,
+          variant: "destructive",
+          duration: 2000,
+        });
+      }
     } catch (error: any) {
       console.error("Error saving test:", error);
       toast({ title: "Save Error", description: `Failed to save test: ${error.message || "Please try again."}`, variant: "destructive", duration: 2000 });

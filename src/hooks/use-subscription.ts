@@ -54,6 +54,7 @@ interface SubscriptionContextType {
   remainingTests: number;
   canCreateAiTest: boolean;
   remainingAiTests: number;
+  addCreatedTest: (test: Test) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -92,6 +93,18 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         }
         setIsLoading(false);
     }, [user, isAuthLoading, pathname]);
+    
+    const addCreatedTest = useCallback((test: Test) => {
+        setLifetimeUserTests(prevTests => {
+            const testIndex = prevTests.findIndex(t => t.id === test.id);
+            if (testIndex > -1) {
+                const newTests = [...prevTests];
+                newTests[testIndex] = test;
+                return newTests;
+            }
+            return [test, ...prevTests];
+        });
+    }, []);
 
     const plan = plans[planId];
     
@@ -118,6 +131,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         remainingTests,
         canCreateAiTest,
         remainingAiTests,
+        addCreatedTest,
     };
 
     return React.createElement(SubscriptionContext.Provider, { value }, children);

@@ -4030,5 +4030,157 @@
     "createdAt": "2025-06-25T08:53:34.807Z",
     "updatedAt": "2025-06-25T08:53:45.547Z",
     "batchId": "group-1750480811384-bjl7aq2"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750915593478-0-0pupuyb",
+        "text": "What will be the output of the following C++ code snippet? `int x = 5; if (x > 10) { /* block A */ } else { /* block B */ }` Assuming blocks A and B are replaced with code that doesn't cause errors, which block will be executed?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750915593478_aum0dk493",
+            "text": "Execute block A"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750915593478_yaxq376eb",
+            "text": "Execute block B"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750915593478_un62taq72",
+            "text": "Compile-time error"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750915593478_f3xairqsk",
+            "text": "Run-time error"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1750915593478_aum0dk493",
+        "correctAnswer": "Execute block A",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915593479-1-8gqkr7r",
+        "text": "What will happen if the condition in a `while` loop is always true?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750915593479_rhbq1hc53",
+            "text": "The loop will execute indefinitely."
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750915593479_7bwa3r42v",
+            "text": "The loop will not execute at all."
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750915593479_fiuilprao",
+            "text": "The loop will execute once."
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750915593479_ckzmjt7fu",
+            "text": "The loop will execute 10 times."
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx0_1750915593479_rhbq1hc53",
+        "correctAnswer": "The loop will execute indefinitely.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915593479-2-nko3mxz",
+        "text": "Which keyword is used to exit a loop prematurely in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750915593479_fxyk3318g",
+            "text": "continue"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750915593479_qajyw1sme",
+            "text": "exit"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750915593479_zabztyeef",
+            "text": "return"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750915593479_o3i3rni2q",
+            "text": "break"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1750915593479_o3i3rni2q",
+        "correctAnswer": "break",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915593479-3-36d3mhe",
+        "text": "What is the value of `i` after the following loop executes? `for (int i = 0; i < 10; ++i) {}`",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750915593479_wg2eo1ote",
+            "text": "0"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750915593479_w28l75muk",
+            "text": "1"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750915593479_b26pwefc7",
+            "text": "9"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750915593479_enwe77g8o",
+            "text": "10"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750915593479_enwe77g8o",
+        "correctAnswer": "10",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915593479-4-xjf6a1e",
+        "text": "What is the purpose of the `continue` statement in a loop?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750915593479_04ln13e34",
+            "text": "The continue statement exits the loop entirely."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750915593479_akilc9pub",
+            "text": "The continue statement skips the rest of the current iteration and proceeds to the next iteration."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750915593479_wm41d8ez6",
+            "text": "The continue statement terminates the program."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750915593479_ihjshnd0b",
+            "text": "The continue statement is equivalent to the break statement."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1750915593479_akilc9pub",
+        "correctAnswer": "The continue statement skips the rest of the current iteration and proceeds to the next iteration.",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750915607228-yndgv",
+    "createdAt": "2025-06-26T05:26:47.228Z",
+    "updatedAt": "2025-06-26T05:26:47.228Z"
   }
 ]
