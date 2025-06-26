@@ -4486,5 +4486,157 @@
     "id": "test-1750916288890-2ws47",
     "createdAt": "2025-06-26T05:38:08.890Z",
     "updatedAt": "2025-06-26T05:38:08.890Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750916645955-0-qhbzpam",
+        "text": "What is the primary purpose of a return statement in a C++ function?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750916645955_y6rxsfmzf",
+            "text": "Declare a variable"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750916645955_c2r1b44hj",
+            "text": "Allocate memory for the variable"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750916645955_fiauubbnn",
+            "text": "Return the value of the variable"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750916645955_0yntwx1mq",
+            "text": "Change the scope of the variable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1750916645955_fiauubbnn",
+        "correctAnswer": "Return the value of the variable",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916645955-1-qu14fxn",
+        "text": "In C++, how are arguments passed to a function by default?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750916645955_dvkit1b65",
+            "text": "By reference"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750916645955_bdh9noo97",
+            "text": "By pointer"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750916645955_ywiefpbxa",
+            "text": "By value"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750916645955_6a5phhpmb",
+            "text": "By address"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750916645955_ywiefpbxa",
+        "correctAnswer": "By value",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916645955-2-kam8m9j",
+        "text": "What is the term for having multiple functions with the same name but different parameters in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750916645955_1gf966vk4",
+            "text": "Function overriding"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750916645955_oweb4ftei",
+            "text": "Function polymorphism"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750916645955_n500g0sw4",
+            "text": "Function inheritance"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750916645955_mmzomy9h4",
+            "text": "Function overloading"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1750916645955_mmzomy9h4",
+        "correctAnswer": "Function overloading",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916645955-3-m6quvbb",
+        "text": "Which keyword is used to suggest to the compiler to perform inline expansion of a function in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750916645955_e3zxmi8dc",
+            "text": "static"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750916645955_tj9o8sdtd",
+            "text": "extern"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750916645955_hpf93kw56",
+            "text": "virtual"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750916645955_tgftkn4ok",
+            "text": "inline"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1750916645955_tgftkn4ok",
+        "correctAnswer": "inline",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750916645955-4-i52nnh5",
+        "text": "What return type should a function have if it does not return any value?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750916645955_nc3mshe48",
+            "text": "int"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750916645955_wjxxtbyar",
+            "text": "string"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750916645955_uh7wyhg5j",
+            "text": "void"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750916645955_maomfju6h",
+            "text": "double"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750916645955_uh7wyhg5j",
+        "correctAnswer": "void",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750916662386-ho97h",
+    "createdAt": "2025-06-26T05:44:22.386Z",
+    "updatedAt": "2025-06-26T05:44:22.386Z"
   }
 ]

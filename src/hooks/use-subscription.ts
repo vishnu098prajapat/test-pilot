@@ -54,7 +54,6 @@ interface SubscriptionContextType {
   remainingTests: number;
   canCreateAiTest: boolean;
   remainingAiTests: number;
-  addCreatedTest: (test: Test) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -78,7 +77,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
             
             if (user.role === 'teacher') {
                 setIsTestCountLoading(true);
-                getTestsByTeacher(user.id).then(tests => { // Removed `true` to only count active tests
+                getTestsByTeacher(user.id).then(tests => {
                     setLifetimeUserTests(tests);
                     setIsTestCountLoading(false);
                 });
@@ -94,18 +93,6 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         setIsLoading(false);
     }, [user, isAuthLoading, pathname]);
     
-    const addCreatedTest = useCallback((test: Test) => {
-        setLifetimeUserTests(prevTests => {
-            const testIndex = prevTests.findIndex(t => t.id === test.id);
-            if (testIndex > -1) {
-                const newTests = [...prevTests];
-                newTests[testIndex] = test;
-                return newTests;
-            }
-            return [test, ...prevTests];
-        });
-    }, []);
-
     const plan = plans[planId];
     
     const now = new Date();
@@ -131,13 +118,12 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         remainingTests,
         canCreateAiTest,
         remainingAiTests,
-        addCreatedTest,
     };
 
     return React.createElement(SubscriptionContext.Provider, { value }, children);
 }
 
-export function useSubscription(): SubscriptionContextType {
+export function useSubscription(): Omit<SubscriptionContextType, 'addCreatedTest'> {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
     throw new Error("useSubscription must be used within a SubscriptionProvider");

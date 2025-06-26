@@ -63,7 +63,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, remainingAiTests, addCreatedTest } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -254,7 +254,6 @@ export default function TestBuilderForm() {
       }
 
       if (savedTest) {
-        addCreatedTest(savedTest);
         toast({
           title: "Success",
           description: `Test ${testIdToEdit ? 'updated' : 'created'} successfully!`,
