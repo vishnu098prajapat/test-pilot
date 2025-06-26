@@ -4182,5 +4182,157 @@
     "id": "test-1750915607228-yndgv",
     "createdAt": "2025-06-26T05:26:47.228Z",
     "updatedAt": "2025-06-26T05:26:47.228Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750915971395-0-kvgdo7q",
+        "text": "Which mode is used to only read a file in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750915971395_mewixr6in",
+            "text": "w"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750915971395_89g20vc9w",
+            "text": "a"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750915971395_1biylthz4",
+            "text": "x"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750915971395_fx8cymk0g",
+            "text": "r"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx3_1750915971395_fx8cymk0g",
+        "correctAnswer": "r",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915971395-1-pdx76xp",
+        "text": "Which mode is used to open a file for appending in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750915971395_mevy65od9",
+            "text": "w"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750915971395_q9900fyhy",
+            "text": "a"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750915971395_9v8tjsm4i",
+            "text": "x"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750915971395_4b7h8xssd",
+            "text": "r"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1750915971395_q9900fyhy",
+        "correctAnswer": "a",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915971395-2-09ko2bq",
+        "text": "Which of the following is the correct way to open a file for writing using the `with` statement in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750915971395_wvh4wvdl2",
+            "text": "open('file.txt', 'w') as f:"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750915971395_s3tk8ttld",
+            "text": "with open('file.txt', 'w') as f:"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750915971395_98bs9chl1",
+            "text": "with file('file.txt', 'w') as f:"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750915971395_y4bdyf5l1",
+            "text": "open file('file.txt', 'w') as f:"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1750915971395_s3tk8ttld",
+        "correctAnswer": "with open('file.txt', 'w') as f:",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915971395-3-zlvotl5",
+        "text": "Which function is used to read all the lines of a file into a list in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750915971395_2vx5bpbyi",
+            "text": "f.readline()"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750915971395_n42mq4kim",
+            "text": "f.read()"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750915971395_amdwqotb4",
+            "text": "f.readlines()"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750915971395_g9wrkak9s",
+            "text": "f.readall()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1750915971395_amdwqotb4",
+        "correctAnswer": "f.readlines()",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750915971395-4-vj8ms47",
+        "text": "What is the main advantage of using the `with` statement when working with files in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750915971395_fovkw6o2r",
+            "text": "It automatically closes the file."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750915971395_3070h0cbf",
+            "text": "It doesn't need to be explicitly closed."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750915971395_x26nfv8qi",
+            "text": "It raises an exception if the file is not found."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750915971395_rggawbbt8",
+            "text": "It handles file permissions automatically."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx0_1750915971395_fovkw6o2r",
+        "correctAnswer": "It automatically closes the file.",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1750915982840-njo96",
+    "createdAt": "2025-06-26T05:33:02.840Z",
+    "updatedAt": "2025-06-26T05:33:02.840Z"
   }
 ]
