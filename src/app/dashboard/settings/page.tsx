@@ -9,11 +9,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Settings, ShieldAlert, Edit, Camera, Loader2 } from "lucide-react";
+import { Settings, ShieldAlert, Edit, Camera, Loader2, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const settingsSchema = z.object({
   displayName: z.string().min(1, "Name is required."),
@@ -27,6 +39,7 @@ export default function SettingsPage() {
   const { user, isLoading: isAuthLoading, updateUserProfileData } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const form = useForm<SettingsFormValues>({
@@ -96,14 +109,7 @@ export default function SettingsPage() {
       updates.profileImageUrl = previewImage; 
       changed = true;
       console.log("New profile image (base64) prepared for mock saving:", previewImage.substring(0,50) + "...");
-    } else if (!data.profileImageFile && !previewImage && user.profileImageUrl) {
-      // This logic is if user wants to REMOVE existing image
-      // For now, we don't have a "remove image" button, so this case isn't directly hit
-      // If we wanted to allow removal, we'd set updates.profileImageUrl = "" or null.
-      // updates.profileImageUrl = ""; // Example for removal
-      // changed = true;
     }
-
 
     if (!changed) {
       toast({ title: "No Changes", description: "No changes were made to your profile.", duration: 2000 });
@@ -115,7 +121,6 @@ export default function SettingsPage() {
       const result = await updateUserProfileData(updates);
       if (result.success && result.user) {
         toast({ title: "Profile Updated", description: "Your profile has been successfully updated.", duration: 2000 });
-        // Update form defaults and preview again to reflect saved state
         form.reset({ 
           displayName: result.user.displayName, 
           dob: result.user.dob, 
@@ -129,6 +134,41 @@ export default function SettingsPage() {
       toast({ title: "Error", description: "An unexpected error occurred.", variant: "destructive", duration: 2000 });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleClearData = async () => {
+    if (!user) return;
+    setIsClearing(true);
+    try {
+      const response = await fetch('/api/clear-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacherId: user.id }),
+      });
+      
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || 'Server error');
+      }
+
+      toast({
+        title: "Data Cleared",
+        description: "All your tests and student attempts have been deleted.",
+        duration: 3000,
+      });
+       // Optional: could force a refresh or redirect to reflect changes everywhere.
+       window.location.reload();
+
+    } catch (error: any) {
+      toast({
+        title: "Clearing Failed",
+        description: error.message || "An error occurred while clearing data.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsClearing(false);
     }
   };
   
@@ -163,8 +203,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto py-2">
-      <div className="flex items-center mb-8">
+    <div className="container mx-auto py-2 space-y-8">
+      <div className="flex items-center">
         <Settings className="w-8 h-8 md:w-10 md:h-10 text-primary mr-3" />
         <h1 className="text-2xl md:text-3xl font-bold font-headline">Account Settings</h1>
       </div>
@@ -193,7 +233,7 @@ export default function SettingsPage() {
                <FormField
                   control={form.control}
                   name="profileImageFile"
-                  render={({ field: { onChange, onBlur, name, ref }}) => ( // Destructure to avoid passing `value` to file input
+                  render={({ field: { onChange, onBlur, name, ref }}) => (
                     <FormItem className="hidden">
                       <FormControl>
                         <Input
@@ -201,8 +241,8 @@ export default function SettingsPage() {
                           type="file"
                           accept=".png, .jpg, .jpeg"
                           onChange={(e) => {
-                            onChange(e.target.files ? e.target.files[0] : null); // Pass File object or null
-                            handleImageChange(e); // Handle preview separately
+                            onChange(e.target.files ? e.target.files[0] : null);
+                            handleImageChange(e);
                           }}
                           onBlur={onBlur}
                           name={name}
@@ -250,7 +290,7 @@ export default function SettingsPage() {
                 )}
               />
               <p className="text-xs text-muted-foreground">
-                Note: Email and Role cannot be changed. Profile image changes are saved as base64 data URIs in this mock version, which can increase local data size significantly. This is for demonstration purposes only.
+                Note: Email and Role cannot be changed. Profile image changes are saved as base64 data URIs in this mock version.
               </p>
             </CardContent>
             <CardFooter className="flex justify-end">
@@ -262,6 +302,55 @@ export default function SettingsPage() {
           </form>
         </Form>
       </Card>
+
+       <Separator />
+
+       <Card className="w-full max-w-lg mx-auto border-destructive shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-xl font-headline flex items-center text-destructive">
+            <ShieldAlert className="mr-2 h-5 w-5" /> Danger Zone
+          </CardTitle>
+          <CardDescription>
+            These actions are permanent and cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center p-4 border border-dashed border-destructive/50 rounded-md">
+            <div>
+              <p className="font-semibold">Clear All Data</p>
+              <p className="text-sm text-muted-foreground">
+                This will delete all your tests and their attempts. Your student groups will not be affected.
+              </p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={isClearing}>
+                  {isClearing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                  Clear Data
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete all tests and attempt data associated with your account ({user.displayName}). Student groups and members will NOT be deleted. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleClearData}
+                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  >
+                    Yes, clear my data
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
