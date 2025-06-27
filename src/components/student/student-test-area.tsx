@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Test, Question, StudentAnswer, TestAttempt, MCQQuestion } from '@/lib/types';
 import QuestionDisplay from './question-display';
 import Timer from './timer';
@@ -48,63 +48,72 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [isTranslating, setIsTranslating] = useState(false);
-  const [displayQuestion, setDisplayQuestion] = useState<Question>(testData.questions[0]);
-  const translationCache = useRef<Record<string, Question>>({});
+  const [displayQuestions, setDisplayQuestions] = useState<Question[]>(testData.questions);
+  const translationCache = useRef<Record<string, Question[]>>({});
 
-  const originalQuestion = useMemo(() => testData.questions[currentQuestionIndex], [testData.questions, currentQuestionIndex]);
-  
-  useEffect(() => {
-    const translateCurrentQuestion = async () => {
-      if (language === 'en') {
-        setDisplayQuestion(originalQuestion);
+  const handleLanguageChange = useCallback(async (lang: 'en' | 'hi') => {
+    if (lang === language || isTranslating) return;
+
+    setLanguage(lang);
+
+    if (lang === 'en') {
+        setDisplayQuestions(testData.questions);
         return;
-      }
+    }
 
-      const cacheKey = `${originalQuestion.id}-${language}`;
-      if (translationCache.current[cacheKey]) {
-        setDisplayQuestion(translationCache.current[cacheKey]);
+    if (translationCache.current[lang]) {
+        setDisplayQuestions(translationCache.current[lang]);
         return;
-      }
-      
-      setIsTranslating(true);
-      try {
-        const textsToTranslate: string[] = [originalQuestion.text];
-        if (originalQuestion.type === 'mcq') {
-          originalQuestion.options.forEach(opt => textsToTranslate.push(opt.text));
-        }
+    }
 
-        const input: TranslateTextInput = {
-          texts: textsToTranslate,
-          targetLanguage: 'Hindi',
-        };
+    setIsTranslating(true);
+    toast({ title: "Translating Test...", description: "Please wait while the questions are translated to Hindi." });
+
+    try {
+        const textsToTranslate: string[] = [];
+        const structureMap: { qIndex: number, type: 'q' | 'o', optIndex?: number }[] = [];
+
+        testData.questions.forEach((q, qIndex) => {
+            textsToTranslate.push(q.text);
+            structureMap.push({ qIndex, type: 'q' });
+            if (q.type === 'mcq') {
+                q.options.forEach((opt, optIndex) => {
+                    textsToTranslate.push(opt.text);
+                    structureMap.push({ qIndex, type: 'o', optIndex });
+                });
+            }
+        });
+
+        const input: TranslateTextInput = { texts: textsToTranslate, targetLanguage: 'Hindi' };
         const result = await translateText(input);
 
         if (result.translations && result.translations.length === textsToTranslate.length) {
-          const translatedQuestion: Question = JSON.parse(JSON.stringify(originalQuestion)); // Deep copy
-          translatedQuestion.text = result.translations[0];
-          if (translatedQuestion.type === 'mcq') {
-            translatedQuestion.options.forEach((opt: any, index: number) => {
-              opt.text = result.translations[index + 1];
-            });
-          }
-          translationCache.current[cacheKey] = translatedQuestion;
-          setDisplayQuestion(translatedQuestion);
-        } else {
-          toast({ title: "Translation Error", description: "Could not translate the question. Displaying original.", variant: "destructive" });
-          setDisplayQuestion(originalQuestion);
-        }
-      } catch (e) {
-        console.error("Translation failed:", e);
-        toast({ title: "Translation Error", description: "An error occurred while translating.", variant: "destructive" });
-        setDisplayQuestion(originalQuestion);
-      } finally {
-        setIsTranslating(false);
-      }
-    };
-    
-    translateCurrentQuestion();
+            const translatedQuestions: Question[] = JSON.parse(JSON.stringify(testData.questions)); // Deep copy to avoid mutating original
 
-  }, [currentQuestionIndex, language, originalQuestion, toast]);
+            result.translations.forEach((translatedText, index) => {
+                const info = structureMap[index];
+                if (info.type === 'q') {
+                    translatedQuestions[info.qIndex].text = translatedText;
+                } else if (info.type === 'o' && info.optIndex !== undefined) {
+                    (translatedQuestions[info.qIndex] as MCQQuestion).options[info.optIndex].text = translatedText;
+                }
+            });
+
+            translationCache.current[lang] = translatedQuestions;
+            setDisplayQuestions(translatedQuestions);
+            toast({ title: "Translation Complete", description: "The test is now in Hindi." });
+        } else {
+            throw new Error("Mismatch in translated texts count.");
+        }
+    } catch (e) {
+        console.error("Bulk translation failed:", e);
+        toast({ title: "Translation Error", description: "Could not translate the test. Reverting to English.", variant: "destructive" });
+        setLanguage('en');
+        setDisplayQuestions(testData.questions);
+    } finally {
+        setIsTranslating(false);
+    }
+  }, [language, isTranslating, testData.questions, toast]);
 
 
   // Effect for syncing pending submissions when online
@@ -376,7 +385,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
     );
   }
   
-  const currentQuestion = displayQuestion;
+  const originalQuestion = testData.questions[currentQuestionIndex];
   const totalQuestions = testData.questions.length;
 
   return (
@@ -402,9 +411,9 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
               </CardHeader>
               <CardContent className="p-3">
                   <div className="flex gap-2">
-                      <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => setLanguage('en')} className="w-full" disabled={isTranslating}>English</Button>
-                      <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => setLanguage('hi')} className="w-full" disabled={isTranslating}>
-                          {isTranslating && language === 'hi' ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
+                      <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => handleLanguageChange('en')} className="w-full" disabled={isTranslating}>English</Button>
+                      <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => handleLanguageChange('hi')} className="w-full" disabled={isTranslating}>
+                          {isTranslating ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
                       </Button>
                   </div>
               </CardContent>
@@ -420,7 +429,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
                       size="sm"
                       className="aspect-square"
                       onClick={() => setCurrentQuestionIndex(index)}
-                      disabled={isSubmitting || isSubmitted}
+                      disabled={isSubmitting || isSubmitted || isTranslating}
                     >
                       {index + 1}
                     </Button>
@@ -433,11 +442,11 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
 
         <div className="w-full md:w-2/3 order-1 md:order-2">
            <QuestionDisplay
-            question={currentQuestion}
+            question={displayQuestions[currentQuestionIndex]}
             questionNumber={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
             currentAnswer={answers[originalQuestion.id]}
-            onAnswerChange={handleAnswerChange}
+            onAnswerChange={(qid, answer) => handleAnswerChange(originalQuestion.id, answer)}
             isReviewMode={false} 
           />
         </div>
@@ -447,7 +456,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
         <Button
           variant="outline"
           onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
-          disabled={currentQuestionIndex === 0 || isSubmitting || isSubmitted}
+          disabled={currentQuestionIndex === 0 || isSubmitting || isSubmitted || isTranslating}
         >
           <ChevronLeft className="mr-2 h-4 w-4" /> Previous
         </Button>
@@ -457,7 +466,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
         {currentQuestionIndex === totalQuestions - 1 ? (
            <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="default" disabled={isSubmitting || isSubmitted} className="bg-green-600 hover:bg-green-700 text-white">
+              <Button variant="default" disabled={isSubmitting || isSubmitted || isTranslating} className="bg-green-600 hover:bg-green-700 text-white">
                 <Send className="mr-2 h-4 w-4" /> Submit Test
               </Button>
             </AlertDialogTrigger>
@@ -480,7 +489,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
           <Button
             variant="default"
             onClick={() => setCurrentQuestionIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
-            disabled={isSubmitting || isSubmitted}
+            disabled={isSubmitting || isSubmitted || isTranslating}
           >
             Next <ChevronRight className="ml-2 h-4 w-4" />
           </Button>

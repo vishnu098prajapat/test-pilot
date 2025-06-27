@@ -238,5 +238,70 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1751005183970-de597n8",
     "submittedAt": "2025-06-27T06:19:43.970Z"
+  },
+  {
+    "testId": "test-1751005798354-yr0cd",
+    "testTitle": "AI Gen (medium) MCQ Test on biology",
+    "studentIdentifier": "shinu",
+    "startTime": "2025-06-27T06:30:23.131Z",
+    "endTime": "2025-06-27T06:33:40.527Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1751005786913-0-0asy5kf",
+        "answer": "ai-opt_q0_idx2_1751005786913_u8mvsocp2",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751005786913-1-tny4tl2",
+        "answer": "ai-opt_q1_idx0_1751005786913_meavb5ta3",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751005786913-2-stkdlei",
+        "answer": "ai-opt_q2_idx2_1751005786913_u9zrmczaa",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751005786913-3-s0wmvr6",
+        "answer": "ai-opt_q3_idx2_1751005786913_09f0krlmv",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751005786913-4-y0qii6x",
+        "answer": "ai-opt_q4_idx1_1751005786913_w0a7mycio",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751005786913-5-p1ww0no",
+        "answer": "ai-opt_q5_idx3_1751005786913_pye1vjkfg",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751005786913-6-wohjttj",
+        "answer": "ai-opt_q6_idx0_1751005786913_pegcgmk04",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751005786914-7-epiht6c",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 20,
+    "maxPossiblePoints": 80,
+    "scorePercentage": 25,
+    "activityLog": "[2025-06-27T06:30:23.152Z] User: shinu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T06:30:23.153Z] User: shinu (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T06:31:21.031Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-0-0asy5kf.\n[2025-06-27T06:31:40.745Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-1-tny4tl2.\n[2025-06-27T06:31:49.742Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-1-tny4tl2.\n[2025-06-27T06:31:51.892Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-2-stkdlei.\n[2025-06-27T06:31:54.904Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-2-stkdlei.\n[2025-06-27T06:31:56.695Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-3-s0wmvr6.\n[2025-06-27T06:32:02.025Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-4-y0qii6x.\n[2025-06-27T06:32:07.111Z] User: shinu (IP: 127.0.0.1 (localhost)) - Tab switched / minimized.\n[2025-06-27T06:33:29.349Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-5-p1ww0no.\n[2025-06-27T06:33:35.363Z] User: shinu (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751005786913-6-wohjttj.",
+    "isSuspicious": true,
+    "suspiciousReason": "The student switched tabs during the test. Tab switching can be an indicator of accessing unauthorized resources or communicating with others, which violates the integrity of the test. Although only one instance of tab switching was recorded, it warrants further investigation.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1751005732940-15n0x18",
+    "submittedAt": "2025-06-27T06:28:52.940Z"
   }
 ]

@@ -30,7 +30,7 @@ const translateTextPrompt = ai.definePrompt({
   name: 'translateTextPrompt',
   input: {schema: TranslateTextInputSchema},
   output: {schema: TranslateTextOutputSchema},
-  prompt: `You are an expert translator. Translate the following array of texts into {{targetLanguage}}.
+  prompt: `You are an expert translator. Translate the following array of texts into {{targetLanguage}}. Use simple, conversational language that is easy to understand (saral Hindi).
   
   IMPORTANT: 
   1.  Provide translations for EACH text in the input array.

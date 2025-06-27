@@ -4814,5 +4814,238 @@
     "id": "test-1751004076466-qu8xs",
     "createdAt": "2025-06-27T06:01:16.466Z",
     "updatedAt": "2025-06-27T06:01:16.466Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1751005786913-0-0asy5kf",
+        "text": "Natural selection is best described as:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751005786913_lhenx2dg9",
+            "text": "Random chance"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751005786913_rzrc56hrq",
+            "text": "Acquired characteristics"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751005786913_u8mvsocp2",
+            "text": "Differential survival and reproduction"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751005786913_v9fh17xxu",
+            "text": "Genetic drift"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1751005786913_u8mvsocp2",
+        "correctAnswer": "Differential survival and reproduction",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-1-tny4tl2",
+        "text": "Which of the following is the original source of all genetic variation?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751005786913_meavb5ta3",
+            "text": "Genetic drift"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751005786913_griwmvqik",
+            "text": "Mutation"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751005786913_7fam320co",
+            "text": "Natural selection"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751005786913_8qkfwspyv",
+            "text": "Gene flow"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1751005786913_griwmvqik",
+        "correctAnswer": "Mutation",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-2-stkdlei",
+        "text": "Evolution acts on:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751005786913_d5ik363ls",
+            "text": "An individual"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751005786913_6y4tjwkd0",
+            "text": "A species"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751005786913_u9zrmczaa",
+            "text": "A community"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751005786913_qhzkcazcx",
+            "text": "A population"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1751005786913_qhzkcazcx",
+        "correctAnswer": "A population",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-3-s0wmvr6",
+        "text": "Which of the following is a classic example of natural selection?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751005786913_k2t5cdbk5",
+            "text": "The Galapagos finches"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751005786913_i93hgbqfv",
+            "text": "The peppered moth"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751005786913_09f0krlmv",
+            "text": "Fossil records"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751005786913_oelhi78jq",
+            "text": "Vestigial structures"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1751005786913_i93hgbqfv",
+        "correctAnswer": "The peppered moth",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-4-y0qii6x",
+        "text": "Structures that have different mature forms but develop from the same embryonic tissues are called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751005786913_m4m1s5jj4",
+            "text": "Analogous structures"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751005786913_w0a7mycio",
+            "text": "Vestigial structures"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751005786913_yccjppray",
+            "text": "Homologous structures"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751005786913_33b0atnlc",
+            "text": "Convergent structures"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1751005786913_yccjppray",
+        "correctAnswer": "Homologous structures",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-5-p1ww0no",
+        "text": "A population is:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1751005786913_186uqbtt5",
+            "text": "An individual"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1751005786913_7cp9u0y0o",
+            "text": "A species"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1751005786913_svx0ny4ih",
+            "text": "A community"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1751005786913_pye1vjkfg",
+            "text": "The smallest unit that can evolve"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx3_1751005786913_pye1vjkfg",
+        "correctAnswer": "The smallest unit that can evolve",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786913-6-wohjttj",
+        "text": "The transfer of alleles from one population to another is called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1751005786913_pegcgmk04",
+            "text": "Natural selection"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1751005786913_qx85iut08",
+            "text": "Genetic drift"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1751005786913_oijlki555",
+            "text": "Mutation"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1751005786913_r24yvzsrb",
+            "text": "Gene flow"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx3_1751005786913_r24yvzsrb",
+        "correctAnswer": "Gene flow",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751005786914-7-epiht6c",
+        "text": "The evolution of many diverse species from a common ancestor is called:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1751005786914_zgdxliadd",
+            "text": "Coevolution"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1751005786914_7r4d4kxc7",
+            "text": "Convergent evolution"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1751005786914_zdo575bg2",
+            "text": "Adaptive radiation"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1751005786914_cco2pfew7",
+            "text": "Parallel evolution"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx2_1751005786914_zdo575bg2",
+        "correctAnswer": "Adaptive radiation",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1751003769372-rdwg4yr",
+    "id": "test-1751005798354-yr0cd",
+    "createdAt": "2025-06-27T06:29:58.354Z",
+    "updatedAt": "2025-06-27T06:29:58.354Z"
   }
 ]
