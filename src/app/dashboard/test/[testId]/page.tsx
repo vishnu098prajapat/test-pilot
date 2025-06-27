@@ -293,7 +293,7 @@ export default function TestManagementPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                 {assignedGroupName ? (
-                    <p className="text-sm">Currently assigned to: <Badge>{assignedGroupName}</Badge></p>
+                    <div className="text-sm">Currently assigned to: <Badge>{assignedGroupName}</Badge></div>
                 ) : (
                     <p className="text-sm text-muted-foreground">This test is not assigned to any group.</p>
                 )}

@@ -268,5 +268,53 @@
     "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
     "id": "attempt-1750915841082-bqmrvyl",
     "submittedAt": "2025-06-26T05:30:41.082Z"
+  },
+  {
+    "testId": "test-1750937349912-6ag4y",
+    "testTitle": "AI Gen (hard) MCQ Test on math",
+    "studentIdentifier": "vishnu",
+    "startTime": "2025-06-26T11:30:18.065Z",
+    "endTime": "2025-06-26T11:30:43.406Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1750937312301-0-alwa06i",
+        "answer": "ai-opt_q0_idx1_1750937312301_ebd3mqwdp",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750937312301-1-9n1mlah",
+        "answer": "ai-opt_q1_idx1_1750937312301_bn789f43r",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750937312301-2-5dzedyo",
+        "answer": "ai-opt_q2_idx2_1750937312301_yzalds45g",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1750937312301-3-4fn6tby",
+        "answer": "ai-opt_q3_idx1_1750937312301_htrbh93wg",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1750937312301-4-om6mdpd",
+        "answer": "ai-opt_q4_idx1_1750937312301_ocw56yumh",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 10,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 20,
+    "activityLog": "[2025-06-26T11:30:18.082Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-26T11:30:18.083Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-26T11:30:20.964Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750937312301-0-alwa06i.\n[2025-06-26T11:30:25.088Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750937312301-1-9n1mlah.\n[2025-06-26T11:30:28.283Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750937312301-2-5dzedyo.\n[2025-06-26T11:30:31.855Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750937312301-3-4fn6tby.\n[2025-06-26T11:30:34.707Z] User: vishnu (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1750937312301-4-om6mdpd.",
+    "isSuspicious": false,
+    "suspiciousReason": "The activity log shows normal test-taking behavior. The student answered questions sequentially without any indication of suspicious activity such as frequent tab switches or copy-pasting. The repeated test start messages are unusual but do not indicate cheating.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1750937158196-sx8ufjm",
+    "submittedAt": "2025-06-26T11:25:58.196Z"
   }
 ]

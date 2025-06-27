@@ -4638,5 +4638,310 @@
     "id": "test-1750916662386-ho97h",
     "createdAt": "2025-06-26T05:44:22.386Z",
     "updatedAt": "2025-06-26T05:44:22.386Z"
+  },
+  {
+    "title": "AI Gen (hard) MCQ Test on math",
+    "subject": "math",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750937312301-0-alwa06i",
+        "text": "A shopkeeper sells an article at a profit of 20%. If he had bought it at 10% less and sold it for Rs. 18 less, he would have gained 30%. Find the cost price of the article.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750937312301_msxev674j",
+            "text": "Rs. 10,000"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750937312301_ebd3mqwdp",
+            "text": "Rs. 12,000"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750937312301_2eplbcyt4",
+            "text": "Rs. 8,000"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750937312301_tlro6zuvs",
+            "text": "Rs. 9,000"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1750937312301_msxev674j",
+        "correctAnswer": "Rs. 10,000",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-1-9n1mlah",
+        "text": "A man sells two horses for Rs. 4000 each. He gains 20% on one and loses 20% on the other. Find his gain or loss percent in the whole transaction.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750937312301_kplwvqi95",
+            "text": "10%"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750937312301_bn789f43r",
+            "text": "20%"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750937312301_t1xia0wxg",
+            "text": "25%"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750937312301_s29m09z4x",
+            "text": "30%"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750937312301_t1xia0wxg",
+        "correctAnswer": "25%",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-2-5dzedyo",
+        "text": "By selling an article for Rs. 110, a man loses 12%. What price should he sell it to gain 8%?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750937312301_ojv98jgvz",
+            "text": "Rs. 140"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750937312301_h0axt5917",
+            "text": "Rs. 150"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750937312301_yzalds45g",
+            "text": "Rs. 160"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750937312301_oej57kzaf",
+            "text": "Rs. 170"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1750937312301_ojv98jgvz",
+        "correctAnswer": "Rs. 140",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-3-4fn6tby",
+        "text": "A merchant bought goods worth Rs. 600. He sold half of them at a gain of 10%. At what gain percent must he sell the remainder so as to get a gain of 25% on the whole?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750937312301_e276ouqux",
+            "text": "Rs. 200"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750937312301_htrbh93wg",
+            "text": "Rs. 225"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750937312301_wfaeuty68",
+            "text": "Rs. 250"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750937312301_brnxn4eok",
+            "text": "Rs. 275"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750937312301_htrbh93wg",
+        "correctAnswer": "Rs. 225",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-4-om6mdpd",
+        "text": "A dishonest dealer professes to sell at cost price but uses a weight of 900 gms for a kg. His gain percent is:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750937312301_2b49ojl3e",
+            "text": "10%"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750937312301_ocw56yumh",
+            "text": "15%"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750937312301_1zcy8y8nz",
+            "text": "20%"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750937312301_40n7kx4gn",
+            "text": "25%"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750937312301_1zcy8y8nz",
+        "correctAnswer": "20%",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750937342515-ydzak",
+    "createdAt": "2025-06-26T11:29:02.515Z",
+    "updatedAt": "2025-06-26T11:29:02.515Z"
+  },
+  {
+    "title": "AI Gen (hard) MCQ Test on math",
+    "subject": "math",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1750937312301-0-alwa06i",
+        "text": "A shopkeeper sells an article at a profit of 20%. If he had bought it at 10% less and sold it for Rs. 18 less, he would have gained 30%. Find the cost price of the article.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1750937312301_msxev674j",
+            "text": "Rs. 10,000"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1750937312301_ebd3mqwdp",
+            "text": "Rs. 12,000"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1750937312301_2eplbcyt4",
+            "text": "Rs. 8,000"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1750937312301_tlro6zuvs",
+            "text": "Rs. 9,000"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1750937312301_msxev674j",
+        "correctAnswer": "Rs. 10,000",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-1-9n1mlah",
+        "text": "A man sells two horses for Rs. 4000 each. He gains 20% on one and loses 20% on the other. Find his gain or loss percent in the whole transaction.",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1750937312301_kplwvqi95",
+            "text": "10%"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1750937312301_bn789f43r",
+            "text": "20%"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1750937312301_t1xia0wxg",
+            "text": "25%"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1750937312301_s29m09z4x",
+            "text": "30%"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1750937312301_t1xia0wxg",
+        "correctAnswer": "25%",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-2-5dzedyo",
+        "text": "By selling an article for Rs. 110, a man loses 12%. What price should he sell it to gain 8%?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1750937312301_ojv98jgvz",
+            "text": "Rs. 140"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1750937312301_h0axt5917",
+            "text": "Rs. 150"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1750937312301_yzalds45g",
+            "text": "Rs. 160"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1750937312301_oej57kzaf",
+            "text": "Rs. 170"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1750937312301_ojv98jgvz",
+        "correctAnswer": "Rs. 140",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-3-4fn6tby",
+        "text": "A merchant bought goods worth Rs. 600. He sold half of them at a gain of 10%. At what gain percent must he sell the remainder so as to get a gain of 25% on the whole?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1750937312301_e276ouqux",
+            "text": "Rs. 200"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1750937312301_htrbh93wg",
+            "text": "Rs. 225"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1750937312301_wfaeuty68",
+            "text": "Rs. 250"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1750937312301_brnxn4eok",
+            "text": "Rs. 275"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1750937312301_htrbh93wg",
+        "correctAnswer": "Rs. 225",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1750937312301-4-om6mdpd",
+        "text": "A dishonest dealer professes to sell at cost price but uses a weight of 900 gms for a kg. His gain percent is:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1750937312301_2b49ojl3e",
+            "text": "10%"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1750937312301_ocw56yumh",
+            "text": "15%"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1750937312301_1zcy8y8nz",
+            "text": "20%"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1750937312301_40n7kx4gn",
+            "text": "25%"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx2_1750937312301_1zcy8y8nz",
+        "correctAnswer": "20%",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": true,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1750937349912-6ag4y",
+    "createdAt": "2025-06-26T11:29:09.912Z",
+    "updatedAt": "2025-06-26T11:31:55.597Z",
+    "batchId": "group-1750480811384-bjl7aq2"
   }
 ]
