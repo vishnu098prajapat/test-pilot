@@ -3758,5 +3758,158 @@
     "id": "test-1750916662386-ho97h",
     "createdAt": "2025-06-26T05:44:22.386Z",
     "updatedAt": "2025-06-26T05:44:22.386Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1751002314490-0-gezcj9j",
+        "text": "Which of the following is a valid variable name in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751002314490_qk8uz8uzc",
+            "text": "123variable"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751002314490_86dcvof9u",
+            "text": "my-variable"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751002314490_gmghrrvsx",
+            "text": "my_variable"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751002314490_42afp6cgz",
+            "text": "MyVariable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1751002314490_gmghrrvsx",
+        "correctAnswer": "my_variable",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002314490-1-e1229hq",
+        "text": "What is the output of the expression: 11 % 6?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751002314490_mu8uo8a47",
+            "text": "1"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751002314490_9ubb7q0p0",
+            "text": "5"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751002314490_zyrcelz73",
+            "text": "6"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751002314490_glhrj6e7n",
+            "text": "11"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1751002314490_9ubb7q0p0",
+        "correctAnswer": "5",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002314490-2-g6li70t",
+        "text": "What type of error will be raised if you try to add a string and an integer in Python without explicit type conversion?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751002314490_98ozd0xkw",
+            "text": "ValueError"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751002314490_sxjvnytcw",
+            "text": "TypeError"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751002314490_efeqm9xg5",
+            "text": "SyntaxError"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751002314490_umne2b7zl",
+            "text": "IndentationError"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1751002314490_sxjvnytcw",
+        "correctAnswer": "TypeError",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002314490-3-9znbi1s",
+        "text": "What is the result of the expression: 2 * (3 + 3)?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751002314490_fo5u1gjpo",
+            "text": "2"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751002314490_6fbuqtng2",
+            "text": "3"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751002314491_twront61v",
+            "text": "6"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751002314491_inetx4fut",
+            "text": "12"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx3_1751002314491_inetx4fut",
+        "correctAnswer": "12",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002314491-4-ovgjakz",
+        "text": "What will be the output of the expression: 5 == 5?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751002314491_rg935e6tv",
+            "text": "True"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751002314491_tzcg8o65c",
+            "text": "False"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751002314491_689so4xts",
+            "text": "Error"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751002314491_tgf6h9rla",
+            "text": "None"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx0_1751002314491_rg935e6tv",
+        "correctAnswer": "True",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1751002328898-hoym0",
+    "createdAt": "2025-06-27T05:32:08.898Z",
+    "updatedAt": "2025-06-27T05:32:19.977Z",
+    "batchId": "group-1750480811384-bjl7aq2"
   }
 ]

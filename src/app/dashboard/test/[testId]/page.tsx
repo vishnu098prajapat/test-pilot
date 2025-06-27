@@ -29,12 +29,14 @@ import {
 import QrCodeModal from "@/components/common/qr-code-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useSubscription } from "@/hooks/use-subscription";
 
 export default function TestManagementPage() {
   const params = useParams();
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  const { plan } = useSubscription();
 
   const [test, setTest] = useState<Test | null>(null);
   const [isFetchingTest, setIsFetchingTest] = useState(true);
@@ -80,7 +82,7 @@ export default function TestManagementPage() {
       try {
         const [fetchedTest, fetchedGroups] = await Promise.all([
           getTestById(testId),
-          fetch(`/api/groups?teacherId=${user.id}`).then(res => res.ok ? res.json() : [])
+          plan.canUseGroups ? fetch(`/api/groups?teacherId=${user.id}`).then(res => res.ok ? res.json() : []) : Promise.resolve([])
         ]);
 
         if (!isActive) return;
@@ -117,7 +119,7 @@ export default function TestManagementPage() {
     return () => {
       isActive = false;
     };
-  }, [testId, user, isAuthLoading, router, toast]);
+  }, [testId, user, isAuthLoading, router, toast, plan.canUseGroups]);
 
   const handleDeleteTest = async () => {
     if (!test) return;
@@ -286,37 +288,39 @@ export default function TestManagementPage() {
         <Separator className="my-8" />
 
         <div className="space-y-6">
-          <Card className="border-primary/50">
-            <CardHeader>
-              <CardTitle className="text-xl font-headline flex items-center"><Users className="mr-2 h-5 w-5" /> Assign to Group</CardTitle>
-              <CardDescription>Assign this test to a specific group of students. Only students in the assigned group will see this test in their portal (future feature).</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {assignedGroupName ? (
-                    <div className="text-sm">Currently assigned to: <Badge>{assignedGroupName}</Badge></div>
-                ) : (
-                    <p className="text-sm text-muted-foreground">This test is not assigned to any group.</p>
-                )}
-                <div className="flex flex-col sm:flex-row gap-4 items-end">
-                    <div className="w-full sm:w-1/2">
-                        <Label htmlFor="group-select">Select a Group</Label>
-                        <Select onValueChange={setSelectedGroupId} defaultValue={selectedGroupId}>
-                            <SelectTrigger id="group-select">
-                                <SelectValue placeholder="Choose a group..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {groups.length > 0 ? groups.map(g => (
-                                    <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
-                                )) : <SelectItem value="none" disabled>No groups found</SelectItem>}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Button onClick={handleAssignTest} disabled={isAssigning || selectedGroupId === undefined}>
-                      {isAssigning ? "Assigning..." : "Assign Test"}
-                    </Button>
-                </div>
-            </CardContent>
-          </Card>
+          {plan.canUseGroups && (
+            <Card className="border-primary/50">
+              <CardHeader>
+                <CardTitle className="text-xl font-headline flex items-center"><Users className="mr-2 h-5 w-5" /> Assign to Group</CardTitle>
+                <CardDescription>Assign this test to a specific group of students. Only students in the assigned group will see this test in their portal (future feature).</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                  {assignedGroupName ? (
+                      <div className="text-sm">Currently assigned to: <Badge>{assignedGroupName}</Badge></div>
+                  ) : (
+                      <p className="text-sm text-muted-foreground">This test is not assigned to any group.</p>
+                  )}
+                  <div className="flex flex-col sm:flex-row gap-4 items-end">
+                      <div className="w-full sm:w-1/2">
+                          <Label htmlFor="group-select">Select a Group</Label>
+                          <Select onValueChange={setSelectedGroupId} defaultValue={selectedGroupId}>
+                              <SelectTrigger id="group-select">
+                                  <SelectValue placeholder="Choose a group..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  {groups.length > 0 ? groups.map(g => (
+                                      <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                                  )) : <SelectItem value="none" disabled>No groups found</SelectItem>}
+                              </SelectContent>
+                          </Select>
+                      </div>
+                      <Button onClick={handleAssignTest} disabled={isAssigning || selectedGroupId === undefined}>
+                        {isAssigning ? "Assigning..." : "Assign Test"}
+                      </Button>
+                  </div>
+              </CardContent>
+            </Card>
+          )}
           <Card className="border-destructive/50">
             <CardHeader>
               <CardTitle className="text-xl font-headline flex items-center text-destructive"><Settings2 className="mr-2 h-5 w-5" /> Advanced Settings</CardTitle>
