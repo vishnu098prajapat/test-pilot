@@ -18,7 +18,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Question, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion, StudentAnswer } from '@/lib/types';
 import QuestionDisplay from '@/components/student/question-display';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
@@ -103,7 +102,7 @@ export default function StudentResultsPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center justify-center">
-        <Card className="w-full max-w-xl shadow-xl">
+        <Card className="w-full max-w-2xl shadow-xl">
           <CardHeader className="text-center">
             <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
             <Skeleton className="h-8 w-3/4 mx-auto mb-2" />
@@ -149,12 +148,12 @@ export default function StudentResultsPage() {
   const displayTotalQuestions = results.questions.length;
 
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen flex flex-col items-center">
-      <Card className="w-full max-w-xl shadow-xl">
+    <div className="w-full">
+      <Card className="w-full max-w-2xl mx-auto shadow-xl">
         <CardHeader className="text-center">
           <Award className="w-16 h-16 text-primary mx-auto mb-4" />
           <CardTitle className="text-3xl font-bold font-headline">Test Results</CardTitle>
-          <CardDescription>Your performance for: {results.testTitle} (ID: {testId})</CardDescription>
+          <CardDescription>Your performance for: {results.testTitle}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
@@ -163,7 +162,7 @@ export default function StudentResultsPage() {
             <p className="text-xs text-muted-foreground mt-1">({results.totalPointsScored} / {results.maxPossiblePoints} Points)</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center pt-4">
             <div className="flex flex-col items-center">
               <p className="text-2xl font-semibold">{displayTotalQuestions}</p>
               <p className="text-sm text-muted-foreground">Total Questions</p>
@@ -181,30 +180,29 @@ export default function StudentResultsPage() {
               <p className="text-sm text-muted-foreground">Incorrect/Unanswered</p>
             </div>
           </div>
-
-          <div className="text-center mt-6">
-             <Button variant="outline" className="mt-2" onClick={() => setShowReview(!showReview)}>
-              {showReview ? <EyeOff className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
-              {showReview ? 'Hide Review' : 'Review My Answers'}
+        </CardContent>
+        <CardFooter className="flex-col gap-4 pt-6">
+           <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowReview(!showReview)}>
+            {showReview ? <EyeOff className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
+            {showReview ? 'Hide Review' : 'Review My Answers'}
+          </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 w-full">
+            <Button asChild variant="default" className="flex-1">
+              <Link href={`/test/${testId}/leaderboard`}>
+                <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
+              </Link>
+            </Button>
+            <Button asChild variant="secondary" className="flex-1">
+              <Link href="/"> 
+                <Home className="mr-2 h-4 w-4" /> Go to Homepage
+              </Link>
             </Button>
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 pt-6">
-           <Button asChild variant="default">
-            <Link href={`/test/${testId}/leaderboard`}>
-              <BarChart3 className="mr-2 h-4 w-4" /> View Leaderboard
-            </Link>
-          </Button>
-           <Button asChild variant="secondary">
-             <Link href="/"> 
-               <Home className="mr-2 h-4 w-4" /> Go to Homepage
-             </Link>
-           </Button>
         </CardFooter>
       </Card>
 
       {showReview && results && (
-        <div className="w-full max-w-3xl mt-8 space-y-6">
+        <div className="w-full max-w-3xl mt-8 space-y-6 mx-auto">
             <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
@@ -224,7 +222,6 @@ export default function StudentResultsPage() {
                         let correctAnswerText = "N/A";
                         if (q.type === 'mcq') {
                             const mcq = q as MCQQuestion;
-                            // Robust check for correct answer text
                             let correctOption = mcq.options.find(opt => opt.id === mcq.correctOptionId);
                             if (!correctOption && mcq.correctAnswer) {
                                 correctOption = mcq.options.find(opt => opt.text === mcq.correctAnswer);
@@ -235,7 +232,6 @@ export default function StudentResultsPage() {
                         } else if (q.type === 'true-false') {
                             correctAnswerText = (q as TrueFalseQuestion).correctAnswer ? "True" : "False";
                         }
-
 
                         return (
                             <React.Fragment key={q.id}>

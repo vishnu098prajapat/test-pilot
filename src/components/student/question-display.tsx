@@ -64,7 +64,7 @@ export default function QuestionDisplay({
     }
 
     reviewFeedbackDisplay = (
-      <div className={`mt-3 p-2 border rounded-md text-sm ${qIsCorrect ? 'bg-green-500/10 border-green-500' : 'bg-red-500/10 border-red-500'}`}>
+      <div className={`mt-3 p-3 border rounded-md text-sm ${qIsCorrect ? 'bg-green-500/10 border-green-500' : 'bg-red-500/10 border-red-500'}`}>
         <div className="font-semibold mb-1 flex items-start"> 
           {qIsCorrect ? <CheckCircle className="h-5 w-5 mr-2 text-green-700 shrink-0 mt-px" /> : <XCircle className="h-5 w-5 mr-2 text-red-700 shrink-0 mt-px" />}
           <span className="mr-1 shrink-0">Your Answer:</span> 
@@ -123,7 +123,15 @@ export default function QuestionDisplay({
             {(question as MCQQuestion).options.map((option) => {
               let optionStyle = 'border-border';
               if (isReviewMode) {
-                if (option.id === (question as MCQQuestion).correctOptionId) {
+                const mcq = question as MCQQuestion;
+                let correctId = mcq.correctOptionId;
+                // Fallback check if correctOptionId is null but correctAnswer text exists
+                if (!correctId && mcq.correctAnswer) {
+                    const correctOpt = mcq.options.find(o => o.text === mcq.correctAnswer);
+                    if (correctOpt) correctId = correctOpt.id;
+                }
+                
+                if (option.id === correctId) {
                   optionStyle = 'border-green-500 bg-green-500/10 text-green-700 font-medium';
                 }
                 if (option.id === studentAttempt?.answer && !(studentAttempt?.isCorrect)) {
