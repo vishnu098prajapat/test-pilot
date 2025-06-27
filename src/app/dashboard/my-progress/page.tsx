@@ -23,9 +23,10 @@ interface StatCardProps {
   description?: string;
   colorClass?: string;
   animate?: boolean;
+  formatTimeFn?: (seconds: number) => string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, colorClass = "text-primary", animate = false }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, colorClass = "text-primary", animate = false, formatTimeFn }) => {
   const IconComponent = icon;
   const [animatedValue, setAnimatedValue] = useState<string | number>(0);
   const numericValue = useMemo(() => {
@@ -43,12 +44,20 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const currentAnimatedNumber = Math.floor(progress * numericValue);
         
-        setAnimatedValue(currentAnimatedNumber + suffix);
+        if (formatTimeFn) {
+          setAnimatedValue(formatTimeFn(currentAnimatedNumber));
+        } else {
+          setAnimatedValue(currentAnimatedNumber + suffix);
+        }
         
         if (progress < 1) {
           requestAnimationFrame(step);
         } else {
-           setAnimatedValue(numericValue + suffix);
+           if (formatTimeFn) {
+            setAnimatedValue(formatTimeFn(numericValue));
+          } else {
+            setAnimatedValue(numericValue + suffix);
+          }
         }
       };
       const frameId = requestAnimationFrame(step);
@@ -56,7 +65,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, description, co
     } else {
       setAnimatedValue(value);
     }
-  }, [animate, value, numericValue, suffix]);
+  }, [animate, value, numericValue, suffix, formatTimeFn]);
 
   return (
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
@@ -220,7 +229,7 @@ export default function MyProgressPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard title="Attempts This Month" value={summaryStats.totalMonthlySubmissions} icon={FileText} description={`Lifetime attempts: ${summaryStats.lifetimeTotalAttempts}`} animate={true}/>
           <StatCard title="Average Score (This Month)" value={`${summaryStats.currentMonthAverageScore}%`} icon={Percent} description="Your average score for this calendar month." animate={true}/>
-          <StatCard title="Avg. Time / Attempt (This Month)" value={formatTime(summaryStats.averageTimePerAttemptSeconds)} icon={Clock} description="Your average completion time this month." animate={true}/>
+          <StatCard title="Avg. Time / Attempt (This Month)" value={summaryStats.averageTimePerAttemptSeconds} icon={Clock} description="Your average completion time this month." animate={true} formatTimeFn={formatTime}/>
          
           {plan.id === 'free' ? (
             <Card className="col-span-1 md:col-span-2 lg:col-span-3 shadow-sm flex flex-col items-center justify-center text-center bg-primary/5 border-primary/20 p-6">
