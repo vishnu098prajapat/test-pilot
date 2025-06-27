@@ -63,6 +63,7 @@ export interface Test {
   randomizeQuestions: boolean;
   enableTabSwitchDetection: boolean;
   enableCopyPasteDisable: boolean;
+  enableMultiLanguage?: boolean;
   batchId?: string;
   isAiGenerated?: boolean;
   deletedAt?: Date;     
@@ -152,6 +153,7 @@ export const testBuilderSchema = z.object({
   randomizeQuestions: z.boolean(),
   enableTabSwitchDetection: z.boolean(),
   enableCopyPasteDisable: z.boolean(),
+  enableMultiLanguage: z.boolean().optional(),
   published: z.boolean(),
   isAiGenerated: z.boolean().optional(),
 });

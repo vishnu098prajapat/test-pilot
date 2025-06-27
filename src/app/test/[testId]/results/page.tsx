@@ -33,7 +33,8 @@ interface StoredTestResults {
   maxPossiblePoints: number;
   scorePercentage: number;
   questions: Question[]; 
-  studentRawAnswers: Record<string, any>; 
+  studentRawAnswers: Record<string, any>;
+  enableMultiLanguage?: boolean;
 }
 
 export default function StudentResultsPage() {
@@ -281,12 +282,14 @@ export default function StudentResultsPage() {
                             <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
                             <CardDescription>Review each question, your answer, and the correct answer.</CardDescription>
                         </div>
-                        <div className="flex gap-2">
-                           <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => handleLanguageChange('en')} size="sm" disabled={isTranslating}>English</Button>
-                            <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => handleLanguageChange('hi')} size="sm" disabled={isTranslating}>
-                                {isTranslating ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
-                            </Button>
-                        </div>
+                        {results.enableMultiLanguage && (
+                          <div className="flex gap-2">
+                            <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => handleLanguageChange('en')} size="sm" disabled={isTranslating}>English</Button>
+                              <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => handleLanguageChange('hi')} size="sm" disabled={isTranslating}>
+                                  {isTranslating ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
+                              </Button>
+                          </div>
+                        )}
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-6">

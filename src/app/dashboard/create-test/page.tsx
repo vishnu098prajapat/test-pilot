@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Save, Eye, Settings as SettingsIcon, Info } from "lucide-react";
+import { PlusCircle, Save, Eye, Settings as SettingsIcon, Info, Languages } from "lucide-react";
 import { QuestionForm } from "@/components/test/question-form";
 import type { Test, Question, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion, TestBuilderFormValues } from '@/lib/types';
 import { testBuilderSchema } from "@/lib/types";
@@ -83,6 +83,7 @@ export default function TestBuilderForm() {
       randomizeQuestions: false,
       enableTabSwitchDetection: true,
       enableCopyPasteDisable: true,
+      enableMultiLanguage: false,
       published: false,
       isAiGenerated: false,
     },
@@ -122,6 +123,7 @@ export default function TestBuilderForm() {
             form.setValue("randomizeQuestions", aiData.randomizeQuestions === undefined ? false : aiData.randomizeQuestions);
             form.setValue("enableTabSwitchDetection", aiData.enableTabSwitchDetection === undefined ? true : aiData.enableTabSwitchDetection);
             form.setValue("enableCopyPasteDisable", aiData.enableCopyPasteDisable === undefined ? true : aiData.enableCopyPasteDisable);
+            form.setValue("enableMultiLanguage", true); // Default AI tests to have translation enabled
             form.setValue("published", aiData.published === undefined ? false : aiData.published);
             form.setValue("isAiGenerated", true);
             
@@ -503,6 +505,21 @@ export default function TestBuilderForm() {
                       </div>
                       <FormControl>
                         <Switch id="enableCopyPasteDisable" checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="enableMultiLanguage"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="enableMultiLanguage" className="flex items-center"><Languages className="mr-2 h-4 w-4" />Enable Hindi/English Translation</Label>
+                        <p className="text-xs text-muted-foreground">Allows students to switch language during the test.</p>
+                      </div>
+                      <FormControl>
+                        <Switch id="enableMultiLanguage" checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}

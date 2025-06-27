@@ -1,7 +1,7 @@
 
 "use client"; 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import StudentTestArea from '@/components/student/student-test-area';
 import { getTestById } from '@/lib/store'; 
