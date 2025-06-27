@@ -49,19 +49,25 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const allTests: Test[] = readJsonFile<Test[]>(TESTS_DB_PATH, []);
     const allAttempts: TestAttempt[] = readJsonFile<TestAttempt[]>(ATTEMPTS_DB_PATH, []);
 
-    // Identify tests created by the specified teacher
-    const testIdsToDelete = new Set(
-      allTests.filter(test => test.teacherId === teacherId).map(test => test.id)
-    );
+    let testIdsToDelete = new Set<string>();
+    let testsUpdatedCount = 0;
+    
+    // Soft delete the tests by adding a deletedAt timestamp
+    const updatedTests = allTests.map(test => {
+      // Find tests belonging to the teacher that are not already deleted
+      if (test.teacherId === teacherId && !test.deletedAt) {
+        testIdsToDelete.add(test.id);
+        testsUpdatedCount++;
+        return { ...test, deletedAt: new Date() };
+      }
+      return test;
+    });
 
-    if (testIdsToDelete.size === 0) {
-      return res.status(200).json({ message: 'No tests found for this teacher to delete.' });
+    if (testsUpdatedCount === 0) {
+      return res.status(200).json({ message: 'No active tests found for this teacher to clear.' });
     }
 
-    // Filter out the tests belonging to the teacher
-    const updatedTests = allTests.filter(test => test.teacherId !== teacherId);
-
-    // Filter out the attempts related to the deleted tests
+    // Filter out the attempts related to the "deleted" tests
     const updatedAttempts = allAttempts.filter(attempt => !testIdsToDelete.has(attempt.testId));
 
     // Write the updated data back to the files
@@ -69,7 +75,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const attemptsWritten = writeJsonFile(ATTEMPTS_DB_PATH, updatedAttempts);
 
     if (testsWritten && attemptsWritten) {
-      res.status(200).json({ message: `Successfully cleared ${testIdsToDelete.size} tests and their associated attempts.` });
+      res.status(200).json({ message: `Successfully cleared ${testsUpdatedCount} tests and their associated attempts.` });
     } else {
       // This case indicates a server-side file writing issue.
       throw new Error('Failed to write updated data to the database files.');

@@ -27,7 +27,7 @@ export interface Plan {
 const plans: Record<PlanId, Plan> = {
   free: { id: 'free', name: 'Free Trial', testCreationLimit: 5, aiTestCreationLimit: 1, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
   student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 5, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
-  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: true },
   teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, aiTestCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
 
@@ -70,7 +70,8 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
      const fetchAndSetTests = useCallback(async (userId: string) => {
         setIsTestCountLoading(true);
         try {
-            const tests = await getTestsByTeacher(userId);
+            // Fetch ALL tests including deleted ones for accurate quota calculation
+            const tests = await getTestsByTeacher(userId, true);
             setLifetimeUserTests(tests);
         } catch (error) {
             console.error("Failed to fetch teacher tests:", error);
@@ -112,8 +113,9 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     const now = new Date();
     const currentMonthStart = startOfMonth(now);
 
+    // monthlyUserTests now correctly counts all tests CREATED this month, even if soft-deleted.
     const monthlyUserTests = lifetimeUserTests.filter(t => 
-        !t.deletedAt && isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
+        isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
     );
 
     const monthlyManualTestsCount = monthlyUserTests.filter(t => !t.isAiGenerated).length;
