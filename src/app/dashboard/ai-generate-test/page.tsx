@@ -185,8 +185,8 @@ export default function AIGenerateTestPage() {
   }
 
   return (
-    <div className="container mx-auto py-2">
-      <Alert className="mb-6 border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
+    <div className="container mx-auto py-2 space-y-8">
+      <Alert className="border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
         <Info className="h-4 w-4" />
         <AlertTitle className="font-semibold">Plan Information</AlertTitle>
         <AlertDescription>
@@ -198,7 +198,7 @@ export default function AIGenerateTestPage() {
         </AlertDescription>
       </Alert>
 
-      <Card className="max-w-2xl mx-auto">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-headline flex items-center">
             <Sparkles className="mr-2 h-6 w-6 text-primary" /> AI Test Generator
@@ -261,7 +261,7 @@ export default function AIGenerateTestPage() {
       </Card>
 
       {generatedQuestions && generatedQuestions.length > 0 && (
-        <Card className="max-w-2xl mx-auto mt-8">
+        <Card className="mt-8">
           <CardHeader><CardTitle className="text-xl font-headline flex items-center"><ListChecks className="mr-2 h-5 w-5" /> Generated Questions</CardTitle><CardDescription>Review the questions. You can use them in the Test Builder.</CardDescription></CardHeader>
           <CardContent className="space-y-4 max-h-96 overflow-y-auto">
             {generatedQuestions.map((q, index) => (
@@ -279,3 +279,5 @@ export default function AIGenerateTestPage() {
     </div>
   );
 }
+
+    

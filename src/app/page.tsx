@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="py-4 px-4 sm:px-6 md:px-10 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
+      <header className="py-4 px-4 sm:px-6 md:px-8 border-b sticky top-0 bg-background/95 backdrop-blur-sm z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center text-xl sm:text-2xl font-bold font-headline text-primary">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 sm:h-7 sm:w-7"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
@@ -139,3 +139,5 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
     </Card>
   );
 }
+
+    

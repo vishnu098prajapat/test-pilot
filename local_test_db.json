@@ -4220,7 +4220,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1751003391360-cue8f",
     "createdAt": "2025-06-27T05:49:51.360Z",
-    "updatedAt": "2025-06-27T05:49:51.360Z"
+    "updatedAt": "2025-06-27T05:49:51.360Z",
+    "deletedAt": "2025-06-27T05:54:43.070Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on Python",
@@ -4507,6 +4508,7 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1751003756039-ij8py",
     "createdAt": "2025-06-27T05:55:56.039Z",
-    "updatedAt": "2025-06-27T05:55:56.039Z"
+    "updatedAt": "2025-06-27T05:55:56.039Z",
+    "deletedAt": "2025-06-27T05:54:43.070Z"
   }
 ]
