@@ -150,7 +150,7 @@ export default function AIGenerateTestPage() {
     const aiGeneratedTitle = `AI Gen (${generationParams.difficulty}) ${generationParams.questionType.toUpperCase()} Test on ${generationParams.subject}`;
     const dataToStore = {
       title: aiGeneratedTitle, subject: generationParams.subject, questions: testBuilderQuestions,
-      duration: 30, attemptsAllowed: 1, randomizeQuestions: false,
+      duration: 5, attemptsAllowed: 1, randomizeQuestions: false,
       enableTabSwitchDetection: true, enableCopyPasteDisable: true, published: false, 
       isAiGenerated: true, // Mark this test as AI-generated
     };

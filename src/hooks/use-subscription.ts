@@ -27,7 +27,7 @@ export interface Plan {
 const plans: Record<PlanId, Plan> = {
   free: { id: 'free', name: 'Free Trial', testCreationLimit: 5, aiTestCreationLimit: 1, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
   student_lite: { id: 'student_lite', name: 'Student Lite', testCreationLimit: 30, aiTestCreationLimit: 5, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
-  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: false },
+  teacher_basic: { id: 'teacher_basic', name: 'Teacher Basic', testCreationLimit: 50, aiTestCreationLimit: 20, canUseAI: true, canUseGroups: false, canViewStudentAnalytics: true },
   teacher_premium: { id: 'teacher_premium', name: 'Teacher Premium', testCreationLimit: Infinity, aiTestCreationLimit: Infinity, canUseAI: true, canUseGroups: true, canViewStudentAnalytics: true },
 };
 
@@ -54,7 +54,7 @@ interface SubscriptionContextType {
   remainingTests: number;
   canCreateAiTest: boolean;
   remainingAiTests: number;
-  addCreatedTest: (test: Test) => void;
+  addCreatedTest: () => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -104,9 +104,11 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         setIsLoading(false);
     }, [user, isAuthLoading, fetchAndSetTests, pathname]); // Added pathname to re-fetch on navigation
     
-    const addCreatedTest = useCallback((newTest: Test) => {
-        setLifetimeUserTests(prev => [...prev, newTest]);
-    }, []);
+    const addCreatedTest = useCallback(() => {
+        if (user?.id) {
+            fetchAndSetTests(user.id);
+        }
+    }, [user, fetchAndSetTests]);
 
     const plan = plans[planId];
     

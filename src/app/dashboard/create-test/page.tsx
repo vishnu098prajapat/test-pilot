@@ -63,7 +63,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, remainingAiTests, addCreatedTest } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, addCreatedTest, remainingAiTests } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,7 +77,7 @@ export default function TestBuilderForm() {
     defaultValues: {
       title: "",
       subject: "",
-      duration: 30,
+      duration: 5,
       questions: [defaultQuestionValues('mcq')],
       attemptsAllowed: 1,
       randomizeQuestions: false,
@@ -117,7 +117,7 @@ export default function TestBuilderForm() {
           if (aiData.questions && aiData.questions.length > 0) {
             form.setValue("title", aiData.title || "AI Generated Test");
             form.setValue("subject", aiData.subject || "AI Suggested Subject");
-            form.setValue("duration", aiData.duration || 30);
+            form.setValue("duration", aiData.duration || 5);
             form.setValue("attemptsAllowed", aiData.attemptsAllowed === undefined ? 1 : aiData.attemptsAllowed);
             form.setValue("randomizeQuestions", aiData.randomizeQuestions === undefined ? false : aiData.randomizeQuestions);
             form.setValue("enableTabSwitchDetection", aiData.enableTabSwitchDetection === undefined ? true : aiData.enableTabSwitchDetection);
@@ -255,7 +255,7 @@ export default function TestBuilderForm() {
       } else {
         savedTest = await addTest({ ...finalData, teacherId: teacherUserId });
         if (savedTest) {
-            addCreatedTest(savedTest);
+            addCreatedTest();
         }
       }
 

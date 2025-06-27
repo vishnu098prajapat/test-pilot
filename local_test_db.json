@@ -4068,5 +4068,157 @@
     "createdAt": "2025-06-27T05:32:55.477Z",
     "updatedAt": "2025-06-27T05:32:55.477Z",
     "deletedAt": "2025-06-27T05:33:12.822Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1751003370058-0-5bw0rn0",
+        "text": "What is the primary function of the 'new' operator in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751003370058_cjsszyey3",
+            "text": "Allocates memory on the stack."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751003370058_04ddhiyzx",
+            "text": "Deallocates memory automatically."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751003370058_zfxie6lzc",
+            "text": "Dynamically allocates memory on the heap."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751003370058_0zaszt3x5",
+            "text": "Is used for global variables."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1751003370058_zfxie6lzc",
+        "correctAnswer": "Dynamically allocates memory on the heap.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003370058-1-voiii97",
+        "text": "Which statement correctly deallocates the memory pointed to by 'ptr' that was allocated using 'new'?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751003370058_mytkdnlx5",
+            "text": "free(ptr);"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751003370058_9o68xuycd",
+            "text": "delete ptr;"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751003370058_laglg22b9",
+            "text": "delete[] ptr;"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751003370058_nktzur5fc",
+            "text": "ptr->delete();"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx1_1751003370058_9o68xuycd",
+        "correctAnswer": "delete ptr;",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003370058-2-7luchm9",
+        "text": "What is a dangling pointer?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751003370058_7o0zeo9vl",
+            "text": "A pointer initialized to zero."
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751003370058_84v7jbi44",
+            "text": "A pointer that does not point to a valid memory location."
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751003370058_acbj34261",
+            "text": "A pointer that points to the beginning of an array."
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751003370058_fgqs8caac",
+            "text": "A pointer to a constant variable."
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1751003370058_84v7jbi44",
+        "correctAnswer": "A pointer that does not point to a valid memory location.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003370058-3-jfs0f6h",
+        "text": "Why is it important to deallocate memory using 'delete' when it's no longer needed?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751003370058_a05irsnze",
+            "text": "Improve code readability."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751003370058_v36hr0bu5",
+            "text": "Prevent memory leaks."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751003370058_08q5vlh3s",
+            "text": "Increase program speed."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751003370058_gf99zmopd",
+            "text": "Reduce compilation time."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1751003370058_v36hr0bu5",
+        "correctAnswer": "Prevent memory leaks.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003370058-4-c2d0y08",
+        "text": "Which of the following statements correctly allocates an array of 10 integers dynamically using 'new' in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751003370058_2d56p2kdm",
+            "text": "int ptr = new int(10);"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751003370058_azkumz0k6",
+            "text": "int *ptr = new int[10];"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751003370058_c0vu6261t",
+            "text": "int ptr = malloc(10 * sizeof(int));"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751003370058_ebeqaby56",
+            "text": "int *ptr = calloc(10, sizeof(int));"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1751003370058_azkumz0k6",
+        "correctAnswer": "int *ptr = new int[10];",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1751003391360-cue8f",
+    "createdAt": "2025-06-27T05:49:51.360Z",
+    "updatedAt": "2025-06-27T05:49:51.360Z"
   }
 ]
