@@ -3301,7 +3301,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750915607228-yndgv",
     "createdAt": "2025-06-26T05:26:47.228Z",
-    "updatedAt": "2025-06-26T05:26:47.228Z"
+    "updatedAt": "2025-06-26T05:26:47.228Z",
+    "deletedAt": "2025-06-27T05:33:12.822Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on Python",
@@ -3453,7 +3454,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750915982840-njo96",
     "createdAt": "2025-06-26T05:33:02.840Z",
-    "updatedAt": "2025-06-26T05:33:02.840Z"
+    "updatedAt": "2025-06-26T05:33:02.840Z",
+    "deletedAt": "2025-06-27T05:33:12.822Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on java",
@@ -3605,7 +3607,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750916288890-2ws47",
     "createdAt": "2025-06-26T05:38:08.890Z",
-    "updatedAt": "2025-06-26T05:38:08.890Z"
+    "updatedAt": "2025-06-26T05:38:08.890Z",
+    "deletedAt": "2025-06-27T05:33:12.822Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on c++",
@@ -3757,7 +3760,8 @@
     "teacherId": "user-1750670374252-qy60gkc",
     "id": "test-1750916662386-ho97h",
     "createdAt": "2025-06-26T05:44:22.386Z",
-    "updatedAt": "2025-06-26T05:44:22.386Z"
+    "updatedAt": "2025-06-26T05:44:22.386Z",
+    "deletedAt": "2025-06-27T05:33:12.822Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on Python",
@@ -3911,5 +3915,158 @@
     "createdAt": "2025-06-27T05:32:08.898Z",
     "updatedAt": "2025-06-27T05:32:19.977Z",
     "batchId": "group-1750480811384-bjl7aq2"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on java",
+    "subject": "java",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1751002355564-0-9q5xtpf",
+        "text": "What will be the output of the following Java code snippet?\n\n```java\nif (true) {\n  System.out.println(\"Hello\");\n}\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751002355564_09vuq75y8",
+            "text": "The code will print \"Hello\" multiple times."
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751002355564_5ro3n4anl",
+            "text": "The code will not print anything."
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751002355564_gtsgrxphx",
+            "text": "The code will result in a compilation error."
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751002355564_neq9u44id",
+            "text": "The code will print \"Hello\" once."
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx3_1751002355564_neq9u44id",
+        "correctAnswer": "The code will print \"Hello\" once.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002355564-1-3ax5zhl",
+        "text": "What is the return type of the following Java method?\n\n```java\npublic static int calculateSum(int a, int b) {\n  return a + b;\n}\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751002355564_p5fgaltpx",
+            "text": "void"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751002355564_facxms7rw",
+            "text": "String"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751002355564_kvupgojro",
+            "text": "boolean"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751002355564_0wp2e3oi7",
+            "text": "int"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx3_1751002355564_0wp2e3oi7",
+        "correctAnswer": "int",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002355564-2-i4rwsle",
+        "text": "What will be the output of the following Java code snippet?\n\n```java\nfor (int i = 1; i <= 5; i++) {\n  System.out.println(i);\n}\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751002355564_bs3roxgxi",
+            "text": "The code will print numbers from 0 to 5."
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751002355564_5aaqk1ygf",
+            "text": "The code will print numbers from 1 to 6."
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751002355564_v1i6meqrj",
+            "text": "The code will not print anything."
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751002355564_fi2t2r4lc",
+            "text": "The code will print numbers from 1 to 5."
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx3_1751002355564_fi2t2r4lc",
+        "correctAnswer": "The code will print numbers from 1 to 5.",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002355564-3-wxiirp8",
+        "text": "What will be the output of the following Java code snippet?\n\n```java\nint number = 4;\nif (number % 2 == 0) {\n  System.out.println(\"Even\");\n} else {\n  System.out.println(\"Odd\");\n}\n```",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751002355564_2jcuuu5lp",
+            "text": "The code will print \"Odd\"."
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751002355564_5uoobu1oi",
+            "text": "The code will print \"Even\"."
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751002355564_p523gfq8a",
+            "text": "The code will not print anything."
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751002355564_fst385hyj",
+            "text": "The code will result in a compilation error."
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1751002355564_5uoobu1oi",
+        "correctAnswer": "The code will print \"Even\".",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751002355564-4-97ujkos",
+        "text": "In Java, what is a method?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751002355564_hrfnxxq44",
+            "text": "A variable that stores data."
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751002355564_ne24dqcy1",
+            "text": "A class that defines objects."
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751002355564_kx7nup0c1",
+            "text": "A loop that repeats code."
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751002355564_3xh2tv2e3",
+            "text": "A block of code that performs a specific task."
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1751002355564_3xh2tv2e3",
+        "correctAnswer": "A block of code that performs a specific task.",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1751002375476-xw82v",
+    "createdAt": "2025-06-27T05:32:55.477Z",
+    "updatedAt": "2025-06-27T05:32:55.477Z",
+    "deletedAt": "2025-06-27T05:33:12.822Z"
   }
 ]

@@ -247,8 +247,9 @@ export default function DashboardPage() {
                 <>
                    <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm" disabled={isLoading || tests.length === 0}>
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete All
+                      <Button variant="destructive" size="sm" disabled={isLoading || tests.length === 0} className="w-10 h-9 p-0 sm:w-auto sm:px-3">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="hidden sm:inline sm:ml-2">Delete All</span>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -266,19 +267,22 @@ export default function DashboardPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button variant="outline" size="sm" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0}>
-                    <ListFilter className="mr-2 h-4 w-4" /> Select to Delete
+                  <Button variant="outline" size="sm" onClick={toggleSelectionMode} disabled={isLoading || tests.length === 0} className="w-10 h-9 p-0 sm:w-auto sm:px-3">
+                    <ListFilter className="h-4 w-4" />
+                    <span className="hidden sm:inline sm:ml-2">Select to Delete</span>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" onClick={toggleSelectionMode}>
-                    <X className="mr-2 h-4 w-4" /> Cancel
+                  <Button variant="ghost" onClick={toggleSelectionMode} size="sm" className="w-10 h-9 p-0 sm:w-auto sm:px-3">
+                    <X className="h-4 w-4" />
+                    <span className="hidden sm:inline sm:ml-2">Cancel</span>
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" disabled={selectedTests.length === 0}>
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({selectedTests.length})
+                      <Button variant="destructive" size="sm" className="w-auto h-9 p-0 px-3" disabled={selectedTests.length === 0}>
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sm:ml-2">Delete ({selectedTests.length})</span>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
