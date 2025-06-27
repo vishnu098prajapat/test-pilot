@@ -136,10 +136,7 @@ export async function deleteTest(testId: string): Promise<boolean> {
 
   if (testIndex !== -1) {
     // Soft delete by adding a 'deletedAt' timestamp
-    allTests[testIndex] = {
-      ...allTests[testIndex],
-      deletedAt: new Date(),
-    };
+    allTests[testIndex].deletedAt = new Date();
     
     const success = await _saveAllTests(allTests);
     if (success) {

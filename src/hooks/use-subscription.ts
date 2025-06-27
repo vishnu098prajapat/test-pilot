@@ -54,6 +54,7 @@ interface SubscriptionContextType {
   remainingTests: number;
   canCreateAiTest: boolean;
   remainingAiTests: number;
+  addCreatedTest: (test: Test) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -66,6 +67,19 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     const [isTestCountLoading, setIsTestCountLoading] = useState(true);
     const pathname = usePathname();
 
+     const fetchAndSetTests = useCallback(async (userId: string) => {
+        setIsTestCountLoading(true);
+        try {
+            const tests = await getTestsByTeacher(userId);
+            setLifetimeUserTests(tests);
+        } catch (error) {
+            console.error("Failed to fetch teacher tests:", error);
+            setLifetimeUserTests([]);
+        } finally {
+            setIsTestCountLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
         if (isAuthLoading) {
             setIsLoading(true);
@@ -76,11 +90,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
             setPlanId(userPlanId);
             
             if (user.role === 'teacher') {
-                setIsTestCountLoading(true);
-                getTestsByTeacher(user.id).then(tests => {
-                    setLifetimeUserTests(tests);
-                    setIsTestCountLoading(false);
-                });
+                fetchAndSetTests(user.id);
             } else {
                 setLifetimeUserTests([]);
                 setIsTestCountLoading(false);
@@ -91,15 +101,19 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
             setIsTestCountLoading(false);
         }
         setIsLoading(false);
-    }, [user, isAuthLoading, pathname]);
+    }, [user, isAuthLoading, fetchAndSetTests, pathname]); // Added pathname to re-fetch on navigation
     
+    const addCreatedTest = useCallback((newTest: Test) => {
+        setLifetimeUserTests(prev => [...prev, newTest]);
+    }, []);
+
     const plan = plans[planId];
     
     const now = new Date();
     const currentMonthStart = startOfMonth(now);
 
     const monthlyUserTests = lifetimeUserTests.filter(t => 
-        isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
+        !t.deletedAt && isWithinInterval(new Date(t.createdAt), { start: currentMonthStart, end: now })
     );
 
     const monthlyManualTestsCount = monthlyUserTests.filter(t => !t.isAiGenerated).length;
@@ -118,12 +132,13 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         remainingTests,
         canCreateAiTest,
         remainingAiTests,
+        addCreatedTest
     };
 
     return React.createElement(SubscriptionContext.Provider, { value }, children);
 }
 
-export function useSubscription(): Omit<SubscriptionContextType, 'addCreatedTest'> {
+export function useSubscription(): SubscriptionContextType {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
     throw new Error("useSubscription must be used within a SubscriptionProvider");

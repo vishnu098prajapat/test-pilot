@@ -63,13 +63,14 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, addCreatedTest } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testIdToEdit, setTestIdToEdit] = useState<string | null>(null);
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [previewTestData, setPreviewTestData] = useState<TestBuilderFormValues | null>(null);
+  const [isAiSourced, setIsAiSourced] = useState(false);
 
   const form = useForm<TestBuilderFormValues>({
     resolver: zodResolver(testBuilderSchema),
@@ -95,6 +96,7 @@ export default function TestBuilderForm() {
   useEffect(() => {
     const editId = searchParams.get("edit");
     const source = searchParams.get("source");
+    setIsAiSourced(source === 'ai');
 
     if (isAuthLoading) {
         return;
@@ -163,6 +165,7 @@ export default function TestBuilderForm() {
       getTestById(editId)
         .then(testData => {
           if (testData && testData.teacherId === user?.id) {
+            setIsAiSourced(testData.isAiGenerated || false);
             const questionsWithProcessedIds = testData.questions.map(q => {
               const baseQ = { ...q, id: String(q.id), text: q.text || "", points: q.points || 10 };
               if (baseQ.type === 'mcq') {
@@ -208,7 +211,7 @@ export default function TestBuilderForm() {
       return;
     }
 
-    if (!testIdToEdit) { // Only check limits for NEW tests, not for edits.
+    if (!testIdToEdit) {
       if (data.isAiGenerated) {
         if (!canCreateAiTest) {
           toast({ title: "AI Test Limit Reached", description: `You have reached your monthly limit of ${plan.aiTestCreationLimit} AI-generated tests.`, variant: "destructive", duration: 3000 });
@@ -251,6 +254,9 @@ export default function TestBuilderForm() {
         savedTest = await updateTest(testIdToEdit, { ...finalData, teacherId: teacherUserId });
       } else {
         savedTest = await addTest({ ...finalData, teacherId: teacherUserId });
+        if (savedTest) {
+            addCreatedTest(savedTest);
+        }
       }
 
       if (savedTest) {
@@ -294,7 +300,7 @@ export default function TestBuilderForm() {
     return <Loading />;
   }
   
-  if (!testIdToEdit && !canCreateTest) { // Block new manual test creation if limit reached
+  if (!testIdToEdit && !canCreateTest && !isAiSourced) {
     return (
         <UpgradeNudge 
             featureName="more manual tests"
@@ -303,22 +309,38 @@ export default function TestBuilderForm() {
         />
     );
   }
+   if (!testIdToEdit && !canCreateAiTest && isAiSourced) {
+    return (
+        <UpgradeNudge 
+            featureName="more AI-generated tests"
+            description={`You have reached your limit of ${plan.aiTestCreationLimit} AI-generated tests for this month on the ${plan.name} plan.`}
+            requiredPlan="a higher tier"
+        />
+    );
+  }
 
   return (
     <>
-      <div className="mb-6">
-          <Alert className="border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
-              <Info className="h-4 w-4" />
-              <AlertTitle className="font-semibold">Plan Information</AlertTitle>
-              <AlertDescription>
-              You are on the <b>{plan.name}</b> plan. 
-              {plan.testCreationLimit !== Infinity 
-                  ? ` You have ${remainingTests} manual test creation(s) remaining this month.`
-                  : ` You have unlimited manual test creations.`
-              }
-              </AlertDescription>
-          </Alert>
-      </div>
+      {!testIdToEdit && (
+        <div className="mb-6">
+            <Alert className="border-primary/50 text-primary bg-primary/5 dark:bg-primary/10">
+                <Info className="h-4 w-4" />
+                <AlertTitle className="font-semibold">Plan Information</AlertTitle>
+                <AlertDescription>
+                You are on the <b>{plan.name}</b> plan. 
+                {isAiSourced ? (
+                  plan.aiTestCreationLimit !== Infinity 
+                    ? ` You have ${remainingAiTests} AI test creation(s) remaining this month.`
+                    : ` You have unlimited AI test creations.`
+                ) : (
+                  plan.testCreationLimit !== Infinity 
+                    ? ` You have ${remainingTests} manual test creation(s) remaining this month.`
+                    : ` You have unlimited manual test creations.`
+                )}
+                </AlertDescription>
+            </Alert>
+        </div>
+      )}
       <UIForm {...form}>
         <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
           console.error("Form validation errors on submit:", errors);
@@ -331,7 +353,7 @@ export default function TestBuilderForm() {
               </CardTitle>
               <CardDescription>
                 {testIdToEdit ? "Modify the details of your existing test." : "Fill in the details to create a new test."}
-                {searchParams.get("source") === 'ai' && " Using AI-generated questions as a starting point."}
+                {isAiSourced && " Using AI-generated questions as a starting point."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
