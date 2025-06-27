@@ -190,5 +190,53 @@
     "ipAddress": "127.0.0.1 (localhost)",
     "id": "attempt-1751004868492-xr2yynr",
     "submittedAt": "2025-06-27T06:14:28.493Z"
+  },
+  {
+    "testId": "test-1751004099420-gtgwp",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "honey",
+    "startTime": "2025-06-27T06:24:09.711Z",
+    "endTime": "2025-06-27T06:24:30.461Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1751004084678-0-y7zinzj",
+        "answer": "ai-opt_q0_idx2_1751004084678_m2j14wt64",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-1-veg05o6",
+        "answer": "ai-opt_q1_idx2_1751004084678_ln2e0ik5l",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-2-iax0q6n",
+        "answer": "ai-opt_q2_idx2_1751004084678_yq7m6e8bt",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-3-begba7e",
+        "answer": "ai-opt_q3_idx1_1751004084678_yrx1mwc4p",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-4-yzl27e1",
+        "answer": "ai-opt_q4_idx2_1751004084678_kv89ags0d",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 40,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 80,
+    "activityLog": "[2025-06-27T06:24:09.732Z] User: honey (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T06:24:09.734Z] User: honey (IP: 127.0.0.1 (localhost)) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T06:24:12.933Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751004084678-0-y7zinzj.\n[2025-06-27T06:24:16.818Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751004084678-1-veg05o6.\n[2025-06-27T06:24:20.602Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751004084678-2-iax0q6n.\n[2025-06-27T06:24:23.955Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751004084678-3-begba7e.\n[2025-06-27T06:24:27.924Z] User: honey (IP: 127.0.0.1 (localhost)) - Answer changed for question ID ai-q-1751004084678-4-yzl27e1.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior. The student answered several questions in sequence without any unusual activity.",
+    "ipAddress": "127.0.0.1 (localhost)",
+    "id": "attempt-1751005183970-de597n8",
+    "submittedAt": "2025-06-27T06:19:43.970Z"
   }
 ]

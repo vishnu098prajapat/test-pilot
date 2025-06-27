@@ -1,15 +1,16 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import type { Test, Question, StudentAnswer, TestAttempt } from '@/lib/types';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import type { Test, Question, StudentAnswer, TestAttempt, MCQQuestion } from '@/lib/types';
 import QuestionDisplay from './question-display';
 import Timer from './timer';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, CheckCircle, Send, WifiOff } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Send, WifiOff, Languages, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { analyzeStudentBehavior, AnalyzeStudentBehaviorInput } from '@/ai/flows/analyze-student-behavior';
+import { translateText, TranslateTextInput } from '@/ai/flows/translate-text-flow';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -44,6 +45,67 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
   const router = useRouter();
   const startTimeRef = useRef<Date>(new Date());
   const isOnline = useOnlineStatus();
+  
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [displayQuestion, setDisplayQuestion] = useState<Question>(testData.questions[0]);
+  const translationCache = useRef<Record<string, Question>>({});
+
+  const originalQuestion = useMemo(() => testData.questions[currentQuestionIndex], [testData.questions, currentQuestionIndex]);
+  
+  useEffect(() => {
+    const translateCurrentQuestion = async () => {
+      if (language === 'en') {
+        setDisplayQuestion(originalQuestion);
+        return;
+      }
+
+      const cacheKey = `${originalQuestion.id}-${language}`;
+      if (translationCache.current[cacheKey]) {
+        setDisplayQuestion(translationCache.current[cacheKey]);
+        return;
+      }
+      
+      setIsTranslating(true);
+      try {
+        const textsToTranslate: string[] = [originalQuestion.text];
+        if (originalQuestion.type === 'mcq') {
+          originalQuestion.options.forEach(opt => textsToTranslate.push(opt.text));
+        }
+
+        const input: TranslateTextInput = {
+          texts: textsToTranslate,
+          targetLanguage: 'Hindi',
+        };
+        const result = await translateText(input);
+
+        if (result.translations && result.translations.length === textsToTranslate.length) {
+          const translatedQuestion: Question = JSON.parse(JSON.stringify(originalQuestion)); // Deep copy
+          translatedQuestion.text = result.translations[0];
+          if (translatedQuestion.type === 'mcq') {
+            translatedQuestion.options.forEach((opt: any, index: number) => {
+              opt.text = result.translations[index + 1];
+            });
+          }
+          translationCache.current[cacheKey] = translatedQuestion;
+          setDisplayQuestion(translatedQuestion);
+        } else {
+          toast({ title: "Translation Error", description: "Could not translate the question. Displaying original.", variant: "destructive" });
+          setDisplayQuestion(originalQuestion);
+        }
+      } catch (e) {
+        console.error("Translation failed:", e);
+        toast({ title: "Translation Error", description: "An error occurred while translating.", variant: "destructive" });
+        setDisplayQuestion(originalQuestion);
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+    
+    translateCurrentQuestion();
+
+  }, [currentQuestionIndex, language, originalQuestion, toast]);
+
 
   // Effect for syncing pending submissions when online
   useEffect(() => {
@@ -314,7 +376,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
     );
   }
   
-  const currentQuestion = testData.questions[currentQuestionIndex];
+  const currentQuestion = displayQuestion;
   const totalQuestions = testData.questions.length;
 
   return (
@@ -327,31 +389,46 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
       )}
       <div className="w-full flex flex-col md:flex-row gap-6 md:gap-8">
         <div className="w-full md:w-1/3 order-2 md:order-1">
-           <Timer 
-            initialDuration={testData.duration * 60} 
-            onTimeUp={() => handleSubmitTest(true)}
-            onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 2000})}
-            warningThreshold={60} 
-          />
-           <Card className="mt-6 shadow-lg">
-            <CardHeader><CardTitle className="text-lg font-headline">Navigation</CardTitle></CardHeader>
-            <CardContent className="max-h-60 overflow-y-auto">
-              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                {testData.questions.map((q, index) => (
-                  <Button
-                    key={q.id}
-                    variant={index === currentQuestionIndex ? 'default' : (answers[q.id] !== undefined ? 'secondary' : 'outline')}
-                    size="sm"
-                    className="aspect-square"
-                    onClick={() => setCurrentQuestionIndex(index)}
-                    disabled={isSubmitting || isSubmitted}
-                  >
-                    {index + 1}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="sticky top-4 z-20 space-y-4">
+            <Timer 
+              initialDuration={testData.duration * 60} 
+              onTimeUp={() => handleSubmitTest(true)}
+              onAlmostTimeUp={() => toast({ title: "Time Warning!", description: "Less than a minute remaining!", variant: "destructive", duration: 2000})}
+              warningThreshold={60} 
+            />
+            <Card>
+              <CardHeader className="p-3">
+                  <CardTitle className="text-base flex items-center gap-2"><Languages className="h-5 w-5"/> Language</CardTitle>
+              </CardHeader>
+              <CardContent className="p-3">
+                  <div className="flex gap-2">
+                      <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => setLanguage('en')} className="w-full" disabled={isTranslating}>English</Button>
+                      <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => setLanguage('hi')} className="w-full" disabled={isTranslating}>
+                          {isTranslating && language === 'hi' ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
+                      </Button>
+                  </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-lg">
+              <CardHeader><CardTitle className="text-lg font-headline">Navigation</CardTitle></CardHeader>
+              <CardContent className="max-h-60 overflow-y-auto">
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                  {testData.questions.map((q, index) => (
+                    <Button
+                      key={q.id}
+                      variant={index === currentQuestionIndex ? 'default' : (answers[q.id] !== undefined ? 'secondary' : 'outline')}
+                      size="sm"
+                      className="aspect-square"
+                      onClick={() => setCurrentQuestionIndex(index)}
+                      disabled={isSubmitting || isSubmitted}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         <div className="w-full md:w-2/3 order-1 md:order-2">
@@ -359,7 +436,7 @@ export default function StudentTestArea({ testData, studentIdentifier, studentIp
             question={currentQuestion}
             questionNumber={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
-            currentAnswer={answers[currentQuestion.id]}
+            currentAnswer={answers[originalQuestion.id]}
             onAnswerChange={handleAnswerChange}
             isReviewMode={false} 
           />
