@@ -86,23 +86,17 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
             setIsLoading(true);
             return;
         }
-        if (user) {
+        if (user && user.id) {
             const userPlanId = getMockUserPlan(user.id);
             setPlanId(userPlanId);
-            
-            if (user.role === 'teacher') {
-                fetchAndSetTests(user.id);
-            } else {
-                setLifetimeUserTests([]);
-                setIsTestCountLoading(false);
-            }
+            fetchAndSetTests(user.id); // Always fetch tests for any logged in user to check quotas
         } else {
             setPlanId('free');
             setLifetimeUserTests([]);
             setIsTestCountLoading(false);
         }
         setIsLoading(false);
-    }, [user, isAuthLoading, fetchAndSetTests, pathname]); // Added pathname to re-fetch on navigation
+    }, [user, isAuthLoading, fetchAndSetTests, pathname]);
     
     const addCreatedTest = useCallback(() => {
         if (user?.id) {
