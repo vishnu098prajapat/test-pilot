@@ -4943,5 +4943,220 @@
     "createdAt": "2025-06-26T11:29:09.912Z",
     "updatedAt": "2025-06-26T11:31:55.597Z",
     "batchId": "group-1750480811384-bjl7aq2"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on biology",
+    "subject": "biology",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "ai-q-1751001435539-0-90kjxs4",
+        "text": "Which organelle is responsible for protein synthesis in a cell?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751001435539_zxf8u5lza",
+            "text": "Mitochondria"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751001435539_eceufa2u7",
+            "text": "Ribosomes"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751001435539_ijot78ko2",
+            "text": "Golgi apparatus"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751001435539_rkfxia98w",
+            "text": "Endoplasmic reticulum"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx1_1751001435539_eceufa2u7",
+        "correctAnswer": "Ribosomes",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751001435539-1-3pt1nuc",
+        "text": "Which structure is present in plant cells but not in animal cells?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751001435539_syqrf84mk",
+            "text": "Cell membrane"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751001435539_1aesewkhp",
+            "text": "Cytoplasm"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751001435539_rak98tm6q",
+            "text": "Cell wall"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751001435539_p3wsd7sbi",
+            "text": "Nucleus"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1751001435539_rak98tm6q",
+        "correctAnswer": "Cell wall",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751001435539-2-qp9ev3d",
+        "text": "What is the primary function of mitochondria in a eukaryotic cell?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751001435539_0rdtu3g15",
+            "text": "To store genetic material"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751001435539_zqe27ildu",
+            "text": "To produce ATP"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751001435539_i7sah5vks",
+            "text": "To synthesize proteins"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751001435539_6l4jwi5oj",
+            "text": "To transport molecules"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1751001435539_zqe27ildu",
+        "correctAnswer": "To produce ATP",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751001435539-3-gxv3811",
+        "text": "Which organelles are responsible for breaking down waste materials in the cell?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751001435539_19z8vt9hu",
+            "text": "Vacuoles"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751001435539_qusrcy0fy",
+            "text": "Lysosomes"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751001435539_gkdx3uncg",
+            "text": "Peroxisomes"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751001435539_buamg9mxv",
+            "text": "Ribosomes"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1751001435539_qusrcy0fy",
+        "correctAnswer": "Lysosomes",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751001435539-4-6wa1q9w",
+        "text": "Which type of transport requires a carrier protein but does NOT require energy?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751001435539_3xv6gpvxh",
+            "text": "Osmosis"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751001435539_1pr8wbgo8",
+            "text": "Active transport"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751001435539_9lux7u9yy",
+            "text": "Simple diffusion"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751001435539_ms5dthfc5",
+            "text": "Facilitated diffusion"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1751001435539_ms5dthfc5",
+        "correctAnswer": "Facilitated diffusion",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1751001442854-qry76",
+    "createdAt": "2025-06-27T05:17:22.854Z",
+    "updatedAt": "2025-06-27T05:17:22.854Z"
+  },
+  {
+    "title": "uuuu",
+    "subject": "Python",
+    "duration": 30,
+    "questions": [
+      {
+        "id": "new-1751001462797-x4fura1",
+        "text": "ufytxrtyuiho",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1751001462797-x4fura1-0",
+            "text": "jbjjbjb"
+          },
+          {
+            "id": "opt-new-1751001462797-x4fura1-1",
+            "text": " mk,,,,"
+          },
+          {
+            "id": "opt-new-1751001462797-x4fura1-1751001488801-9e0yo2x",
+            "text": "n867"
+          }
+        ],
+        "correctOptionId": "opt-new-1751001462797-x4fura1-1",
+        "correctAnswer": " mk,,,,",
+        "isAiPreselected": false
+      },
+      {
+        "id": "new-1751001492353-r97swed",
+        "text": "ycddddd",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "opt-new-1751001492353-r97swed-0",
+            "text": "cyd6s5t"
+          },
+          {
+            "id": "opt-new-1751001492353-r97swed-1",
+            "text": "ycgh "
+          },
+          {
+            "id": "opt-new-1751001492353-r97swed-1751001504544-1fqpdyg",
+            "text": "hycd6y"
+          }
+        ],
+        "correctOptionId": "opt-new-1751001492353-r97swed-0",
+        "correctAnswer": "cyd6s5t",
+        "isAiPreselected": false
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": false,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1751001516312-oxtvb",
+    "createdAt": "2025-06-27T05:18:36.312Z",
+    "updatedAt": "2025-06-27T05:18:36.312Z"
   }
 ]
