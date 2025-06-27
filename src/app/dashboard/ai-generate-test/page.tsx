@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sparkles, Loader2, ListChecks, Send, Lightbulb, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Form, FormControl, FormField, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { generateTestQuestions, GenerateTestQuestionsInput, AIQuestion } from '@/ai/flows/generate-test-questions-flow';
 import { suggestTopics, SuggestTopicsInput } from '@/ai/flows/suggest-topics-flow';
 import type { Question as TestBuilderQuestion, MCQQuestion, ShortAnswerQuestion, TrueFalseQuestion } from '@/lib/types';
