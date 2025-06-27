@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import TestPreviewDialog from "@/components/test/test-preview-dialog"; 
-import { useSubscription } from "@/hooks/use-subscription";
-import UpgradeNudge from "@/components/common/upgrade-nudge";
+import { useSubscription } from '@/hooks/use-subscription';
+import UpgradeNudge from '@/components/common/upgrade-nudge';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Loading from "@/app/loading";
 
@@ -63,7 +63,7 @@ export default function TestBuilderForm() {
   const searchParams = useSearchParams();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, addCreatedTest } = useSubscription();
+  const { plan, isLoading: isSubscriptionLoading, canCreateTest, canCreateAiTest, remainingTests, remainingAiTests, addCreatedTest } = useSubscription();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
