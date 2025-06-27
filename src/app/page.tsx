@@ -36,7 +36,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative py-20 md:py-32 text-center overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-900">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 -z-10"></div>
-           <div className="container mx-auto px-6 flex flex-col items-center relative z-10">
+           <div className="container mx-auto px-4 flex flex-col items-center relative z-10">
             <Badge variant="outline" className="mb-4 border-primary/50 text-primary bg-primary/10">
               <Zap className="mr-2 h-4 w-4" /> World's Fastest Quiz Generator
             </Badge>
@@ -63,7 +63,7 @@ export default function HomePage() {
 
         {/* Features Section */}
         <section id="features" className="py-16 md:py-24 bg-background">
-          <div className="container mx-auto px-6">
+          <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4 text-foreground">
                 Why Choose Test Pilot?
@@ -109,7 +109,7 @@ export default function HomePage() {
       </main>
 
       <footer className="py-10 border-t bg-secondary/50">
-        <div className="container mx-auto px-6 text-center text-muted-foreground">
+        <div className="container mx-auto px-4 text-center text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Test Pilot. All rights reserved.</p>
           <p className="text-sm mt-1">Built with 🚀 by Firebase Studio</p>
         </div>
