@@ -3914,7 +3914,8 @@
     "id": "test-1751002328898-hoym0",
     "createdAt": "2025-06-27T05:32:08.898Z",
     "updatedAt": "2025-06-27T05:32:19.977Z",
-    "batchId": "group-1750480811384-bjl7aq2"
+    "batchId": "group-1750480811384-bjl7aq2",
+    "deletedAt": "2025-06-27T05:49:15.985Z"
   },
   {
     "title": "AI Gen (medium) MCQ Test on java",
@@ -4220,5 +4221,292 @@
     "id": "test-1751003391360-cue8f",
     "createdAt": "2025-06-27T05:49:51.360Z",
     "updatedAt": "2025-06-27T05:49:51.360Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python",
+    "subject": "Python",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1751003726139-0-1ayj1s8",
+        "text": "What is the main purpose of using functions in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751003726139_e215cpzak",
+            "text": "To reuse code"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751003726139_vyw0sn38y",
+            "text": "To make the code run faster"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751003726139_alxp1nikv",
+            "text": "To confuse other programmers"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751003726139_6nvw5j91e",
+            "text": "To avoid comments"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx0_1751003726139_e215cpzak",
+        "correctAnswer": "To reuse code",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-1-uhneew3",
+        "text": "Which keyword is used to define a function in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751003726139_ogscxy5jg",
+            "text": "define"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751003726139_nzrhk8z2a",
+            "text": "function"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751003726139_m0ot7uqgl",
+            "text": "def"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751003726139_2eswpo458",
+            "text": "fun"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1751003726139_m0ot7uqgl",
+        "correctAnswer": "def",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-2-zhtpblj",
+        "text": "What are the values passed to a function when it is called known as?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751003726139_s5g5tdwoj",
+            "text": "Variables"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751003726139_6p1nyruri",
+            "text": "Arguments"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751003726139_cb7gl6q8x",
+            "text": "Parameters"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751003726139_g2rcmp7y2",
+            "text": "Constants"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx1_1751003726139_6p1nyruri",
+        "correctAnswer": "Arguments",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-3-0izhzd2",
+        "text": "Which keyword is used to return a value from a function?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751003726139_e51n3pdpn",
+            "text": "exit"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751003726139_vq6t9xfr9",
+            "text": "break"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751003726139_cftjrjwiq",
+            "text": "return"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751003726139_skx4w3yae",
+            "text": "pass"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx2_1751003726139_cftjrjwiq",
+        "correctAnswer": "return",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-4-7nvuspz",
+        "text": "What is true about a function defined as `def my_function():`?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751003726139_35vcfjnb5",
+            "text": "It has no parameters"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751003726139_s0dd58kxh",
+            "text": "It has one parameter"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751003726139_0zs5gycic",
+            "text": "It has two parameters"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751003726139_z2so3yosm",
+            "text": "It has three parameters"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx0_1751003726139_35vcfjnb5",
+        "correctAnswer": "It has no parameters",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-5-goqptu1",
+        "text": "A variable defined inside a function is known as:",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q5_idx0_1751003726139_1n6wmj3l5",
+            "text": "A global variable"
+          },
+          {
+            "id": "ai-opt_q5_idx1_1751003726139_jjoil13a4",
+            "text": "A local variable"
+          },
+          {
+            "id": "ai-opt_q5_idx2_1751003726139_5ea9iteuf",
+            "text": "A function parameter"
+          },
+          {
+            "id": "ai-opt_q5_idx3_1751003726139_glohf0344",
+            "text": "An attribute"
+          }
+        ],
+        "correctOptionId": "ai-opt_q5_idx1_1751003726139_jjoil13a4",
+        "correctAnswer": "A local variable",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-6-zs7iqwu",
+        "text": "What determines the accessibility of a variable in different parts of your code?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q6_idx0_1751003726139_im6ynen2n",
+            "text": "Context"
+          },
+          {
+            "id": "ai-opt_q6_idx1_1751003726139_gupqv36xy",
+            "text": "Domain"
+          },
+          {
+            "id": "ai-opt_q6_idx2_1751003726139_8l5xocshj",
+            "text": "Scope"
+          },
+          {
+            "id": "ai-opt_q6_idx3_1751003726139_lwwpqeups",
+            "text": "Range"
+          }
+        ],
+        "correctOptionId": "ai-opt_q6_idx2_1751003726139_8l5xocshj",
+        "correctAnswer": "Scope",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-7-pk1qh4m",
+        "text": "What is required to actually execute the code inside a function?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q7_idx0_1751003726139_a487hgg3b",
+            "text": "Defining the function"
+          },
+          {
+            "id": "ai-opt_q7_idx1_1751003726139_3scfojisy",
+            "text": "Commenting the function"
+          },
+          {
+            "id": "ai-opt_q7_idx2_1751003726139_uhvopgflg",
+            "text": "Calling the function"
+          },
+          {
+            "id": "ai-opt_q7_idx3_1751003726139_5b99y4lhr",
+            "text": "Ignoring the function"
+          }
+        ],
+        "correctOptionId": "ai-opt_q7_idx2_1751003726139_uhvopgflg",
+        "correctAnswer": "Calling the function",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-8-gy1cevn",
+        "text": "What happens if you call a function with fewer arguments than it expects?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q8_idx0_1751003726139_14gc7bnnl",
+            "text": "The function will run without errors"
+          },
+          {
+            "id": "ai-opt_q8_idx1_1751003726139_8mswym4mp",
+            "text": "The function will return None"
+          },
+          {
+            "id": "ai-opt_q8_idx2_1751003726139_d3hoh0z8o",
+            "text": "A TypeError will be raised"
+          },
+          {
+            "id": "ai-opt_q8_idx3_1751003726139_4ulentjwt",
+            "text": "The function will ignore the missing argument"
+          }
+        ],
+        "correctOptionId": "ai-opt_q8_idx2_1751003726139_d3hoh0z8o",
+        "correctAnswer": "A TypeError will be raised",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751003726139-9-lkn80v4",
+        "text": "How can you make function arguments optional in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q9_idx0_1751003726139_t5y7u03l9",
+            "text": "Use global variables"
+          },
+          {
+            "id": "ai-opt_q9_idx1_1751003726139_rvr3iyfz1",
+            "text": "Specify default values for the parameters"
+          },
+          {
+            "id": "ai-opt_q9_idx2_1751003726139_o20n7jqsm",
+            "text": "Raise an exception"
+          },
+          {
+            "id": "ai-opt_q9_idx3_1751003726139_beyoyq2oh",
+            "text": "Ignore the missing arguments"
+          }
+        ],
+        "correctOptionId": "ai-opt_q9_idx1_1751003726139_rvr3iyfz1",
+        "correctAnswer": "Specify default values for the parameters",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1750670374252-qy60gkc",
+    "id": "test-1751003756039-ij8py",
+    "createdAt": "2025-06-27T05:55:56.039Z",
+    "updatedAt": "2025-06-27T05:55:56.039Z"
   }
 ]
