@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation'; 
 import { Button } from "@/components/ui/button";
 import { 
@@ -12,12 +12,14 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home, Eye, EyeOff } from "lucide-react"; 
+import { Award, CheckCircle, XCircle, AlertTriangle, BarChart3, Home, Eye, EyeOff, Languages, Loader2 } from "lucide-react"; 
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; 
 import type { Question, MCQQuestion, TrueFalseQuestion, ShortAnswerQuestion, StudentAnswer } from '@/lib/types';
 import QuestionDisplay from '@/components/student/question-display';
 import { Separator } from '@/components/ui/separator';
+import { translateText, TranslateTextInput } from '@/ai/flows/translate-text-flow';
+import { useToast } from "@/hooks/use-toast";
 
 const STUDENT_TEST_RESULTS_STORAGE_KEY_PREFIX = "studentTestResults_";
 
@@ -42,6 +44,13 @@ export default function StudentResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+
+  // State for translation
+  const { toast } = useToast();
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [displayQuestions, setDisplayQuestions] = useState<Question[]>([]);
+  const translationCache = useRef<Record<string, Question[]>>({});
 
   useEffect(() => {
     setIsLoading(true);
@@ -71,6 +80,8 @@ export default function StudentResultsPage() {
           typeof parsedResults.studentRawAnswers === 'object' 
         ) {
           setResults(parsedResults);
+          setDisplayQuestions(parsedResults.questions); // Initialize display questions with original
+          translationCache.current['en'] = parsedResults.questions;
         } else {
           setError("Test result data is invalid or incomplete. Please try taking the test again.");
           console.warn("[ResultsPage] Invalid results structure in localStorage:", parsedResults);
@@ -85,6 +96,66 @@ export default function StudentResultsPage() {
       setIsLoading(false);
     }
   }, [testId]);
+  
+  const handleLanguageChange = useCallback(async (lang: 'en' | 'hi') => {
+    if (lang === language || isTranslating || !results) return;
+
+    setLanguage(lang);
+
+    if (translationCache.current[lang]) {
+        setDisplayQuestions(translationCache.current[lang]);
+        return;
+    }
+
+    setIsTranslating(true);
+    toast({ title: "Translating Review...", description: "Please wait while your test review is translated." });
+
+    try {
+        const textsToTranslate: string[] = [];
+        const structureMap: { qIndex: number, type: 'q' | 'o', optIndex?: number }[] = [];
+
+        results.questions.forEach((q, qIndex) => {
+            textsToTranslate.push(q.text);
+            structureMap.push({ qIndex, type: 'q' });
+            if (q.type === 'mcq') {
+                q.options.forEach((opt, optIndex) => {
+                    textsToTranslate.push(opt.text);
+                    structureMap.push({ qIndex, type: 'o', optIndex });
+                });
+            }
+        });
+
+        const input: TranslateTextInput = { texts: textsToTranslate, targetLanguage: 'Hindi' };
+        const result = await translateText(input);
+
+        if (result.translations && result.translations.length === textsToTranslate.length) {
+            const translatedQuestions: Question[] = JSON.parse(JSON.stringify(results.questions));
+
+            result.translations.forEach((translatedText, index) => {
+                const info = structureMap[index];
+                if (info.type === 'q') {
+                    translatedQuestions[info.qIndex].text = translatedText;
+                } else if (info.type === 'o' && info.optIndex !== undefined) {
+                    (translatedQuestions[info.qIndex] as MCQQuestion).options[info.optIndex].text = translatedText;
+                }
+            });
+
+            translationCache.current[lang] = translatedQuestions;
+            setDisplayQuestions(translatedQuestions);
+            toast({ title: "Translation Complete", description: "Review is now in Hindi." });
+        } else {
+            throw new Error("Mismatch in translated texts count.");
+        }
+    } catch (e) {
+        console.error("Bulk translation failed for review:", e);
+        toast({ title: "Translation Error", description: "Could not translate the review. Reverting to English.", variant: "destructive" });
+        setLanguage('en');
+        setDisplayQuestions(results.questions);
+    } finally {
+        setIsTranslating(false);
+    }
+  }, [language, isTranslating, results, toast]);
+
 
   const calculateCorrectness = (question: Question, studentAnswerValue: any): boolean => {
     if (studentAnswerValue === undefined || studentAnswerValue === null) return false;
@@ -205,31 +276,46 @@ export default function StudentResultsPage() {
         <div className="w-full max-w-3xl mt-8 space-y-6 mx-auto">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
-                    <CardDescription>Review each question, your answer, and the correct answer.</CardDescription>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle className="text-2xl font-headline">Answers Review</CardTitle>
+                            <CardDescription>Review each question, your answer, and the correct answer.</CardDescription>
+                        </div>
+                        <div className="flex gap-2">
+                           <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => handleLanguageChange('en')} size="sm" disabled={isTranslating}>English</Button>
+                            <Button variant={language === 'hi' ? 'default' : 'outline'} onClick={() => handleLanguageChange('hi')} size="sm" disabled={isTranslating}>
+                                {isTranslating ? <Loader2 className="h-4 w-4 animate-spin"/> : 'हिन्दी'}
+                            </Button>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {results.questions.map((q, index) => {
-                        const studentAnswerValue = results.studentRawAnswers[q.id];
-                        const isActuallyCorrect = calculateCorrectness(q, studentAnswerValue);
+                    {displayQuestions.map((q, index) => {
+                        const originalQuestion = results.questions[index];
+                        const studentAnswerValue = results.studentRawAnswers[originalQuestion.id];
+                        const isActuallyCorrect = calculateCorrectness(originalQuestion, studentAnswerValue);
                         const studentAttemptForDisplay: StudentAnswer = {
-                            questionId: q.id,
+                            questionId: originalQuestion.id,
                             answer: studentAnswerValue,
                             isCorrect: isActuallyCorrect,
                             pointsScored: isActuallyCorrect ? q.points : 0
                         };
                         
                         let correctAnswerText = "N/A";
-                        if (q.type === 'mcq') {
+                        if (originalQuestion.type === 'mcq') {
                             const mcq = q as MCQQuestion;
-                            let correctOption = mcq.options.find(opt => opt.id === mcq.correctOptionId);
-                            if (!correctOption && mcq.correctAnswer) {
-                                correctOption = mcq.options.find(opt => opt.text === mcq.correctAnswer);
+                            const originalMcq = originalQuestion as MCQQuestion;
+                            let correctOption = mcq.options.find(opt => opt.id === originalMcq.correctOptionId);
+                            if (!correctOption && originalMcq.correctAnswer) {
+                                const originalCorrectOption = originalMcq.options.find(opt => opt.text === originalMcq.correctAnswer);
+                                if (originalCorrectOption) {
+                                    correctOption = mcq.options.find(opt => opt.id === originalCorrectOption.id);
+                                }
                             }
-                            correctAnswerText = correctOption ? correctOption.text : mcq.correctAnswer || "Not specified";
-                        } else if (q.type === 'short-answer') {
+                            correctAnswerText = correctOption ? correctOption.text : originalMcq.correctAnswer || "Not specified";
+                        } else if (originalQuestion.type === 'short-answer') {
                             correctAnswerText = (q as ShortAnswerQuestion).correctAnswer;
-                        } else if (q.type === 'true-false') {
+                        } else if (originalQuestion.type === 'true-false') {
                             correctAnswerText = (q as TrueFalseQuestion).correctAnswer ? "True" : "False";
                         }
 
