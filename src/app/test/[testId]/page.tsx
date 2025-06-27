@@ -53,9 +53,11 @@ export default function StudentTestPage() {
       let currentIp: string | null = null;
 
       try {
-        // 1. Fetch Test Data
-        console.log(`[StudentTestPage] Fetching test data for ID: ${testId}`);
-        const fetchedTest = await getTestById(testId);
+        const testPromise = getTestById(testId);
+        const ipPromise = fetch('/api/get-ip');
+
+        const [fetchedTest, ipResponse] = await Promise.all([testPromise, ipPromise]);
+
         if (!fetchedTest) {
           setError(`Test not found. It might have been deleted or the ID is incorrect (ID: ${testId}).`);
           throw new Error("Test not found");
@@ -66,29 +68,20 @@ export default function StudentTestPage() {
         }
         setTestData(fetchedTest);
         console.log(`[StudentTestPage] Test data loaded: "${fetchedTest.title}", Attempts Allowed by Teacher: ${fetchedTest.attemptsAllowed}`);
-
-        // 2. Fetch Student IP (conditionally, if IP check is *not* disabled AND attempts are limited)
-        // For "unlimited attempts for all" (user's current request for testing):
-        // We still fetch IP for logging/proctoring but don't use it to block attempts.
         
+        if (!ipResponse.ok) throw new Error('Failed to fetch your IP address. Please check your network connection.');
+        const ipData = await ipResponse.json();
+        currentIp = ipData.ip;
+        setStudentIp(currentIp);
+
         if (DISABLE_IP_BASED_ATTEMPT_LIMIT) {
-          currentIp = "IP_CHECK_DISABLED_FOR_TESTING"; // Placeholder IP
-          setStudentIp(currentIp);
-          console.log(`[StudentTestPage] IP-based attempt limit check is DISABLED by flag. Using placeholder IP: ${currentIp}`);
-          setHasReachedAttemptLimit(false); // Always allow attempt if flag is true
-        } else if (fetchedTest.attemptsAllowed === 0) { // Teacher set unlimited attempts
-            currentIp = "IP_CHECK_NOT_NEEDED_UNLIMITED_ATTEMPTS_BY_TEACHER";
-            setStudentIp(currentIp);
+          console.log(`[StudentTestPage] IP-based attempt limit check is DISABLED by flag.`);
+          setHasReachedAttemptLimit(false);
+        } else if (fetchedTest.attemptsAllowed === 0) {
             console.log("[StudentTestPage] Teacher set unlimited attempts for this test. IP-based limit check skipped.");
             setHasReachedAttemptLimit(false);
-        } else { // IP check is enabled by flag AND attempts are limited by teacher
-          const ipResponse = await fetch('/api/get-ip');
-          if (!ipResponse.ok) throw new Error('Failed to fetch your IP address. Please check your network connection.');
-          const ipData = await ipResponse.json();
-          currentIp = ipData.ip;
-          setStudentIp(currentIp);
+        } else {
           console.log(`[StudentTestPage] Student IP fetched: ${currentIp}. Checking against teacher's attempt limit of ${fetchedTest.attemptsAllowed}.`);
-
           console.log(`[StudentTestPage] Checking existing attempts for testId: ${testId} and IP: ${currentIp}`);
           const attemptsResponse = await fetch(`/api/attempts?testId=${testId}&ipAddress=${currentIp}`);
           if (!attemptsResponse.ok) throw new Error('Failed to fetch existing attempts. Please try again.');
@@ -99,7 +92,7 @@ export default function StudentTestPage() {
           if (existingAttemptsForIp.length >= fetchedTest.attemptsAllowed) {
             setHasReachedAttemptLimit(true);
             const message = `You have reached the maximum number of attempts (${fetchedTest.attemptsAllowed}) for this test from your current IP address.`;
-            setError(message); // Set error to display block message
+            setError(message);
             toast({
               title: "Attempt Limit Reached",
               description: message,
@@ -121,7 +114,7 @@ export default function StudentTestPage() {
       }
     }
     fetchInitialData();
-  }, [testId, toast, error]); // Removed studentIp from dependencies as it's set within the effect
+  }, [testId, toast, error]);
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -254,4 +247,3 @@ export default function StudentTestPage() {
 
   return <StudentTestArea testData={testData} studentIdentifier={studentName.trim()} studentIp={studentIp} />;
 }
-

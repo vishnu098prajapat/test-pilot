@@ -4510,5 +4510,309 @@
     "createdAt": "2025-06-27T05:55:56.039Z",
     "updatedAt": "2025-06-27T05:55:56.039Z",
     "deletedAt": "2025-06-27T05:54:43.070Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on c++",
+    "subject": "c++",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1751004084678-0-y7zinzj",
+        "text": "What is the primary purpose of the 'else' block in an 'if/else' statement?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751004084678_zmz22kpn3",
+            "text": "Executes only if the condition is true"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751004084678_misqwincd",
+            "text": "Always executes"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751004084678_m2j14wt64",
+            "text": "Executes only if the condition is false"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751004084678_iw2w8l9gh",
+            "text": "Never executes"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1751004084678_m2j14wt64",
+        "correctAnswer": "Executes only if the condition is false",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004084678-1-veg05o6",
+        "text": "What is the main function of a loop in C++?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751004084678_c1kokt9xb",
+            "text": "To define a new data type"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751004084678_x5rn8njc6",
+            "text": "To declare a variable"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751004084678_ln2e0ik5l",
+            "text": "To execute a block of code repeatedly"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751004084678_rfetnzfwh",
+            "text": "To allocate memory"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1751004084678_ln2e0ik5l",
+        "correctAnswer": "To execute a block of code repeatedly",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004084678-2-iax0q6n",
+        "text": "What causes an infinite loop?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751004084678_cd4lh1rny",
+            "text": "The loop executes once"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751004084678_075f7v38p",
+            "text": "The condition is always true"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751004084678_yq7m6e8bt",
+            "text": "The condition is never met"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751004084678_5mw0fycpo",
+            "text": "The loop executes a finite number of times"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx2_1751004084678_yq7m6e8bt",
+        "correctAnswer": "The condition is never met",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004084678-3-begba7e",
+        "text": "What is the purpose of a 'switch' statement?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751004084678_z65q2zkzh",
+            "text": "Looping through a collection of data"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751004084678_yrx1mwc4p",
+            "text": "Conditional branching based on a variable's value"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751004084678_potyeeoa1",
+            "text": "Defining a new function"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751004084678_ecbocqzs4",
+            "text": "Declaring a variable"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx1_1751004084678_yrx1mwc4p",
+        "correctAnswer": "Conditional branching based on a variable's value",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004084678-4-yzl27e1",
+        "text": "Which keyword is used to exit a loop prematurely?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751004084678_84fulhvyn",
+            "text": "continue"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751004084678_be8xl0ok4",
+            "text": "return"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751004084678_kv89ags0d",
+            "text": "exit"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751004084678_fa7tsu73v",
+            "text": "break"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx3_1751004084678_fa7tsu73v",
+        "correctAnswer": "break",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1751003769372-rdwg4yr",
+    "id": "test-1751004099420-gtgwp",
+    "createdAt": "2025-06-27T06:01:39.420Z",
+    "updatedAt": "2025-06-27T06:01:39.420Z"
+  },
+  {
+    "title": "AI Gen (medium) MCQ Test on Python ",
+    "subject": "Python ",
+    "duration": 5,
+    "questions": [
+      {
+        "id": "ai-q-1751004063326-0-mctd3tu",
+        "text": "What is the output of the following Python code: print('Hello, World!')?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q0_idx0_1751004063326_gvmbj60cm",
+            "text": "Hello World"
+          },
+          {
+            "id": "ai-opt_q0_idx1_1751004063326_5jf1g1vhm",
+            "text": "Hello,World"
+          },
+          {
+            "id": "ai-opt_q0_idx2_1751004063326_27u6yrb63",
+            "text": "Hello, World!"
+          },
+          {
+            "id": "ai-opt_q0_idx3_1751004063326_jp5z4x8gx",
+            "text": "Hello World!"
+          }
+        ],
+        "correctOptionId": "ai-opt_q0_idx2_1751004063326_27u6yrb63",
+        "correctAnswer": "Hello, World!",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004063326-1-zf3cbzu",
+        "text": "How do you slice a string 'mystring' from the 3rd character to the 5th character (inclusive) in Python?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q1_idx0_1751004063326_78m5ehjbf",
+            "text": "mystring(2:5)"
+          },
+          {
+            "id": "ai-opt_q1_idx1_1751004063326_hncrno3pc",
+            "text": "mystring{2:5}"
+          },
+          {
+            "id": "ai-opt_q1_idx2_1751004063326_52rvneh7x",
+            "text": "mystring[2:5]"
+          },
+          {
+            "id": "ai-opt_q1_idx3_1751004063326_c4hu1sqe1",
+            "text": "mystring.substring(2,5)"
+          }
+        ],
+        "correctOptionId": "ai-opt_q1_idx2_1751004063326_52rvneh7x",
+        "correctAnswer": "mystring[2:5]",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004063326-2-at9dfwt",
+        "text": "Which string method is used to replace a substring within a string?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q2_idx0_1751004063326_aqtqavh8r",
+            "text": "str.replace()"
+          },
+          {
+            "id": "ai-opt_q2_idx1_1751004063326_h1b0s5kj6",
+            "text": "str.substitute()"
+          },
+          {
+            "id": "ai-opt_q2_idx2_1751004063326_to6fkga9c",
+            "text": "str.change()"
+          },
+          {
+            "id": "ai-opt_q2_idx3_1751004063326_4f741lzdb",
+            "text": "str.modify()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q2_idx0_1751004063326_aqtqavh8r",
+        "correctAnswer": "str.replace()",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004063326-3-v3koxdr",
+        "text": "Which string method converts a string to lowercase?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q3_idx0_1751004063326_f7y3331wg",
+            "text": "lower()"
+          },
+          {
+            "id": "ai-opt_q3_idx1_1751004063326_reuslsacu",
+            "text": "uppercase()"
+          },
+          {
+            "id": "ai-opt_q3_idx2_1751004063326_v35vlppng",
+            "text": "lowercase()"
+          },
+          {
+            "id": "ai-opt_q3_idx3_1751004063326_qhdq41kv8",
+            "text": "to_lower()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q3_idx0_1751004063326_f7y3331wg",
+        "correctAnswer": "lower()",
+        "isAiPreselected": true
+      },
+      {
+        "id": "ai-q-1751004063326-4-mp1uuvh",
+        "text": "Which string method removes leading and trailing whitespace from a string?",
+        "points": 10,
+        "type": "mcq",
+        "options": [
+          {
+            "id": "ai-opt_q4_idx0_1751004063326_wnfm5mon7",
+            "text": "trim()"
+          },
+          {
+            "id": "ai-opt_q4_idx1_1751004063326_e0p1rf8xp",
+            "text": "strip()"
+          },
+          {
+            "id": "ai-opt_q4_idx2_1751004063326_mnj144iqg",
+            "text": "clean()"
+          },
+          {
+            "id": "ai-opt_q4_idx3_1751004063326_etmijscx1",
+            "text": "remove()"
+          }
+        ],
+        "correctOptionId": "ai-opt_q4_idx1_1751004063326_e0p1rf8xp",
+        "correctAnswer": "strip()",
+        "isAiPreselected": true
+      }
+    ],
+    "attemptsAllowed": 1,
+    "randomizeQuestions": false,
+    "enableTabSwitchDetection": true,
+    "enableCopyPasteDisable": true,
+    "published": true,
+    "isAiGenerated": true,
+    "teacherId": "user-1749975115744-fa007kc",
+    "id": "test-1751004076466-qu8xs",
+    "createdAt": "2025-06-27T06:01:16.466Z",
+    "updatedAt": "2025-06-27T06:01:16.466Z"
   }
 ]

@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "testId": "test-1751004099420-gtgwp",
+    "testTitle": "AI Gen (medium) MCQ Test on c++",
+    "studentIdentifier": "Baba",
+    "startTime": "2025-06-27T05:57:19.251Z",
+    "endTime": "2025-06-27T05:59:11.707Z",
+    "answers": [
+      {
+        "questionId": "ai-q-1751004084678-0-y7zinzj",
+        "answer": "ai-opt_q0_idx2_1751004084678_m2j14wt64",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-1-veg05o6",
+        "answer": "ai-opt_q1_idx2_1751004084678_ln2e0ik5l",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-2-iax0q6n",
+        "answer": "ai-opt_q2_idx3_1751004084678_5mw0fycpo",
+        "isCorrect": false,
+        "pointsScored": 0
+      },
+      {
+        "questionId": "ai-q-1751004084678-3-begba7e",
+        "answer": "ai-opt_q3_idx1_1751004084678_yrx1mwc4p",
+        "isCorrect": true,
+        "pointsScored": 10
+      },
+      {
+        "questionId": "ai-q-1751004084678-4-yzl27e1",
+        "answer": "ai-opt_q4_idx2_1751004084678_kv89ags0d",
+        "isCorrect": false,
+        "pointsScored": 0
+      }
+    ],
+    "score": 30,
+    "maxPossiblePoints": 50,
+    "scorePercentage": 60,
+    "activityLog": "[2025-06-27T05:57:19.310Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T05:57:19.315Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Test started. Anti-cheat measures active based on test settings.\n[2025-06-27T05:58:37.452Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-0-y7zinzj.\n[2025-06-27T05:58:39.802Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-0-y7zinzj.\n[2025-06-27T05:58:51.467Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-1-veg05o6.\n[2025-06-27T05:59:00.229Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-2-iax0q6n.\n[2025-06-27T05:59:06.164Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-3-begba7e.\n[2025-06-27T05:59:10.206Z] User: Baba (IP: IP_CHECK_DISABLED_FOR_TESTING) - Answer changed for question ID ai-q-1751004084678-4-yzl27e1.",
+    "isSuspicious": false,
+    "suspiciousReason": "The student's activity log shows normal test-taking behavior. The student changed answers to multiple questions within a short period, which is not necessarily indicative of cheating, but rather could reflect careful consideration or correction of responses.",
+    "ipAddress": "IP_CHECK_DISABLED_FOR_TESTING",
+    "id": "attempt-1751003954625-7hddc56",
+    "submittedAt": "2025-06-27T05:59:14.625Z"
+  }
+]
