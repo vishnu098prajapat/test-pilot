@@ -1,4 +1,3 @@
-
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
@@ -86,6 +85,19 @@ function readDb(): Test[] {
   try {
     if (fs.existsSync(DB_FILE_PATH)) {
       const fileContent = fs.readFileSync(DB_FILE_PATH, 'utf-8');
+      
+      // Check if file is empty before parsing
+      if (fileContent.trim() === '') {
+        console.log('[API-DB] DB file is empty. Initializing with mock data.');
+        try {
+          fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initialMockTests, null, 2), 'utf-8');
+          return initialMockTests;
+        } catch (writeError) {
+          console.error('[API-DB] Error writing initial data to empty file:', writeError);
+          return initialMockTests; // Return mock data even if write fails
+        }
+      }
+      
       const data = JSON.parse(fileContent);
       return data.map((test: any) => ({ // Parse dates from string
         ...test,
@@ -96,8 +108,14 @@ function readDb(): Test[] {
   } catch (error) {
     console.error('[API-DB] Error reading or parsing DB file:', error);
   }
+  
   console.log('[API-DB] DB file not found or error reading. Initializing with mock data and creating file.');
-  fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initialMockTests, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(initialMockTests, null, 2), 'utf-8');
+  } catch (writeError) {
+    console.error('[API-DB] Error creating initial DB file:', writeError);
+    // Don't throw here - return mock data even if file write fails
+  }
   return initialMockTests;
 }
 
